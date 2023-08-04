@@ -1,0 +1,16 @@
+**/.venv
+**/build
+**/install
+**/coverage
+**/results
+**/unit_tests
+**/profiles
+**/logs
+**/memcheck
+**/callgrind
+**/.cache
+**/.conan
+**/.clangd
+**/launch.dev.json
+**/compile_commands.json
+**/CMakeUserPresets.json

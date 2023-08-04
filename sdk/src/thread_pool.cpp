@@ -1,0 +1,116 @@
+#include <sdk/thread_pool.hpp>
+#include <barrier>
+
+namespace tc::sdk
+{
+thread_pool::thread_pool()
+    : _is_running{ false }
+{
+}
+
+thread_pool::~thread_pool()
+{
+    if (_is_running)
+        stop();
+}
+
+bool thread_pool::start(const unsigned int num_threads)
+{
+    {
+        std::scoped_lock lock(_is_running_mutex);
+        if(_is_running)
+            return false;
+    }
+    
+    const auto thread_count = std::clamp(num_threads, 1u, std::thread::hardware_concurrency());
+    _threads.reserve(thread_count);
+
+    auto threads_barrier_callback = []() noexcept { };
+    using barrier_t = std::barrier<decltype(threads_barrier_callback)>;
+
+    auto dispatcher_threads_barrier = std::make_shared<barrier_t>(thread_count, threads_barrier_callback);
+    const auto worker_thread = [this, dispatcher_threads_barrier]()
+    {
+        dispatcher_threads_barrier->arrive_and_wait();
+        worker();
+    };
+
+    {
+        std::scoped_lock lock(_is_running_mutex);
+        _is_running = true;
+    }
+
+    for (unsigned int i = 0; i < thread_count; ++i)
+        _threads.emplace_back(worker_thread);
+
+    return true;
+}
+
+bool thread_pool::stop()
+{
+    {
+        std::scoped_lock lock(_is_running_mutex);
+        if(!_is_running)
+            return false;
+    }
+
+    {
+        std::scoped_lock lock(_task_mutex);
+        _task_queue = {};
+    }
+    
+    {
+        std::scoped_lock lock(_is_running_mutex);
+        _is_running = false;
+    }
+
+    _task_cv.notify_all();
+    
+    for (auto&& t : _threads)
+    {
+        if (t.joinable())
+            t.join();
+    }
+
+    return true;
+}
+
+size_t thread_pool::threads_count() const
+{
+    return _threads.size();
+}
+
+bool thread_pool::is_running() const
+{
+    return _is_running;
+}
+
+void thread_pool::worker()
+{
+    while (_is_running)
+    {
+        std::unique_lock lock(_task_mutex);
+
+        _task_cv.wait(lock, [this] { return !_task_queue.empty() || !_is_running; });
+        if (!_is_running)
+            return;
+
+        auto task = std::move(_task_queue.front());
+        _task_queue.pop();
+        lock.unlock();
+
+        task();
+    }
+}
+
+void thread_pool::enqueue_task(tc::sdk::task&& task)
+{
+    {
+        std::scoped_lock lock(_task_mutex);
+        _task_queue.emplace(std::move(task));
+    }
+
+    _task_cv.notify_one();
+}
+
+}

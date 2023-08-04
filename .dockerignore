@@ -1,0 +1,16 @@
+**/.git
+**/.gitignore
+**/.dockerignore
+**/.cache
+**/.vs
+**/.vscode
+**/.venv
+**/build
+**/install
+**/coverage
+**/ci
+**/.gitignore
+**/CHANGELOG.md
+**/Dockerfile
+**/compile_commands.json
+**/README.md

@@ -1,0 +1,11 @@
+﻿---
+BasedOnStyle: Microsoft
+AccessModifierOffset: '-4'
+BreakConstructorInitializers: BeforeComma
+ColumnLimit: '0'
+IndentWidth: '4'
+KeepEmptyLinesAtTheStartOfBlocks: 'false'
+PointerAlignment: Left
+UseTab: Never
+FixNamespaceComments: 'false'
+...

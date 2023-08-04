@@ -1,0 +1,25 @@
+cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
+
+find_package(spdlog REQUIRED)
+
+function(add_example EXAMPLE_TARGET)
+	add_executable(${EXAMPLE_TARGET} src/${EXAMPLE_TARGET}.cpp)
+	target_link_libraries(${EXAMPLE_TARGET} PRIVATE ssts::ssts PRIVATE spdlog::spdlog)
+	target_compile_features(${EXAMPLE_TARGET} PRIVATE cxx_std_17)
+	
+	if(${SSTS_INSTALL_EXAMPLES})
+		install(TARGETS ${EXAMPLE_TARGET} RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+	endif()
+endfunction()
+
+add_example(example_duplicate)
+add_example(example_pool)
+add_example(example_test)
+add_example(example_recursive)
+add_example(example_scheduler)
+add_example(example_nested)
+add_example(example_bind)
+add_example(example_update_interval)
+add_example(example_every)
+add_example(example_unordered)
+add_example(example_remove)

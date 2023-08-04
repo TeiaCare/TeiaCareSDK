@@ -1,0 +1,8 @@
+function(setup_benchmarks TARGET_NAME TARGET_SRC_BENCHMARK)	
+	set(TARGET_NAME_BENCHMARK ${TARGET_NAME}_benchmarks)
+	find_package(benchmark REQUIRED)
+	add_executable(${TARGET_NAME_BENCHMARK})
+	target_sources(${TARGET_NAME_BENCHMARK} PRIVATE ${TARGET_SRC_BENCHMARK})
+	target_compile_features(${TARGET_NAME_BENCHMARK} PUBLIC cxx_std_20)
+	target_link_libraries(${TARGET_NAME_BENCHMARK} PRIVATE benchmark::benchmark PRIVATE ${TARGET_NAME})
+endfunction()

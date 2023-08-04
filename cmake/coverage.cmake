@@ -1,0 +1,8 @@
+function(add_coverage TARGET)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        target_compile_options(${TARGET_NAME} PUBLIC --coverage -fPIC -O0 -g)
+        target_link_options(${TARGET_NAME} PUBLIC --coverage -fPIC)
+    elseif(MSVC)
+        message(STATUS "Code coverage not supported on MSVC")
+    endif()
+endfunction()
