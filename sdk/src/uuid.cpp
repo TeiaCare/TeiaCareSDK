@@ -91,15 +91,10 @@ uuid& uuid::operator=(const uuid& other)
 
 std::string uuid::bytes() const
 {
-    std::string mem;
-    bytes(mem);
-    return mem;
-}
-
-void uuid::bytes(std::string& out) const
-{
-    out.resize(sizeof(data));
-    bytes((char*)out.data());
+    std::string uuid_bytes;
+    uuid_bytes.resize(sizeof(data));
+    bytes((char*)uuid_bytes.data());
+    return uuid_bytes;
 }
 
 void uuid::bytes(char* bytes) const
@@ -110,15 +105,10 @@ void uuid::bytes(char* bytes) const
 
 std::string uuid::str() const
 {
-    std::string mem;
-    str(mem);
-    return mem;
-}
-
-void uuid::str(std::string& s) const
-{
-    s.resize(36);
-    str((char*)s.data());
+    std::string uuid_str;
+    uuid_str.resize(36);
+    str((char*)uuid_str.data());
+    return uuid_str;
 }
 
 void uuid::str(char* res) const

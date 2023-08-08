@@ -162,6 +162,10 @@ if(TEIACORE_ENABLE_UNIT_TESTS)
         tests/src/test_task.hpp
         tests/src/test_thread_pool.cpp
         tests/src/test_thread_pool.hpp
+        tests/src/test_uuid_generator.cpp
+        tests/src/test_uuid_generator.hpp
+        tests/src/test_uuid.cpp
+        tests/src/test_uuid.hpp
     )
     setup_unit_tests(${TARGET_NAME} "${TEIACORE_UNIT_TESTS_SRC}")
 endif()

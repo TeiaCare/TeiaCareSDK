@@ -15,12 +15,8 @@ public:
     uuid(const uuid& other);
     uuid& operator=(const uuid& other);
     
-    std::string bytes() const;
-    void bytes(std::string& out) const;
-    
+    std::string bytes() const;    
     std::string str() const;
-    void str(std::string& str) const;
-
     size_t hash() const;
 
     friend bool operator==(const uuid& lhs, const uuid& rhs);
@@ -45,15 +41,14 @@ private:
 
 }
 
-namespace std
-{
-template <>
-struct hash<tc::sdk::uuid>
-{
-    size_t operator()(const tc::sdk::uuid& uuid) const
-    {
-        return uuid.hash();
-    }
-};
-
-}
+// namespace std
+// {
+// template <>
+// struct hash<tc::sdk::uuid>
+// {
+//     size_t operator()(const tc::sdk::uuid& uuid) const
+//     {
+//         return uuid.hash();
+//     }
+// };
+// }
