@@ -76,10 +76,10 @@ public:
     event_dispatcher& operator=(event_dispatcher&&) = delete;
 
     /*! 
-     * @brief Add a user defined handler to the specified event
-     * @param event_name Event name
-     * @tparam event_handler User defined event handler
-     * @return Handler ID
+     * \brief Add a user defined handler to the specified event
+     * \param event_name Event name
+     * \tparam event_handler User defined event handler
+     * \return Handler ID
      *
      * TODO!
      */
@@ -103,10 +103,10 @@ public:
     }
 
     /*! 
-     * @brief Add a user defined handler to the specified event.
-     * @param event_name Event name
-     * @tparam args event handler arguments
-     * @return true if the event has been emitted succesfully and at least an event handler has been called.
+     * \brief Add a user defined handler to the specified event.
+     * \param event_name Event name
+     * \tparam args event handler arguments
+     * \return true if the event has been emitted succesfully and at least an event handler has been called.
      *
      * TODO!
      */
@@ -136,29 +136,29 @@ public:
     }
 
     /*! 
-     * @brief remove the handler with the given handler_id
-     * @param handler_id Handler ID
-     * @return true if removed successfully
+     * \brief remove the handler with the given handler_id
+     * \param handler_id Handler ID
+     * \return true if removed successfully
      */ 
     auto remove_handler(unsigned long handler_id) -> bool;
     
     /*! 
-     * @brief remove the event with the given event_name and all its associated handlers
-     * @param event_name Event name
-     * @return true if removed successfully
+     * \brief remove the event with the given event_name and all its associated handlers
+     * \param event_name Event name
+     * \return true if removed successfully
      */ 
     auto remove_event(std::string event_name) -> bool;
 
     /*! 
-     * @brief Starts the event_dispatcher and the underlying tc::sdk::thread_pool with the given number of threads
-     * @param num_threads Number of threads of the underlying tc::sdk::thread_pool
-     * @return true if started successfully
+     * \brief Starts the event_dispatcher and the underlying tc::sdk::thread_pool with the given number of threads
+     * \param num_threads Number of threads of the underlying tc::sdk::thread_pool
+     * \return true if started successfully
      */ 
     auto start(const unsigned int num_threads = 1) -> bool;
 
     /*! 
-     * @brief Stop the event_dispatcher and the underlying tc::sdk::thread_pool
-     * @return true if stopped successfully
+     * \brief Stop the event_dispatcher and the underlying tc::sdk::thread_pool
+     * \return true if stopped successfully
      */ 
     auto stop() -> bool;
     

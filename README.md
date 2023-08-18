@@ -164,3 +164,9 @@ cpplint --counting=detailed  $(find teiacore_sdk* -type f -name "*.hpp" -or -nam
 cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D TEIACORE_ENABLE_CPPLINT=True -B ./build/Debug -S .
 cmake --build ./build/Debug --target teiacore_sdk_cpplint
 ```
+
+
+## Documentation (Doxygen)
+```bash
+apt-get install doxygen graphviz
+```

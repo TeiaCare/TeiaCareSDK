@@ -15,7 +15,7 @@ set(TARGET_HEADERS
     include/sdk/datetime/time.hpp
     include/sdk/datetime/timedelta.hpp
 
-    include/sdk/concurrent_queue.hpp
+    include/sdk/blocking_queue.hpp
     include/sdk/data_types.hpp
     include/sdk/event_dispatcher.hpp
     include/sdk/function_traits.hpp
@@ -146,6 +146,8 @@ if(TEIACORE_ENABLE_UNIT_TESTS)
     include(unit_tests)
     set(TEIACORE_UNIT_TESTS_SRC
         tests/src/main.cpp
+        tests/src/test_blocking_queue.cpp
+        tests/src/test_blocking_queue.hpp
         tests/src/test_event_dispatcher.cpp
         tests/src/test_event_dispatcher.hpp
         tests/src/test_high_precision_timer.cpp
@@ -202,6 +204,7 @@ if(TEIACORE_ENABLE_EXAMPLES)
     endif()
 
     include(examples)
+    add_example(${TARGET_NAME} example_blocking_queue)
     add_example(${TARGET_NAME} example_date)
     add_example(${TARGET_NAME} example_event_dispatcher)
     add_example(${TARGET_NAME} example_high_precision_timer)

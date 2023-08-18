@@ -124,7 +124,7 @@ public:
     /*!
      * \brief Start running tasks
      * \param num_threads Number of threads that will be used in the underlying tc::sdk::thread_pool
-     * @return true if started successfully
+     * \return true if started successfully
      *
      * This function starts the task_scheduler worker thread.
      * The function is guaranteed to return after the scheduler thread is started.
@@ -133,7 +133,7 @@ public:
 
     /*!
      * \brief Stop all running tasks
-     * @return true if stopped successfully
+     * \return true if stopped successfully
      * 
      * This function stops the task_scheduler execution and stops all the running tasks.
      */
