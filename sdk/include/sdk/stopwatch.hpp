@@ -1,13 +1,16 @@
 #pragma once
 
 #include <sdk/clock.hpp>
+#include <sdk/non_copyable.hpp>
+#include <sdk/non_moveable.hpp>
 
 namespace tc::sdk
 {
-/*! \class stopwatch
- *  \brief Stopwatch object that measures the amount of elapsed time from a given time point.
+/*!
+ * \class stopwatch
+ * \brief Stopwatch object that measures the amount of elapsed time from a given time point.
  */
-class stopwatch
+class stopwatch : private non_copyable, private non_moveable
 {
 public:
     /*!
@@ -24,21 +27,30 @@ public:
      */
     ~stopwatch() noexcept = default;
 
-    stopwatch(const stopwatch&) = delete;
-    stopwatch(stopwatch&&) noexcept = delete;
-    stopwatch& operator=(const stopwatch&) = delete;
-    stopwatch& operator=(stopwatch&&) = delete;
-
+    /*!
+     * \brief Get the start time.
+     * \return start_time time_point
+     */
     [[nodiscard]] tc::sdk::time_point start_time() const noexcept
     {
         return _start_time;
     }
 
+    /*!
+     * \brief Get the elapsed time.
+     * \return elapsed time_duration
+     */
     [[nodiscard]] tc::sdk::time_duration elapsed() const noexcept
     {
         return tc::sdk::clock::now() - _start_time;
     }
 
+    /*!
+     * \brief Get the elapsed time.
+     * \return elapsed time_duration
+     * 
+     * Override to require the elapsed time with a gived duration type (i.e. std::chrono::milliseconds)
+     */
     template<class DurationT>
     [[nodiscard]] DurationT elapsed() const noexcept
     {
@@ -48,17 +60,9 @@ public:
         return std::chrono::duration_cast<DurationT>(elapsed());
     }
 
-    // [[nodiscard]] float GetElapsedSecondsF() const noexcept
-    // {
-    //     return GetElapsedSeconds<float>();
-    // }
-
-    // template<typename T>
-    // [[nodiscard]] T GetElapsedSeconds() const noexcept
-    // {
-    //     return std::chrono::duration_cast<std::chrono::duration<T>>(elapsed()).count();
-    // }
-
+    /*!
+     * \brief Reset the start time.
+     */
     void reset() noexcept
     {
         _start_time = tc::sdk::clock::now();

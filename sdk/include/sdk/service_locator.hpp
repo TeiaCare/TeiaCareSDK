@@ -1,5 +1,8 @@
 #pragma once
 
+#include <sdk/non_copyable.hpp>
+#include <sdk/non_moveable.hpp>
+
 #include <type_traits>
 #include <unordered_map>
 #include <typeinfo>
@@ -7,17 +10,32 @@
 
 namespace tc::sdk
 {
-class service_locator
+/*!
+ * \class service_locator
+ * \brief TODO
+ *
+ * TODO
+ */
+class service_locator : private non_copyable, private non_moveable
 {
-public:
+public: 
+    /*!
+     * \brief Get service_locator instance
+     */
     static service_locator& instance();
 
+    /*!
+     * \brief Destructor
+     * 
+     * Destructs this. If the high_precision_timer is running its task is stopped before deletion.
+     */
     ~service_locator() noexcept = default;
-    service_locator(const service_locator&) = delete;
-    service_locator(service_locator&&) noexcept = delete;
-    service_locator& operator=(const service_locator&) = delete;
-    service_locator& operator=(service_locator&&) = delete;
 
+    /*!
+     * \brief Add a new service
+     * 
+     * TODO
+     */
     template<typename ServiceInterfaceT, typename ServiceT, typename ... Args>
     constexpr auto register_service(Args... args) -> bool
     {
@@ -34,6 +52,11 @@ public:
         return is_inserted;
     }
 
+    /*!
+     * \brief Remove a service
+     * 
+     * TODO
+     */
     template<typename ServiceInterfaceT>
     constexpr auto unregister_service() -> bool
     {
@@ -47,6 +70,11 @@ public:
         return true;
     }
 
+    /*!
+     * \brief Check if a service is currently registered
+     * 
+     * TODO
+     */
     template<typename ServiceInterfaceT>
     constexpr auto is_service_registered() -> bool
     {
@@ -56,6 +84,11 @@ public:
         return _services.contains(get_id<ServiceInterfaceT>());
     }
 
+    /*!
+     * \brief Get a registered service instance
+     * 
+     * TODO
+     */
     template<typename ServiceInterfaceT>
     constexpr auto get() const -> std::shared_ptr<ServiceInterfaceT>
     {

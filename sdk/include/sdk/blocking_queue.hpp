@@ -1,5 +1,8 @@
 #pragma once
 
+#include <sdk/non_copyable.hpp>
+#include <sdk/non_moveable.hpp>
+
 #include <queue>
 #include <mutex>
 #include <condition_variable>
@@ -8,16 +11,17 @@
 
 namespace tc::sdk
 {
-/*! \class blocking_queue
- *  \brief Thread safe, blocking queue
- *  \tparam T Queue items type
+/*! 
+ * \class blocking_queue
+ * \brief Thread safe, blocking queue
+ * \tparam T Queue items type
  * 
- *  The queue has a fixed capacity (i.e. maximum number of items that can be hold).  
- *  When the queue is full and a new item is needs to be inserted via blocking_queue::push() the queue blocks until an item is popped.  
- *  Viceversa, when the queue is empty and an item is required via blocking_queue::pop(), the queue blocks until the first item is pushed.
+ * The queue has a fixed capacity (i.e. maximum number of items that can be hold).  
+ * When the queue is full and a new item is needs to be inserted via blocking_queue::push() the queue blocks until an item is popped.  
+ * Viceversa, when the queue is empty and an item is required via blocking_queue::pop(), the queue blocks until the first item is pushed.
  */
 template <typename T>
-class blocking_queue
+class blocking_queue : private non_copyable, private non_moveable
 {
 public:
     /*!
@@ -37,11 +41,6 @@ public:
      * Destructs this.
      */
     ~blocking_queue() = default;
-
-    blocking_queue(const blocking_queue&) = delete;
-    blocking_queue(blocking_queue&&) = delete;
-    blocking_queue& operator=(const blocking_queue&) = delete;
-    blocking_queue& operator=(blocking_queue&&) = delete;
 
     /*!
      * \brief Insert an item into the queue

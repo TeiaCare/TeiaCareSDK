@@ -1,5 +1,8 @@
 #pragma once
 
+#include <sdk/non_copyable.hpp>
+#include <sdk/non_moveable.hpp>
+
 #include <atomic>
 #include <mutex>
 #include <type_traits>
@@ -7,15 +10,33 @@
 
 namespace tc::sdk
 {
-/*
-* T must be Equality Comparable, i.e. it must implement the equality comparison operator:
-* bool operator==(T const&) const { }
-*/
-
+/*!
+ * \class observable
+ * \brief Utility class to observe a value with a user provided callback
+ * 
+ * \tparam T Observed item type
+ * \tparam CallbackT User defined callback type
+ * 
+ * The callback is invoked every time the observed value is updated.  
+ * The observable callback receives as a parameter the updated observed value.  
+ * Thread safe.  
+ * 
+ * \note T must be Equality Comparable, i.e. it must implement the equality comparison operator:
+ * \code
+ * bool operator==(T const&) const { }
+ * \endcode
+ */
 template<std::equality_comparable T, typename CallbackT>
-class observable
+class observable : private non_copyable, private non_moveable
 {
 public:
+    /*!
+     * \brief Constructor
+     * \tparam T initial value for the observed value
+     * \tparam CallbackT callable object that is invoked every time the value is changed
+     * 
+     * Creates a tc::sdk::observable instance. 
+     */
     explicit observable(const T& t, const CallbackT& callback)
         : _value{ t }
         , _callback{ callback }
@@ -25,6 +46,13 @@ public:
         static_assert(std::is_same_v<void, std::invoke_result_t<CallbackT, T>>, "CallbackT must return void");
     }
 
+    /*!
+     * \brief Constructor
+     * \tparam T initial value for the observed value
+     * \tparam CallbackT callable object that is invoked every time the value is changed
+     * 
+     * Creates a tc::sdk::observable instance. 
+     */
     explicit observable(T&& t, const CallbackT& callback)
         : _value{ std::forward<T>(t) }
         , _callback{ callback }
@@ -34,47 +62,81 @@ public:
         static_assert(std::is_same_v<void, std::invoke_result_t<CallbackT, T>>, "CallbackT must return void");
     }
 
-    observable(observable&) = delete;
-    observable(const observable&) = delete;
-    observable(observable&&) noexcept = delete;
-    observable& operator=(const observable&) = delete;
-    observable& operator=(observable&&) = delete;
+    /*!
+     * \brief Destructor
+     * 
+     * Destructs this.
+     */
     ~observable() = default;
 
+    /*!
+     * \brief Check if the callback is currently enabled
+     * \return true if the callback is currently enabled
+     */
     bool callback_enabled() const
     {
         std::lock_guard lock(_mutex);
         return _is_callback_enabled.load();
     }
 
+    /*!
+     * \brief Enable or disable the callback temporarily
+     * \param is_enabled enable or disable callback
+     */
     void callback_enabled(bool is_enabled) 
     {
         std::lock_guard lock(_mutex);
         _is_callback_enabled.store(is_enabled);
     }
 
+    /*!
+     * \brief Return the observed value
+     * \return const observed value
+     */
     operator T const() const
     {
         return value();
     }
 
+    /*!
+     * \brief Return the observed value
+     * \return observed value
+     */
     operator T()
     {
         return value();
     }
 
+    /*!
+     * \brief Return the observed value
+     * \return the observed value
+     */
     T value() const
     {
         std::lock_guard lock(_mutex);
         return _value;
     }
 
+    /*!
+     * \brief Update the observed value
+     * \tparam t the updated value
+     * \return a reference to self
+     * 
+     * If the parameter value is different from the observed one the callback is invoked.
+     */
     observable& operator=(T&& t)
     {
         set(std::forward<T>(t));
         return *this;
     }
 
+    /*!
+     * \brief Update the observed value
+     * \tparam t the updated value
+     * \return a reference to self
+     * 
+     * If the parameter value is different from the observed one the callback is invoked.
+     */
     observable& operator=(const T& t)
     {
         set(t);

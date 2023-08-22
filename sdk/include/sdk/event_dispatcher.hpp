@@ -1,5 +1,10 @@
 #pragma once 
 
+#include <sdk/thread_pool.hpp>
+#include <sdk/function_traits.hpp>
+#include <sdk/non_copyable.hpp>
+#include <sdk/non_moveable.hpp>
+
 #include <atomic>
 #include <condition_variable>
 #include <functional>
@@ -9,18 +14,16 @@
 #include <queue>
 #include <vector>
 
-#include <sdk/thread_pool.hpp>
-#include <sdk/function_traits.hpp>
-
 namespace tc::sdk
 {
-/*! \class event_dispatcher
- *  \brief Event Dispatcher object that handles events and dispatch them with user defined handlers.
+/*! 
+ * \class event_dispatcher
+ * \brief Event Dispatcher object that handles events and dispatch them with user defined handlers.
  *
- *  This class is used to manage a queue of tasks using a fixed number of threads.  
- *  The actual task execution is delgated to an internal tc::sdk::task_pool object.
+ * This class is used to manage a queue of tasks using a fixed number of threads.  
+ * The actual task execution is delgated to an internal tc::sdk::task_pool object.
  */
-class event_dispatcher final
+class event_dispatcher final : private non_copyable, private non_moveable
 {
 private:
     struct base_handler_t
@@ -36,15 +39,11 @@ private:
     };
 
     template <typename... Args>
-    class handler_t : public base_handler_t
+    class handler_t : public base_handler_t, private non_copyable, private non_moveable
     {
     public:
         handler_t(unsigned long id, std::function<void(Args...)>&& h) noexcept : base_handler_t(id), _handler{std::move(h)} {}
         ~handler_t() noexcept override = default;
-        handler_t(const handler_t&) = delete;
-        handler_t(handler_t&&) noexcept = delete;
-        handler_t& operator=(const handler_t&) = delete;
-        handler_t& operator=(handler_t&&) = delete;
         
         void call(Args... args) const
         {
@@ -69,11 +68,6 @@ public:
      * Destructs this.
      */
     ~event_dispatcher() noexcept;
-
-    event_dispatcher(const event_dispatcher&) = delete;
-    event_dispatcher(event_dispatcher&&) noexcept = delete;
-    event_dispatcher& operator=(const event_dispatcher&) = delete;
-    event_dispatcher& operator=(event_dispatcher&&) = delete;
 
     /*! 
      * \brief Add a user defined handler to the specified event

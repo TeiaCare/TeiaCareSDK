@@ -1,19 +1,21 @@
 #pragma once
 
+#include <sdk/non_copyable.hpp>
+
 #include <memory>
 #include <algorithm>
 #include <type_traits>
 
-
 namespace tc::sdk
 {
-/*! \class task
- *  \brief Move-only callable object.
- *
- *  This class represents a callable object. Can be initialized with any invocable type that supports operator().  
- *  Internally the class implements a type-erasure idiom to accept any callable signature without exposing it to the outside.
+/*! 
+ * \class task
+ * \brief Move-only callable object.
+ * 
+ * This class represents a callable object. Can be initialized with any invocable type that supports operator().  
+ * Internally the class implements a type-erasure idiom to accept any callable signature without exposing it to the outside.
  */
-class task
+class task : private non_copyable
 {
 private:
     struct task_base
@@ -68,9 +70,18 @@ public:
      */
     task(task&& other) noexcept;
 
+    /*!
+     * \brief Destructor
+     * 
+     * Destructs this.
+     */
     ~task() noexcept = default;
-    task(const task&) = delete;
-    task& operator=(const task&) = delete;
+
+    /*!
+     * \brief Move assignment operator
+     * 
+     * Move assignment operator marked as deleted. 
+     */
     task& operator=(task&&) = delete;
 
     /*!

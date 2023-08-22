@@ -2,6 +2,8 @@
 
 #include <sdk/clock.hpp>
 #include <sdk/task.hpp>
+#include <sdk/non_copyable.hpp>
+#include <sdk/non_moveable.hpp>
 
 #include <mutex>
 #include <thread>
@@ -10,13 +12,14 @@
 
 namespace tc::sdk
 {
-/*! \class high_precision_timer
- *  \brief High Precision Timer that triggers a given callback with milliseconds precision.
+/*!
+ * \class high_precision_timer
+ * \brief High Precision Timer that triggers a given callback with milliseconds precision.
  *
- *  The timer callback can be set to any callable object (lambda, free function, member function)
- *  It is mandatory to set the callback interval calling high_precision_timer::start with a duration argument.
+ * The timer callback can be set to any callable object (lambda, free function, member function)
+ * It is mandatory to set the callback interval calling high_precision_timer::start with a duration argument.
  */
-class high_precision_timer
+class high_precision_timer : private non_copyable, private non_moveable
 {
 public:
     /*!
@@ -32,12 +35,6 @@ public:
      * Destructs this. If the high_precision_timer is running its task is stopped before deletion.
      */
     ~high_precision_timer();
-
-    high_precision_timer(high_precision_timer&) = delete;
-    high_precision_timer(const high_precision_timer&) = delete;
-    high_precision_timer(high_precision_timer&&) noexcept = delete;
-    high_precision_timer& operator=(const high_precision_timer&) = delete;
-    high_precision_timer& operator=(high_precision_timer&&) = delete;
 
     /*!
      * \brief Start running the worker task

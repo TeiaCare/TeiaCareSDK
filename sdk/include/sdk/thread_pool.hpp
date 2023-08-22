@@ -1,5 +1,9 @@
 #pragma once
 
+#include <sdk/task.hpp>
+#include <sdk/non_copyable.hpp>
+#include <sdk/non_moveable.hpp>
+
 #include <atomic>
 #include <vector>
 #include <queue>
@@ -8,17 +12,16 @@
 #include <future>
 #include <condition_variable>
 
-#include <sdk/task.hpp>
-
 namespace tc::sdk
 {
-/*! \class thread_pool
- *  \brief Thread Pool that can run any callable object.
- *
- *  This class is general purpose thread pool that can launch task asyncronously.
- *  It is possible to get an asyncronous result of a task execution.
+/*!
+ * \class thread_pool
+ * \brief Thread Pool that can run any callable object.
+ * 
+ * This class is general purpose thread pool that can launch task asyncronously.
+ * It is possible to get an asyncronous result of a task execution.
  */
-class thread_pool
+class thread_pool : private non_copyable, private non_moveable
 {
 public:
     /*!
@@ -28,12 +31,6 @@ public:
      * Creates a tc::sdk::thread_pool instance with the given number of threads.
      */
     explicit thread_pool();
-
-    thread_pool(thread_pool&) = delete;
-    thread_pool(const thread_pool&) = delete;
-    thread_pool(thread_pool&&) = delete;
-    thread_pool& operator=(const thread_pool&) = delete;
-    thread_pool& operator=(thread_pool&&) = delete;
 
     /*!
      * \brief Destructor.

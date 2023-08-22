@@ -1,5 +1,4 @@
 #include "test_blocking_queue.hpp"
-#include <sdk/macros.hpp>
 #include <gtest/gtest.h>
 #include <thread>
 
