@@ -1,7 +1,0 @@
-#pragma once
-
-namespace tc::sdk
-{
-constexpr const char* name = "@PROJECT_NAME@";
-constexpr const char* version = "@TeiaCoreSDK_VERSION_MAJOR@.@TeiaCoreSDK_VERSION_MINOR@.@TeiaCoreSDK_VERSION_PATCH@";
-}

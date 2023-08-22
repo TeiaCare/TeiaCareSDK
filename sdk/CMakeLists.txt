@@ -5,8 +5,8 @@ add_library(teiacore_sdk::teiacore_sdk ALIAS ${TARGET_NAME})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
 
 configure_file(
-    src/version.hpp.in 
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/sdk/version.hpp
+    src/version.cpp.in 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/version.cpp
 )
 
 set(TARGET_HEADERS
@@ -48,6 +48,7 @@ set(TARGET_SOURCES
     src/thread_pool.cpp
     src/uuid_generator.cpp
     src/uuid.cpp
+    src/version.cpp
 )
 
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
@@ -217,6 +218,7 @@ if(TEIACORE_ENABLE_EXAMPLES)
     add_example(${TARGET_NAME} example_time)
     add_example(${TARGET_NAME} example_timedelta)
     add_example(${TARGET_NAME} example_uuid)
+    add_example(${TARGET_NAME} example_version)
 endif()
 
 ####################
