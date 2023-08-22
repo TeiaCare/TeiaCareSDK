@@ -20,7 +20,8 @@ set(TARGET_HEADERS
     include/sdk/event_dispatcher.hpp
     include/sdk/function_traits.hpp
     include/sdk/high_precision_timer.hpp
-    include/sdk/macros.hpp
+    include/sdk/non_copyable.hpp
+    include/sdk/non_moveable.hpp
     include/sdk/observable.hpp
     include/sdk/rate_limiter.hpp
     include/sdk/service_locator.hpp
@@ -160,6 +161,8 @@ if(TEIACORE_ENABLE_UNIT_TESTS)
         tests/src/test_service_locator.hpp
         tests/src/test_stopwatch.cpp
         tests/src/test_stopwatch.hpp
+        tests/src/test_task_scheduler.hpp
+        tests/src/test_task_scheduler.cpp
         tests/src/test_task.cpp
         tests/src/test_task.hpp
         tests/src/test_thread_pool.cpp

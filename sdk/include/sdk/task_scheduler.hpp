@@ -1,5 +1,11 @@
 #pragma once
 
+#include <sdk/clock.hpp>
+#include <sdk/task.hpp>
+#include <sdk/thread_pool.hpp>
+#include <sdk/non_copyable.hpp>
+#include <sdk/non_moveable.hpp>
+
 #include <chrono>
 #include <condition_variable>
 #include <future>
@@ -7,22 +13,23 @@
 #include <optional>
 #include <string>
 
-#include <sdk/clock.hpp>
-#include <sdk/task.hpp>
-#include <sdk/thread_pool.hpp>
-
 namespace tc::sdk
 {
-/*! \class task_scheduler
- *  \brief Task Scheduler that can launch tasks on based several time-based policies
+/*! 
+ * \class task_scheduler
+ * \brief Task Scheduler that can launch tasks on based several time-based policies
  *
- *  This class is used to manage a queue of tasks using a fixed number of threads.  
- *  The actual task execution is delgated to an internal tc::sdk::task_pool object.
+ * This class is used to manage a queue of tasks using a fixed number of threads.  
+ * The actual task execution is delgated to an internal tc::sdk::task_pool object.
  */
-class task_scheduler
+class task_scheduler : private non_copyable, private non_moveable
 {
+public:
+    using delay_t = tc::sdk::clock::duration;
+    using interval_t = tc::sdk::clock::duration;
+
 private:
-    class schedulable_task
+    class schedulable_task : private non_copyable, private non_moveable
     {
     public:
         template<typename FunctionType>
@@ -58,11 +65,6 @@ private:
         }
 
         ~schedulable_task() { }
-
-        schedulable_task(schedulable_task&) = delete;
-        schedulable_task(const schedulable_task&) = delete;
-        schedulable_task& operator=(const schedulable_task&) = delete;
-        schedulable_task& operator=(schedulable_task&&) = delete;
         
         schedulable_task(schedulable_task&& other) noexcept 
         : _task{std::move(other._task)}
@@ -113,13 +115,6 @@ public:
      * Destructs this. If the task_scheduler is running its tasks are stopped first
      */
     ~task_scheduler();
-
-    task_scheduler(task_scheduler&) = delete;
-    task_scheduler(const task_scheduler&) = delete;
-    task_scheduler& operator=(const task_scheduler&) = delete;
-    task_scheduler(task_scheduler&&) noexcept = delete;
-    task_scheduler& operator=(task_scheduler&&) = delete;
-
 
     /*!
      * \brief Start running tasks
@@ -204,10 +199,15 @@ public:
      * or the task has not been assigned a task_id, it is not possible to update it. 
      * In case of any failure (task_id not found or task non recursive) this function return false. 
      */
-    bool update_interval(const std::string& task_id, tc::sdk::clock::duration interval);
+    bool update_interval(const std::string& task_id, interval_t interval);
 
+    /*!
+     * \brief Spawn a task at a given time_point
+     * 
+     * TODO
+     */
     template <typename TaskFunction>
-    auto at(tc::sdk::clock::time_point &&timepoint, TaskFunction &&func)
+    auto at(tc::sdk::clock::time_point&& timepoint, TaskFunction&& func)
         -> std::optional<std::future<std::invoke_result_t<TaskFunction>>>
     {
         auto task = [t = std::forward<TaskFunction>(func)] 
@@ -225,8 +225,13 @@ public:
         return future;
     }
 
+    /*!
+     * \brief Spawn a task at a given time_point
+     * 
+     * TODO
+     */
     template <typename TaskFunction, typename... Args>
-    auto at(tc::sdk::clock::time_point &&timepoint, TaskFunction &&func, Args &&... args)
+    auto at(tc::sdk::clock::time_point&& timepoint, TaskFunction&& func, Args&&... args)
         -> std::optional<std::future<std::invoke_result_t<TaskFunction, Args...>>>
     {
         auto task = [t = std::forward<TaskFunction>(func), params = std::make_tuple(std::forward<Args>(args)...)] 
@@ -244,8 +249,13 @@ public:
         return future;
     }
 
+    /*!
+     * \brief Spawn a task at a given time_point
+     * 
+     * TODO
+     */
     template <typename TaskFunction, typename... Args>
-    auto at(std::string&& task_id, tc::sdk::clock::time_point &&timepoint, TaskFunction &&func, Args &&... args)
+    auto at(std::string&& task_id, tc::sdk::clock::time_point&& timepoint, TaskFunction&& func, Args&&... args)
         -> std::optional<std::future<std::invoke_result_t<TaskFunction, Args...>>>
     {
         auto task = [t = std::forward<TaskFunction>(func), params = std::make_tuple(std::forward<Args>(args)...)] 
@@ -263,38 +273,58 @@ public:
         return future;
     }
 
+    /*!
+     * \brief Spawn a task at a given time_duration
+     * 
+     * TODO
+     */
     template <typename TaskFunction>
-    auto in(tc::sdk::clock::duration&& duration, TaskFunction &&func)
+    auto in(delay_t&& delay, TaskFunction&& func)
         -> std::optional<std::future<std::invoke_result_t<TaskFunction>>>
     {
         return at(
-            std::forward<tc::sdk::clock::time_point>(tc::sdk::clock::now() + duration),
+            std::forward<tc::sdk::clock::time_point>(tc::sdk::clock::now() + delay),
             std::forward<TaskFunction>(func));
     }
 
+    /*!
+     * \brief Spawn a task at a given time_duration
+     * 
+     * TODO
+     */
     template <typename TaskFunction, typename... Args>
-    auto in(tc::sdk::clock::duration&& duration, TaskFunction &&func, Args &&... args)
+    auto in(delay_t&& delay, TaskFunction&& func, Args&&... args)
         -> std::optional<std::future<std::invoke_result_t<TaskFunction, Args...>>>
     {
         return at(
-            std::forward<tc::sdk::clock::time_point>(tc::sdk::clock::now() + duration),
+            std::forward<tc::sdk::clock::time_point>(tc::sdk::clock::now() + delay),
             std::forward<TaskFunction>(func),
             std::forward<Args>(args)...);
     }
 
+    /*!
+     * \brief Spawn a task at a given time_duration
+     * 
+     * TODO
+     */
     template <typename TaskFunction, typename... Args>
-    auto in(std::string&& task_id, tc::sdk::clock::duration&& duration, TaskFunction &&func, Args &&... args)
+    auto in(std::string&& task_id, delay_t&& delay, TaskFunction&& func, Args&&... args)
         -> std::optional<std::future<std::invoke_result_t<TaskFunction, Args...>>>
     {
         return at(
             std::forward<std::string>(task_id),
-            std::forward<tc::sdk::clock::time_point>(tc::sdk::clock::now() + duration),
+            std::forward<tc::sdk::clock::time_point>(tc::sdk::clock::now() + delay),
             std::forward<TaskFunction>(func),
             std::forward<Args>(args)...);
     }
 
+    /*!
+     * \brief Spawn a task periodically
+     * 
+     * TODO
+     */
     template <typename TaskFunction>
-    auto every(tc::sdk::clock::duration&& interval, TaskFunction &&func) -> bool
+    auto every(interval_t&& interval, TaskFunction&& func) -> bool
     {
         auto task = [t = std::forward<TaskFunction>(func)] 
         {
@@ -304,8 +334,13 @@ public:
         return add_task(std::move(tc::sdk::clock::now()), schedulable_task(std::move(task), interval));
     }
 
+    /*!
+     * \brief Spawn a task periodically
+     * 
+     * TODO
+     */
     template <typename TaskFunction, typename... Args>
-    auto every(tc::sdk::clock::duration&& interval, TaskFunction &&func, Args &&... args) -> bool
+    auto every(interval_t&& interval, TaskFunction&& func, Args&&... args) -> bool
     {
         auto task = [t = std::forward<TaskFunction>(func), params = std::make_tuple(std::forward<Args>(args)...)] 
         {
@@ -315,8 +350,13 @@ public:
         return add_task(std::move(tc::sdk::clock::now()), schedulable_task(std::move(task), interval));
     }
 
+    /*!
+     * \brief Spawn a task periodically
+     * 
+     * TODO
+     */
     template <typename TaskFunction, typename... Args>
-    auto every(std::string&& task_id, tc::sdk::clock::duration&& interval, TaskFunction &&func, Args &&... args) -> bool
+    auto every(std::string&& task_id, interval_t&& interval, TaskFunction&& func, Args&&... args) -> bool
     {
         auto task = [t = std::forward<TaskFunction>(func), params = std::make_tuple(std::forward<Args>(args)...)] 
         {
@@ -326,8 +366,13 @@ public:
         return add_task(std::move(tc::sdk::clock::now()), schedulable_task(std::move(task), _hasher(task_id), interval));
     }
 
+    /*!
+     * \brief Spawn a task periodically
+     * 
+     * TODO
+     */
     template <typename TaskFunction, typename... Args>
-    auto every(std::string&& task_id, tc::sdk::clock::duration&& interval, tc::sdk::clock::duration&& delay, TaskFunction &&func, Args &&... args) -> bool
+    auto every(std::string&& task_id, interval_t&& interval, delay_t&& delay, TaskFunction&& func, Args&&... args) -> bool
     {
         auto task = [t = std::forward<TaskFunction>(func), params = std::make_tuple(std::forward<Args>(args)...)] 
         {
@@ -339,8 +384,6 @@ public:
 
 private:
     tc::sdk::thread_pool _tp;
-    std::atomic_bool _is_running;
-    std::mutex _is_running_mutex;
     std::thread _scheduler_thread;
     std::multimap<tc::sdk::clock::time_point, schedulable_task> _tasks;
     std::condition_variable _update_tasks_cv;
@@ -348,10 +391,10 @@ private:
     std::hash<std::string> _hasher;
     std::atomic<tc::sdk::clock::time_point> _next_task_timepoint;
 
-    auto add_task(tc::sdk::clock::time_point&& timepoint, schedulable_task&& st) -> bool;
+    bool add_task(tc::sdk::clock::time_point&& timepoint, schedulable_task&& st);
     void update_tasks();
     auto get_task_iterator(const std::string& task_id) -> decltype(_tasks)::iterator;
-    auto already_exists(const std::optional<size_t>& opt_hash) -> bool;
+    bool already_exists(const std::optional<size_t>& opt_hash);
 };
 
 }

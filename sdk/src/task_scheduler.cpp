@@ -3,14 +3,12 @@
 namespace tc::sdk
 {
 task_scheduler::task_scheduler()
-    : _is_running{ false }
 {
 }
 
 task_scheduler::~task_scheduler()
 {
-    if (_is_running)
-        stop();
+    stop();
 }
 
 bool task_scheduler::start(const unsigned int num_threads)
@@ -25,13 +23,13 @@ bool task_scheduler::start(const unsigned int num_threads)
     {
         thread_started_notifier.set_value();
 
-        while (_is_running)
+        while (_tp.is_running())
         {
             std::unique_lock lock(_update_tasks_mtx);
 
             if (_tasks.empty())
             {
-                _update_tasks_cv.wait(lock, [this]{ return !_is_running || !_tasks.empty(); });
+                _update_tasks_cv.wait(lock, [this]{ return !_tp.is_running() || !_tasks.empty(); });
             }
             else
             {
@@ -44,7 +42,7 @@ bool task_scheduler::start(const unsigned int num_threads)
                     continue;
             }
 
-            if (!_is_running)
+            if (!_tp.is_running())
                 return;
 
             update_tasks();
@@ -53,20 +51,13 @@ bool task_scheduler::start(const unsigned int num_threads)
 
     thread_started_watcher.wait();
 
-    {
-        std::unique_lock<std::mutex> lock(_is_running_mutex);
-        _is_running = false;
-    }
-
     return true;
 }
 
 bool task_scheduler::stop()
 {
-    {
-        std::unique_lock<std::mutex> lock(_is_running_mutex);
-        _is_running = false;
-    }
+    if (!_tp.stop())
+        return false;
 
     _update_tasks_cv.notify_all();
     
@@ -75,10 +66,11 @@ bool task_scheduler::stop()
         _tasks.clear();
     }
 
+
     if (_scheduler_thread.joinable())
         _scheduler_thread.join();
 
-    return _tp.stop();
+    return true;
 }
 
 size_t task_scheduler::tasks_size()
@@ -126,7 +118,7 @@ bool task_scheduler::remove_task(const std::string& task_id)
     return false;
 }
 
-bool task_scheduler::update_interval(const std::string& task_id, tc::sdk::clock::duration interval) 
+bool task_scheduler::update_interval(const std::string& task_id, interval_t interval) 
 {
     std::unique_lock lock(_update_tasks_mtx);
     if (auto task_iterator = get_task_iterator(task_id); task_iterator != _tasks.end() && task_iterator->second.interval().has_value())
@@ -150,9 +142,9 @@ bool task_scheduler::update_interval(const std::string& task_id, tc::sdk::clock:
     return false;
 }
 
-auto task_scheduler::add_task(tc::sdk::clock::time_point&& timepoint, schedulable_task&& st) -> bool
+bool task_scheduler::add_task(tc::sdk::clock::time_point&& timepoint, schedulable_task&& st)
 {
-    if (!_is_running)
+    if (!_tp.is_running())
         return false;
 
     {
@@ -219,7 +211,7 @@ auto task_scheduler::get_task_iterator(const std::string& task_id) -> decltype(_
     });
 }
 
-auto task_scheduler::already_exists(const std::optional<size_t>& opt_hash) -> bool
+bool task_scheduler::already_exists(const std::optional<size_t>& opt_hash)
 {
     if (!opt_hash.has_value())
         return false;
