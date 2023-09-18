@@ -1,12 +1,11 @@
+**/__pycache__
 **/.vscode
 **/.venv
 **/build
 **/install
-**/coverage
 **/results
-**/unit_tests
 **/profiles
-**/logs
+**/export
 **/memcheck
 **/callgrind
 **/.cache

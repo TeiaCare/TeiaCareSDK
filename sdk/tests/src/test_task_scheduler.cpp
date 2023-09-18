@@ -487,11 +487,11 @@ class test_task_scheduler_every : public test_task_scheduler_api {};
 TEST_F(test_task_scheduler_every, simple)
 {
     ts->start();
-    EXPECT_TRUE(ts->every(5ms, task));
+    EXPECT_TRUE(ts->every(3ms, task));
     EXPECT_TRUE(is_executed() ^ is_pending());
 
     wait_execution();
-
+    
     EXPECT_TRUE(is_executed());
     EXPECT_TRUE(is_pending());
 }

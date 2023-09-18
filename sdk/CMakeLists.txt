@@ -3,6 +3,7 @@ add_library(${TARGET_NAME})
 add_library(teiacore_sdk::teiacore_sdk ALIAS ${TARGET_NAME})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto=auto")
 
 configure_file(
     src/version.cpp.in 
@@ -25,7 +26,7 @@ set(TARGET_HEADERS
     include/sdk/observable.hpp
     include/sdk/rate_limiter.hpp
     include/sdk/service_locator.hpp
-    include/sdk/shutdown_signal_handler.hpp
+    include/sdk/signal_handler.hpp
     include/sdk/stopwatch.hpp
     include/sdk/task_scheduler.hpp
     include/sdk/task.hpp
@@ -42,7 +43,7 @@ set(TARGET_SOURCES
     src/high_precision_timer.cpp
     src/rate_limiter.cpp
     src/service_locator.cpp
-    src/shutdown_signal_handler.cpp
+    src/signal_handler.cpp
     src/task_scheduler.cpp
     src/task.cpp
     src/thread_pool.cpp
@@ -160,6 +161,8 @@ if(TEIACORE_ENABLE_UNIT_TESTS)
         tests/src/test_rate_limiter.hpp        
         tests/src/test_service_locator.cpp
         tests/src/test_service_locator.hpp
+        tests/src/test_signal_handler.cpp
+        tests/src/test_signal_handler.hpp
         tests/src/test_stopwatch.cpp
         tests/src/test_stopwatch.hpp
         tests/src/test_task_scheduler.hpp

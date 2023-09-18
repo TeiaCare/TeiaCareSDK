@@ -51,7 +51,9 @@ python scripts/conan/profile.py "Visual Studio" 17
 
 - Install packages for the given conan profile and build configuration (Debug or Release)
 ```bash
-python scripts/conan/install.py <Debug|Release> <PROFILE_NAME>
+python scripts/conan/install.py <Debug|Release> <PROFILE_NAME> -d sdk/tests
+python scripts/conan/install.py <Debug|Release> <PROFILE_NAME> -d sdk/examples
+python scripts/conan/install.py <Debug|Release> <PROFILE_NAME> -d sdk/benchmarks
 
 # Example: Release with gcc12 profile
 python scripts/conan/install.py Release gcc12

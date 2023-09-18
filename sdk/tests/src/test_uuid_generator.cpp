@@ -42,12 +42,12 @@ TEST_F(test_uuid_generator, from_string_null)
 TEST_F(test_uuid_generator, from_string_empty)
 {
     {
-        const auto uuid = g.from_string(std::string(""));
+        const auto uuid = g.from_string(std::string("12345678901234567890"));
         EXPECT_NE(uuid, tc::sdk::uuid());
     }
 
     {
-        const auto uuid = g.from_string("");
+        const auto uuid = g.from_string("12345678901234567890");
         EXPECT_NE(uuid, tc::sdk::uuid());
     }
 }
