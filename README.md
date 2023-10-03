@@ -32,21 +32,21 @@ pip install -r scripts/requirements.txt --no-cache-dir --disable-pip-version-che
 ```bash
 python scripts/conan/profile.py <COMPILER_NAME> <COMPILER_VERSION>
 
-# Example: clang 15 (Linux)
+# Example: clang-15 (Linux/Windows/MacOS)
 python scripts/conan/profile.py clang 15
-# This will create a conan profile file under scripts/profiles/clang15
+# profile created in scripts/profiles/clang15
 
-# Example: gcc 12 (Linux)
+# Example: gcc-12 (Linux/Windows/MacOS)
 python scripts/conan/profile.py gcc 12
-# This will create a conan profile file under scripts/profiles/gcc12
+# profile created in scripts/profiles/gcc12
+
+# Example: msvc v17 (Visual Studio 2022, Windows)
+python scripts/conan/profile.py msvc 17
+# profile created in scripts/profiles/msvc17
 
 # Example: apple-clang 14 (MacOS)
 python scripts/conan/profile.py apple-clang 14
-# This will create a conan profile file under scripts/profiles/apple-clang14
-
-# Example: Visual Studio 2022, msvc v17 (Windows)
-python scripts/conan/profile.py "Visual Studio" 17
-# This will create a conan profile file under scripts/profiles/VisualStudio17
+# profile created in scripts/profiles/apple-clang14
 ```
 
 - Install packages for the given conan profile and build configuration (Debug or Release)

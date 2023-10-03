@@ -118,6 +118,17 @@ bool task_scheduler::remove_task(const std::string& task_id)
     return false;
 }
 
+std::optional<sdk::clock::duration> task_scheduler::get_interval(const std::string& task_id)
+{
+    std::scoped_lock lock(_update_tasks_mtx);
+    if (auto task_iterator = get_task_iterator(task_id); task_iterator != _tasks.end() && task_iterator->second.interval().has_value())
+    {
+        return task_iterator->second.interval();
+    }
+
+    return std::nullopt;
+}
+
 bool task_scheduler::update_interval(const std::string& task_id, interval_t interval) 
 {
     std::unique_lock lock(_update_tasks_mtx);

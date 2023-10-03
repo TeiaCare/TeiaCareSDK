@@ -36,11 +36,11 @@ class TeiaCoreSDK(ConanFile):
     def generate(self):
         tc = CMakeToolchain(self)
         tc.variables["BUILD_SHARED_LIBS"] = "ON" if self.options.shared else "OFF"
+        tc.variables["TEIACORE_ENABLE_WARNINGS_ERROR"] = False
         tc.variables["TEIACORE_ENABLE_INTEGRATION_TESTS"] = False
         tc.variables["TEIACORE_ENABLE_UNIT_TESTS"] = False
         tc.variables["TEIACORE_ENABLE_BENCHMARKS"] = False
         tc.variables["TEIACORE_ENABLE_EXAMPLES"] = False
-        tc.variables["TEIACORE_ENABLE_WARNINGS_ERROR"] = False
         tc.variables["TEIACORE_ENABLE_SANITIZER_ADDRESS"] = False
         tc.variables["TEIACORE_ENABLE_SANITIZER_THREAD"] = False
         tc.variables["TEIACORE_ENABLE_CLANG_FORMAT"] = False

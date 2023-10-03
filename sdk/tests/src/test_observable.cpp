@@ -12,7 +12,7 @@ TEST(test_observable, callback_enabled)
     int callback_triggered_count = 0;
     const auto callback = [&](int){ ++callback_triggered_count; };
 
-    auto o = tc::sdk::observable(value, callback);
+    auto o = tc::sdk::observable<int>(value, callback);
     ASSERT_TRUE(o.callback_enabled());
     
     o = value;
@@ -37,7 +37,7 @@ TEST(test_observable, callback_disabled)
     int callback_triggered_count = 0;
     const auto callback = [&](int){ ++callback_triggered_count; };
 
-    auto o = tc::sdk::observable(value, callback);
+    auto o = tc::sdk::observable<int>(value, callback);
     ASSERT_TRUE(o.callback_enabled());
 
     o.callback_enabled(false);
@@ -64,7 +64,7 @@ TEST(test_observable, set_new_value)
     const auto value = 12345;
     int callback_triggered_count = 0;
     const auto callback = [&](int){ ++callback_triggered_count; };
-    auto o = tc::sdk::observable(value, callback);
+    auto o = tc::sdk::observable<int>(value, callback);
     EXPECT_EQ(o, value);
 
     // const T&
@@ -85,7 +85,7 @@ TEST(test_observable, set_same_value)
     const auto value = 12345;
     int callback_triggered_count = 0;
     const auto callback = [&](int){ ++callback_triggered_count; };
-    auto o = tc::sdk::observable(value, callback);
+    auto o = tc::sdk::observable<int>(value, callback);
     EXPECT_EQ(o, 12345);
 
     // const T&
@@ -107,7 +107,7 @@ TEST(test_observable, multiple_thread_same_value)
     int callback_triggered_count = 0;
     const int v = 1;
     const auto callback = [&](int value){ ++callback_triggered_count; EXPECT_EQ(value, v); };
-    auto o = tc::sdk::observable(value, callback);
+    auto o = tc::sdk::observable<int>(value, callback);
     
     {
         auto worker = [&o](int value){ o = value; };
@@ -126,7 +126,7 @@ TEST(test_observable, multiple_thread_different_value)
     const auto value = 12345;
     int callback_triggered_count = 0;
     const auto callback = [&](int){ ++callback_triggered_count; };
-    auto o = tc::sdk::observable(value, callback);
+    auto o = tc::sdk::observable<int>(value, callback);
     
     auto worker = [&o](int v){ o = v; };
 
@@ -147,7 +147,7 @@ TEST(test_observable, custom_type)
     const auto callback = [&](foo_t){ ++callback_triggered_count; };
     
     foo_t foo("1");
-    auto o1 = tc::sdk::observable(foo, callback);
+    auto o1 = tc::sdk::observable<foo_t>(foo, callback);
     EXPECT_EQ(o1.value().get(), foo.get());
     EXPECT_EQ(callback_triggered_count, 0);
 
@@ -155,7 +155,7 @@ TEST(test_observable, custom_type)
     EXPECT_EQ(o1.value().get(), "1_update");
     EXPECT_EQ(callback_triggered_count, 1);
 
-    auto o2 = tc::sdk::observable<foo_t, decltype(callback)>(foo_t("2"), callback);
+    auto o2 = tc::sdk::observable<foo_t>(foo_t("2"), callback);
     EXPECT_EQ(o2.value().get(), "2");
     EXPECT_EQ(callback_triggered_count, 1);
 
@@ -168,7 +168,7 @@ TEST(test_observable, custom_type)
 TEST(test_observable, callback_lambda)
 {
     counter_t counter;
-    auto o = tc::sdk::observable(0, [&counter](int value){ 
+    auto o = tc::sdk::observable<int>(0, [&counter](int value){ 
         static int local_counter = 0;
         local_counter += value;
         counter.update(value);
@@ -189,7 +189,7 @@ TEST(test_observable, callback_lambda)
 TEST(test_observable, callback_bind)
 {
     counter_t counter;
-    auto o = tc::sdk::observable(0, std::bind(&counter_t::update, &counter, std::placeholders::_1));
+    auto o = tc::sdk::observable<int>(0, std::bind(&counter_t::update, &counter, std::placeholders::_1));
     EXPECT_EQ(o.value(), 0);
 
     const int total_updates = 10;
@@ -207,7 +207,7 @@ TEST(test_observable, callback_bind)
 //NOLINTNEXTLINE
 TEST(test_observable, callback_free_function)
 {
-    auto o = tc::sdk::observable(0, &free_function);
+    auto o = tc::sdk::observable<int>(0, &free_function);
     EXPECT_EQ(o.value(), 0);
 
     const int total_updates = 10;
@@ -228,7 +228,7 @@ TEST(test_observable, callback_numeric)
     {
         const int value = 12345;
         bool callback_triggered = false;
-        auto o = tc::sdk::observable(0, [&](decltype(value) v){ 
+        auto o = tc::sdk::observable<int>(0, [&](decltype(value) v){ 
             EXPECT_EQ(v, value); 
             callback_triggered = true;
         });
@@ -241,7 +241,7 @@ TEST(test_observable, callback_numeric)
     {
         const float value = 1.2345f;
         bool callback_triggered = false;
-        auto o = tc::sdk::observable(0.f, [&](decltype(value) v){ 
+        auto o = tc::sdk::observable<float>(0.f, [&](decltype(value) v){ 
             EXPECT_EQ(v, value); 
             callback_triggered = true;
         });
@@ -254,7 +254,7 @@ TEST(test_observable, callback_numeric)
     {
         const double value = 1.2345;
         bool callback_triggered = false;
-        auto o = tc::sdk::observable(0.0, [&](decltype(value) v){ 
+        auto o = tc::sdk::observable<double>(0.0, [&](decltype(value) v){ 
             EXPECT_EQ(v, value); 
             callback_triggered = true;
         });
@@ -267,7 +267,7 @@ TEST(test_observable, callback_numeric)
     {
         const size_t value = 12345;
         bool callback_triggered = false;
-        auto o = tc::sdk::observable(std::size_t{0}, [&](decltype(value) v){ 
+        auto o = tc::sdk::observable<size_t>(std::size_t{0}, [&](decltype(value) v){ 
             EXPECT_EQ(v, value); 
             callback_triggered = true;
         });
@@ -280,7 +280,7 @@ TEST(test_observable, callback_numeric)
     {
         const uint32_t value = 12345;
         bool callback_triggered = false;
-        auto o = tc::sdk::observable(uint32_t{0}, [&](decltype(value) v){ 
+        auto o = tc::sdk::observable<uint32_t>(uint32_t{0}, [&](decltype(value) v){ 
             EXPECT_EQ(v, value); 
             callback_triggered = true;
         });
@@ -293,7 +293,7 @@ TEST(test_observable, callback_numeric)
     {
         const unsigned long long value = 12345;
         bool callback_triggered = false;
-        auto o = tc::sdk::observable(uint32_t{0}, [&](decltype(value) v){ 
+        auto o = tc::sdk::observable<unsigned long long>(uint32_t{0}, [&](decltype(value) v){ 
             EXPECT_EQ(v, value); 
             callback_triggered = true;
         });
@@ -306,7 +306,7 @@ TEST(test_observable, callback_numeric)
     {
         const char value = 127;
         bool callback_triggered = false;
-        auto o = tc::sdk::observable(char{0}, [&](decltype(value) v){ 
+        auto o = tc::sdk::observable<char>(char{0}, [&](decltype(value) v){ 
             EXPECT_EQ(v, value); 
             callback_triggered = true;
         });
@@ -323,7 +323,7 @@ TEST(test_observable, callback_string)
     {
         const std::string value = "update";
         bool callback_triggered = false;
-        auto o = tc::sdk::observable(std::string("observable"), [&](const std::string& v){ 
+        auto o = tc::sdk::observable<std::string>(std::string("observable"), [&](const std::string& v){ 
             EXPECT_EQ(v, value); 
             callback_triggered = true;
         });
@@ -336,7 +336,7 @@ TEST(test_observable, callback_string)
     {
         const char* value = "update";
         bool callback_triggered = false;
-        auto o = tc::sdk::observable(std::string("observable"), [&](const std::string& v){ 
+        auto o = tc::sdk::observable<std::string>(std::string("observable"), [&](const std::string& v){ 
             EXPECT_EQ(v, value); 
             callback_triggered = true;
         });

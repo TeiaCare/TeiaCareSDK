@@ -17,6 +17,7 @@ set(TARGET_HEADERS
     include/sdk/datetime/timedelta.hpp
 
     include/sdk/blocking_queue.hpp
+    include/sdk/clock.hpp
     include/sdk/data_types.hpp
     include/sdk/event_dispatcher.hpp
     include/sdk/function_traits.hpp
@@ -27,10 +28,12 @@ set(TARGET_HEADERS
     include/sdk/rate_limiter.hpp
     include/sdk/service_locator.hpp
     include/sdk/signal_handler.hpp
+    include/sdk/singleton.hpp
     include/sdk/stopwatch.hpp
     include/sdk/task_scheduler.hpp
     include/sdk/task.hpp
     include/sdk/thread_pool.hpp
+    include/sdk/unreachable.hpp
     include/sdk/uuid_generator.hpp
     include/sdk/uuid.hpp
     include/sdk/version.hpp
@@ -176,7 +179,7 @@ if(TEIACORE_ENABLE_UNIT_TESTS)
         tests/src/test_uuid.cpp
         tests/src/test_uuid.hpp
     )
-    setup_unit_tests(${TARGET_NAME} "${TEIACORE_UNIT_TESTS_SRC}")
+    setup_unit_tests(${TARGET_NAME} ${TEIACORE_UNIT_TESTS_SRC})
 endif()
 
 ####################
@@ -196,7 +199,7 @@ if(TEIACORE_ENABLE_BENCHMARKS)
         benchmarks/src/benchmark_event_dispatcher.hpp
         benchmarks/src/main.cpp
     )
-    setup_benchmarks(${TARGET_NAME} "${BENCHMARKS_SRC}")
+    setup_benchmarks(${TARGET_NAME} ${BENCHMARKS_SRC})
 endif()
 
 ####################
