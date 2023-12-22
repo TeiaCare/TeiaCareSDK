@@ -16,7 +16,7 @@ extern const char* const cxx_flags_release = "-O3 -DNDEBUG";
 extern const char* const cxx_standard = "20";
 
 extern const char* const os_name = "Linux";
-extern const char* const os_version = "6.2.0-32-generic";
+extern const char* const os_version = "6.2.0-39-generic";
 extern const char* const os_processor = "x86_64";
 
 }

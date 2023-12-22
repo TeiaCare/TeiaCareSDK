@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21 FATAL_ERROR)
 file(STRINGS "VERSION" VERSION_STR)
-project(TeiaCoreSDK
+project(teiacore_sdk
     VERSION ${VERSION_STR}
     LANGUAGES CXX
     HOMEPAGE_URL "https://dev.azure.com/teiacare/Ancelia/_git/TeiaCoreSDK"
@@ -8,18 +8,19 @@ project(TeiaCoreSDK
 )
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_LINK_WHAT_YOU_USE True)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS True)
-# set(CMAKE_INTERPROCEDURAL_OPTIMIZATION True)
 set(WINDOWS_EXPORT_ALL_SYMBOLS ON)
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/build/modules ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(GNUInstallDirs)
 include(CMakePrintHelpers)
 include(CheckIPOSupported)
-check_ipo_supported(RESULT supported OUTPUT error)
-if(supported)
-    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+check_ipo_supported(RESULT ipo_supported OUTPUT error)
+if(ipo_supported)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION True)
 endif()
 
 cmake_print_variables(CMAKE_BUILD_TYPE)
@@ -33,7 +34,7 @@ cmake_print_variables(TEIACORE_ENABLE_INTEGRATION_TESTS)
 option(TEIACORE_ENABLE_UNIT_TESTS "Enable Unit Tests" True)
 cmake_print_variables(TEIACORE_ENABLE_UNIT_TESTS)
 
-option(TEIACORE_ENABLE_UNIT_TESTS_COVERAGE "Enable Unit Tests Coverage" False)
+option(TEIACORE_ENABLE_UNIT_TESTS_COVERAGE "Enable Unit Tests Coverage" True)
 cmake_print_variables(TEIACORE_ENABLE_UNIT_TESTS_COVERAGE)
 
 option(TEIACORE_ENABLE_BENCHMARKS "Enable Benchmarks" False)

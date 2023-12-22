@@ -1,9 +1,9 @@
 set(TARGET_NAME teiacore_sdk)
 add_library(${TARGET_NAME})
-add_library(teiacore_sdk::teiacore_sdk ALIAS ${TARGET_NAME})
+add_library(teiacore::sdk ALIAS ${TARGET_NAME})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
-SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto=auto")
+# SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto=auto")
 
 configure_file(
     src/version.cpp.in 
