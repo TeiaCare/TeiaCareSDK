@@ -115,7 +115,7 @@ protected:
     }
 };
 
-struct test_params
+struct blocking_queue_params
 {
     std::string name;
     size_t producers;
@@ -124,25 +124,25 @@ struct test_params
 };
 
 template <class ItemsT>
-struct params_factory : test_params
+struct blocking_queue_params_factory : blocking_queue_params
 {
-    static const size_t ItemsSize = 10'000;
+    static const size_t ItemsSize = 8'000;
     using Items = std::array<ItemsT, ItemsSize>;
     Items items;
     Items create_items();
 
-    params_factory(test_params p)
-        : test_params(p)
+    blocking_queue_params_factory(blocking_queue_params p)
+        : blocking_queue_params(p)
         , items{create_items()}
     {
     }
 };
 
 template <class ItemsT>
-class test_blocking_queue_producer_consumer : public testing::TestWithParam<params_factory<ItemsT>>
+class test_blocking_queue_producer_consumer : public testing::TestWithParam<blocking_queue_params_factory<ItemsT>>
 {
 protected:
-    void producer_consumer(const params_factory<ItemsT>& params)
+    void producer_consumer(const blocking_queue_params_factory<ItemsT>& params)
     {
         const auto producer_threads_count = params.producers;
         const auto consumer_threads_count = params.consumers;

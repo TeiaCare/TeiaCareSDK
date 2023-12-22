@@ -35,14 +35,18 @@ protected:
     std::function<void()> task = [this]{ 
         std::this_thread::sleep_for(sleep_time);
         _is_executed = true;
-        _sync.count_down();
+    
+        if(!_sync.try_wait())
+            _sync.count_down();
     };
 
     std::function<void(int)> task_with_argument = [this](int arg){ 
         std::this_thread::sleep_for(sleep_time);
         _is_executed = true;
         EXPECT_EQ(arg, 42);
-        _sync.count_down();
+
+        if(!_sync.try_wait())
+            _sync.count_down();
     };
 
     struct DummyClass { bool ok = false; };
@@ -51,7 +55,9 @@ protected:
         std::this_thread::sleep_for(sleep_time);
         _is_executed = true;
         EXPECT_TRUE(dd.ok);
-        _sync.count_down();
+        
+        if(!_sync.try_wait())
+            _sync.count_down();
     };
 
     std::function<int(int)> task_with_result = [this](int arg){ 
@@ -63,7 +69,9 @@ protected:
         std::this_thread::sleep_for(sleep_time);
         _is_executed = true;
         ts->remove_task(task_id);
-        _sync.count_down();
+
+        if(!_sync.try_wait())
+            _sync.count_down();
     };
 
 private:

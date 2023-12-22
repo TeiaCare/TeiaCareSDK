@@ -6,8 +6,8 @@ function(add_sanitizer_address TARGET)
             -fno-sanitize=signed-integer-overflow
             -fno-sanitize-recover=all
             -fno-omit-frame-pointer
-            -fsanitize=address
         )
+        target_link_libraries(${TARGET} PRIVATE -fsanitize=address)
     elseif(MSVC)
         target_compile_options(${TARGET} PRIVATE -fsanitize=address)
         target_link_libraries(${TARGET} PRIVATE -fsanitize=address)

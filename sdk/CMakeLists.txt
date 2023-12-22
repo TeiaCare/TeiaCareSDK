@@ -1,8 +1,9 @@
 set(TARGET_NAME teiacore_sdk)
 add_library(${TARGET_NAME})
-add_library(teiacore_sdk::teiacore_sdk ALIAS ${TARGET_NAME})
+add_library(teiacore::sdk ALIAS ${TARGET_NAME})
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
+# SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto=auto")
 
 configure_file(
     src/version.cpp.in 
@@ -16,6 +17,7 @@ set(TARGET_HEADERS
     include/sdk/datetime/timedelta.hpp
 
     include/sdk/blocking_queue.hpp
+    include/sdk/clock.hpp
     include/sdk/data_types.hpp
     include/sdk/event_dispatcher.hpp
     include/sdk/function_traits.hpp
@@ -25,11 +27,13 @@ set(TARGET_HEADERS
     include/sdk/observable.hpp
     include/sdk/rate_limiter.hpp
     include/sdk/service_locator.hpp
-    include/sdk/shutdown_signal_handler.hpp
+    include/sdk/signal_handler.hpp
+    include/sdk/singleton.hpp
     include/sdk/stopwatch.hpp
     include/sdk/task_scheduler.hpp
     include/sdk/task.hpp
     include/sdk/thread_pool.hpp
+    include/sdk/unreachable.hpp
     include/sdk/uuid_generator.hpp
     include/sdk/uuid.hpp
     include/sdk/version.hpp
@@ -42,7 +46,7 @@ set(TARGET_SOURCES
     src/high_precision_timer.cpp
     src/rate_limiter.cpp
     src/service_locator.cpp
-    src/shutdown_signal_handler.cpp
+    src/signal_handler.cpp
     src/task_scheduler.cpp
     src/task.cpp
     src/thread_pool.cpp
@@ -160,6 +164,8 @@ if(TEIACORE_ENABLE_UNIT_TESTS)
         tests/src/test_rate_limiter.hpp        
         tests/src/test_service_locator.cpp
         tests/src/test_service_locator.hpp
+        tests/src/test_signal_handler.cpp
+        tests/src/test_signal_handler.hpp
         tests/src/test_stopwatch.cpp
         tests/src/test_stopwatch.hpp
         tests/src/test_task_scheduler.hpp
@@ -173,7 +179,7 @@ if(TEIACORE_ENABLE_UNIT_TESTS)
         tests/src/test_uuid.cpp
         tests/src/test_uuid.hpp
     )
-    setup_unit_tests(${TARGET_NAME} "${TEIACORE_UNIT_TESTS_SRC}")
+    setup_unit_tests(${TARGET_NAME} ${TEIACORE_UNIT_TESTS_SRC})
 endif()
 
 ####################
@@ -193,7 +199,7 @@ if(TEIACORE_ENABLE_BENCHMARKS)
         benchmarks/src/benchmark_event_dispatcher.hpp
         benchmarks/src/main.cpp
     )
-    setup_benchmarks(${TARGET_NAME} "${BENCHMARKS_SRC}")
+    setup_benchmarks(${TARGET_NAME} ${BENCHMARKS_SRC})
 endif()
 
 ####################

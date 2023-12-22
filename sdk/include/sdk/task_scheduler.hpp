@@ -190,6 +190,17 @@ public:
     bool remove_task(const std::string& task_id);
 
     /*!
+     * \brief Retrieve task interval.
+     * \param task_id task_id to retrieve.
+     * \return std::optional<sdk::clock::duration> interval associated with given task_id.
+     *
+     * If a task is not recursive (i.e. has not been started with every() APIs)
+     * or the task has not been assigned a task_id, it is not possible to retrieve its interval.
+     * In case of any failure (task_id not found or task non recursive) this function returns std::nullopt.
+     */
+    std::optional<sdk::clock::duration> get_interval(const std::string& task_id);
+
+    /*!
      * \brief Update a task interval
      * \param task_id task_id to update
      * \param interval new task interval to set

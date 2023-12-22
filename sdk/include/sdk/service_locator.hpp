@@ -53,6 +53,18 @@ public:
     }
 
     /*!
+     * \brief Add a new instance
+     * 
+     * TODO
+     */
+    template<typename ServiceT>
+    constexpr auto register_instance(std::shared_ptr<ServiceT> instance) -> bool
+    {
+        auto [_, is_inserted] = _services.emplace(get_id<ServiceT>(), std::move(instance));
+        return is_inserted;
+    }
+
+    /*!
      * \brief Remove a service
      * 
      * TODO
@@ -89,13 +101,11 @@ public:
      * 
      * TODO
      */
-    template<typename ServiceInterfaceT>
-    constexpr auto get() const -> std::shared_ptr<ServiceInterfaceT>
+    template<typename ServiceT>
+    constexpr auto get() const -> std::shared_ptr<ServiceT>
     {
-        static_assert(std::is_abstract_v<ServiceInterfaceT>);
-
-        if (auto service = _services.find(get_id<ServiceInterfaceT>()); service != _services.end())
-            return std::static_pointer_cast<ServiceInterfaceT>(service->second);
+        if (auto service = _services.find(get_id<ServiceT>()); service != _services.end())
+            return std::static_pointer_cast<ServiceT>(service->second);
 
         return nullptr;
     }

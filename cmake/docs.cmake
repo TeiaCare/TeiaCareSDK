@@ -39,4 +39,5 @@ function(setup_docs TARGET_NAME TARGET_HEADERS TARGET_HEADERS_DIRECTORY DOXYFILE
         COMMENT "Generating docs"
     )    
     add_custom_target(${TARGET_NAME}_docs ALL DEPENDS ${DOXYGEN_INDEX_FILE})
+    install(DIRECTORY ${DOXYGEN_OUTPUT_DIR} DESTINATION .)
 endfunction()

@@ -5,7 +5,7 @@
 
 namespace tc::sdk::tests
 {
-class test_stopwatch : public ::testing::Test
+class test_stopwatch : public testing::Test
 {
 protected:
     explicit test_stopwatch()
@@ -18,5 +18,8 @@ protected:
 
     tc::sdk::stopwatch s;
 };
+
+template<class DurationT>
+class test_stopwatch_duration_t : public test_stopwatch {};
 
 }

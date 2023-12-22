@@ -75,11 +75,11 @@ class test_blocking_queue_producer_consumer_int
     : public test_blocking_queue_producer_consumer<int> { };
 
 template<>
-params_factory<int>::Items params_factory<int>::create_items()
+blocking_queue_params_factory<int>::Items blocking_queue_params_factory<int>::create_items()
 {
     Items items;
-    for(int idx = 0; idx < params_factory::ItemsSize; idx++)
-        items[idx] = idx;
+    for(int idx = 0; idx < blocking_queue_params_factory::ItemsSize; idx++)
+        items.at(idx) = idx;
     return items;
 }
 
@@ -88,13 +88,13 @@ INSTANTIATE_TEST_SUITE_P(
     test_blocking_queue_producer_consumer,
     test_blocking_queue_producer_consumer_int,
     testing::Values(
-        params_factory<int>({ .name="1_producers_1_consumers", .producers=1, .consumers=1, .queue_capacity=1000 }),
-        params_factory<int>({ .name="1_producers_2_consumers", .producers=1, .consumers=2, .queue_capacity=1000 }),
-        params_factory<int>({ .name="2_producers_1_consumers", .producers=2, .consumers=1, .queue_capacity=1000 }),
-        params_factory<int>({ .name="2_producers_4_consumers", .producers=2, .consumers=4, .queue_capacity=100  }),
-        params_factory<int>({ .name="4_producers_2_consumers", .producers=4, .consumers=2, .queue_capacity=100  }),
-        params_factory<int>({ .name="4_producers_4_consumers", .producers=4, .consumers=4, .queue_capacity=100  }),
-        params_factory<int>({ .name="8_producers_8_consumers", .producers=8, .consumers=8, .queue_capacity=10   })
+        blocking_queue_params_factory<int>({ .name="1_producers_1_consumers", .producers=1, .consumers=1, .queue_capacity=1000 }),
+        blocking_queue_params_factory<int>({ .name="1_producers_2_consumers", .producers=1, .consumers=2, .queue_capacity=1000 }),
+        blocking_queue_params_factory<int>({ .name="2_producers_1_consumers", .producers=2, .consumers=1, .queue_capacity=1000 }),
+        blocking_queue_params_factory<int>({ .name="2_producers_4_consumers", .producers=2, .consumers=4, .queue_capacity=100  }),
+        blocking_queue_params_factory<int>({ .name="4_producers_2_consumers", .producers=4, .consumers=2, .queue_capacity=100  }),
+        blocking_queue_params_factory<int>({ .name="4_producers_4_consumers", .producers=4, .consumers=4, .queue_capacity=100  }),
+        blocking_queue_params_factory<int>({ .name="8_producers_8_consumers", .producers=8, .consumers=8, .queue_capacity=10   })
     ), [](const auto& info) { return info.param.name; }
 );
 TEST_P(test_blocking_queue_producer_consumer_int, test){ producer_consumer(GetParam()); } //NOLINT
@@ -104,11 +104,11 @@ class test_blocking_queue_producer_consumer_const_char_ptr
     : public test_blocking_queue_producer_consumer<const char*> { };
 
 template<>
-params_factory<const char*>::Items params_factory<const char*>::create_items()
+blocking_queue_params_factory<const char*>::Items blocking_queue_params_factory<const char*>::create_items()
 {
     Items items;
-    for(int idx = 0; idx < params_factory::ItemsSize; idx++)
-        items[idx] = std::to_string(idx).c_str();
+    for(int idx = 0; idx < blocking_queue_params_factory::ItemsSize; idx++)
+        items.at(idx) = std::to_string(idx).c_str();
     return items;
 }
 
@@ -117,28 +117,27 @@ INSTANTIATE_TEST_SUITE_P(
     test_blocking_queue_producer_consumer,
     test_blocking_queue_producer_consumer_const_char_ptr,
     testing::Values(
-        params_factory<const char*>({ .name="1_producers_1_consumers", .producers=1, .consumers=1, .queue_capacity=1000 }),
-        params_factory<const char*>({ .name="1_producers_2_consumers", .producers=1, .consumers=2, .queue_capacity=1000 }),
-        params_factory<const char*>({ .name="2_producers_1_consumers", .producers=2, .consumers=1, .queue_capacity=1000 }),
-        params_factory<const char*>({ .name="2_producers_4_consumers", .producers=2, .consumers=4, .queue_capacity=100  }),
-        params_factory<const char*>({ .name="4_producers_2_consumers", .producers=4, .consumers=2, .queue_capacity=100  }),
-        params_factory<const char*>({ .name="4_producers_4_consumers", .producers=4, .consumers=4, .queue_capacity=100  }),
-        params_factory<const char*>({ .name="8_producers_8_consumers", .producers=8, .consumers=8, .queue_capacity=10   })
+        blocking_queue_params_factory<const char*>({ .name="1_producers_1_consumers", .producers=1, .consumers=1, .queue_capacity=1000 }),
+        blocking_queue_params_factory<const char*>({ .name="1_producers_2_consumers", .producers=1, .consumers=2, .queue_capacity=1000 }),
+        blocking_queue_params_factory<const char*>({ .name="2_producers_1_consumers", .producers=2, .consumers=1, .queue_capacity=1000 }),
+        blocking_queue_params_factory<const char*>({ .name="2_producers_4_consumers", .producers=2, .consumers=4, .queue_capacity=100  }),
+        blocking_queue_params_factory<const char*>({ .name="4_producers_2_consumers", .producers=4, .consumers=2, .queue_capacity=100  }),
+        blocking_queue_params_factory<const char*>({ .name="4_producers_4_consumers", .producers=4, .consumers=4, .queue_capacity=100  }),
+        blocking_queue_params_factory<const char*>({ .name="8_producers_8_consumers", .producers=8, .consumers=8, .queue_capacity=10   })
     ), [](auto info) { return info.param.name; }
 );
 TEST_P(test_blocking_queue_producer_consumer_const_char_ptr, test){ producer_consumer(GetParam()); } //NOLINT
-
 
 // Type = std::string
 class test_blocking_queue_producer_consumer_string
     : public test_blocking_queue_producer_consumer<std::string> { };
 
 template<>
-params_factory<std::string>::Items params_factory<std::string>::create_items()
+blocking_queue_params_factory<std::string>::Items blocking_queue_params_factory<std::string>::create_items()
 {
     Items items;
-    for(int idx = 0; idx < params_factory::ItemsSize; idx++)
-        items[idx] = std::to_string(idx);
+    for(int idx = 0; idx < blocking_queue_params_factory::ItemsSize; idx++)
+        items.at(idx) = std::to_string(idx);
     return items;
 }
 
@@ -147,13 +146,13 @@ INSTANTIATE_TEST_SUITE_P(
     test_blocking_queue_producer_consumer,
     test_blocking_queue_producer_consumer_string,
     testing::Values(
-        params_factory<std::string>({ .name="1_producers_1_consumers", .producers=1, .consumers=1, .queue_capacity=1000 }),
-        params_factory<std::string>({ .name="1_producers_2_consumers", .producers=1, .consumers=2, .queue_capacity=1000 }),
-        params_factory<std::string>({ .name="2_producers_1_consumers", .producers=2, .consumers=1, .queue_capacity=1000 }),
-        params_factory<std::string>({ .name="2_producers_4_consumers", .producers=2, .consumers=4, .queue_capacity=100  }),
-        params_factory<std::string>({ .name="4_producers_2_consumers", .producers=4, .consumers=2, .queue_capacity=100  }),
-        params_factory<std::string>({ .name="4_producers_4_consumers", .producers=4, .consumers=4, .queue_capacity=100  }),
-        params_factory<std::string>({ .name="8_producers_8_consumers", .producers=8, .consumers=8, .queue_capacity=10   })
+        blocking_queue_params_factory<std::string>({ .name="1_producers_1_consumers", .producers=1, .consumers=1, .queue_capacity=1000 }),
+        blocking_queue_params_factory<std::string>({ .name="1_producers_2_consumers", .producers=1, .consumers=2, .queue_capacity=1000 }),
+        blocking_queue_params_factory<std::string>({ .name="2_producers_1_consumers", .producers=2, .consumers=1, .queue_capacity=1000 }),
+        blocking_queue_params_factory<std::string>({ .name="2_producers_4_consumers", .producers=2, .consumers=4, .queue_capacity=100  }),
+        blocking_queue_params_factory<std::string>({ .name="4_producers_2_consumers", .producers=4, .consumers=2, .queue_capacity=100  }),
+        blocking_queue_params_factory<std::string>({ .name="4_producers_4_consumers", .producers=4, .consumers=4, .queue_capacity=100  }),
+        blocking_queue_params_factory<std::string>({ .name="8_producers_8_consumers", .producers=8, .consumers=8, .queue_capacity=10   })
     ), [](auto info) { return info.param.name; }
 );
 TEST_P(test_blocking_queue_producer_consumer_string, test){ producer_consumer(GetParam()); } //NOLINT

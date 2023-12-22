@@ -1,0 +1,10 @@
+{
+   libc
+   Memcheck:Cond
+   obj:/usr/lib/x86_64-linux-gnu/libc.so.6
+}
+{
+   libc
+   Memcheck:Value8
+   obj:/usr/lib/x86_64-linux-gnu/libc.so.6
+}

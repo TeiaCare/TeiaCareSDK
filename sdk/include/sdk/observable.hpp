@@ -7,6 +7,7 @@
 #include <mutex>
 #include <type_traits>
 #include <concepts>
+#include <functional>
 
 namespace tc::sdk
 {
@@ -26,8 +27,8 @@ namespace tc::sdk
  * bool operator==(T const&) const { }
  * \endcode
  */
-template<std::equality_comparable T, typename CallbackT>
-class observable : private non_copyable, private non_moveable
+template<std::equality_comparable T>
+class observable // : private non_copyable, private non_moveable
 {
 public:
     /*!
@@ -37,13 +38,13 @@ public:
      * 
      * Creates a tc::sdk::observable instance. 
      */
-    explicit observable(const T& t, const CallbackT& callback)
+    explicit observable(const T& t, const std::function<void(T)>& callback)
         : _value{ t }
         , _callback{ callback }
         , _is_callback_enabled{ true }
     {
-        static_assert(std::is_invocable_v<CallbackT, T>, "CallbackT must be an invocable object that accepts T");
-        static_assert(std::is_same_v<void, std::invoke_result_t<CallbackT, T>>, "CallbackT must return void");
+        // static_assert(std::is_invocable_v<CallbackT, T>, "CallbackT must be an invocable object that accepts T");
+        // static_assert(std::is_same_v<void, std::invoke_result_t<CallbackT, T>>, "CallbackT must return void");
     }
 
     /*!
@@ -53,13 +54,13 @@ public:
      * 
      * Creates a tc::sdk::observable instance. 
      */
-    explicit observable(T&& t, const CallbackT& callback)
+    explicit observable(T&& t, const std::function<void(T)>& callback)
         : _value{ std::forward<T>(t) }
         , _callback{ callback }
         , _is_callback_enabled{ true }
     {
-        static_assert(std::is_invocable_v<CallbackT, T>, "CallbackT must be an invocable object that accepts T");
-        static_assert(std::is_same_v<void, std::invoke_result_t<CallbackT, T>>, "CallbackT must return void");
+        // static_assert(std::is_invocable_v<CallbackT, T>, "CallbackT must be an invocable object that accepts T");
+        // static_assert(std::is_same_v<void, std::invoke_result_t<CallbackT, T>>, "CallbackT must return void");
     }
 
     /*!
@@ -173,7 +174,7 @@ protected:
 private:
     mutable std::mutex _mutex;
     T _value;
-    const CallbackT _callback;
+    const std::function<void(T)> _callback;
     std::atomic_bool _is_callback_enabled;
 };
 

@@ -5,7 +5,7 @@ using namespace std::chrono_literals;
 namespace tc::sdk::tests
 {
 // NOLINTNEXTLINE
-TEST_F(test_stopwatch, start_time)
+TEST_F(test_stopwatch, start_time_range)
 {
     ASSERT_TRUE(s.start_time() > tc::sdk::time_point::min());
     ASSERT_TRUE(s.start_time() < tc::sdk::time_point::max());
@@ -13,33 +13,34 @@ TEST_F(test_stopwatch, start_time)
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_stopwatch, elapsed_seconds)
+TEST_F(test_stopwatch, start_time_updated_on_reset)
 {
-    using duration_t = std::chrono::seconds;
-
-    ASSERT_TRUE(s.elapsed() > tc::sdk::time_duration::min());
-    ASSERT_TRUE(s.elapsed() > std::chrono::duration_cast<duration_t>(tc::sdk::time_duration::min()));
-
-    auto elapsed = s.elapsed<duration_t>();
-    EXPECT_EQ(std::chrono::duration_cast<duration_t>(s.elapsed()), elapsed);
+    constexpr int total_count = 1'000;
+    for (auto i = 0; i < total_count; ++i)
+    {
+        auto initial_timepoint = tc::sdk::clock::now();
+        ASSERT_LT(s.start_time(), initial_timepoint);
+        s.reset();
+        ASSERT_GT(s.start_time(), initial_timepoint);
+    }
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_stopwatch, elapsed_milliseconds)
+TEST_F(test_stopwatch, staret_time_increases_on_reset)
 {
-    using duration_t = std::chrono::milliseconds;
-
-    ASSERT_TRUE(s.elapsed() > tc::sdk::time_duration::min());
-    ASSERT_TRUE(s.elapsed() > std::chrono::duration_cast<duration_t>(tc::sdk::time_duration::min()));
-
-    auto elapsed = s.elapsed<duration_t>();
-    EXPECT_EQ(std::chrono::duration_cast<duration_t>(s.elapsed()), elapsed);
+    constexpr int total_count = 1'000;
+    for (auto i = 0; i < total_count; ++i)
+    {
+        auto start = s.start_time();    
+        s.reset();
+        ASSERT_GT(s.start_time(), start);
+    }
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_stopwatch, elapsed_multiple)
+TEST_F(test_stopwatch, elapsed_monotonically_increases)
 {
-    const int total_count = 10;
+    constexpr int total_count = 10;
     auto elapsed = s.elapsed();
     for (auto i = 0; i < total_count; ++i)
     {
@@ -47,32 +48,45 @@ TEST_F(test_stopwatch, elapsed_multiple)
         elapsed = s.elapsed();
         std::this_thread::sleep_for(1ms);
     }
+
+    EXPECT_GT(s.elapsed(), elapsed);
 }
 
+using duration_types = testing::Types<std::chrono::seconds, std::chrono::milliseconds, std::chrono::microseconds, std::chrono::nanoseconds>;
+TYPED_TEST_SUITE(test_stopwatch_duration_t, duration_types);
 
-// NOLINTNEXTLINE
-TEST_F(test_stopwatch, elapsed_reset_multiple)
+TYPED_TEST(test_stopwatch_duration_t, elapsed_duration_types)
 {
-    const auto variance_microseconds = 500;
-    const int total_count = 10;
-    auto prev_elapsed = s.elapsed<std::chrono::microseconds>().count();
+    using duration_t = TypeParam;
+    constexpr auto max_error = 10ms;
+    constexpr auto abs_error = std::chrono::duration_cast<duration_t>(max_error).count();
+
+    ASSERT_TRUE(this->s.elapsed() > tc::sdk::time_duration::min());
+    ASSERT_TRUE(this->s.elapsed() > std::chrono::duration_cast<duration_t>(tc::sdk::time_duration::min()));
+    EXPECT_NEAR(
+        std::chrono::duration_cast<duration_t>(this->s.elapsed()).count(),
+        (this->s.template elapsed<duration_t>()).count(),
+        abs_error
+    );
+    
+    // see why the template syntax this->s.template elapsed<duration_t>() must be used here: 
+    // https://stackoverflow.com/questions/610245/where-and-why-do-i-have-to-put-the-template-and-typename-keywords
+}
+
+TYPED_TEST(test_stopwatch_duration_t, elapsed_reset_duration_types)
+{
+    using duration_t = TypeParam;
+    constexpr int total_count = 1'000;
+
     for (auto i = 0; i < total_count; ++i)
     {
-        auto elapsed = s.elapsed<std::chrono::microseconds>().count();
-        EXPECT_NEAR(elapsed, prev_elapsed, variance_microseconds);
-        prev_elapsed = elapsed;
-        s.reset();
+        this->s.reset();
+        std::this_thread::sleep_for(1ms);
+
+        const auto start = this->s.start_time();
+        const auto elapsed = this->s.elapsed();
+        EXPECT_GT(tc::sdk::clock::now(), start + elapsed);
     }
-}
-
-// NOLINTNEXTLINE
-TEST_F(test_stopwatch, reset)
-{
-    auto start = s.start_time();
-    std::this_thread::sleep_for(5ms);
-    s.reset();
-
-    ASSERT_GT(s.start_time(), start);
 }
 
 }

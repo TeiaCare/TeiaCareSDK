@@ -1,0 +1,7 @@
+cmake==3.27.4.1
+conan==1.60.2
+ninja==1.11.1
+gcovr==5.2.0
+clang-format==15.0.6
+clang-tidy==15.0.2.1
+cpplint==1.6.1
