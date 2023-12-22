@@ -1,6 +1,6 @@
 namespace tc::sdk::info
 {
-extern const char* const name = "TeiaCoreSDK";
+extern const char* const name = "teiacore_sdk";
 extern const char* const version = "1.0.0";
 
 extern const char* const project_description = "TeiaCoreSDK is a collection of reusable C++ components";
