@@ -16,7 +16,6 @@ variables:
 
 jobs:
   - job: Build
-    condition: False
     strategy:
       matrix:
 
@@ -123,12 +122,12 @@ jobs:
           python3 -m venv .venv
           $(ACTIVATE_VIRTUAL_ENV)
           pip3 install -r scripts/requirements.txt
+          python3 scripts/conan/setup.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION)
         displayName: 'Virtual Environment'
 
       - script: |
           $(ACTIVATE_VIRTUAL_ENV)
           $(SETUP_BUILD_ENV)
-          python3 scripts/conan/setup.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) -d inference_client
           python3 scripts/cmake/configure.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION)
           python3 scripts/cmake/build.py $(BUILD_TYPE)
           python3 scripts/cmake/install.py $(BUILD_TYPE)
@@ -136,21 +135,19 @@ jobs:
         env:
           CONAN_USER_HOME: $(Build.SourcesDirectory)
 
-      # - script: |
-      #     $(ACTIVATE_VIRTUAL_ENV)
-      #     $(SETUP_BUILD_ENV)
-      #     python3 scripts/conan/setup.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) -d inference_client/tests
-      #     python3 scripts/cmake/configure.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) --unit_tests
-      #     python3 scripts/cmake/build.py $(BUILD_TYPE)
-      #     python3 scripts/cmake/install.py $(BUILD_TYPE)
-      #   displayName: 'Unit Tests'
-      #   env:
-      #     CONAN_USER_HOME: $(Build.SourcesDirectory)
+      - script: |
+          $(ACTIVATE_VIRTUAL_ENV)
+          $(SETUP_BUILD_ENV)
+          python3 scripts/cmake/configure.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) --unit_tests
+          python3 scripts/cmake/build.py $(BUILD_TYPE)
+          python3 scripts/cmake/install.py $(BUILD_TYPE)
+        displayName: 'Unit Tests'
+        env:
+          CONAN_USER_HOME: $(Build.SourcesDirectory)
 
       - script: |
           $(ACTIVATE_VIRTUAL_ENV)
           $(SETUP_BUILD_ENV)
-          python3 scripts/conan/setup.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) -d inference_client/benchmarks
           python3 scripts/cmake/configure.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) --benchmarks
           python3 scripts/cmake/build.py $(BUILD_TYPE)
           python3 scripts/cmake/install.py $(BUILD_TYPE)
@@ -161,7 +158,6 @@ jobs:
       - script: |
           $(ACTIVATE_VIRTUAL_ENV)
           $(SETUP_BUILD_ENV)
-          python3 scripts/conan/setup.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) -d inference_client/examples
           python3 scripts/cmake/configure.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) --examples
           python3 scripts/cmake/build.py $(BUILD_TYPE)
           python3 scripts/cmake/install.py $(BUILD_TYPE)
@@ -173,9 +169,9 @@ jobs:
           $(ACTIVATE_VIRTUAL_ENV)
           $(SETUP_BUILD_ENV)
           python3 scripts/conan/create.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) --install_dir $(Build.SourcesDirectory)
-          cd inference_client_package_test
+          cd sdk_package_test
           python3 build.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION)
-          install/teiacore_inference_client_package_test 
+          install/teiacore_sdk_client_package_test 
         displayName: 'Conan Package'
         env:
           CONAN_USER_HOME: $(Build.SourcesDirectory)
