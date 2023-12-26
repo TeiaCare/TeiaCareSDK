@@ -17,7 +17,7 @@ echo "export CONAN_USER_HOME=$PWD" >> .venv/bin/activate
 source .venv/bin/activate
 
 # Windows
-echo set CONAN_USER_HOME="%CD%">>.venv\Scripts\activate.bat
+echo set CONAN_USER_HOME=%CD%>>.venv\Scripts\activate.bat
 .venv\Scripts\activate.bat
 
 pip install -r scripts/requirements.txt
