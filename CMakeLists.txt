@@ -32,7 +32,7 @@ cmake_print_variables(CMAKE_CXX_COMPILER_VERSION)
 option(TEIACORE_ENABLE_INTEGRATION_TESTS "Enable Integration Tests" False)
 cmake_print_variables(TEIACORE_ENABLE_INTEGRATION_TESTS)
 
-option(TEIACORE_ENABLE_UNIT_TESTS "Enable Unit Tests" True)
+option(TEIACORE_ENABLE_UNIT_TESTS "Enable Unit Tests" False)
 cmake_print_variables(TEIACORE_ENABLE_UNIT_TESTS)
 
 option(TEIACORE_ENABLE_UNIT_TESTS_COVERAGE "Enable Unit Tests Coverage" False)

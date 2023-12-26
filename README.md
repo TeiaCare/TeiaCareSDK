@@ -17,7 +17,7 @@ echo "export CONAN_USER_HOME=$PWD" >> .venv/bin/activate
 source .venv/bin/activate
 
 # Windows
-echo set CONAN_USER_HOME="%CD%">>.venv\Scripts\activate.bat
+echo set CONAN_USER_HOME=%CD%>>.venv\Scripts\activate.bat
 .venv\Scripts\activate.bat
 
 pip install -r scripts/requirements.txt
@@ -118,4 +118,26 @@ cmake --build ./build/Debug --target teiacore_sdk_cpplint
 apt-get install doxygen graphviz
 
 # TODO
+```
+
+## Conan Package - Local Install
+```bash
+git clone https://teiacare@dev.azure.com/teiacare/Ancelia/_git/TeiaCoreSDK
+cd TeiaCoreSDK
+
+# Create and install local package at --install_dir path
+python ./scripts/conan/create.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --install_dir <INSTALL_DIR_PATH>
+```
+
+## Conan Package - Test
+```bash
+git clone https://teiacare@dev.azure.com/teiacare/Ancelia/_git/TeiaCoreSDK
+cd TeiaCoreSDK
+cd sdk_package_test
+
+# Build and install the test package executable at $PWD/install/teiacore_sdk_client_package_test
+python build.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> 
+
+# Run it
+$PWD/install/teiacore_sdk_client_package_test
 ```
