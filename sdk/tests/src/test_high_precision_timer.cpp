@@ -117,7 +117,7 @@ TEST_F(test_high_precision_timer, start_callback_with_custom_arguments)
 // NOLINTNEXTLINE
 TEST_F(test_high_precision_timer, callback_count_delay)
 {
-    ulong callback_count = 0;
+    uint64_t callback_count = 0;
     auto callback = [&callback_count]{
         const auto execution_duration = 25ms;
         ++callback_count;

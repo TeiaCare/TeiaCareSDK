@@ -23,20 +23,25 @@ echo setx CONAN_USER_HOME "%CD%" >> .venv\Scripts\activate.bat
 pip install -r scripts/requirements.txt
 ```
 
+## Setup Build Environment (Windows only)
+When building from command line on Windows it is necessary to activate the Visual Studio Developer Command Prompt.
+Depending on the version of Visual Studio compiler and on its install location it is required to run *vcvars64.bat* script the set the development environment properly.  
+*Note*: using Visual Studio IDE or the CMake extension for VSCode this step is already managed in the background.  
+
+Examples:
+
+```bash
+# Visual Studio 2022 - Build Tools
+"C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\VC\Auxiliary\Build\vcvars64.bat"
+
+# Visual Studio 2019 - Enterprise
+"C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+```
+
 ## Dependencies Setup
 ```bash
 python scripts/conan/setup.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION>
 ```
-
-## Configure Pre-Steps
-- Only for Windows builds with Visual Studio compiler
-```bash
-# TODO
-```
-
-_Notes:_  
-- This is required to set the MSVC development environment on Windows platform using Visual Studio.  
-- The following CMake steps (Configure and Build) must be executed in the same shell on which the MSVC environment has been setup using one of the following scripts (according to your Visual Studio installation).
 
 ## Configure, Build and Install
 ```bash
