@@ -56,12 +56,12 @@ void high_precision_timer::stop()
         _worker_thread.join();
 }
 
-ulong high_precision_timer::invoked_callback_count() const
+uint64_t high_precision_timer::invoked_callback_count() const
 {
     return _invoked_callback_count;
 }
 
-ulong high_precision_timer::missed_callback_count() const
+uint64_t high_precision_timer::missed_callback_count() const
 {
     return _missed_callback_count;
 }

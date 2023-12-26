@@ -13,10 +13,6 @@ protected:
     {
     }
 
-    ~test_uuid() override
-    {
-    }
-
     const tc::sdk::uuid create() const
     {
         auto& generator = tc::sdk::uuid_generator::instance();

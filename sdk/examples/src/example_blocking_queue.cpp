@@ -20,7 +20,7 @@ struct fmt::formatter<tc::sdk::blocking_queue<T>>
                 os << ", ";
         }
         
-        return format_to(ctx.out(), "[{}]", os.str());
+        return fmt::format_to(ctx.out(), "[{}]", os.str());
     }
 };
 

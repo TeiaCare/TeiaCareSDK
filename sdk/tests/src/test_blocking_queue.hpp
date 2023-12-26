@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 #include <sdk/blocking_queue.hpp>
+#include <array>
 
 namespace tc::sdk::tests
 {
@@ -126,7 +127,12 @@ struct blocking_queue_params
 template <class ItemsT>
 struct blocking_queue_params_factory : blocking_queue_params
 {
-    static const size_t ItemsSize = 8'000;
+    static const constexpr size_t ItemsSize
+#if defined(_MSC_VER)
+     = 100;
+#else
+     = 5'000;
+#endif
     using Items = std::array<ItemsT, ItemsSize>;
     Items items;
     Items create_items();

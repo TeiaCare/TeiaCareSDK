@@ -14,7 +14,12 @@ int main()
     }
 
     {
-        auto t = tc::sdk::TimeDelta(std::chrono::days(1), 25h, 61min, 61s, 1001ms, 1001us, 1001ns);
+        auto t = tc::sdk::TimeDelta(std::chrono::days(1), 25h, 61min, 61s, 1001ms, 1001us
+    #if defined (_MSC_VER)
+            ); // Visual Studio seems to not support nanoseconds (!?)
+    #else
+            , 1001ns);
+    #endif
 
         std::cout
             << "\nTimeDelta(std::chrono::days(1), 25h, 61min, 61s, 1001ms, 1001us, 1001ns): " << t << std::endl
@@ -35,13 +40,16 @@ int main()
     }
 
     {
-        auto t1 = tc::sdk::TimeDelta(std::chrono::days(1), 25h, 61min, 61s, 1001ms, 1001us, 1002ns);
-        auto t2 = tc::sdk::TimeDelta(std::chrono::days(2), 2h, 2min, 2s, 2ms, 2us, 2ns);
+        auto t1 = tc::sdk::TimeDelta(std::chrono::days(1), 25h, 61min, 61s, 1001ms, 1002us);
+        auto t2 = tc::sdk::TimeDelta(std::chrono::days(2), 2h, 2min, 2s, 2ms, 2us);
 
         std::cout
             << std::boolalpha
-            << "\nTimeDelta(std::chrono::days(1), 25h, 61min, 61s, 1001ms, 1001us, 1002ns)" << " == " << std::endl
-            << "TimeDelta(std::chrono::days(2),  2h,  2min,  2s,    2ms,    2us,    2ns): " << (t1==t2) << std::endl;
+            << "\nTimeDelta(std::chrono::days(1), 25h, 61min, 61s, 1001ms, 1002us)" 
+            << "\n is equal to: "
+            << "\nTimeDelta(std::chrono::days(2),  2h,  2min,  2s,    2ms,    2us)\n"
+            << (t1==t2)
+            << std::endl;
     }
 
     {

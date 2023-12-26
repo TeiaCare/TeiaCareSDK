@@ -23,5 +23,14 @@
             "program": "${workspaceFolder}/build/Debug/sdk/teiacore_sdk_unit_tests",
             "args": [  ], 
         },
+        {
+            "name": "unit_tests (msvc)",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/build/Debug/sdk",
+            "program": "${workspaceFolder}/build/Debug/sdk/teiacore_sdk_unit_tests",
+            "args": [  ], 
+        }
     ]
 }

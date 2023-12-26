@@ -65,7 +65,7 @@ def main():
         '-D', f'TEIACORE_ENABLE_CPPLINT={str(args.cpplint)}',
         '-D', f'TEIACORE_ENABLE_DOCS={str(args.docs)}',
         '-D', f'TEIACORE_ENABLE_DEPENDENCIES_SETUP=False',
-        '-B', args.build_dir,
+        '-B', f'{args.build_dir}/{args.build_type}',
         '-S', '.'
     ])
 

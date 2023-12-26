@@ -79,7 +79,7 @@ public:
      *
      * A callback is invoked every time the previous callback execution lasts less than the execution interval.
      */
-    ulong invoked_callback_count() const;
+    uint64_t invoked_callback_count() const;
 
     /*!
      * \brief Get the number of missed callbacks
@@ -87,7 +87,7 @@ public:
      *
      * A callback is missed every time the previous callback execution lasts more than the execution interval.
      */
-    ulong missed_callback_count() const;
+    uint64_t missed_callback_count() const;
 
 protected:
     void worker();
@@ -101,8 +101,8 @@ private:
     std::thread _worker_thread;
     std::condition_variable _worker_cv;
     std::mutex _worker_mutex;
-    std::atomic_ulong _invoked_callback_count = 0;
-    std::atomic_ulong _missed_callback_count = 0;
+    std::atomic_uint64_t _invoked_callback_count = 0;
+    std::atomic_uint64_t _missed_callback_count = 0;
 };
 
 }

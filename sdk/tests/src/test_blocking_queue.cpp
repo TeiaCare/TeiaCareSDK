@@ -1,6 +1,5 @@
 #include "test_blocking_queue.hpp"
 #include <gtest/gtest.h>
-#include <thread>
 
 using namespace std::string_literals;
 

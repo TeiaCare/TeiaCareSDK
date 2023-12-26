@@ -14,6 +14,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS True)
 set(WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/build/modules)
 
 include(GNUInstallDirs)
 include(CMakePrintHelpers)
@@ -37,10 +38,10 @@ cmake_print_variables(TEIACORE_ENABLE_UNIT_TESTS)
 option(TEIACORE_ENABLE_UNIT_TESTS_COVERAGE "Enable Unit Tests Coverage" False)
 cmake_print_variables(TEIACORE_ENABLE_UNIT_TESTS_COVERAGE)
 
-option(TEIACORE_ENABLE_BENCHMARKS "Enable Benchmarks" False)
+option(TEIACORE_ENABLE_BENCHMARKS "Enable Benchmarks" True)
 cmake_print_variables(TEIACORE_ENABLE_BENCHMARKS)
 
-option(TEIACORE_ENABLE_EXAMPLES "Enable Examples" False)
+option(TEIACORE_ENABLE_EXAMPLES "Enable Examples" True)
 cmake_print_variables(TEIACORE_ENABLE_EXAMPLES)
 
 option(TEIACORE_ENABLE_WARNINGS_ERROR "Enable treat Warnings as Errors" True)
