@@ -69,7 +69,7 @@ TEST_F(test_high_precision_timer, start_callback_with_simple_arguments)
         sync.release();
     };
 
-    t.set_callback(callback, 1.2345f, "__hello__");
+    t.set_callback(callback, 1.2345f, "__hello__"); //NOLINT
 
     EXPECT_TRUE(t.start(interval));
     sync.acquire();
@@ -212,7 +212,7 @@ Missed Ticks:   ----X-------X-------X-------X-------X---
 
     auto callback_count = 0;
     auto callback = [&callback_count]{
-        std::this_thread::sleep_for(150ms);
+        std::this_thread::sleep_for(150ms); //NOLINT
         ++callback_count;
     };
 

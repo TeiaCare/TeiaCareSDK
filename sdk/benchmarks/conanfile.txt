@@ -2,8 +2,4 @@
 benchmark/1.8.0
 
 [generators]
-cmake_find_package
-
-[options]
-
-[imports]
+CMakeDeps

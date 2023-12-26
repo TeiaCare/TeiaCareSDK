@@ -5,7 +5,7 @@ int main()
 {
     spdlog::set_pattern("[%H:%M:%S.%e] %v");
 
-    auto observable = tc::sdk::observable(-1, [](int value){ spdlog::info("Updated: {}", value); });
+    auto observable = tc::sdk::observable<int>(-1, [](int value){ spdlog::info("Updated: {}", value); });
     
     const int total_updates = 10;
     for (int i = 0; i < total_updates; ++i)

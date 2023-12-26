@@ -2,8 +2,4 @@
 spdlog/1.11.0
 
 [generators]
-cmake_find_package
-
-[options]
-
-[imports]
+CMakeDeps

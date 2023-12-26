@@ -14,13 +14,13 @@ event_dispatcher::~event_dispatcher() noexcept
     handler_id = 0;
 }
 
-auto event_dispatcher::remove_handler(unsigned long handler_id) -> bool
+auto event_dispatcher::remove_handler(unsigned long remove_handler_id) -> bool
 {
     std::unique_lock handlers_lock(_handlers_mutex);
 
     for(auto&& event_handlers : _handlers)
     {
-        if(std::erase_if(event_handlers.second, [handler_id](auto&& h){ return h->id == handler_id; }))
+        if(std::erase_if(event_handlers.second, [remove_handler_id](auto&& h){ return h->id == remove_handler_id; }))
         {
             if(event_handlers.second.empty())
                 _handlers.erase(event_handlers.first);

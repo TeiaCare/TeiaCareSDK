@@ -1,5 +1,6 @@
 #include "test_uuid_generator.hpp"
 #include <algorithm>
+#include <array>
 
 namespace tc::sdk::tests
 {
@@ -12,10 +13,10 @@ TEST_F(test_uuid_generator, instance)
 // NOLINTNEXTLINE
 TEST_F(test_uuid_generator, create_unique)
 {
-    std::array<tc::sdk::uuid, 1'000> uuids;
+    std::array<tc::sdk::uuid, 1'000> uuids; //NOLINT
     std::generate(uuids.begin(), uuids.end(), [this]{ return g.create(); });
 
-    auto is_unique = [](auto uuids) -> bool {
+    auto is_unique = [](auto& uuids) -> bool {
         std::sort(uuids.begin(), uuids.end());
         const auto last_unique = std::unique(uuids.begin(), uuids.end());
         return last_unique == uuids.end();
