@@ -2,12 +2,6 @@ set(TARGET_NAME teiacore_sdk)
 add_library(${TARGET_NAME})
 add_library(teiacore::sdk ALIAS ${TARGET_NAME})
 
-if(NOT MSVC)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native")
-endif()
-
-# SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -flto=auto")
-
 configure_file(
     src/version.cpp.in 
     ${CMAKE_CURRENT_SOURCE_DIR}/src/version.cpp
@@ -60,184 +54,72 @@ set(TARGET_SOURCES
 
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
 target_sources(${TARGET_NAME} PUBLIC ${TARGET_HEADERS} PRIVATE ${TARGET_SOURCES})
-target_include_directories(${TARGET_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include> $<INSTALL_INTERFACE:CMAKE_INSTALL_INCLUDEDIR>)
+target_include_directories(${TARGET_NAME} 
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
+        $<INSTALL_INTERFACE:CMAKE_INSTALL_INCLUDEDIR>
+)
 set_target_properties(${TARGET_NAME} PROPERTIES VERSION ${${PROJECT_NAME}_VERSION} SOVERSION ${${PROJECT_NAME}_VERSION_MAJOR})
 set_target_properties(${TARGET_NAME} PROPERTIES PUBLIC_HEADER "${TARGET_HEADERS}")
 install(TARGETS ${TARGET_NAME} PUBLIC_HEADER DESTINATION include/sdk)
 
-if(TEIACORE_ENABLE_UNIT_TESTS 
-    OR TEIACORE_ENABLE_UNIT_TESTS_COVERAGE
-	OR TEIACORE_ENABLE_BENCHMARKS 
-	OR TEIACORE_ENABLE_SANITIZER_ADDRESS
-    OR TEIACORE_ENABLE_SANITIZER_THREAD
-	OR TEIACORE_ENABLE_CLANG_TIDY 
-	OR TEIACORE_ENABLE_CPPCHECK
-	OR TEIACORE_ENABLE_CPPLINT)
-	set(CMAKE_DISABLE_PRECOMPILE_HEADERS True)
-else()
-    target_precompile_headers(${TARGET_NAME}
-        PRIVATE
-            <string>
-            <csignal>
-            <filesystem>
-            <chrono>
-            <tuple>
-            <future>
-            <fstream>
-            <atomic>
-            <condition_variable>
-            <functional>
-            <map>
-            <memory>
-            <mutex>
-            <queue>
-            <thread>
-            <barrier>
-            <vector>
-    )
-endif()
-
-if(TEIACORE_ENABLE_WARNINGS_ERROR)
+if(TEIACORE_SDK_ENABLE_WARNINGS_ERROR)
     include(warnings)
     add_warnings(${TARGET_NAME})
     add_warnings_as_errors(${TARGET_NAME})
 endif()
 
-if(TEIACORE_ENABLE_SANITIZER_ADDRESS)
+if(TEIACORE_SDK_ENABLE_SANITIZER_ADDRESS)
     include(sanitizer_address)
     add_sanitizer_address(${TARGET_NAME})
 endif()
 
-if(TEIACORE_ENABLE_SANITIZER_THREAD)
+if(TEIACORE_SDK_ENABLE_SANITIZER_THREAD)
     include(sanitizer_thread)
     add_sanitizer_thread(${TARGET_NAME})
 endif()
 
-if(TEIACORE_ENABLE_CLANG_FORMAT)
+if(TEIACORE_SDK_ENABLE_CLANG_FORMAT)
     include(clang_format)
     setup_target_clang_format(${TARGET_NAME} ${TARGET_SRC})
 endif()
 
-if(TEIACORE_ENABLE_CLANG_TIDY)
+if(TEIACORE_SDK_ENABLE_CLANG_TIDY)
     include(clang_tidy)
     setup_target_clang_tidy(${TARGET_NAME} ${TARGET_SRC})
     set(CMAKE_CXX_CLANG_TIDY clang-tidy)
 endif()
 
-if(TEIACORE_ENABLE_CPPCHECK)
+if(TEIACORE_SDK_ENABLE_CPPCHECK)
     include(cppcheck)
     setup_target_cppcheck(${TARGET_NAME} ${TARGET_SRC})
     set(CMAKE_CXX_CPPCHECK cppcheck) # --enable=all --suppress=missingIncludeSystem
 endif()
 
-if(TEIACORE_ENABLE_CPPLINT)
+if(TEIACORE_SDK_ENABLE_CPPLINT)
     include(cpplint)
     setup_target_cpplint(${TARGET_NAME} ${TARGET_SRC})
     set(CMAKE_CXX_CPPLINT cpplint)
 endif()
 
-####################
-## UNIT_TESTS
-if(TEIACORE_ENABLE_UNIT_TESTS)
-    if(TEIACORE_ENABLE_DEPENDENCIES_SETUP)
-        include(compiler_info)
-        get_compiler_versions()
-        get_compiler_name()
-        include(packages)
-        setup_packages(${COMPILER_NAME_C} ${COMPILER_VERSION_MAJOR} "sdk/tests")
-    endif()
-
-    if(TEIACORE_ENABLE_UNIT_TESTS_COVERAGE)
-        include(coverage)
-        add_coverage(${TARGET_NAME})
-    endif()
-
-    include(unit_tests)
-    set(TEIACORE_UNIT_TESTS_SRC
-        tests/src/main.cpp
-        tests/src/test_blocking_queue.cpp
-        tests/src/test_blocking_queue.hpp
-        tests/src/test_event_dispatcher.cpp
-        tests/src/test_event_dispatcher.hpp
-        tests/src/test_high_precision_timer.cpp
-        tests/src/test_high_precision_timer.cpp
-        tests/src/test_observable.cpp
-        tests/src/test_observable.hpp
-        tests/src/test_rate_limiter.cpp
-        tests/src/test_rate_limiter.hpp        
-        tests/src/test_service_locator.cpp
-        tests/src/test_service_locator.hpp
-        tests/src/test_signal_handler.cpp
-        tests/src/test_signal_handler.hpp
-        tests/src/test_stopwatch.cpp
-        tests/src/test_stopwatch.hpp
-        tests/src/test_task_scheduler.hpp
-        tests/src/test_task_scheduler.cpp
-        tests/src/test_task.cpp
-        tests/src/test_task.hpp
-        tests/src/test_thread_pool.cpp
-        tests/src/test_thread_pool.hpp
-        tests/src/test_uuid_generator.cpp
-        tests/src/test_uuid_generator.hpp
-        tests/src/test_uuid.cpp
-        tests/src/test_uuid.hpp
-    )
-    setup_unit_tests(${TARGET_NAME} ${TEIACORE_UNIT_TESTS_SRC})
+if(TEIACORE_SDK_ENABLE_UNIT_TESTS)
+    add_subdirectory(tests)
 endif()
 
-####################
-## BENCHMARKS
-if(TEIACORE_ENABLE_BENCHMARKS)
-    if(TEIACORE_ENABLE_DEPENDENCIES_SETUP)
-        include(compiler_info)
-        get_compiler_versions()
-        get_compiler_name()
-        include(packages)
-        setup_packages(${COMPILER_NAME_C} ${COMPILER_VERSION_MAJOR} "sdk/benchmarks")
-    endif()
-
-    include(benchmarks)
-    set(BENCHMARKS_SRC
-        benchmarks/src/benchmark_event_dispatcher.cpp
-        benchmarks/src/benchmark_event_dispatcher.hpp
-        benchmarks/src/main.cpp
-    )
-    setup_benchmarks(${TARGET_NAME} ${BENCHMARKS_SRC})
+if(TEIACORE_SDK_ENABLE_BENCHMARKS)
+    add_subdirectory(benchmarks)
 endif()
 
-####################
-## EXAMPLES
-if(TEIACORE_ENABLE_EXAMPLES)
-    if(TEIACORE_ENABLE_DEPENDENCIES_SETUP)
-        include(compiler_info)
-        get_compiler_versions()
-        get_compiler_name()
-        include(packages)
-        setup_packages(${COMPILER_NAME_C} ${COMPILER_VERSION_MAJOR} "sdk/examples")
-    endif()
-
-    include(examples)
-    add_example(${TARGET_NAME} example_blocking_queue)
-    add_example(${TARGET_NAME} example_date)
-    add_example(${TARGET_NAME} example_event_dispatcher)
-    add_example(${TARGET_NAME} example_high_precision_timer)
-    add_example(${TARGET_NAME} example_observable)
-    add_example(${TARGET_NAME} example_rate_limiter)
-    add_example(${TARGET_NAME} example_service_locator)
-    add_example(${TARGET_NAME} example_time)
-    add_example(${TARGET_NAME} example_timedelta)
-    add_example(${TARGET_NAME} example_uuid)
-    add_example(${TARGET_NAME} example_version)
+if(TEIACORE_SDK_ENABLE_EXAMPLES)
+    add_subdirectory(examples)
 endif()
 
-####################
-## DOCS
-if(TEIACORE_ENABLE_DOCS)
-    include(docs)
+if(TEIACORE_SDK_ENABLE_DOCS)
+    include(doxygen)
     setup_docs(
         ${TARGET_NAME} 
         "${TARGET_HEADERS}"
-        ${PROJECT_SOURCE_DIR}/sdk/include/sdk 
-        ${PROJECT_SOURCE_DIR}/docs/Doxyfile
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/sdk 
+        ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile
     )
 endif()

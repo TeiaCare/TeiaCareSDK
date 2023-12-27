@@ -1,0 +1,36 @@
+if(TEIACORE_SDK_ENABLE_UNIT_TESTS_COVERAGE)
+    include(coverage)
+    add_coverage(${TARGET_NAME})
+endif()
+
+include(unit_tests)
+set(TEIACORE_UNIT_TESTS_SRC
+    src/main.cpp
+    src/test_blocking_queue.cpp
+    src/test_blocking_queue.hpp
+    src/test_event_dispatcher.cpp
+    src/test_event_dispatcher.hpp
+    src/test_high_precision_timer.cpp
+    src/test_high_precision_timer.cpp
+    src/test_observable.cpp
+    src/test_observable.hpp
+    src/test_rate_limiter.cpp
+    src/test_rate_limiter.hpp        
+    src/test_service_locator.cpp
+    src/test_service_locator.hpp
+    src/test_signal_handler.cpp
+    src/test_signal_handler.hpp
+    src/test_stopwatch.cpp
+    src/test_stopwatch.hpp
+    src/test_task_scheduler.hpp
+    src/test_task_scheduler.cpp
+    src/test_task.cpp
+    src/test_task.hpp
+    src/test_thread_pool.cpp
+    src/test_thread_pool.hpp
+    src/test_uuid_generator.cpp
+    src/test_uuid_generator.hpp
+    src/test_uuid.cpp
+    src/test_uuid.hpp
+)
+setup_unit_tests(${TARGET_NAME} ${TEIACORE_UNIT_TESTS_SRC})

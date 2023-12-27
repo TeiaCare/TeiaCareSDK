@@ -50,19 +50,39 @@ python ./scripts/cmake/build.py <Debug|Release>
 python ./scripts/cmake/install.py <Debug|Release>
 ```
 
-## Unit Tests
+## Unit Tests [TODO: Review] 
 ```bash
+python ./scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --tests --warnings
+python ./scripts/cmake/build.py <Debug|Release>
+python ./scripts/cmake/install.py <Debug|Release>
+```
+Unit tests are now installed in $PWD/install/tests.
+
+Run unit tests with:
+```bash
+# Run from build directory (does not require previous cmake install step)
 ctest --test-dir ./build/<Debug|Release> --output-on-failure --output-junit ../../results/tests.xml
+
+# Run from install directory (requires cmake install step)
+ctest --test-dir ./install/tests --output-on-failure --output-junit ../../results/tests.xml
 ```
 
-## Code Coverage
+## Code Coverage [TODO: Review] 
 ```bash
-python scripts/tools/run_gcovr.py <COMPILER_NAME> <COMPILER_VERSION>
+python ./scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --coverage --warnings
+python ./scripts/cmake/build.py <Debug|Release>
+python ./scripts/cmake/install.py <Debug|Release>
+```
+Unit tests (built with code coverage enabled) are now installed in $PWD/install/tests.
+
+Run unit tests and generate coverage report with:
+```bash
+python scripts/tools/run_coverage.py <COMPILER_NAME> <COMPILER_VERSION>
 ```
 
 ## Examples
 ```bash
-python ./scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --examples
+python ./scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --examples --warnings
 python ./scripts/cmake/build.py <Debug|Release>
 python ./scripts/cmake/install.py <Debug|Release>
 ```
@@ -76,49 +96,62 @@ python ./scripts/cmake/install.py <Debug|Release>
 ```
 Benchmarks are now installed in $PWD/install/benchmarks.
 
-## Code Formatting (clang-format)
+## Code Formatting (clang-format) [TODO: Review]
 ```bash
 python ./scripts/tools/run_clang_format.py . -r -i
 
 # From CMake:
-cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D TEIACORE_ENABLE_CLANG_FORMAT=True -B ./build/Debug -S .
+cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D TEIACORE_SDK_ENABLE_CLANG_FORMAT=True -B ./build/Debug -S .
 cmake --build ./build/Debug --target teiacore_sdk_clang_format
 ```
 
-## Code Analysis (clang-tidy)
+## Code Analysis (clang-tidy) [TODO: Review] 
 ```bash
 python ./scripts/tools/run_clang_tidy.py .
 
 # From CMake:
-cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D TEIACORE_ENABLE_CLANG_TIDY=True -B ./build/Debug -S .
+cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D TEIACORE_SDK_ENABLE_CLANG_TIDY=True -B ./build/Debug -S .
 cmake --build ./build/Debug --target teiacore_sdk_clang_tidy
 ```
 
-## Code Analysis (cppcheck)
+## Code Analysis (cppcheck) [TODO: Review]
 ```bash
 # TODO: add python script.
 
 # From CMake:
-cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D TEIACORE_ENABLE_CPPCHECK=True -B ./build/Debug -S .
+cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D TEIACORE_SDK_ENABLE_CPPCHECK=True -B ./build/Debug -S .
 cmake --build ./build/Debug --target teiacore_sdk_cppcheck
 ```
 
-## Code Analysis (cpplint)
+## Code Analysis (cpplint) [TODO: Review]
 ```bash
 # TODO: replace with a python script.
 cpplint --counting=detailed  $(find teiacore_sdk* -type f -name "*.hpp" -or -name "*.cpp")
 
 # From CMake:
-cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D TEIACORE_ENABLE_CPPLINT=True -B ./build/Debug -S .
+cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D TEIACORE_SDK_ENABLE_CPPLINT=True -B ./build/Debug -S .
 cmake --build ./build/Debug --target teiacore_sdk_cpplint
 ```
 
 ## Documentation
+First install and setup doxygen from your OS package manager.
 ```bash
+# Linux
 apt-get install doxygen graphviz
 
-# TODO
+# Windows
+winget install doxygen
+
+# Update Doxyfile (required only after Doxygen updates)
+doxygen -u sdk/docs/Doxyfile
 ```
+
+```bash
+python ./scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --docs
+python ./scripts/cmake/build.py <Debug|Release>
+python ./scripts/cmake/install.py <Debug|Release>
+```
+Documentation is now installed in $PWD/install/docs.
 
 ## Conan Package - Local Install
 ```bash
