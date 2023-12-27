@@ -52,7 +52,7 @@ python ./scripts/cmake/install.py <Debug|Release>
 
 ## Unit Tests [TODO: Review] 
 ```bash
-python ./scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --tests --warnings
+python ./scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --unit_tests --warnings
 python ./scripts/cmake/build.py <Debug|Release>
 python ./scripts/cmake/install.py <Debug|Release>
 ```
@@ -60,14 +60,16 @@ Unit tests are now installed in $PWD/install/tests.
 
 Run unit tests with:
 ```bash
-# Run from build directory (does not require previous cmake install step)
-ctest --test-dir ./build/<Debug|Release> --output-on-failure --output-junit ../../results/tests.xml
+# Run with CTest from build directory (does not require previous cmake install step)
+ctest --test-dir ./build/<Debug|Release> --schedule-random --timeout 30 --output-on-failure --output-junit ../../results/ctest_tests.xml
 
-# Run from install directory (requires cmake install step)
-ctest --test-dir ./install/tests --output-on-failure --output-junit ../../results/tests.xml
+# Run directly using GoogleTest from install directory (requires cmake install step)
+./install/tests/teiacore_sdk_unit_tests --gtest_shuffle --gtest_output=xml:results/gtest_tests.xml
 ```
 
 ## Code Coverage [TODO: Review] 
+Note that code coverage is not available on Windows.
+
 ```bash
 python ./scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --coverage --warnings
 python ./scripts/cmake/build.py <Debug|Release>
