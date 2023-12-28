@@ -11,7 +11,7 @@ int main()
     
     std::cout << "\nBuild Type: " << tc::sdk::info::build_type << "\n";
     std::cout << "Compiler: " << tc::sdk::info::compiler_name << " " << tc::sdk::info::compiler_version << "\n";
-    std::cout << "Compiler Flags: " << tc::sdk::info::cxx_flags << " " << tc::sdk::info::cxx_flags_debug << "\n";
+    std::cout << "Compiler Flags: " << tc::sdk::info::cxx_flags << "\n";
     std::cout << "C++ Standard: " << tc::sdk::info::cxx_standard << "\n";
 
     std::cout << "\nOS: " << tc::sdk::info::os_name << "\n";

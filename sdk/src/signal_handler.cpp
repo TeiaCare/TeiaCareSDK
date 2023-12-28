@@ -27,7 +27,7 @@ void wait_for_quit()
 
 void signal_handler(int signal)
 {
-    const char* message = "";
+    const char* message;
     switch(signal)
     {
         case SIGINT:   message = "SIGINT";   break;

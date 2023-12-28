@@ -1,7 +1,6 @@
 #include "test_signal_handler.hpp"
 #include <csignal>
 #include <barrier>
-#include <syncstream>
 
 namespace tc::sdk::tests
 {

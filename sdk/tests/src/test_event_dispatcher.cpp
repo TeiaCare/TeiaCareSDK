@@ -390,7 +390,6 @@ TEST_F(test_event_dispatcher, sync_multiple_events_on_multiple_threads)
 TEST_F(test_event_dispatcher, push_missing_event)
 {
     e->start();
-    const auto event_name = "EVENT_NAME";
     EXPECT_FALSE(e->emit(""));
     EXPECT_FALSE(e->emit("", 1, 2, 3));
 }

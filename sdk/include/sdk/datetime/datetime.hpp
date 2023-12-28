@@ -65,7 +65,7 @@ public:
 
 
 private:
-    date::fields<typename std::common_type<Duration, std::chrono::seconds>::type> fields_ymd_time() const;
+    date::fields<typename std::common_type<DurationT, std::chrono::seconds>::type> fields_ymd_time() const;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
