@@ -13,32 +13,17 @@ INSTANTIATE_TEST_SUITE_P(
         signal_handler_params({ 
             .signal=SIGINT,
             .name="SIGINT",
-            .callback=[](const char* msg, int sig){EXPECT_EQ(SIGINT, sig); EXPECT_EQ("SIGINT", msg);} 
-        }),
-        signal_handler_params({
-            .signal=SIGILL,
-            .name="SIGILL",
-            .callback=[](const char* msg, int sig){EXPECT_EQ(SIGILL, sig); EXPECT_EQ("SIGILL", msg);} 
+            .callback=[](const char* msg, int sig){EXPECT_EQ(SIGINT, sig); EXPECT_STREQ("SIGINT", msg); } 
         }),
         signal_handler_params({
             .signal=SIGABRT,
             .name="SIGABRT",
-            .callback=[](const char* msg, int sig){EXPECT_EQ(SIGABRT, sig); EXPECT_EQ("SIGABRT", msg);} 
-        }),
-        signal_handler_params({
-            .signal=SIGFPE,
-            .name="SIGFPE",
-            .callback=[](const char* msg, int sig){EXPECT_EQ(SIGFPE, sig); EXPECT_EQ("SIGFPE", msg);} 
-        }),
-        signal_handler_params({
-            .signal=SIGSEGV,
-            .name="SIGSEGV",
-            .callback=[](const char* msg, int sig){EXPECT_EQ(SIGSEGV, sig); EXPECT_EQ("SIGSEGV", msg);} 
+            .callback=[](const char* msg, int sig){EXPECT_EQ(SIGABRT, sig); EXPECT_STREQ("SIGABRT", msg);} 
         }),
         signal_handler_params({
             .signal=SIGTERM,
             .name="SIGTERM",
-            .callback=[](const char* msg, int sig){EXPECT_EQ(SIGTERM, sig); EXPECT_EQ("SIGTERM", msg);} 
+            .callback=[](const char* msg, int sig){EXPECT_EQ(SIGTERM, sig); EXPECT_STREQ("SIGTERM", msg);} 
         })
     ), [](auto info) { return info.param.name; }
 );

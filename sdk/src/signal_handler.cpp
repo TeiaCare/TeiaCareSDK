@@ -30,12 +30,9 @@ void signal_handler(int signal)
     const char* message = "";
     switch(signal)
     {
-        case SIGINT:  message = "SIGINT";  break;
-        case SIGILL:  message = "SIGILL";  break;
-        case SIGABRT: message = "SIGABRT"; break;
-        case SIGFPE:  message = "SIGFPE";  break;
-        case SIGSEGV: message = "SIGSEGV"; break;
-        case SIGTERM: message = "SIGTERM"; break;
+        case SIGINT:   message = "SIGINT";   break;
+        case SIGABRT:  message = "SIGABRT";  break;
+        case SIGTERM:  message = "SIGTERM";  break;
         default: message = "UNKNOWN_SIGNAL";
     }
 
@@ -47,10 +44,7 @@ void install_signal_handlers(std::function<void(const char*, int)> callback)
     signal_callback = callback;
 
     std::signal(SIGINT, signal_handler);
-    std::signal(SIGILL, signal_handler);
     std::signal(SIGABRT, signal_handler);
-    std::signal(SIGFPE, signal_handler);
-    std::signal(SIGSEGV, signal_handler);
     std::signal(SIGTERM, signal_handler);
 }
 
