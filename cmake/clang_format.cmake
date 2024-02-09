@@ -1,7 +1,7 @@
 include(FindPythonInterp)
 find_program(CLANG_FORMAT NAMES "clang-format" HINTS "${CMAKE_SOURCE_DIR}/.venv/bin")
 
-if(NOT (CLANG_FORMAT OR PYTHON_FOUND))
+if(NOT CLANG_FORMAT)
     message(WARNING "clang-format not found!")
 else()
 	message(STATUS "clang-format: " ${CLANG_FORMAT})
@@ -13,14 +13,25 @@ else()
     endif()
 endif()
 
-function(setup_target_clang_format TARGET)
-    if(NOT (CLANG_FORMAT OR PYTHON_FOUND))
+function(setup_target_clang_format TARGET_NAME TARGET_FOLDERS)
+    if(NOT CLANG_FORMAT)
         message(WARNING "clang-format not found!")
         return()
     endif()
-    add_custom_target(${TARGET}_clang_format ALL
-        COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_SOURCE_DIR}/scripts/tools/run_clang_format.py -i ${CMAKE_CURRENT_SOURCE_DIR}/${ARGN}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Running ${CLANG_FORMAT} on ${TARGET}"
+    
+    if(NOT ${PYTHON_FOUND})
+        message(WARNING "python3 not found!")
+        return()
+    endif()
+
+    add_custom_target(${TARGET_NAME}_clang_format ALL
+        COMMAND ${PYTHON_EXECUTABLE} 
+            ${CMAKE_SOURCE_DIR}/scripts/tools/run_clang_format.py
+            --clang-format-executable ${CLANG_FORMAT}
+            --in-place
+            --recursive 
+            ${TARGET_FOLDERS}
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Running ${CLANG_FORMAT} on ${TARGET_NAME}"
     )
 endfunction()

@@ -98,41 +98,26 @@ python ./scripts/cmake/install.py <Debug|Release>
 ```
 Benchmarks are now installed in $PWD/install/benchmarks.
 
-## Code Formatting (clang-format) [TODO: Review]
+## Code Formatting (clang-format)
 ```bash
-python ./scripts/tools/run_clang_format.py . -r -i
-
-# From CMake:
-cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D TC_ENABLE_CLANG_FORMAT=True -B ./build/Debug -S .
-cmake --build ./build/Debug --target teiacore_sdk_clang_format
+python ./scripts/tools/run_clang_format.py -r -i sdk
 ```
 
-## Code Analysis (clang-tidy) [TODO: Review] 
+## Code Analysis (clang-tidy) 
 ```bash
-python ./scripts/tools/run_clang_tidy.py .
-
-# From CMake:
-cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D TC_ENABLE_CLANG_TIDY=True -B ./build/Debug -S .
-cmake --build ./build/Debug --target teiacore_sdk_clang_tidy
+python ./scripts/tools/run_clang_tidy.py -header-filter=.* sdk
 ```
 
 ## Code Analysis (cppcheck) [TODO: Review]
 ```bash
 # TODO: add python script.
-
-# From CMake:
-cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D TC_ENABLE_CPPCHECK=True -B ./build/Debug -S .
-cmake --build ./build/Debug --target teiacore_sdk_cppcheck
 ```
 
 ## Code Analysis (cpplint) [TODO: Review]
 ```bash
-# TODO: replace with a python script.
-cpplint --counting=detailed  $(find teiacore_sdk* -type f -name "*.hpp" -or -name "*.cpp")
+# TODO: add python script.
 
-# From CMake:
-cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D TC_ENABLE_CPPLINT=True -B ./build/Debug -S .
-cmake --build ./build/Debug --target teiacore_sdk_cpplint
+cpplint --counting=detailed  $(find teiacore_sdk* -type f -name "*.hpp" -or -name "*.cpp")
 ```
 
 ## Documentation

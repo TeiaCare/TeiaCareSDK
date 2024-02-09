@@ -32,7 +32,7 @@ cmake_print_variables(TC_ENABLE_SANITIZER_THREAD)
 option(TC_ENABLE_CLANG_FORMAT "Enable Clang Format" True)
 cmake_print_variables(TC_ENABLE_CLANG_FORMAT)
 
-option(TC_ENABLE_CLANG_TIDY "Enable Clang Tidy" False)
+option(TC_ENABLE_CLANG_TIDY "Enable Clang Tidy" True)
 cmake_print_variables(TC_ENABLE_CLANG_TIDY)
 
 option(TC_ENABLE_CPPCHECK "Enable Cppcheck" False)

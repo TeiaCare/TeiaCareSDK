@@ -52,6 +52,9 @@ set(TARGET_SOURCES
     src/version.cpp
 )
 
+list(APPEND ALL_SOURCES ${TARGET_HEADERS} ${TARGET_SOURCES})
+list(TRANSFORM ALL_SOURCES_ABS_PATH PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
+
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
 target_sources(${TARGET_NAME} PUBLIC ${TARGET_HEADERS} PRIVATE ${TARGET_SOURCES})
 target_include_directories(${TARGET_NAME} 
@@ -81,13 +84,14 @@ endif()
 
 if(TC_ENABLE_CLANG_FORMAT)
     include(clang_format)
-    setup_target_clang_format(${TARGET_NAME} ${TARGET_SRC})
+    setup_target_clang_format(${TARGET_NAME} sdk/include sdk/src)
+    # setup_target_clang_format(${TARGET_NAME} ${ALL_SOURCES_ABS_PATH})
 endif()
 
 if(TC_ENABLE_CLANG_TIDY)
     include(clang_tidy)
-    setup_target_clang_tidy(${TARGET_NAME} ${TARGET_SRC})
-    set(CMAKE_CXX_CLANG_TIDY clang-tidy)
+    setup_target_clang_tidy(${TARGET_NAME} sdk/include sdk/src)
+    set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY} -header-filter=.*)
 endif()
 
 if(TC_ENABLE_CPPCHECK)
