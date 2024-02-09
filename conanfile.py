@@ -32,16 +32,16 @@ class TeiaCoreSDK(ConanFile):
     def generate(self):
         tc = CMakeToolchain(self)
         tc.variables["BUILD_SHARED_LIBS"] = "ON" if self.options.shared else "OFF"
-        tc.variables["TEIACORE_SDK_ENABLE_WARNINGS_ERROR"] = False
-        tc.variables["TEIACORE_SDK_ENABLE_UNIT_TESTS"] = False
-        tc.variables["TEIACORE_SDK_ENABLE_BENCHMARKS"] = False
-        tc.variables["TEIACORE_SDK_ENABLE_EXAMPLES"] = False
-        tc.variables["TEIACORE_SDK_ENABLE_SANITIZER_ADDRESS"] = False
-        tc.variables["TEIACORE_SDK_ENABLE_SANITIZER_THREAD"] = False
-        tc.variables["TEIACORE_SDK_ENABLE_CLANG_FORMAT"] = False
-        tc.variables["TEIACORE_SDK_ENABLE_CLANG_TIDY"] = False
-        tc.variables["TEIACORE_SDK_ENABLE_CPPCHECK"] = False
-        tc.variables["TEIACORE_SDK_ENABLE_CPPLINT"] = False
+        tc.variables["TC_ENABLE_WARNINGS_ERROR"] = False
+        tc.variables["TC_ENABLE_UNIT_TESTS"] = False
+        tc.variables["TC_ENABLE_BENCHMARKS"] = False
+        tc.variables["TC_ENABLE_EXAMPLES"] = False
+        tc.variables["TC_ENABLE_SANITIZER_ADDRESS"] = False
+        tc.variables["TC_ENABLE_SANITIZER_THREAD"] = False
+        tc.variables["TC_ENABLE_CLANG_FORMAT"] = False
+        tc.variables["TC_ENABLE_CLANG_TIDY"] = False
+        tc.variables["TC_ENABLE_CPPCHECK"] = False
+        tc.variables["TC_ENABLE_CPPLINT"] = False
         tc.generate()
 
     def build(self):

@@ -103,7 +103,7 @@ Benchmarks are now installed in $PWD/install/benchmarks.
 python ./scripts/tools/run_clang_format.py . -r -i
 
 # From CMake:
-cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D TEIACORE_SDK_ENABLE_CLANG_FORMAT=True -B ./build/Debug -S .
+cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D TC_ENABLE_CLANG_FORMAT=True -B ./build/Debug -S .
 cmake --build ./build/Debug --target teiacore_sdk_clang_format
 ```
 
@@ -112,7 +112,7 @@ cmake --build ./build/Debug --target teiacore_sdk_clang_format
 python ./scripts/tools/run_clang_tidy.py .
 
 # From CMake:
-cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D TEIACORE_SDK_ENABLE_CLANG_TIDY=True -B ./build/Debug -S .
+cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D TC_ENABLE_CLANG_TIDY=True -B ./build/Debug -S .
 cmake --build ./build/Debug --target teiacore_sdk_clang_tidy
 ```
 
@@ -121,7 +121,7 @@ cmake --build ./build/Debug --target teiacore_sdk_clang_tidy
 # TODO: add python script.
 
 # From CMake:
-cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D TEIACORE_SDK_ENABLE_CPPCHECK=True -B ./build/Debug -S .
+cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D TC_ENABLE_CPPCHECK=True -B ./build/Debug -S .
 cmake --build ./build/Debug --target teiacore_sdk_cppcheck
 ```
 
@@ -131,7 +131,7 @@ cmake --build ./build/Debug --target teiacore_sdk_cppcheck
 cpplint --counting=detailed  $(find teiacore_sdk* -type f -name "*.hpp" -or -name "*.cpp")
 
 # From CMake:
-cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D TEIACORE_SDK_ENABLE_CPPLINT=True -B ./build/Debug -S .
+cmake -G Ninja -D CMAKE_BUILD_TYPE=Debug -D TC_ENABLE_CPPLINT=True -B ./build/Debug -S .
 cmake --build ./build/Debug --target teiacore_sdk_cpplint
 ```
 

@@ -63,58 +63,58 @@ set_target_properties(${TARGET_NAME} PROPERTIES VERSION ${${PROJECT_NAME}_VERSIO
 set_target_properties(${TARGET_NAME} PROPERTIES PUBLIC_HEADER "${TARGET_HEADERS}")
 install(TARGETS ${TARGET_NAME} PUBLIC_HEADER DESTINATION include/sdk)
 
-if(TEIACORE_SDK_ENABLE_WARNINGS_ERROR)
+if(TC_ENABLE_WARNINGS_ERROR)
     include(warnings)
     add_warnings(${TARGET_NAME})
     add_warnings_as_errors(${TARGET_NAME})
 endif()
 
-if(TEIACORE_SDK_ENABLE_SANITIZER_ADDRESS)
+if(TC_ENABLE_SANITIZER_ADDRESS)
     include(sanitizer_address)
     add_sanitizer_address(${TARGET_NAME})
 endif()
 
-if(TEIACORE_SDK_ENABLE_SANITIZER_THREAD)
+if(TC_ENABLE_SANITIZER_THREAD)
     include(sanitizer_thread)
     add_sanitizer_thread(${TARGET_NAME})
 endif()
 
-if(TEIACORE_SDK_ENABLE_CLANG_FORMAT)
+if(TC_ENABLE_CLANG_FORMAT)
     include(clang_format)
     setup_target_clang_format(${TARGET_NAME} ${TARGET_SRC})
 endif()
 
-if(TEIACORE_SDK_ENABLE_CLANG_TIDY)
+if(TC_ENABLE_CLANG_TIDY)
     include(clang_tidy)
     setup_target_clang_tidy(${TARGET_NAME} ${TARGET_SRC})
     set(CMAKE_CXX_CLANG_TIDY clang-tidy)
 endif()
 
-if(TEIACORE_SDK_ENABLE_CPPCHECK)
+if(TC_ENABLE_CPPCHECK)
     include(cppcheck)
     setup_target_cppcheck(${TARGET_NAME} ${TARGET_SRC})
     set(CMAKE_CXX_CPPCHECK cppcheck) # --enable=all --suppress=missingIncludeSystem
 endif()
 
-if(TEIACORE_SDK_ENABLE_CPPLINT)
+if(TC_ENABLE_CPPLINT)
     include(cpplint)
     setup_target_cpplint(${TARGET_NAME} ${TARGET_SRC})
     set(CMAKE_CXX_CPPLINT cpplint)
 endif()
 
-if(TEIACORE_SDK_ENABLE_UNIT_TESTS)
+if(TC_ENABLE_UNIT_TESTS)
     add_subdirectory(tests)
 endif()
 
-if(TEIACORE_SDK_ENABLE_BENCHMARKS)
+if(TC_ENABLE_BENCHMARKS)
     add_subdirectory(benchmarks)
 endif()
 
-if(TEIACORE_SDK_ENABLE_EXAMPLES)
+if(TC_ENABLE_EXAMPLES)
     add_subdirectory(examples)
 endif()
 
-if(TEIACORE_SDK_ENABLE_DOCS)
+if(TC_ENABLE_DOCS)
     include(doxygen)
     setup_docs(
         ${TARGET_NAME} 

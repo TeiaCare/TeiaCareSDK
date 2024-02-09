@@ -1,5 +1,5 @@
 include(FindPythonInterp)
-find_program(CLANG_FORMAT NAMES "clang-format")
+find_program(CLANG_FORMAT NAMES "clang-format" HINTS "${CMAKE_SOURCE_DIR}/.venv/bin")
 
 if(NOT (CLANG_FORMAT OR PYTHON_FOUND))
     message(WARNING "clang-format not found!")

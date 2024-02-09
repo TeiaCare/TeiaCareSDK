@@ -1,4 +1,4 @@
-if(TEIACORE_SDK_ENABLE_UNIT_TESTS_COVERAGE)
+if(TC_ENABLE_UNIT_TESTS_COVERAGE)
     include(coverage)
     add_coverage(${TARGET_NAME})
 endif()
