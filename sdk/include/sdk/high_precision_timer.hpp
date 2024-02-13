@@ -5,6 +5,7 @@
 #include <sdk/non_copyable.hpp>
 #include <sdk/non_moveable.hpp>
 
+#include <atomic>
 #include <mutex>
 #include <thread>
 #include <memory>

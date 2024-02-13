@@ -45,44 +45,33 @@ python scripts/conan/setup.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION>
 
 ## Configure, Build and Install
 ```bash
-python ./scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION>
-python ./scripts/cmake/build.py <Debug|Release>
-python ./scripts/cmake/install.py <Debug|Release>
+python scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION>
+python scripts/cmake/build.py <Debug|Release>
+python scripts/cmake/install.py <Debug|Release>
 ```
 
 ## Unit Tests
 ```bash
-python ./scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --unit_tests --warnings
-python ./scripts/cmake/build.py <Debug|Release>
+python scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --unit_tests --warnings
+python scripts/cmake/build.py <Debug|Release>
 python ./scripts/cmake/install.py <Debug|Release>
+python scripts/tools/run_unit_tests.py <Debug|Release>
 ```
-Unit tests are now installed in $PWD/install/tests.
+Examples are installed in $PWD/install/unit_tests.
+Unit tests results are available in $PWD/results/unit_tests.  
 
-Run unit tests with:
-```bash
-# Run with CTest from build directory (does not require previous cmake install step)
-ctest --test-dir ./build/<Debug|Release> --schedule-random --timeout 30 --output-on-failure --output-junit ../../results/unit_tests/unit_tests.xml
 
-# Run directly using GoogleTest from install directory (requires cmake install step)
-./install/tests/teiacore_sdk_unit_tests --gtest_shuffle --gtest_output=xml:results/unit_tests/gtest.xml
-```
-
-## Code Coverage [TODO: Review] 
+## Code Coverage
 Note that code coverage is not available on Windows.
 
 ```bash
-python ./scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --coverage --warnings
-python ./scripts/cmake/build.py <Debug|Release>
+python scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --coverage --warnings
+python scripts/cmake/build.py <Debug|Release>
 python ./scripts/cmake/install.py <Debug|Release>
-```
-
-Run unit tests and generate coverage report with:
-```bash
-python scripts/tools/run_unit_tests.py <COMPILER_NAME> <COMPILER_VERSION>
+python scripts/tools/run_unit_tests.py <Debug|Release>
 python scripts/tools/run_coverage.py <COMPILER_NAME> <COMPILER_VERSION>
 ```
-
-Unit tests results are available in $PWD/results/unit_tests.
+Unit tests results are available in $PWD/results/unit_tests.  
 Coverage results are available in $PWD/results/coverage.
 
 ## Examples
@@ -91,7 +80,7 @@ python ./scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VE
 python ./scripts/cmake/build.py <Debug|Release>
 python ./scripts/cmake/install.py <Debug|Release>
 ```
-Examples are now installed in $PWD/install/examples.
+Examples are installed in $PWD/install/examples.
 
 ## Benchmarks
 ```bash
@@ -99,7 +88,7 @@ python ./scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VE
 python ./scripts/cmake/build.py <Debug|Release>
 python ./scripts/cmake/install.py <Debug|Release> 
 ```
-Benchmarks are now installed in $PWD/install/benchmarks.
+Benchmarks are installed in $PWD/install/benchmarks.
 
 ## Code Formatting (clang-format)
 ```bash
