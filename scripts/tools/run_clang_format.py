@@ -31,7 +31,7 @@ except ImportError:
     DEVNULL = open(os.devnull, "wb")
 
 
-DEFAULT_EXTENSIONS = 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx, hpp.in'
+DEFAULT_EXTENSIONS = 'c,h,C,H,cpp,hpp,cc,hh,c++,h++,cxx,hxx,cpp.in,hpp.in'
 DEFAULT_CLANG_FORMAT_IGNORE = '.clang-format-ignore'
 
 

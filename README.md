@@ -61,7 +61,7 @@ Unit tests are now installed in $PWD/install/tests.
 Run unit tests with:
 ```bash
 # Run with CTest from build directory (does not require previous cmake install step)
-ctest --test-dir ./build/<Debug|Release> --schedule-random --timeout 30 --output-on-failure --output-junit ../../results/unit_tests/ctest.xml
+ctest --test-dir ./build/<Debug|Release> --schedule-random --timeout 30 --output-on-failure --output-junit ../../results/unit_tests/unit_tests.xml
 
 # Run directly using GoogleTest from install directory (requires cmake install step)
 ./install/tests/teiacore_sdk_unit_tests --gtest_shuffle --gtest_output=xml:results/unit_tests/gtest.xml
@@ -75,12 +75,15 @@ python ./scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VE
 python ./scripts/cmake/build.py <Debug|Release>
 python ./scripts/cmake/install.py <Debug|Release>
 ```
-Unit tests (built with code coverage enabled) are now installed in $PWD/install/tests.
 
 Run unit tests and generate coverage report with:
 ```bash
+python scripts/tools/run_unit_tests.py <COMPILER_NAME> <COMPILER_VERSION>
 python scripts/tools/run_coverage.py <COMPILER_NAME> <COMPILER_VERSION>
 ```
+
+Unit tests results are available in $PWD/results/unit_tests.
+Coverage results are available in $PWD/results/coverage.
 
 ## Examples
 ```bash

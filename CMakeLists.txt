@@ -12,17 +12,18 @@ list(APPEND CMAKE_PREFIX_PATH ${CMAKE_CURRENT_SOURCE_DIR}/build/modules)
 
 include(GNUInstallDirs)
 include(CMakePrintHelpers)
-include(CheckIPOSupported)
-check_ipo_supported(RESULT ipo_supported OUTPUT error)
-if(ipo_supported)
-    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION True)
-endif()
+# include(CheckIPOSupported)
+# check_ipo_supported(RESULT ipo_supported OUTPUT error)
+# if(ipo_supported)
+#     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION True)
+# endif()
 
 cmake_print_variables(CMAKE_BUILD_TYPE)
 cmake_print_variables(CMAKE_GENERATOR)
 cmake_print_variables(CMAKE_CXX_COMPILER_ID)
 cmake_print_variables(CMAKE_CXX_COMPILER_VERSION)
 
+include(compiler_info)
 include(options)
 validate_project_options()
 

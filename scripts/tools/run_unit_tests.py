@@ -4,16 +4,16 @@ from command import run
 
 def parse():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    # parser.add_argument("program_path", help="Path to the test program")
+    parser.add_argument("build_type", help="Debug or Release", choices=['Debug', 'Release'])
     parser.add_argument("--test_dir", help="Unit Tests root directory", required=False, default='./build')
-    parser.add_argument("--xml_results_path", help="Unit Tests xml results path", required=False, default='./results/unit_tests/unit_tests.xml') 
+    parser.add_argument("--xml_results_path", help="Unit Tests xml results path", required=False, default='../../results/unit_tests/unit_tests.xml') 
     return parser.parse_args()
 
-def run_ctests(args):
+def run_ctest(args):
     run([
         'ctest',
         '--parallel', '4',
-        '--test-dir', args.test_dir,
+        '--test-dir', f'{args.test_dir}/{args.build_type}',
         '--output-junit', args.xml_results_path,
         '--timeout', '30', # seconds
         '--output-on-failure',
@@ -21,7 +21,7 @@ def run_ctests(args):
         '--schedule_random'
     ], debug=True)
 
-def unit_tests(args):    
+def unit_tests(args):
     run([
         args.program_path,
         '--gtest_shuffle',
@@ -33,5 +33,5 @@ def unit_tests(args):
 
 if __name__ == '__main__':
     run(['ctest', '--version'])
-    # run_ctests(parse())
+    run_ctest(parse())
     # unit_tests(parse())

@@ -5,8 +5,6 @@
 #include <smmintrin.h>
 #include <immintrin.h>
 
-#include <sstream>
-
 /*
 https://github.com/crashoz/uuid_v4/tree/master
 */
@@ -50,10 +48,12 @@ void inline m128itos(__m128i x, char* mem)
 
     _mm256_storeu_si256((__m256i*)mem, betole256(resd));
 
+#if defined(MSVC)
 #pragma warning( disable: 4244 )
     *(uint16_t*)(mem + 16) = betole16(_mm256_extract_epi16(res, 7));
     *(uint32_t*)(mem + 32) = betole32(_mm256_extract_epi32(res, 7));
 #pragma warning( default: 4244 )
+#endif
 }
 }
 

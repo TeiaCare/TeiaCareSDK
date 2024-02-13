@@ -41,10 +41,13 @@ def main():
                           f"\nat {os.getenv('CONAN_USER_HOME')}/.conan/profiles"
                           "\n========================================================\n")
     
+    os.environ['CC'] = str(CC)
+    os.environ['CXX'] = str(CXX)
+
     print("\n========================================================")
     print("CONAN_USER_HOME:", os.getenv('CONAN_USER_HOME'))
-    print("CXX:", CXX)
-    print("CC:", CC)
+    print("CXX:", os.getenv('CXX'))
+    print("CC:", os.getenv('CC'))
     print("========================================================\n")
     
     run([
@@ -64,7 +67,8 @@ def main():
         '-D', f'TC_ENABLE_CPPLINT={str(args.cpplint)}',
         '-D', f'TC_ENABLE_DOCS={str(args.docs)}',
         '-B', f'{args.build_dir}/{args.build_type}',
-        '-S', '.'
+        '-S', '.',
+        '--fresh'
     ])
 
 if __name__ == '__main__':

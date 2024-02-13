@@ -7,7 +7,7 @@ def check():
 
 def parse():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("compiler", help="Compiler name", choices=['gcc', 'clang', 'apple-clang', 'msvc'])
+    parser.add_argument("compiler", help="Compiler name", choices=['gcc', 'clang', 'visual_studio'])
     parser.add_argument("compiler_version", help="Compiler version")
     parser.add_argument("--xml_coverage_path", help="Coverage xml results path", required=False, default='./results/coverage/cobertura.xml')
     parser.add_argument("--html_coverage_path", help="Coverage html results path", required=False, default='./results/coverage/html/coverage.html')
