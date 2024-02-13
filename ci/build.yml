@@ -142,6 +142,7 @@ jobs:
           python3 scripts/cmake/build.py $(BUILD_TYPE)
           python3 scripts/cmake/install.py $(BUILD_TYPE)
         displayName: 'Unit Tests'
+        timeoutInMinutes: 5
         env:
           CONAN_USER_HOME: $(Build.SourcesDirectory)
 
@@ -152,6 +153,7 @@ jobs:
           python3 scripts/cmake/build.py $(BUILD_TYPE)
           python3 scripts/cmake/install.py $(BUILD_TYPE)
         displayName: 'Benchmarks'
+        timeoutInMinutes: 5
         env:
           CONAN_USER_HOME: $(Build.SourcesDirectory)
 
@@ -162,6 +164,7 @@ jobs:
           python3 scripts/cmake/build.py $(BUILD_TYPE)
           python3 scripts/cmake/install.py $(BUILD_TYPE)
         displayName: 'Examples'
+        timeoutInMinutes: 5
         env:
           CONAN_USER_HOME: $(Build.SourcesDirectory)
 
@@ -173,5 +176,6 @@ jobs:
           python3 build.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION)
           install/teiacore_sdk_client_package_test 
         displayName: 'Conan Package'
+        timeoutInMinutes: 5
         env:
           CONAN_USER_HOME: $(Build.SourcesDirectory)
