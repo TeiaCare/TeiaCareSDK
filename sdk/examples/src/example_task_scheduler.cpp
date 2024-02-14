@@ -88,21 +88,22 @@ int main()
 
     // Return value
     {
-        std::future f = s.in(1s, []{ 
+        std::optional<std::future<std::string>> f = s.in(1s, []{ 
             spdlog::info("The number: {}"); 
-            return "HEY!"; 
+            return std::string("HEY!"); 
         });
 
-        spdlog::info(f.get());
+        spdlog::info(f.value().get());
     }
 
     // Parameters
     {
-        s.in(1s, [](int i, std::string s, float f){ 
-            spdlog::info("int: {}, std::string: {}, float: {}", i, s, f); 
+        auto f = s.in(1s, [](int i, std::string s, float f){ 
+            spdlog::info("int: {}, std::string: {}, float: {}", i, s, f);
+            return i+1;
         }, 123, std::string("something!"), 9.87654321);
 
-        spdlog::info(f.get());
+        spdlog::info(f.value().get());
     }
 
     return 0;
