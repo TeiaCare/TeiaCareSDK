@@ -5,14 +5,12 @@
 #include <sdk/non_copyable.hpp>
 #include <sdk/non_moveable.hpp>
 
-#include <atomic>
-#include <condition_variable>
 #include <functional>
 #include <unordered_map>
 #include <memory>
 #include <mutex>
-#include <queue>
 #include <vector>
+#include <string>
 
 namespace tc::sdk
 {
