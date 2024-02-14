@@ -36,7 +36,7 @@ class TeiaCoreSDK(ConanFile):
         tc.variables["TC_ENABLE_UNIT_TESTS"] = False
         tc.variables["TC_ENABLE_UNIT_TESTS_COVERAGE"] = False
         tc.variables["TC_ENABLE_BENCHMARKS"] = False
-        tc.variables["TC_ENABLE_EXAMPLES"] = True
+        tc.variables["TC_ENABLE_EXAMPLES"] = False
         tc.variables["TC_ENABLE_DOCS"] = False
         tc.variables["TC_ENABLE_WARNINGS_ERROR"] = True
         tc.variables["TC_ENABLE_SANITIZER_ADDRESS"] = False

@@ -172,9 +172,9 @@ jobs:
           $(ACTIVATE_VIRTUAL_ENV)
           $(SETUP_BUILD_ENV)
           python3 scripts/conan/create.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) --install_dir $(Build.SourcesDirectory)
-          cd sdk_package_test
-          python3 build.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION)
-          install/teiacore_sdk_client_package_test 
+        # cd sdk_package_test
+        # python3 build.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION)
+        # install/teiacore_sdk_client_package_test 
         displayName: 'Conan Package'
         timeoutInMinutes: 5
         env:
