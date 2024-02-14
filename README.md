@@ -138,6 +138,8 @@ git clone https://teiacare@dev.azure.com/teiacare/Ancelia/_git/TeiaCoreSDK
 cd TeiaCoreSDK
 
 # Create and install local package at --install_dir path
+# Note that the install_dir path must be the parent directory of a valid Conan cache (i.e. ".conan" folder)
+# So, in order to install the package in the Conan cache of the current repository, it is required to set --install_dir $PWD
 python ./scripts/conan/create.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --install_dir <INSTALL_DIR_PATH>
 ```
 

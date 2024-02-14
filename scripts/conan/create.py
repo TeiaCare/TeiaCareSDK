@@ -35,10 +35,6 @@ def conan_create(conanfile_directory, profile_path, build_type):
     ]
     run(command)
 
-def set_install_dir(install_dir):
-    os.chdir(install_dir)
-    setup_conan_home()
-
 def get_profile_path(profile_name):
     profile_path = pathlib.Path(os.getenv('CONAN_USER_HOME'), ".conan", "profiles", profile_name)
     return profile_path
@@ -46,8 +42,6 @@ def get_profile_path(profile_name):
 def main():
     setup_conan_home()
     args = parse()
-
-    set_install_dir(args.install_dir)
 
     profile_name = f'{args.compiler+args.compiler_version}'
     profile_path = get_profile_path(profile_name)

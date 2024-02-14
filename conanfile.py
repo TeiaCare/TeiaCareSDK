@@ -15,7 +15,8 @@ class TeiaCoreSDK(ConanFile):
     url = "https://dev.azure.com/teiacare/Ancelia/_git/TeiaCoreSDK"
     description = "TeiaCoreSDK is a collection of reusable C++ components"
     topics = ("sdk")
-    exports_sources = "CMakeLists.txt", "README.md", "VERSION", "sdk/*"
+    exports = "VERSION"
+    exports_sources = "CMakeLists.txt", "README.md", "VERSION", "sdk/*", "cmake/*"
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = {"shared": False, "fPIC": True}
