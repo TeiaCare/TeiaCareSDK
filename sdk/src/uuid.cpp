@@ -4,6 +4,7 @@
 #include <emmintrin.h>
 #include <smmintrin.h>
 #include <immintrin.h>
+#include <sstream>
 
 /*
 https://github.com/crashoz/uuid_v4/tree/master

@@ -82,8 +82,8 @@ jobs:
         macos13_clang14:
           AGENT: 'macOS-13'
           COMPILER: clang
-          COMPILER_VERSION: 14
-          SETUP_BUILD_ENV: 'echo clang 14'
+          COMPILER_VERSION: 15
+          SETUP_BUILD_ENV: 'echo clang 15'
           ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
 
         macos13_gcc13:
