@@ -1,12 +1,56 @@
 # TeiaCoreSDK
 Welcome to TeiaCoreSDK!
 
-*TeiaCoreSDK* is a collection of reusable C++ components.
+TeiaCoreSDK is a collection of well-crafted C++ modules designed to make your development journey smoother, faster, and more enjoyable. With its modular approach and extensive features, TeiaCoreSDK empowers you to focus on the core functionality of your application while providing essential building blocks for common tasks.
 
----
+## Key Features:
 
-## Environment Setup
-- Create a virtual environment:
+* **Date & Time:** Master dates, times, and durations with ease using dedicated classes for manipulation, validation, formatting, conversions, timezones, and arithmetic operations.
+* **Concurrency:** Take control of concurrent execution with thread-safe modules for managing tasks, queues, events, and thread pools, enabling efficient parallel processing.
+* **Synchronization & Control:** Maintain data integrity and program flow with modules for rate limiting, observing data changes, and accurately measuring elapsed time, ensuring thread safety and coordinated execution.
+* **Platform Agnostic:** Benefit from cross-platform compatibility with modules that adapt to your system's specifics, like endianness and version information, guaranteeing seamless code execution across different environments.
+* **Singletons & Services:** Create and manage global instances effectively with a dedicated module, and organize your application logic with a service locator, achieving centralized access to essential services and a clean code structure.
+* **Enhanced Code Safety:** Enforce best practices with base classes that prevent copying and moving objects, use a module to signal unexpected code paths, and leverage metaprogramming techniques for function analysis in unit testing, promoting robust and secure code.
+* **Unique Identifier Generation:** Easily generate and manage Universally Unique Identifiers (UUIDs) with dedicated classes, allowing for effortless creation and tracking of unique identifiers for your entities.
+* **Additional Utilities:** Discover more functionality with various modules like tasks, clocks, and observers, providing a broad spectrum of tools to address diverse development needs and enhance your applications.
+
+
+## Why Choose TeiaCoreSDK?
+
+* **Modular Design:** Pick and choose the modules you need, keeping your project lean and focused.
+* **Clear Documentation:** Comprehensive documentation with examples ensures smooth onboarding and understanding.
+* **Active Community:** Engage with our community for support, feedback, and collaboration.
+* **Tested & Reliable:** Enjoy peace of mind with well-tested and actively maintained code.
+
+
+## What’s included in the SDK
+| **Component**        | **Description**                                                                                                                      |
+|----------------------|--------------------------------------------------------------------------------------------------------------------------------------|
+| Datetime             | Classes for date, time, and duration handling, including validation, formatting, conversions, timezones, and arithmetic operations.  |
+| Blocking Queue       | Thread-safe blocking queue with fixed capacity, offering blocking push/pop and optional try_push/try_pop.                            |
+| Clock                | Wrappers and utilities steady_clock, time_point and duration.                                                                        |
+| Endianess            | Cross-platform endianness detection and byte-swapping header.                                                                        |
+| Event Dispatcher     | Event dispatcher with thread pool, supporting handler registration, event emission, and removal with various argument types.         |
+| Function Traits      | Template metaprogramming to extract function information and create std::function wrappers.                                          |
+| High Precision Timer | High-precision timer with millisecond accuracy, offering start/stop, callback setting, and missed/invoked callback counts.           |
+| Non Copiable         | Base class to prevent copying of derived classes.                                                                                    |
+| Non Moveable         | Base class to prevent moving of derived classes.                                                                                     |
+| Observable           | Thread-safe observer pattern implementation with callback and enable/disable control.                                                |
+| Rate Limiter         | Rate limiter to synchronize tasks with a desired frame rate.                                                                         |
+| Service Locator      | Type-safe, centralized service registry for managing and accessing services in an application.                                       |
+| Singleton            | Template-based singleton implementation for thread-safe, lazy initialization of a single instance of any type.                       |
+| Stop Watch           | Stopwatch for measuring elapsed time with generic and specific duration retrieval.                                                   |
+| Task                 | Move-only, type-erased callable object wrapper for safe and flexible task execution.                                                 |
+| Task Scheduler       | Versatile task scheduler for executing tasks at specific times, with delays, or periodically, offering task management capabilities. |
+| Thread Pool          | Thread pool for asynchronous task execution with future-based result access and start/stop control.                                  |
+| Unreachable          | Utility for signaling unexpected code paths.                                                                                         |
+| UUID                 | Class for representing and working with UUID Version 4 values, including creation, comparison, and string/byte representations.      |
+| UUID Generator       | Singleton for generating and managing UUID Version 4 values, offering creation from strings and random generation.                   |
+| Version              | Namespace with details about project, build, and operating system.                                                                   |
+
+## Getting Started
+
+**Create a virtual environment**
 
 ```bash
 python -m pip install --upgrade pip
@@ -23,12 +67,15 @@ echo set CONAN_USER_HOME=%CD%>>.venv\Scripts\activate.bat
 pip install -r scripts/requirements.txt
 ```
 
-## Setup Build Environment (Windows only)
+**Setup Build Environment (Windows Only)**
+
+****
+
 When building from command line on Windows it is necessary to activate the Visual Studio Developer Command Prompt.
 Depending on the version of Visual Studio compiler and on its install location it is required to run *vcvars64.bat* script the set the development environment properly.  
 *Note*: using Visual Studio IDE or the CMake extension for VSCode this step is already managed in the background.  
 
-Examples:
+Examples
 
 ```bash
 # Visual Studio 2022 - Build Tools
@@ -38,12 +85,12 @@ Examples:
 "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
 ```
 
-## Dependencies Setup
+**Dependencies Setup**
 ```bash
 python scripts/conan/setup.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION>
 ```
 
-## Configure, Build and Install
+**Configure, Build and Install**
 ```bash
 python scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION>
 python scripts/cmake/build.py <Debug|Release>
@@ -112,7 +159,7 @@ python ./scripts/tools/run_clang_tidy.py -header-filter=.* sdk
 cpplint --counting=detailed  $(find teiacore_sdk* -type f -name "*.hpp" -or -name "*.cpp")
 ```
 
-## Documentation
+## Generate Documentation
 First install and setup doxygen from your OS package manager.
 ```bash
 # Linux
@@ -155,3 +202,10 @@ python build.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION>
 # Run it
 $PWD/install/teiacore_sdk_client_package_test
 ```
+
+## Contributing
+In order to contribute to TeiaCore SDK, please follow our [contribution guidelines](CONTRIBUTING.md).
+
+## License
+This project is licensed under the [Apache License, Version 2.0](LICENSE).
+Copyright 2024 TeiaCare
