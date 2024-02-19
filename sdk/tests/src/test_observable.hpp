@@ -15,7 +15,7 @@
 #pragma once
 
 #include <gtest/gtest.h>
-#include <sdk/observable.hpp>
+#include <teiacare/sdk/observable.hpp>
 
 namespace tc::sdk::tests
 {

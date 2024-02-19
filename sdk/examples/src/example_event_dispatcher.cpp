@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <sdk/event_dispatcher.hpp>
+#include <teiacare/sdk/event_dispatcher.hpp>
 #include <spdlog/spdlog.h>
 #include <functional>
 #include <cassert>

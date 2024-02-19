@@ -15,7 +15,7 @@
 #pragma once
 
 #include <gtest/gtest.h>
-#include <sdk/uuid_generator.hpp>
+#include <teiacare/sdk/uuid_generator.hpp>
 
 namespace tc::sdk::tests
 {

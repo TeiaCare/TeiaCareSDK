@@ -15,7 +15,7 @@
 #pragma once
 
 #include <gtest/gtest.h>
-#include <sdk/blocking_queue.hpp>
+#include <teiacare/sdk/blocking_queue.hpp>
 #include <array>
 
 namespace tc::sdk::tests

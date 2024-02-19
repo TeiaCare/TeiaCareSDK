@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <sdk/version.hpp>
+#include <teiacare/sdk/version.hpp>
 #include <iostream>
 
 int main(int, char**)

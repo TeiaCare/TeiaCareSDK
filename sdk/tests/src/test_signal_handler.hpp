@@ -15,7 +15,7 @@
 #pragma once
 
 #include <gtest/gtest.h>
-#include <sdk/signal_handler.hpp>
+#include <teiacare/sdk/signal_handler.hpp>
 #include <thread>
 
 namespace tc::sdk::tests

@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include <sdk/non_copyable.hpp>
+#include <teiacare/sdk/non_copyable.hpp>
 
 #include <memory>
 #include <algorithm>

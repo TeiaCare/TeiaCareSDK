@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <sdk/high_precision_timer.hpp>
+#include <teiacare/sdk/high_precision_timer.hpp>
 #include <spdlog/spdlog.h>
 #include "utils/callback_timer.hpp"
 

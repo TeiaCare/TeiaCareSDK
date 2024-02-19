@@ -15,7 +15,7 @@
 #pragma once
 
 #include <gtest/gtest.h>
-#include <sdk/event_dispatcher.hpp>
+#include <teiacare/sdk/event_dispatcher.hpp>
 
 namespace tc::sdk::tests
 {

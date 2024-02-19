@@ -15,7 +15,7 @@
 #pragma once
 
 #include <gtest/gtest.h>
-#include <sdk/rate_limiter.hpp>
+#include <teiacare/sdk/rate_limiter.hpp>
 #include <functional>
 #include <chrono>
 

@@ -14,20 +14,25 @@
 
 #pragma once
 
-#include <benchmark/benchmark.h>
-#include <teiacare/sdk/event_dispatcher.hpp>
+#include <teiacare/sdk/non_copyable.hpp>
+#include <teiacare/sdk/non_moveable.hpp>
 
-namespace tc::sdk::benchmarks
+namespace tc::sdk
 {
-class benchmark_event_dispatcher : public benchmark::Fixture
+template<typename T>
+class singleton : private tc::sdk::non_copyable, private tc::sdk::non_moveable
 {
 public:
-    explicit benchmark_event_dispatcher() : e { std::make_unique<tc::sdk::event_dispatcher>() } { }
-    void SetUp(benchmark::State& st) override { }
-    void TearDown(benchmark::State& st) override { e->stop(); }
+    static T& instance()
+    {
+        static T instance;
+        return instance;
+    }
+
+    virtual ~singleton() = default;
 
 protected:
-    std::unique_ptr<tc::sdk::event_dispatcher> e;
+    singleton() = default;
 };
 
 }

@@ -14,9 +14,9 @@
 
 #pragma once
 
-#include <sdk/task.hpp>
-#include <sdk/non_copyable.hpp>
-#include <sdk/non_moveable.hpp>
+#include <teiacare/sdk/task.hpp>
+#include <teiacare/sdk/non_copyable.hpp>
+#include <teiacare/sdk/non_moveable.hpp>
 
 #include <atomic>
 #include <vector>

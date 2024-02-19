@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <sdk/rate_limiter.hpp>
+#include <teiacare/sdk/rate_limiter.hpp>
 #include <thread>
 
 namespace tc::sdk

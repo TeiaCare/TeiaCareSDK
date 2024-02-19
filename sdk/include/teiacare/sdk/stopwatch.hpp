@@ -14,9 +14,9 @@
 
 #pragma once
 
-#include <sdk/clock.hpp>
-#include <sdk/non_copyable.hpp>
-#include <sdk/non_moveable.hpp>
+#include <teiacare/sdk/clock.hpp>
+#include <teiacare/sdk/non_copyable.hpp>
+#include <teiacare/sdk/non_moveable.hpp>
 
 namespace tc::sdk
 {

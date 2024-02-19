@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <sdk/signal_handler.hpp>
+#include <teiacare/sdk/signal_handler.hpp>
 #include <csignal>
 #include <semaphore>
 

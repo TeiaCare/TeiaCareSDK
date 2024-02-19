@@ -15,7 +15,7 @@
 #pragma once
 
 #include <gtest/gtest.h>
-#include <sdk/thread_pool.hpp>
+#include <teiacare/sdk/thread_pool.hpp>
 
 namespace tc::sdk::tests
 {

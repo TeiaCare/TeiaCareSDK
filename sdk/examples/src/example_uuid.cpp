@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <sdk/uuid.hpp>
-#include <sdk/uuid_generator.hpp>
+#include <teiacare/sdk/uuid.hpp>
+#include <teiacare/sdk/uuid_generator.hpp>
 #include <spdlog/spdlog.h>
 
 using namespace std::chrono_literals;

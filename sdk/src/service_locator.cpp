@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <sdk/service_locator.hpp>
+#include <teiacare/sdk/service_locator.hpp>
 
 namespace tc::sdk
 {

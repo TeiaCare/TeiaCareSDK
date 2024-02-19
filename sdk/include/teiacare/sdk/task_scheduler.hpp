@@ -14,11 +14,11 @@
 
 #pragma once
 
-#include <sdk/clock.hpp>
-#include <sdk/task.hpp>
-#include <sdk/thread_pool.hpp>
-#include <sdk/non_copyable.hpp>
-#include <sdk/non_moveable.hpp>
+#include <teiacare/sdk/clock.hpp>
+#include <teiacare/sdk/task.hpp>
+#include <teiacare/sdk/thread_pool.hpp>
+#include <teiacare/sdk/non_copyable.hpp>
+#include <teiacare/sdk/non_moveable.hpp>
 
 #include <chrono>
 #include <condition_variable>

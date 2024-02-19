@@ -12,8 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <sdk/uuid.hpp>
-#include <sdk/endianness.hpp>
+#include <teiacare/sdk/uuid.hpp>
+#include <teiacare/sdk/endianness.hpp>
 
 #include <emmintrin.h>
 #include <smmintrin.h>

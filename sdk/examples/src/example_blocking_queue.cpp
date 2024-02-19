@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <sdk/blocking_queue.hpp>
+#include <teiacare/sdk/blocking_queue.hpp>
 #include <spdlog/spdlog.h>
 #include <spdlog/fmt/fmt.h>
 

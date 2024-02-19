@@ -15,7 +15,7 @@
 #pragma once
 
 #include <gtest/gtest.h>
-#include <sdk/high_precision_timer.hpp>
+#include <teiacare/sdk/high_precision_timer.hpp>
 
 namespace tc::sdk::tests
 {

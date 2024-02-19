@@ -8,36 +8,36 @@ configure_file(
 )
 
 set(TARGET_HEADERS
-    include/sdk/datetime/date.hpp
-    include/sdk/datetime/datetime.hpp
-    include/sdk/datetime/time.hpp
-    include/sdk/datetime/timedelta.hpp
+    include/teiacare/sdk/datetime/date.hpp
+    include/teiacare/sdk/datetime/datetime.hpp
+    include/teiacare/sdk/datetime/time.hpp
+    include/teiacare/sdk/datetime/timedelta.hpp
 
-    include/sdk/blocking_queue.hpp
-    include/sdk/clock.hpp
-    include/sdk/data_types.hpp
-    include/sdk/event_dispatcher.hpp
-    include/sdk/function_traits.hpp
-    include/sdk/high_precision_timer.hpp
-    include/sdk/non_copyable.hpp
-    include/sdk/non_moveable.hpp
-    include/sdk/observable.hpp
-    include/sdk/rate_limiter.hpp
-    include/sdk/service_locator.hpp
-    include/sdk/signal_handler.hpp
-    include/sdk/singleton.hpp
-    include/sdk/stopwatch.hpp
-    include/sdk/task_scheduler.hpp
-    include/sdk/task.hpp
-    include/sdk/thread_pool.hpp
-    include/sdk/unreachable.hpp
-    include/sdk/uuid_generator.hpp
-    include/sdk/uuid.hpp
-    include/sdk/version.hpp
+    include/teiacare/sdk/blocking_queue.hpp
+    include/teiacare/sdk/clock.hpp
+    include/teiacare/sdk/data_types.hpp
+    include/teiacare/sdk/event_dispatcher.hpp
+    include/teiacare/sdk/function_traits.hpp
+    include/teiacare/sdk/high_precision_timer.hpp
+    include/teiacare/sdk/non_copyable.hpp
+    include/teiacare/sdk/non_moveable.hpp
+    include/teiacare/sdk/observable.hpp
+    include/teiacare/sdk/rate_limiter.hpp
+    include/teiacare/sdk/service_locator.hpp
+    include/teiacare/sdk/signal_handler.hpp
+    include/teiacare/sdk/singleton.hpp
+    include/teiacare/sdk/stopwatch.hpp
+    include/teiacare/sdk/task_scheduler.hpp
+    include/teiacare/sdk/task.hpp
+    include/teiacare/sdk/thread_pool.hpp
+    include/teiacare/sdk/unreachable.hpp
+    include/teiacare/sdk/uuid_generator.hpp
+    include/teiacare/sdk/uuid.hpp
+    include/teiacare/sdk/version.hpp
 )
 
 set(TARGET_SOURCES
-    include/sdk/datetime/date/tz.cpp # TODO: fix me
+    include/teiacare/sdk/datetime/date/tz.cpp # TODO: fix me
     
     src/event_dispatcher.cpp
     src/high_precision_timer.cpp
@@ -64,7 +64,7 @@ target_include_directories(${TARGET_NAME}
 )
 set_target_properties(${TARGET_NAME} PROPERTIES VERSION ${${PROJECT_NAME}_VERSION} SOVERSION ${${PROJECT_NAME}_VERSION_MAJOR})
 set_target_properties(${TARGET_NAME} PROPERTIES PUBLIC_HEADER "${TARGET_HEADERS}")
-install(TARGETS ${TARGET_NAME} PUBLIC_HEADER DESTINATION include/sdk)
+install(TARGETS ${TARGET_NAME} PUBLIC_HEADER DESTINATION include/teiacare/sdk)
 
 if(TC_ENABLE_WARNINGS_ERROR)
     include(warnings)
@@ -123,7 +123,7 @@ if(TC_ENABLE_DOCS)
     setup_docs(
         ${TARGET_NAME} 
         "${TARGET_HEADERS}"
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/sdk 
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/teiacare/sdk 
         ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile
     )
 endif()

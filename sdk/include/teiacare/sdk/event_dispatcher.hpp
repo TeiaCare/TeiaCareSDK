@@ -14,10 +14,10 @@
 
 #pragma once 
 
-#include <sdk/thread_pool.hpp>
-#include <sdk/function_traits.hpp>
-#include <sdk/non_copyable.hpp>
-#include <sdk/non_moveable.hpp>
+#include <teiacare/sdk/thread_pool.hpp>
+#include <teiacare/sdk/function_traits.hpp>
+#include <teiacare/sdk/non_copyable.hpp>
+#include <teiacare/sdk/non_moveable.hpp>
 
 #include <functional>
 #include <unordered_map>

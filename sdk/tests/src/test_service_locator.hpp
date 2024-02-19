@@ -15,7 +15,7 @@
 #pragma once
 
 #include <gtest/gtest.h>
-#include <sdk/service_locator.hpp>
+#include <teiacare/sdk/service_locator.hpp>
 #include <string>
 
 namespace tc::sdk::tests
