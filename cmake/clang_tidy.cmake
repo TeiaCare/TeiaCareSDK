@@ -1,4 +1,4 @@
-include(FindPythonInterp)
+include(FindPython3)
 find_program(CLANG_TIDY NAMES "clang-tidy" HINTS "${CMAKE_SOURCE_DIR}/.venv/bin")
 
 if(NOT CLANG_TIDY)
