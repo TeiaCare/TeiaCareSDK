@@ -4,8 +4,6 @@
 **/build
 **/install
 **/results
-**/profiles
-**/export
 **/memcheck
 **/callgrind
 **/.cache
@@ -14,3 +12,4 @@
 **/launch.dev.json
 **/compile_commands.json
 **/CMakeUserPresets.json
+sdk/src/version.cpp
