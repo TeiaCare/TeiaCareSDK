@@ -20,7 +20,8 @@ TeiaCoreSDK is a collection of well-crafted C++ modules designed to make your de
 * **Modular Design:** Pick and choose the modules you need, keeping your project lean and focused.
 * **Clear Documentation:** Comprehensive documentation with examples ensures smooth onboarding and understanding.
 * **Active Community:** Engage with our community for support, feedback, and collaboration.
-* **Tested & Reliable:** Enjoy peace of mind with well-tested and actively maintained code.
+* **Tested & Reliable:** Enjoy peace of mind with well-tested and actively maintained code with mature CI/CD workflows.
+* **Production Quality:** TeiaCoreSDK runs in production environment serving thousands of devices on a daily basis.
 
 
 ## What’s included in the SDK
@@ -47,6 +48,16 @@ TeiaCoreSDK is a collection of well-crafted C++ modules designed to make your de
 | UUID                 | Class for representing and working with UUID Version 4 values, including creation, comparison, and string/byte representations.      |
 | UUID Generator       | Singleton for generating and managing UUID Version 4 values, offering creation from strings and random generation.                   |
 | Version              | Namespace with details about project, build, and operating system.                                                                   |
+
+## Supported Platforms
+TODO
+
+Add some status badge for CI
+
+## Try online on wandbox
+TODO
+
+Add code snippet
 
 ## Getting Started
 
@@ -204,8 +215,8 @@ $PWD/install/teiacore_sdk_client_package_test
 ```
 
 ## Contributing
-In order to contribute to TeiaCore SDK, please follow our [contribution guidelines](CONTRIBUTING.md).
+In order to contribute to TeiaCoreSDK, please follow our [contribution guidelines](CONTRIBUTING.md).
 
 ## License
-This project is licensed under the [Apache License, Version 2.0](LICENSE).
-Copyright 2024 TeiaCare
+This project is licensed under the [Apache License, Version 2.0](LICENSE).  
+Copyright © 2024 [TeiaCare](https://teiacare.com/)
