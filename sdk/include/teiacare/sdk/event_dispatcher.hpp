@@ -130,7 +130,7 @@ public:
 
         for (auto&& h : event_handlers)
         {
-            const std::function<void()> event = [e = std::static_pointer_cast<handler_t<Args...>>(h), ... args = std::forward<Args>(args)]
+            const std::function<void()> event = [e = std::static_pointer_cast<handler_t<Args...>>(h), args... ]
             {
                 return std::invoke(&handler_t<Args...>::call, e.get(), args...);
             };

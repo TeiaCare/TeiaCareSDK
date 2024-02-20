@@ -73,7 +73,7 @@ int main()
     {
         auto q = tc::sdk::blocking_queue<int>(4);
         
-        auto consumer_thread = std::jthread([&]{
+        auto consumer_thread = std::thread([&]{
             for(int i = 0; i < 10; ++i)
             {
                 auto item = q.pop();
@@ -83,7 +83,7 @@ int main()
             spdlog::warn("consumer finished!");
         });
 
-        auto producer_thread = std::jthread([&]{
+        auto producer_thread = std::thread([&]{
             for(int i = 0; i < 10; ++i)
             {
                 q.push(i+1);

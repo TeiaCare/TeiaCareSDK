@@ -51,7 +51,7 @@ int main()
         s.every(1s, std::bind(&Foo::update, &foo));
         std::this_thread::sleep_for(3s);
         
-        spdlog::info("foo:", foo.get());
+        spdlog::info("foo: {}", foo.get());
     }
 
     // In
@@ -103,7 +103,6 @@ int main()
     // Return value
     {
         std::optional<std::future<std::string>> f = s.in(1s, []{ 
-            spdlog::info("The number: {}"); 
             return std::string("HEY!"); 
         });
 

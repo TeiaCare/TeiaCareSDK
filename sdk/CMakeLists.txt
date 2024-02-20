@@ -15,7 +15,6 @@ set(TARGET_HEADERS
 
     include/teiacare/sdk/blocking_queue.hpp
     include/teiacare/sdk/clock.hpp
-    include/teiacare/sdk/data_types.hpp
     include/teiacare/sdk/event_dispatcher.hpp
     include/teiacare/sdk/function_traits.hpp
     include/teiacare/sdk/high_precision_timer.hpp

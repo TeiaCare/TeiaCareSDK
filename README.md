@@ -54,10 +54,29 @@ TODO
 
 Add some status badge for CI
 
-## Try online on wandbox
-TODO
+## Try online on Wandbox
+![Static Badge](https://img.shields.io/badge/Wandbox-ok?style=plastic&label=Try%20Online&link=https%3A%2F%2Fimg.shields.io%2Fwandbox.org%2Fpermlink%2FsfU3VY4HFMBZp8QI)
 
-Add code snippet
+
+```cpp
+#include <iostream>
+#include "teiacare/sdk/observable.hpp"
+
+int main() 
+{
+    auto callback = [](int value){ std::cout << "Update: " << value << "\n"; };
+    auto observable = tc::sdk::observable<int>(-1, callback);
+    
+    constexpr int total_updates = 10;
+    for (int i = 0; i < total_updates; ++i)
+    {
+        observable = i; // Trigger updates
+    }
+
+    return 0;
+}
+```
+
 
 ## Getting Started
 

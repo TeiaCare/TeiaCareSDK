@@ -15,7 +15,6 @@
 #include <teiacare/sdk/event_dispatcher.hpp>
 #include <spdlog/spdlog.h>
 #include <functional>
-#include <cassert>
 
 using namespace std::chrono_literals;
 
@@ -68,20 +67,37 @@ int main()
     */
 
     // Verify if an event has at least one handler attached when it is emitted
-    bool no_handler = e.emit("NullEvent", "NullEvent_Payload"); // false: no handler has been attached to the event "NullEvent"
+    const bool no_handler = e.emit("NullEvent", "NullEvent_Payload"); // false: no handler has been attached to the event "NullEvent"
+    spdlog::info("no_handler: {}", no_handler);
 
     // Add multiple handlers for the same event
-    auto id1 = e.add_handler<std::string>("Event_A", [](const std::string& arg){ spdlog::info("{}1", arg); }); // id1==1
-    auto id2 = e.add_handler<std::string>("Event_A", [](const std::string& arg){ spdlog::info("{}2", arg); }); // id2==2
-    auto id3 = e.add_handler<std::string>("Event_A", [](const std::string& arg){ spdlog::info("{}3", arg); }); // id3==3
-    e.emit("Event_A", std::string("A"));
+    const unsigned long id1 = e.add_handler<std::string>("Event_A", [](const std::string& arg){ spdlog::info("{}1", arg); }); // id1==1
+    spdlog::info("id1: {}", id1);
+
+    const unsigned long id2 = e.add_handler<std::string>("Event_A", [](const std::string& arg){ spdlog::info("{}2", arg); }); // id2==2
+    spdlog::info("id2: {}", id2);
+
+    const unsigned long id3 = e.add_handler<std::string>("Event_A", [](const std::string& arg){ spdlog::info("{}3", arg); }); // id3==3
+    spdlog::info("id3: {}", id3);
+
+    const auto arg = std::string("A");
+    e.emit("Event_A", arg);
 
     // Remove single handler using event_id
-    bool r1 = e.remove_handler(id1); // true
-    bool r2 = e.remove_handler(id3); // true
-    bool r3 = e.remove_handler(0);  // false (id does not exists)
-    bool r4 = e.remove_handler(id3); // false (already removed)
-    e.emit("Event_A", std::string("A"));
+    const bool r1 = e.remove_handler(id1); // true
+    spdlog::info("r1: {}", r1);
+
+    const bool r2 = e.remove_handler(id3); // true
+    spdlog::info("r2: {}", r2);
+
+    const bool r3 = e.remove_handler(0);  // false (id does not exists)
+    spdlog::info("r3: {}", r3);
+
+    const bool r4 = e.remove_handler(id3); // false (already removed)
+    spdlog::info("r4: {}", r4);
+
+    e.emit("Event_A", std::string("A")); // Now only event with ID id2 should be triggered (it prints "A2")
+    std::this_thread::sleep_for(2s);
 
     // Empty arguments
     e.add_handler("Event_B", []{ spdlog::info("Without args"); });
@@ -94,9 +110,14 @@ int main()
 
     // Multiple arguments
     e.add_handler<int, std::string, float>("Event_D", [](int i, std::string s, float f){ spdlog::info("Multiple arguments: {}, {} ,{}", i, s, f); });
-    bool r5 = e.emit("Event_D"); // false: no arguments
-    bool r6 = e.emit("Event_D", std::string("some_string"), 999, "wrong_argument_type"); // false: wrong arguments type and order
-    bool r7 = e.emit("Event_D", 999, std::string("some_string"), 1.2345f); // true: correct arguments type and order
+    const bool r5 = e.emit("Event_D"); // false: no arguments
+    spdlog::info("r5: {}", r5);
+
+    const bool r6 = e.emit("Event_D", std::string("some_string"), 999, "wrong_argument_type"); // false: wrong arguments type and order
+    spdlog::info("r6: {}", r6);
+
+    const bool r7 = e.emit("Event_D", 999, std::string("some_string"), 1.2345f); // true: correct arguments type and order
+    spdlog::info("r7: {}", r7);
 
     // add_handler: free function
     std::function<void(float, int)> free_function_bind = std::bind(free_function, std::placeholders::_1, std::placeholders::_2);
