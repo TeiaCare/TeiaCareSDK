@@ -52,25 +52,28 @@ TeiaCoreSDK is a collection of well-crafted C++ modules designed to make your de
 ## Supported Platforms
 [![Build Status](https://dev.azure.com/teiacare/Ancelia/_apis/build/status%2FTeiaCore%2Fv3%2FTeiaCoreSDK?branchName=develop)](https://dev.azure.com/teiacare/Ancelia/_build/latest?definitionId=65&branchName=develop)
 
-| **OS**               | **Compiler**        | **Support** |
-|----------------------|---------------------|:--:|
-| Windows Server 2022  | Visual Studio 2022  | ✅ |
-| Windows Server 2022  | Clang 16            | ❌ |
-| Windows Server 2019  | Visual Studio 2019  | ❌ |
-| Windows Server 2019  | Clang 16            | ❌ |
-| Ubuntu 22.04         | GCC 13              | ❌ |
-| Ubuntu 22.04         | GCC 12              | ❌ |
-| Ubuntu 22.04         | GCC 11              | ❌ |
-| Ubuntu 22.04         | Clang 15            | ✅ |
-| Ubuntu 22.04         | Clang 14            | ❌ |
-| Ubuntu 22.04         | Clang 13            | ❌ |
-| Ubuntu 20.04         | GCC 10              | ❌ |
-| Ubuntu 20.04         | GCC 9               | ❌ |
-| Ubuntu 20.04         | Clang 12            | ❌ |
-| Ubuntu 20.04         | Clang 11            | ❌ |
-| Ubuntu 20.04         | Clang 10            | ❌ |
-| macOS 13 Ventura     | Apple-Clang 15      | ❌ |
-| macOS 12 Monterey    | Apple-Clang 15      | ❌ |
+
+| **OS**               | **Compiler**       | **Support** |
+|----------------------|--------------------|:-----------:|
+| Windows Server 2022  | Visual Studio 2022 | ✅          |
+| Windows Server 2022  | Clang 16           | 🚧          |
+| Windows Server 2019  | Visual Studio 2019 | 🚧          |
+| Windows Server 2019  | Clang 16           | 🚧          |
+| Ubuntu 22.04         | GCC 13             | 🚧          |
+| Ubuntu 22.04         | GCC 12             | 🚧          |
+| Ubuntu 22.04         | GCC 11             | 🚧          |
+| Ubuntu 22.04         | Clang 15           | ✅          |
+| Ubuntu 22.04         | Clang 14           | 🚧          |
+| Ubuntu 22.04         | Clang 13           | 🚧          |
+| Ubuntu 20.04         | GCC 10             | 🚧          |
+| Ubuntu 20.04         | GCC 9              | ❌          |
+| Ubuntu 20.04         | Clang 12           | 🚧          |
+| Ubuntu 20.04         | Clang 11           | 🚧          |
+| Ubuntu 20.04         | Clang 10           | ❌          |
+| macOS 13 Ventura     | Apple-Clang 15     | 🚧          |
+| macOS 13 Ventura     | GCC 13             | 🚧          |
+| macOS 12 Monterey    | Apple-Clang 15     | 🚧          |
+| macOS 12 Monterey    | GCC 13             | 🚧          |
 
 ## Try online on Wandbox
 [![Try Online](https://img.shields.io/badge/Wandbox-ok?style=plastic&label=Try%20Online&link=https%3A%2F%2Fimg.shields.io%2Fwandbox.org%2Fpermlink%2FsfU3VY4HFMBZp8QI)](https://wandbox.org/permlink/sfU3VY4HFMBZp8QI)
@@ -115,8 +118,6 @@ pip install -r scripts/requirements.txt
 ```
 
 **Setup Build Environment (Windows Only)**
-
-****
 
 When building from command line on Windows it is necessary to activate the Visual Studio Developer Command Prompt.
 Depending on the version of Visual Studio compiler and on its install location it is required to run *vcvars64.bat* script the set the development environment properly.  
@@ -231,9 +232,12 @@ Documentation is now installed in $PWD/install/docs.
 git clone https://teiacare@dev.azure.com/teiacare/Ancelia/_git/TeiaCoreSDK
 cd TeiaCoreSDK
 
-# Create and install local package at --install_dir path
-# Note that the install_dir path must be the parent directory of a valid Conan cache (i.e. ".conan" folder)
-# So, in order to install the package in the Conan cache of the current repository, it is required to set --install_dir $PWD
+# Create, test and install local package
+# Notes:
+# 1) The install_dir path must be the parent directory of a valid Conan cache (i.e. ".conan" folder)
+#    So, in order to install the package in the Conan cache of the current repository, it is required to set --install_dir $PWD
+# 2) The Conan package tests are automatically run during package creation.
+#    The directory test_package contains a test project that is built to validate the proper package creation.
 python ./scripts/conan/create.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --install_dir <INSTALL_DIR_PATH>
 ```
 
@@ -253,6 +257,10 @@ $PWD/install/teiacore_sdk_client_package_test
 ## Contributing
 In order to contribute to TeiaCoreSDK, please follow our [contribution guidelines](CONTRIBUTING.md).
 
+[![Contributions](https://img.shields.io/badge/Contributions-Welcome-green.svg)](CONTRIBUTING.md) 
+
 ## License
 This project is licensed under the [Apache License, Version 2.0](LICENSE).  
 Copyright © 2024 [TeiaCare](https://teiacare.com/)
+
+[![License](https://img.shields.io/badge/License-Apache_v2-blue)](LICENSE) 
