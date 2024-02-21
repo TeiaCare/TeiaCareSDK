@@ -57,23 +57,23 @@ TeiaCoreSDK is a collection of well-crafted C++ modules designed to make your de
 |----------------------|--------------------|:-----------:|
 | Windows Server 2022  | Visual Studio 2022 | ✅          |
 | Windows Server 2022  | Clang 16           | 🚧          |
-| Windows Server 2019  | Visual Studio 2019 | 🚧          |
+| Windows Server 2019  | Visual Studio 2019 | ✅          |
 | Windows Server 2019  | Clang 16           | 🚧          |
-| Ubuntu 22.04         | GCC 13             | 🚧          |
-| Ubuntu 22.04         | GCC 12             | 🚧          |
+| Ubuntu 22.04         | GCC 13             | ✅          |
+| Ubuntu 22.04         | GCC 12             | ✅          |
 | Ubuntu 22.04         | GCC 11             | 🚧          |
 | Ubuntu 22.04         | Clang 15           | ✅          |
-| Ubuntu 22.04         | Clang 14           | 🚧          |
-| Ubuntu 22.04         | Clang 13           | 🚧          |
-| Ubuntu 20.04         | GCC 10             | 🚧          |
+| Ubuntu 22.04         | Clang 14           | ❌          |
+| Ubuntu 22.04         | Clang 13           | ❌          |
+| Ubuntu 20.04         | GCC 10             | ❌          |
 | Ubuntu 20.04         | GCC 9              | ❌          |
-| Ubuntu 20.04         | Clang 12           | 🚧          |
-| Ubuntu 20.04         | Clang 11           | 🚧          |
+| Ubuntu 20.04         | Clang 12           | ❌          |
+| Ubuntu 20.04         | Clang 11           | ❌          |
 | Ubuntu 20.04         | Clang 10           | ❌          |
 | macOS 13 Ventura     | Apple-Clang 15     | 🚧          |
-| macOS 13 Ventura     | GCC 13             | 🚧          |
+| macOS 13 Ventura     | GCC 13             | ❌          |
 | macOS 12 Monterey    | Apple-Clang 15     | 🚧          |
-| macOS 12 Monterey    | GCC 13             | 🚧          |
+| macOS 12 Monterey    | GCC 13             | ❌          |
 
 ## Try online on Wandbox
 [![Try Online](https://img.shields.io/badge/Wandbox-ok?style=plastic&label=Try%20Online&link=https%3A%2F%2Fimg.shields.io%2Fwandbox.org%2Fpermlink%2FsfU3VY4HFMBZp8QI)](https://wandbox.org/permlink/sfU3VY4HFMBZp8QI)
