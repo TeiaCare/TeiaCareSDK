@@ -97,6 +97,7 @@ int main()
 }
 ```
 
+Check the [Examples](sdk/examples/src/) folder for an in-depth showcase of all the features of this library.
 
 ## Getting Started
 
