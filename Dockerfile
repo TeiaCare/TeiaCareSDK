@@ -16,11 +16,11 @@ RUN apt-get update -qq && export DEBIAN_FRONTEND=noninteractive && \
 ENV CC=${C_COMPILER}-${COMPILER_VERSION}
 ENV CXX=${CXX_COMPILER}-${COMPILER_VERSION}
 
-WORKDIR /teiacore_sdk
+WORKDIR /teiacare_sdk
 COPY /scripts/conan scripts/conan
 COPY /scripts/requirements.txt scripts/requirements.txt
 RUN python3 -m venv .venv
-RUN . /teiacore_sdk/.venv/bin/activate
+RUN . /teiacare_sdk/.venv/bin/activate
 RUN python3 -m pip install -r scripts/requirements.txt --no-cache-dir --disable-pip-version-check
 
 ###############################################################################
@@ -38,12 +38,12 @@ COPY . .
 RUN python3 scripts/cmake/configure.py ${BUILD_TYPE} --warnings --unit_tests --coverage
 RUN python3 scripts/cmake/build.py
 RUN python3 scripts/cmake/install.py
-RUN python3 scripts/tools/run_unit_tests.py ./install/tests/teiacore_sdk_unit_tests
+RUN python3 scripts/tools/run_unit_tests.py ./install/tests/teiacare_sdk_unit_tests
 RUN python3 scripts/tools/run_coverage.py ${C_COMPILER} ${COMPILER_VERSION}
 
 ## tests-export
 FROM scratch as tests-export
-COPY --from=tests /teiacore_sdk/results/ .
+COPY --from=tests /teiacare_sdk/results/ .
 
 ###############################################################################
 ## unit tests - address sanitizer
@@ -60,11 +60,11 @@ COPY . .
 RUN python3 scripts/cmake/configure.py ${BUILD_TYPE} --warnings --unit_tests --address_sanitizer
 RUN python3 scripts/cmake/build.py
 RUN python3 scripts/cmake/install.py
-RUN python3 scripts/tools/run_sanitizer.py ./install/tests/teiacore_sdk_unit_tests --gtest_filter=-test_uuid* --address_sanitizer
+RUN python3 scripts/tools/run_sanitizer.py ./install/tests/teiacare_sdk_unit_tests --gtest_filter=-test_uuid* --address_sanitizer
 
 ## address-sanitizer-export
 FROM scratch as address-sanitizer-export
-COPY --from=tests /teiacore_sdk/results/ .
+COPY --from=tests /teiacare_sdk/results/ .
 
 ###############################################################################
 ## unit tests - thread sanitizer
@@ -81,11 +81,11 @@ COPY . .
 RUN python3 scripts/cmake/configure.py ${BUILD_TYPE} --warnings --unit_tests --thread_sanitizer
 RUN python3 scripts/cmake/build.py
 RUN python3 scripts/cmake/install.py
-RUN python3 scripts/tools/run_sanitizer.py ./install/tests/teiacore_sdk_unit_tests --gtest_filter=-test_uuid* --thread_sanitizer
+RUN python3 scripts/tools/run_sanitizer.py ./install/tests/teiacare_sdk_unit_tests --gtest_filter=-test_uuid* --thread_sanitizer
 
 ## thread-sanitizer-export
 FROM scratch as thread-sanitizer-export
-COPY --from=tests /teiacore_sdk/results/ .
+COPY --from=tests /teiacare_sdk/results/ .
 
 ###############################################################################
 ## examples
@@ -118,11 +118,11 @@ COPY . .
 RUN python3 scripts/cmake/configure.py ${BUILD_TYPE} --warnings --benchmarks
 RUN python3 scripts/cmake/build.py
 RUN python3 scripts/cmake/install.py
-RUN python3 scripts/tools/run_benchmarks.py install/benchmarks/teiacore_sdk_benchmarks
+RUN python3 scripts/tools/run_benchmarks.py install/benchmarks/teiacare_sdk_benchmarks
 
 ## benchmarks-export
 FROM scratch as benchmarks-export
-COPY --from=benchmarks /teiacore_sdk/results/ .
+COPY --from=benchmarks /teiacare_sdk/results/ .
 
 ###############################################################################
 ## valgrind
@@ -143,12 +143,12 @@ COPY . .
 RUN python3 scripts/cmake/configure.py ${BUILD_TYPE} --warnings --unit_tests
 RUN python3 scripts/cmake/build.py
 RUN python3 scripts/cmake/install.py
-RUN python3 scripts/tools/run_valgrind.py install/tests/teiacore_sdk_unit_tests --gtest_filter=-test_uuid*:test_rate_limiter* --memcheck
-RUN python3 scripts/tools/run_valgrind.py install/tests/teiacore_sdk_unit_tests --gtest_filter=-test_uuid*:test_rate_limiter* --callgrind 
+RUN python3 scripts/tools/run_valgrind.py install/tests/teiacare_sdk_unit_tests --gtest_filter=-test_uuid*:test_rate_limiter* --memcheck
+RUN python3 scripts/tools/run_valgrind.py install/tests/teiacare_sdk_unit_tests --gtest_filter=-test_uuid*:test_rate_limiter* --callgrind 
 
 ## valgrind-export
 FROM scratch as valgrind-export
-COPY --from=valgrind /teiacore_sdk/results/ .
+COPY --from=valgrind /teiacare_sdk/results/ .
 
 ###############################################################################
 ## docs
@@ -167,4 +167,4 @@ RUN python3 scripts/cmake/install.py
 
 ## docs-export
 FROM scratch as docs-export
-COPY --from=docs /teiacore_sdk/install/docs/ .
+COPY --from=docs /teiacare_sdk/install/docs/ .

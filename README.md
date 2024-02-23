@@ -1,7 +1,7 @@
-# TeiaCoreSDK
-Welcome to TeiaCoreSDK!
+# TeiaCareSDK
+Welcome to TeiaCareSDK!
 
-TeiaCoreSDK is a collection of well-crafted C++ modules designed to make your development journey smoother, faster, and more enjoyable. With its modular approach and extensive features, TeiaCoreSDK empowers you to focus on the core functionality of your application while providing essential building blocks for common tasks.
+TeiaCareSDK is a collection of well-crafted C++ modules designed to make your development journey smoother, faster, and more enjoyable. With its modular approach and extensive features, TeiaCareSDK empowers you to focus on the core functionality of your application while providing essential building blocks for common tasks.
 
 ## Key Features:
 
@@ -15,13 +15,13 @@ TeiaCoreSDK is a collection of well-crafted C++ modules designed to make your de
 * **Additional Utilities:** Discover more functionality with various modules like tasks, clocks, and observers, providing a broad spectrum of tools to address diverse development needs and enhance your applications.
 
 
-## Why Choose TeiaCoreSDK?
+## Why Choose TeiaCareSDK?
 
 * **Modular Design:** Pick and choose the modules you need, keeping your project lean and focused.
 * **Clear Documentation:** Comprehensive documentation with examples ensures smooth onboarding and understanding.
 * **Active Community:** Engage with our community for support, feedback, and collaboration.
 * **Tested & Reliable:** Enjoy peace of mind with well-tested and actively maintained code with mature CI/CD workflows.
-* **Production Quality:** TeiaCoreSDK runs in production environment serving thousands of devices on a daily basis.
+* **Production Quality:** TeiaCareSDK runs in production environment serving thousands of devices on a daily basis.
 
 
 ## What’s included in the SDK
@@ -50,7 +50,7 @@ TeiaCoreSDK is a collection of well-crafted C++ modules designed to make your de
 | Version              | Namespace with details about project, build, and operating system.                                                                   |
 
 ## Supported Platforms
-[![Build Status](https://dev.azure.com/teiacare/Ancelia/_apis/build/status%2FTeiaCore%2Fv3%2FTeiaCoreSDK?branchName=develop)](https://dev.azure.com/teiacare/Ancelia/_build/latest?definitionId=65&branchName=develop)
+[![Build Status](https://dev.azure.com/teiacare/Ancelia/_apis/build/status%2FTeiaCare%2Fv3%2FTeiaCareSDK?branchName=develop)](https://dev.azure.com/teiacare/Ancelia/_build/latest?definitionId=65&branchName=develop)
 
 
 | **OS**               | **Compiler**       | **Support** |
@@ -206,7 +206,7 @@ python scripts/tools/run_cppcheck.py <Debug|Release>
 - [cpplint](https://github.com/cpplint/cpplint) [TODO: Review]
 ```bash
 # TODO: add python script.
-cpplint --counting=detailed  $(find teiacore_sdk* -type f -name "*.hpp" -or -name "*.cpp")
+cpplint --counting=detailed  $(find teiacare_sdk* -type f -name "*.hpp" -or -name "*.cpp")
 ```
 
 ## Generate Documentation
@@ -231,8 +231,8 @@ Documentation is now installed in $PWD/install/docs.
 
 ## Conan Package - Local Install
 ```bash
-git clone https://teiacare@dev.azure.com/teiacare/Ancelia/_git/TeiaCoreSDK
-cd TeiaCoreSDK
+git clone https://teiacare@dev.azure.com/teiacare/Ancelia/_git/TeiaCareSDK
+cd TeiaCareSDK
 
 # Create, test and install local package
 # Notes:
@@ -245,19 +245,19 @@ python ./scripts/conan/create.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSI
 
 ## Conan Package - Test
 ```bash
-git clone https://teiacare@dev.azure.com/teiacare/Ancelia/_git/TeiaCoreSDK
-cd TeiaCoreSDK
+git clone https://teiacare@dev.azure.com/teiacare/Ancelia/_git/TeiaCareSDK
+cd TeiaCareSDK
 cd sdk_package_test
 
-# Build and install the test package executable at $PWD/install/teiacore_sdk_client_package_test
+# Build and install the test package executable at $PWD/install/teiacare_sdk_client_package_test
 python build.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> 
 
 # Run it
-$PWD/install/teiacore_sdk_client_package_test
+$PWD/install/teiacare_sdk_client_package_test
 ```
 
 ## Contributing
-In order to contribute to TeiaCoreSDK, please follow our [contribution guidelines](CONTRIBUTING.md).
+In order to contribute to TeiaCareSDK, please follow our [contribution guidelines](CONTRIBUTING.md).
 
 [![Contributions](https://img.shields.io/badge/Contributions-Welcome-green.svg)](CONTRIBUTING.md) 
 

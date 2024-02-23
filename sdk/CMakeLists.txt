@@ -1,6 +1,6 @@
-set(TARGET_NAME teiacore_sdk)
+set(TARGET_NAME teiacare_sdk)
 add_library(${TARGET_NAME})
-add_library(teiacore::sdk ALIAS ${TARGET_NAME})
+add_library(teiacare::sdk ALIAS ${TARGET_NAME})
 
 configure_file(
     src/version.cpp.in 
