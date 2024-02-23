@@ -1,11 +1,11 @@
 // Copyright 2024 TeiaCare
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,11 +32,11 @@ auto event_dispatcher::remove_handler(unsigned long remove_handler_id) -> bool
 {
     std::unique_lock handlers_lock(_handlers_mutex);
 
-    for(auto&& event_handlers : _handlers)
+    for (auto&& event_handlers : _handlers)
     {
-        if(std::erase_if(event_handlers.second, [remove_handler_id](auto&& h){ return h->id == remove_handler_id; }))
+        if (std::erase_if(event_handlers.second, [remove_handler_id](auto&& h) { return h->id == remove_handler_id; }))
         {
-            if(event_handlers.second.empty())
+            if (event_handlers.second.empty())
                 _handlers.erase(event_handlers.first);
 
             return true;
@@ -48,9 +48,9 @@ auto event_dispatcher::remove_handler(unsigned long remove_handler_id) -> bool
 
 auto event_dispatcher::remove_event(std::string event_name) -> bool
 {
-    std::unique_lock handlers_lock(_handlers_mutex);        
+    std::unique_lock handlers_lock(_handlers_mutex);
 
-    if(std::erase_if(_handlers, [event_name](auto&& handler_iterator){ return handler_iterator.first.starts_with(event_name); }))
+    if (std::erase_if(_handlers, [event_name](auto&& handler_iterator) { return handler_iterator.first.starts_with(event_name); }))
         return true;
 
     return false;

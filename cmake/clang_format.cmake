@@ -32,8 +32,6 @@ function(setup_target_clang_format TARGET_NAME TARGET_FOLDERS)
             --in-place
             --recursive 
             ${TARGET_FOLDERS}
-        DEPENDS ${TARGET_NAME}
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
         COMMENT "Running ${CLANG_FORMAT} on ${TARGET_NAME}"
     )
 endfunction()

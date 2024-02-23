@@ -33,69 +33,69 @@
 #define HAS_REMOTE_API 0
 
 #ifdef _WIN32
-   // windows.h will be included directly and indirectly (e.g. by curl).
-   // We need to define these macros to prevent windows.h bringing in
-   // more than we need and do it early so windows.h doesn't get included
-   // without these macros having been defined.
-   // min/max macros interfere with the C++ versions.
-#  ifndef NOMINMAX
-#    define NOMINMAX
-#  endif
-   // We don't need all that Windows has to offer.
-#  ifndef WIN32_LEAN_AND_MEAN
-#    define WIN32_LEAN_AND_MEAN
-#  endif
+// windows.h will be included directly and indirectly (e.g. by curl).
+// We need to define these macros to prevent windows.h bringing in
+// more than we need and do it early so windows.h doesn't get included
+// without these macros having been defined.
+// min/max macros interfere with the C++ versions.
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
+// We don't need all that Windows has to offer.
+#ifndef WIN32_LEAN_AND_MEAN
+#define WIN32_LEAN_AND_MEAN
+#endif
 
-   // for wcstombs
-#  ifndef _CRT_SECURE_NO_WARNINGS
-#    define _CRT_SECURE_NO_WARNINGS
-#  endif
+// for wcstombs
+#ifndef _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
+#endif
 
-   // None of this happens with the MS SDK (at least VS14 which I tested), but:
-   // Compiling with mingw, we get "error: 'KF_FLAG_DEFAULT' was not declared in this scope."
-   // and error: 'SHGetKnownFolderPath' was not declared in this scope.".
-   // It seems when using mingw NTDDI_VERSION is undefined and that
-   // causes KNOWN_FOLDER_FLAG and the KF_ flags to not get defined.
-   // So we must define NTDDI_VERSION to get those flags on mingw.
-   // The docs say though here:
-   // https://msdn.microsoft.com/en-nz/library/windows/desktop/aa383745(v=vs.85).aspx
-   // that "If you define NTDDI_VERSION, you must also define _WIN32_WINNT."
-   // So we declare we require Vista or greater.
-#  ifdef __MINGW32__
+// None of this happens with the MS SDK (at least VS14 which I tested), but:
+// Compiling with mingw, we get "error: 'KF_FLAG_DEFAULT' was not declared in this scope."
+// and error: 'SHGetKnownFolderPath' was not declared in this scope.".
+// It seems when using mingw NTDDI_VERSION is undefined and that
+// causes KNOWN_FOLDER_FLAG and the KF_ flags to not get defined.
+// So we must define NTDDI_VERSION to get those flags on mingw.
+// The docs say though here:
+// https://msdn.microsoft.com/en-nz/library/windows/desktop/aa383745(v=vs.85).aspx
+// that "If you define NTDDI_VERSION, you must also define _WIN32_WINNT."
+// So we declare we require Vista or greater.
+#ifdef __MINGW32__
 
-#    ifndef NTDDI_VERSION
-#      define NTDDI_VERSION 0x06000000
-#      define _WIN32_WINNT _WIN32_WINNT_VISTA
-#    elif NTDDI_VERSION < 0x06000000
-#      warning "If this fails to compile NTDDI_VERSION may be to low. See comments above."
-#    endif
-     // But once we define the values above we then get this linker error:
-     // "tz.cpp:(.rdata$.refptr.FOLDERID_Downloads[.refptr.FOLDERID_Downloads]+0x0): "
-     //     "undefined reference to `FOLDERID_Downloads'"
-     // which #include <initguid.h> cures see:
-     // https://support.microsoft.com/en-us/kb/130869
-#    include <initguid.h>
-     // But with <initguid.h> included, the error moves on to:
-     // error: 'FOLDERID_Downloads' was not declared in this scope
-     // Which #include <knownfolders.h> cures.
-#    include <knownfolders.h>
+#ifndef NTDDI_VERSION
+#define NTDDI_VERSION 0x06000000
+#define _WIN32_WINNT _WIN32_WINNT_VISTA
+#elif NTDDI_VERSION < 0x06000000
+#warning "If this fails to compile NTDDI_VERSION may be to low. See comments above."
+#endif
+// But once we define the values above we then get this linker error:
+// "tz.cpp:(.rdata$.refptr.FOLDERID_Downloads[.refptr.FOLDERID_Downloads]+0x0): "
+//     "undefined reference to `FOLDERID_Downloads'"
+// which #include <initguid.h> cures see:
+// https://support.microsoft.com/en-us/kb/130869
+#include <initguid.h>
+// But with <initguid.h> included, the error moves on to:
+// error: 'FOLDERID_Downloads' was not declared in this scope
+// Which #include <knownfolders.h> cures.
+#include <knownfolders.h>
 
-#  endif  // __MINGW32__
+#endif // __MINGW32__
 
-#  include <windows.h>
-#endif  // _WIN32
+#include <windows.h>
+#endif // _WIN32
 
 #include "tz_private.h"
 
 #ifdef __APPLE__
-#  include "ios.h"
+#include "ios.h"
 #else
-#  define TARGET_OS_IPHONE 0
-#  define TARGET_OS_SIMULATOR 0
+#define TARGET_OS_IPHONE 0
+#define TARGET_OS_SIMULATOR 0
 #endif
 
 #if USE_OS_TZDB
-#  include <dirent.h>
+#include <dirent.h>
 #endif
 #include <algorithm>
 #include <cctype>
@@ -108,102 +108,100 @@
 #include <iterator>
 #include <memory>
 #if USE_OS_TZDB
-#  include <queue>
+#include <queue>
 #endif
 #include <sstream>
 #include <string>
+#include <sys/stat.h>
 #include <tuple>
 #include <vector>
-#include <sys/stat.h>
 
 // unistd.h is used on some platforms as part of the the means to get
 // the current time zone. On Win32 windows.h provides a means to do it.
 // gcc/mingw supports unistd.h on Win32 but MSVC does not.
 
 #ifdef _WIN32
-#  ifdef WINAPI_FAMILY
-#    include <winapifamily.h>
-#    if WINAPI_FAMILY != WINAPI_FAMILY_DESKTOP_APP
-#      define WINRT
-#      define INSTALL .
-#    endif
-#  endif
+#ifdef WINAPI_FAMILY
+#include <winapifamily.h>
+#if WINAPI_FAMILY != WINAPI_FAMILY_DESKTOP_APP
+#define WINRT
+#define INSTALL .
+#endif
+#endif
 
-#  include <io.h> // _unlink etc.
+#include <io.h> // _unlink etc.
 
-#  if defined(__clang__)
-    struct IUnknown;    // fix for issue with static_cast<> in objbase.h
-                        //   (see https://github.com/philsquared/Catch/issues/690)
-#  endif
+#if defined(__clang__)
+struct IUnknown; // fix for issue with static_cast<> in objbase.h
+                 //   (see https://github.com/philsquared/Catch/issues/690)
+#endif
 
-#  include <shlobj.h> // CoTaskFree, ShGetKnownFolderPath etc.
-#  if HAS_REMOTE_API
-#    include <direct.h> // _mkdir
-#    include <shellapi.h> // ShFileOperation etc.
-#  endif  // HAS_REMOTE_API
-#else   // !_WIN32
-#  include <unistd.h>
-#  if !USE_OS_TZDB && !defined(INSTALL)
-#    include <wordexp.h>
-#  endif
-#  include <limits.h>
-#  include <string.h>
-#  if !USE_SHELL_API
-#    include <sys/stat.h>
-#    include <sys/fcntl.h>
-#    include <dirent.h>
-#    include <cstring>
-#    include <sys/wait.h>
-#    include <sys/types.h>
-#  endif //!USE_SHELL_API
-#endif  // !_WIN32
-
+#include <shlobj.h> // CoTaskFree, ShGetKnownFolderPath etc.
+#if HAS_REMOTE_API
+#include <direct.h>   // _mkdir
+#include <shellapi.h> // ShFileOperation etc.
+#endif                // HAS_REMOTE_API
+#else                 // !_WIN32
+#include <unistd.h>
+#if !USE_OS_TZDB && !defined(INSTALL)
+#include <wordexp.h>
+#endif
+#include <limits.h>
+#include <string.h>
+#if !USE_SHELL_API
+#include <cstring>
+#include <dirent.h>
+#include <sys/fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#endif //! USE_SHELL_API
+#endif // !_WIN32
 
 #if HAS_REMOTE_API
-   // Note curl includes windows.h so we must include curl AFTER definitions of things
-   // that affect windows.h such as NOMINMAX.
+// Note curl includes windows.h so we must include curl AFTER definitions of things
+// that affect windows.h such as NOMINMAX.
 #if defined(_MSC_VER) && defined(SHORTENED_CURL_INCLUDE)
-   // For rmt_curl nuget package
-#  include <curl.h>
+// For rmt_curl nuget package
+#include <curl.h>
 #else
-#  include <curl/curl.h>
+#include <curl/curl.h>
 #endif
 #endif
 
 #ifdef _WIN32
 static CONSTDATA char folder_delimiter = '\\';
-#else   // !_WIN32
+#else  // !_WIN32
 static CONSTDATA char folder_delimiter = '/';
-#endif  // !_WIN32
+#endif // !_WIN32
 
 #if defined(__GNUC__) && __GNUC__ < 5
-   // GCC 4.9 Bug 61489 Wrong warning with -Wmissing-field-initializers
-#  pragma GCC diagnostic push
-#  pragma GCC diagnostic ignored "-Wmissing-field-initializers"
-#endif  // defined(__GNUC__) && __GNUC__ < 5
+// GCC 4.9 Bug 61489 Wrong warning with -Wmissing-field-initializers
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#endif // defined(__GNUC__) && __GNUC__ < 5
 
 #if !USE_OS_TZDB
 
-#  ifdef _WIN32
-#    ifndef WINRT
+#ifdef _WIN32
+#ifndef WINRT
 
 namespace
 {
-    struct task_mem_deleter
+struct task_mem_deleter
+{
+    void operator()(wchar_t buf[])
     {
-        void operator()(wchar_t buf[])
-        {
-            if (buf != nullptr)
-                CoTaskMemFree(buf);
-        }
-    };
-    using co_task_mem_ptr = std::unique_ptr<wchar_t[], task_mem_deleter>;
+        if (buf != nullptr)
+            CoTaskMemFree(buf);
+    }
+};
+using co_task_mem_ptr = std::unique_ptr<wchar_t[], task_mem_deleter>;
 }
 
 // We might need to know certain locations even if not using the remote API,
 // so keep these routines out of that block for now.
-static
-std::string
+static std::string
 get_known_folder(const GUID& folderid)
 {
     std::string folder;
@@ -224,52 +222,49 @@ get_known_folder(const GUID& folderid)
     return folder;
 }
 
-#      ifndef INSTALL
+#ifndef INSTALL
 
 // Usually something like "c:\Users\username\Downloads".
-static
-std::string
+static std::string
 get_download_folder()
 {
     return get_known_folder(FOLDERID_Downloads);
 }
 
-#      endif  // !INSTALL
+#endif // !INSTALL
 
-#    endif // WINRT
-#  else // !_WIN32
+#endif // WINRT
+#else  // !_WIN32
 
-#    if !defined(INSTALL)
+#if !defined(INSTALL)
 
-static
-std::string
+static std::string
 expand_path(std::string path)
 {
-#      if TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE
     return date::iOSUtils::get_tzdata_path();
-#      else  // !TARGET_OS_IPHONE
+#else  // !TARGET_OS_IPHONE
     ::wordexp_t w{};
-    std::unique_ptr<::wordexp_t, void(*)(::wordexp_t*)> hold{&w, ::wordfree};
+    std::unique_ptr<::wordexp_t, void (*)(::wordexp_t*)> hold{&w, ::wordfree};
     ::wordexp(path.c_str(), &w, 0);
     if (w.we_wordc != 1)
         throw std::runtime_error("Cannot expand path: " + path);
     path = w.we_wordv[0];
     return path;
-#      endif  // !TARGET_OS_IPHONE
+#endif // !TARGET_OS_IPHONE
 }
 
-static
-std::string
+static std::string
 get_download_folder()
 {
     return expand_path("~/Downloads");
 }
 
-#    endif // !defined(INSTALL)
+#endif // !defined(INSTALL)
 
-#  endif  // !_WIN32
+#endif // !_WIN32
 
-#endif  // !USE_OS_TZDB
+#endif // !USE_OS_TZDB
 
 namespace date
 {
@@ -281,37 +276,34 @@ using namespace detail;
 
 #if !USE_OS_TZDB
 
-static
-std::string&
+static std::string&
 access_install()
 {
     static std::string install
 #ifndef INSTALL
 
-    = get_download_folder() + folder_delimiter + "tzdata";
+        = get_download_folder() + folder_delimiter + "tzdata";
 
-#else   // !INSTALL
+#else // !INSTALL
 
-#  define STRINGIZEIMP(x) #x
-#  define STRINGIZE(x) STRINGIZEIMP(x)
+#define STRINGIZEIMP(x) #x
+#define STRINGIZE(x) STRINGIZEIMP(x)
 
-    = STRINGIZE(INSTALL) + std::string(1, folder_delimiter) + "tzdata";
+        = STRINGIZE(INSTALL) + std::string(1, folder_delimiter) + "tzdata";
 
-    #undef STRINGIZEIMP
-    #undef STRINGIZE
-#endif  // !INSTALL
+#undef STRINGIZEIMP
+#undef STRINGIZE
+#endif // !INSTALL
 
     return install;
 }
 
-void
-set_install(const std::string& s)
+void set_install(const std::string& s)
 {
     access_install() = s;
 }
 
-static
-const std::string&
+static const std::string&
 get_install()
 {
     static const std::string& ref = access_install();
@@ -319,63 +311,61 @@ get_install()
 }
 
 #if HAS_REMOTE_API
-static
-std::string
+static std::string
 get_download_gz_file(const std::string& version)
 {
     auto file = get_install() + version + ".tar.gz";
     return file;
 }
-#endif  // HAS_REMOTE_API
+#endif // HAS_REMOTE_API
 
-#endif  // !USE_OS_TZDB
+#endif // !USE_OS_TZDB
 
 // These can be used to reduce the range of the database to save memory
 CONSTDATA auto min_year = date::year::min();
 CONSTDATA auto max_year = date::year::max();
 
-CONSTDATA auto min_day = date::January/1;
-CONSTDATA auto max_day = date::December/31;
+CONSTDATA auto min_day = date::January / 1;
+CONSTDATA auto max_day = date::December / 31;
 
 #if USE_OS_TZDB
 
-CONSTCD14 const sys_seconds min_seconds = sys_days(min_year/min_day);
+CONSTCD14 const sys_seconds min_seconds = sys_days(min_year / min_day);
 
-#endif  // USE_OS_TZDB
+#endif // USE_OS_TZDB
 
 #ifndef _WIN32
 
-static
-std::string
+static std::string
 discover_tz_dir()
 {
     struct stat sb;
     using namespace std;
-#  ifndef __APPLE__
+#ifndef __APPLE__
     CONSTDATA auto tz_dir_default = "/usr/share/zoneinfo";
     CONSTDATA auto tz_dir_buildroot = "/usr/share/zoneinfo/uclibc";
 
     // Check special path which is valid for buildroot with uclibc builds
-    if(stat(tz_dir_buildroot, &sb) == 0 && S_ISDIR(sb.st_mode))
+    if (stat(tz_dir_buildroot, &sb) == 0 && S_ISDIR(sb.st_mode))
         return tz_dir_buildroot;
-    else if(stat(tz_dir_default, &sb) == 0 && S_ISDIR(sb.st_mode))
+    else if (stat(tz_dir_default, &sb) == 0 && S_ISDIR(sb.st_mode))
         return tz_dir_default;
     else
         throw runtime_error("discover_tz_dir failed to find zoneinfo\n");
-#  else  // __APPLE__
-#      if TARGET_OS_IPHONE
-#          if TARGET_OS_SIMULATOR
+#else // __APPLE__
+#if TARGET_OS_IPHONE
+#if TARGET_OS_SIMULATOR
     return "/usr/share/zoneinfo";
-#          else
+#else
     return "/var/db/timezone/zoneinfo";
-#          endif
-#      else
+#endif
+#else
     CONSTDATA auto timezone = "/etc/localtime";
     if (!(lstat(timezone, &sb) == 0 && S_ISLNK(sb.st_mode) && sb.st_size > 0))
         throw runtime_error("discover_tz_dir failed\n");
     string result;
-    char rp[PATH_MAX+1] = {};
-    if (readlink(timezone, rp, sizeof(rp)-1) > 0)
+    char rp[PATH_MAX + 1] = {};
+    if (readlink(timezone, rp, sizeof(rp) - 1) > 0)
         result = string(rp);
     else
         throw system_error(errno, system_category(), "readlink() failed");
@@ -386,12 +376,11 @@ discover_tz_dir()
     if (i == string::npos)
         throw runtime_error("discover_tz_dir failed to find '/'\n");
     return result.substr(0, i);
-#      endif
-#  endif  // __APPLE__
+#endif
+#endif // __APPLE__
 }
 
-static
-const std::string&
+static const std::string&
 get_tz_dir()
 {
     static const std::string tz_dir = discover_tz_dir();
@@ -423,12 +412,11 @@ tzdb_list::~tzdb_list()
 }
 
 tzdb_list::tzdb_list(tzdb_list&& x) NOEXCEPT
-   : head_{x.head_.exchange(nullptr)}
+    : head_{x.head_.exchange(nullptr)}
 {
 }
 
-void
-tzdb_list::push_front(tzdb* tzdb) NOEXCEPT
+void tzdb_list::push_front(tzdb* tzdb) NOEXCEPT
 {
     tzdb->next = head_;
     head_ = tzdb;
@@ -451,8 +439,7 @@ struct tzdb_list::undocumented_helper
     }
 };
 
-static
-tzdb_list
+static tzdb_list
 create_tzdb()
 {
     tzdb_list tz_db;
@@ -467,8 +454,7 @@ get_tzdb_list()
     return tz_db;
 }
 
-static
-std::string
+static std::string
 parse3(std::istream& in)
 {
     std::string r(3, ' ');
@@ -479,11 +465,10 @@ parse3(std::istream& in)
     return r;
 }
 
-static
-unsigned
+static unsigned
 parse_month(std::istream& in)
 {
-    CONSTDATA char*const month_names[] =
+    CONSTDATA char* const month_names[] =
         {"Jan", "Feb", "Mar", "Apr", "May", "Jun",
          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     auto s = parse3(in);
@@ -497,34 +482,31 @@ parse_month(std::istream& in)
 
 #ifdef _WIN32
 
-static
-void
+static void
 sort_zone_mappings(std::vector<date::detail::timezone_mapping>& mappings)
 {
     std::sort(mappings.begin(), mappings.end(),
-        [](const date::detail::timezone_mapping& lhs,
-           const date::detail::timezone_mapping& rhs)->bool
-    {
-        auto other_result = lhs.other.compare(rhs.other);
-        if (other_result < 0)
-            return true;
-        else if (other_result == 0)
-        {
-            auto territory_result = lhs.territory.compare(rhs.territory);
-            if (territory_result < 0)
-                return true;
-            else if (territory_result == 0)
-            {
-                if (lhs.type < rhs.type)
-                    return true;
-            }
-        }
-        return false;
-    });
+              [](const date::detail::timezone_mapping& lhs,
+                 const date::detail::timezone_mapping& rhs) -> bool {
+                  auto other_result = lhs.other.compare(rhs.other);
+                  if (other_result < 0)
+                      return true;
+                  else if (other_result == 0)
+                  {
+                      auto territory_result = lhs.territory.compare(rhs.territory);
+                      if (territory_result < 0)
+                          return true;
+                      else if (territory_result == 0)
+                      {
+                          if (lhs.type < rhs.type)
+                              return true;
+                      }
+                  }
+                  return false;
+              });
 }
 
-static
-bool
+static bool
 native_to_standard_timezone_name(const std::string& native_tz_name,
                                  std::string& standard_tz_name)
 {
@@ -553,8 +535,7 @@ native_to_standard_timezone_name(const std::string& native_tz_name,
 // The parsing method is designed to be simple and quick. It is not overly
 // forgiving of change but it should diagnose basic format issues.
 // See timezone_mapping structure for more info.
-static
-std::vector<detail::timezone_mapping>
+static std::vector<detail::timezone_mapping>
 load_timezone_mappings_from_xml_file(const std::string& input_path)
 {
     std::size_t line_num = 0;
@@ -571,8 +552,7 @@ load_timezone_mappings_from_xml_file(const std::string& input_path)
         throw std::runtime_error(msg);
     }
 
-    auto error = [&input_path, &line_num](const char* info)
-    {
+    auto error = [&input_path, &line_num](const char* info) {
         std::string msg = "Error loading time zone mapping file \"";
         msg += input_path;
         msg += "\" at line ";
@@ -582,10 +562,8 @@ load_timezone_mappings_from_xml_file(const std::string& input_path)
         throw std::runtime_error(msg);
     };
     // [optional space]a="b"
-    auto read_attribute = [&line, &error]
-                          (const char* name, std::string& value, std::size_t startPos)
-                          ->std::size_t
-    {
+    auto read_attribute = [&line, &error](const char* name, std::string& value, std::size_t startPos)
+        -> std::size_t {
         value.clear();
         // Skip leading space before attribute name.
         std::size_t spos = line.find_first_not_of(' ', startPos);
@@ -639,10 +617,11 @@ load_timezone_mappings_from_xml_file(const std::string& input_path)
     bool mapTimezonesCloseTagFound = false;
     std::size_t mapZonePos = std::string::npos;
     std::size_t mapTimezonesPos = std::string::npos;
-    CONSTDATA char mapTimeZonesOpeningTag[] = { "<mapTimezones " };
-    CONSTDATA char mapZoneOpeningTag[] = { "<mapZone " };
+    CONSTDATA char mapTimeZonesOpeningTag[] = {"<mapTimezones "};
+    CONSTDATA char mapZoneOpeningTag[] = {"<mapZone "};
     CONSTDATA std::size_t mapZoneOpeningTagLen = sizeof(mapZoneOpeningTag) /
-                                                 sizeof(mapZoneOpeningTag[0]) - 1;
+                                                     sizeof(mapZoneOpeningTag[0]) -
+                                                 1;
     while (!mapTimezonesOpenTagFound)
     {
         std::getline(is, line);
@@ -703,15 +682,14 @@ load_timezone_mappings_from_xml_file(const std::string& input_path)
     return mappings;
 }
 
-#endif  // _WIN32
+#endif // _WIN32
 
 // Parsing helpers
 
-static
-unsigned
+static unsigned
 parse_dow(std::istream& in)
 {
-    CONSTDATA char*const dow_names[] =
+    CONSTDATA char* const dow_names[] =
         {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
     auto s = parse3(in);
     auto dow = std::find(std::begin(dow_names), std::end(dow_names), s) - dow_names;
@@ -720,8 +698,7 @@ parse_dow(std::istream& in)
     return static_cast<unsigned>(dow);
 }
 
-static
-std::chrono::seconds
+static std::chrono::seconds
 parse_unsigned_time(std::istream& in)
 {
     using namespace std::chrono;
@@ -743,8 +720,7 @@ parse_unsigned_time(std::istream& in)
     return r;
 }
 
-static
-std::chrono::seconds
+static std::chrono::seconds
 parse_signed_time(std::istream& in)
 {
     ws(in);
@@ -812,15 +788,14 @@ detail::MonthDayTime::month() const
     return u.month_day_weekday_.month_day_.month();
 }
 
-int
-detail::MonthDayTime::compare(date::year y, const MonthDayTime& x, date::year yx,
-                      std::chrono::seconds offset, std::chrono::minutes prev_save) const
+int detail::MonthDayTime::compare(date::year y, const MonthDayTime& x, date::year yx,
+                                  std::chrono::seconds offset, std::chrono::minutes prev_save) const
 {
     if (zone_ != x.zone_)
     {
         auto dp0 = to_sys_days(y);
         auto dp1 = x.to_sys_days(yx);
-        if (std::abs((dp0-dp1).count()) > 1)
+        if (std::abs((dp0 - dp1).count()) > 1)
             return dp0 < dp1 ? -1 : 1;
         if (zone_ == tz::local)
         {
@@ -828,7 +803,8 @@ detail::MonthDayTime::compare(date::year y, const MonthDayTime& x, date::year yx
             if (x.zone_ == tz::utc)
                 tp0 -= offset;
             auto tp1 = x.to_time_point(yx);
-            return tp0 < tp1 ? -1 : tp0 == tp1 ? 0 : 1;
+            return tp0 < tp1 ? -1 : tp0 == tp1 ? 0
+                                               : 1;
         }
         else if (zone_ == tz::standard)
         {
@@ -838,7 +814,8 @@ detail::MonthDayTime::compare(date::year y, const MonthDayTime& x, date::year yx
                 tp1 -= prev_save;
             else
                 tp0 -= offset;
-            return tp0 < tp1 ? -1 : tp0 == tp1 ? 0 : 1;
+            return tp0 < tp1 ? -1 : tp0 == tp1 ? 0
+                                               : 1;
         }
         // zone_ == tz::utc
         auto tp0 = to_time_point(y);
@@ -847,16 +824,18 @@ detail::MonthDayTime::compare(date::year y, const MonthDayTime& x, date::year yx
             tp1 -= offset + prev_save;
         else
             tp1 -= offset;
-        return tp0 < tp1 ? -1 : tp0 == tp1 ? 0 : 1;
+        return tp0 < tp1 ? -1 : tp0 == tp1 ? 0
+                                           : 1;
     }
     auto const t0 = to_time_point(y);
     auto const t1 = x.to_time_point(yx);
-    return t0 < t1 ? -1 : t0 == t1 ? 0 : 1;
+    return t0 < t1 ? -1 : t0 == t1 ? 0
+                                   : 1;
 }
 
 sys_seconds
 detail::MonthDayTime::to_sys(date::year y, std::chrono::seconds offset,
-                     std::chrono::seconds save) const
+                             std::chrono::seconds save) const
 {
     using namespace date;
     using namespace std::chrono;
@@ -897,23 +876,22 @@ detail::MonthDayTime::to_sys_days(date::year y) const
     switch (type_)
     {
     case month_day:
-        return sys_days(y/u.month_day_);
+        return sys_days(y / u.month_day_);
     case month_last_dow:
-        return sys_days(y/u.month_weekday_last_);
-    case lteq:
-        {
-            auto const x = y/u.month_day_weekday_.month_day_;
-            auto const wd1 = weekday(static_cast<sys_days>(x));
-            auto const wd0 = u.month_day_weekday_.weekday_;
-            return sys_days(x) - (wd1-wd0);
-        }
+        return sys_days(y / u.month_weekday_last_);
+    case lteq: {
+        auto const x = y / u.month_day_weekday_.month_day_;
+        auto const wd1 = weekday(static_cast<sys_days>(x));
+        auto const wd0 = u.month_day_weekday_.weekday_;
+        return sys_days(x) - (wd1 - wd0);
+    }
     case gteq:
         break;
     }
-    auto const x = y/u.month_day_weekday_.month_day_;
+    auto const x = y / u.month_day_weekday_.month_day_;
     auto const wd1 = u.month_day_weekday_.weekday_;
     auto const wd0 = weekday(static_cast<sys_days>(x));
-    return sys_days(x) + (wd1-wd0);
+    return sys_days(x) + (wd1 - wd0);
 }
 
 sys_seconds
@@ -923,8 +901,7 @@ detail::MonthDayTime::to_time_point(date::year y) const
     return to_sys_days(y) + s_ + h_ + m_;
 }
 
-void
-detail::MonthDayTime::canonicalize(date::year y)
+void detail::MonthDayTime::canonicalize(date::year y)
 {
     using namespace std::chrono;
     using namespace date;
@@ -932,33 +909,30 @@ detail::MonthDayTime::canonicalize(date::year y)
     {
     case month_day:
         return;
-    case month_last_dow:
-        {
-            auto const ymd = year_month_day(sys_days(y/u.month_weekday_last_));
-            u.month_day_ = ymd.month()/ymd.day();
-            type_ = month_day;
-            return;
-        }
-    case lteq:
-        {
-            auto const x = y/u.month_day_weekday_.month_day_;
-            auto const wd1 = weekday(static_cast<sys_days>(x));
-            auto const wd0 = u.month_day_weekday_.weekday_;
-            auto const ymd = year_month_day(sys_days(x) - (wd1-wd0));
-            u.month_day_ = ymd.month()/ymd.day();
-            type_ = month_day;
-            return;
-        }
-    case gteq:
-        {
-            auto const x = y/u.month_day_weekday_.month_day_;
-            auto const wd1 = u.month_day_weekday_.weekday_;
-            auto const wd0 = weekday(static_cast<sys_days>(x));
-            auto const ymd = year_month_day(sys_days(x) + (wd1-wd0));
-            u.month_day_ = ymd.month()/ymd.day();
-            type_ = month_day;
-            return;
-        }
+    case month_last_dow: {
+        auto const ymd = year_month_day(sys_days(y / u.month_weekday_last_));
+        u.month_day_ = ymd.month() / ymd.day();
+        type_ = month_day;
+        return;
+    }
+    case lteq: {
+        auto const x = y / u.month_day_weekday_.month_day_;
+        auto const wd1 = weekday(static_cast<sys_days>(x));
+        auto const wd0 = u.month_day_weekday_.weekday_;
+        auto const ymd = year_month_day(sys_days(x) - (wd1 - wd0));
+        u.month_day_ = ymd.month() / ymd.day();
+        type_ = month_day;
+        return;
+    }
+    case gteq: {
+        auto const x = y / u.month_day_weekday_.month_day_;
+        auto const wd1 = u.month_day_weekday_.weekday_;
+        auto const wd0 = weekday(static_cast<sys_days>(x));
+        auto const ymd = year_month_day(sys_days(x) + (wd1 - wd0));
+        u.month_day_ = ymd.month() / ymd.day();
+        type_ = month_day;
+        return;
+    }
     }
 }
 
@@ -968,7 +942,7 @@ detail::operator>>(std::istream& is, MonthDayTime& x)
     using namespace date;
     using namespace std::chrono;
     assert(((std::ios::failbit | std::ios::badbit) & is.exceptions()) ==
-            (std::ios::failbit | std::ios::badbit));
+           (std::ios::failbit | std::ios::badbit));
     x = MonthDayTime{};
     if (!is.eof() && ws(is) && !is.eof() && is.peek() != '#')
     {
@@ -981,7 +955,7 @@ detail::operator>>(std::istream& is, MonthDayTime& x)
                     is.get();
                 auto dow = parse_dow(is);
                 x.type_ = MonthDayTime::month_last_dow;
-                x.u = date::month(m)/weekday(dow)[last];
+                x.u = date::month(m) / weekday(dow)[last];
             }
             else if (std::isalpha(is.peek()))
             {
@@ -997,23 +971,21 @@ detail::operator>>(std::istream& is, MonthDayTime& x)
                     int d;
                     is >> d;
                     if (d < 1 || d > 31)
-                        throw std::runtime_error(std::string("bad operator: ") + c + c2
-                                 + std::to_string(d));
+                        throw std::runtime_error(std::string("bad operator: ") + c + c2 + std::to_string(d));
                     x.type_ = c == '<' ? MonthDayTime::lteq : MonthDayTime::gteq;
-                    x.u = MonthDayTime::pair{ date::month(m) / d, date::weekday(dow) };
+                    x.u = MonthDayTime::pair{date::month(m) / d, date::weekday(dow)};
                 }
                 else
                     throw std::runtime_error(std::string("bad operator: ") + c);
             }
-            else  // if (std::isdigit(is.peek())
+            else // if (std::isdigit(is.peek())
             {
                 int d;
                 is >> d;
                 if (d < 1 || d > 31)
-                    throw std::runtime_error(std::string("day of month: ")
-                             + std::to_string(d));
+                    throw std::runtime_error(std::string("day of month: ") + std::to_string(d));
                 x.type_ = MonthDayTime::month_day;
-                x.u = date::month(m)/d;
+                x.u = date::month(m) / d;
             }
             if (!is.eof() && ws(is) && !is.eof() && is.peek() != '#')
             {
@@ -1050,7 +1022,7 @@ detail::operator>>(std::istream& is, MonthDayTime& x)
         }
         else
         {
-            x.u = month{m}/1;
+            x.u = month{m} / 1;
         }
     }
     return is;
@@ -1075,8 +1047,8 @@ detail::operator<<(std::ostream& os, const MonthDayTime& x)
         if ((static_cast<unsigned>(x.day()) - 1) % 7 == 0)
         {
             os << (x.u.month_day_weekday_.month_day_.month() /
-                   x.u.month_day_weekday_.weekday_[
-                       (static_cast<unsigned>(x.day()) - 1)/7+1]) << "              ";
+                   x.u.month_day_weekday_.weekday_[(static_cast<unsigned>(x.day()) - 1) / 7 + 1])
+               << "              ";
         }
         else
         {
@@ -1144,7 +1116,7 @@ detail::Rule::Rule(const std::string& s)
             in >> x;
             ending_year_ = year{x};
         }
-        in >> word;  // TYPE (always "-")
+        in >> word; // TYPE (always "-")
         assert(word == "-");
         in >> starting_at_;
         save_ = duration_cast<minutes>(parse_signed_time(in));
@@ -1171,8 +1143,7 @@ detail::Rule::Rule(const Rule& r, date::year starting_year, date::year ending_ye
 {
 }
 
-bool
-detail::operator==(const Rule& x, const Rule& y)
+bool detail::operator==(const Rule& x, const Rule& y)
 {
     if (std::tie(x.name_, x.save_, x.starting_year_, x.ending_year_) ==
         std::tie(y.name_, y.save_, y.starting_year_, y.ending_year_))
@@ -1180,8 +1151,7 @@ detail::operator==(const Rule& x, const Rule& y)
     return false;
 }
 
-bool
-detail::operator<(const Rule& x, const Rule& y)
+bool detail::operator<(const Rule& x, const Rule& y)
 {
     using namespace std::chrono;
     auto const xm = x.month();
@@ -1195,50 +1165,42 @@ detail::operator<(const Rule& x, const Rule& y)
     return x.day() < y.day();
 }
 
-bool
-detail::operator==(const Rule& x, const date::year& y)
+bool detail::operator==(const Rule& x, const date::year& y)
 {
     return x.starting_year_ <= y && y <= x.ending_year_;
 }
 
-bool
-detail::operator<(const Rule& x, const date::year& y)
+bool detail::operator<(const Rule& x, const date::year& y)
 {
     return x.ending_year_ < y;
 }
 
-bool
-detail::operator==(const date::year& x, const Rule& y)
+bool detail::operator==(const date::year& x, const Rule& y)
 {
     return y.starting_year_ <= x && x <= y.ending_year_;
 }
 
-bool
-detail::operator<(const date::year& x, const Rule& y)
+bool detail::operator<(const date::year& x, const Rule& y)
 {
     return x < y.starting_year_;
 }
 
-bool
-detail::operator==(const Rule& x, const std::string& y)
+bool detail::operator==(const Rule& x, const std::string& y)
 {
     return x.name() == y;
 }
 
-bool
-detail::operator<(const Rule& x, const std::string& y)
+bool detail::operator<(const Rule& x, const std::string& y)
 {
     return x.name() < y;
 }
 
-bool
-detail::operator==(const std::string& x, const Rule& y)
+bool detail::operator==(const std::string& x, const Rule& y)
 {
     return y.name() == x;
 }
 
-bool
-detail::operator<(const std::string& x, const Rule& y)
+bool detail::operator<(const std::string& x, const Rule& y)
 {
     return x < y.name();
 }
@@ -1287,8 +1249,7 @@ struct find_rule_by_name
     }
 };
 
-bool
-detail::Rule::overlaps(const Rule& x, const Rule& y)
+bool detail::Rule::overlaps(const Rule& x, const Rule& y)
 {
     // assume x.starting_year_ <= y.starting_year_;
     if (!(x.starting_year_ <= y.starting_year_))
@@ -1302,8 +1263,7 @@ detail::Rule::overlaps(const Rule& x, const Rule& y)
     return !(x.starting_year_ == y.starting_year_ && x.ending_year_ == y.ending_year_);
 }
 
-void
-detail::Rule::split(std::vector<Rule>& rules, std::size_t i, std::size_t k, std::size_t& e)
+void detail::Rule::split(std::vector<Rule>& rules, std::size_t i, std::size_t k, std::size_t& e)
 {
     using namespace date;
     using difference_type = std::vector<Rule>::iterator::difference_type;
@@ -1319,29 +1279,29 @@ detail::Rule::split(std::vector<Rule>& rules, std::size_t i, std::size_t k, std:
     {
         if (rules[k].ending_year_ < rules[i].ending_year_)
         {
-            rules.insert(rules.begin() + static_cast<difference_type>(k+1),
+            rules.insert(rules.begin() + static_cast<difference_type>(k + 1),
                          Rule(rules[i], rules[k].ending_year_ + years{1},
                               std::move(rules[i].ending_year_)));
             ++e;
             rules[i].ending_year_ = rules[k].ending_year_;
         }
-        else  // rules[k].ending_year_ > rules[i].ending_year_
+        else // rules[k].ending_year_ > rules[i].ending_year_
         {
-            rules.insert(rules.begin() + static_cast<difference_type>(k+1),
+            rules.insert(rules.begin() + static_cast<difference_type>(k + 1),
                          Rule(rules[k], rules[i].ending_year_ + years{1},
                               std::move(rules[k].ending_year_)));
             ++e;
             rules[k].ending_year_ = rules[i].ending_year_;
         }
     }
-    else  // rules[i].starting_year_ < rules[k].starting_year_
+    else // rules[i].starting_year_ < rules[k].starting_year_
     {
         if (rules[k].ending_year_ < rules[i].ending_year_)
         {
             rules.insert(rules.begin() + static_cast<difference_type>(k),
                          Rule(rules[i], rules[k].starting_year_, rules[k].ending_year_));
             ++k;
-            rules.insert(rules.begin() + static_cast<difference_type>(k+1),
+            rules.insert(rules.begin() + static_cast<difference_type>(k + 1),
                          Rule(rules[i], rules[k].ending_year_ + years{1},
                               std::move(rules[i].ending_year_)));
             rules[i].ending_year_ = rules[k].starting_year_ - years{1};
@@ -1352,18 +1312,18 @@ detail::Rule::split(std::vector<Rule>& rules, std::size_t i, std::size_t k, std:
             rules.insert(rules.begin() + static_cast<difference_type>(k),
                          Rule(rules[i], rules[k].starting_year_, rules[i].ending_year_));
             ++k;
-            rules.insert(rules.begin() + static_cast<difference_type>(k+1),
+            rules.insert(rules.begin() + static_cast<difference_type>(k + 1),
                          Rule(rules[k], rules[i].ending_year_ + years{1},
-                         std::move(rules[k].ending_year_)));
+                              std::move(rules[k].ending_year_)));
             e += 2;
             rules[k].ending_year_ = std::move(rules[i].ending_year_);
             rules[i].ending_year_ = rules[k].starting_year_ - years{1};
         }
-        else  // rules[k].ending_year_ == rules[i].ending_year_
+        else // rules[k].ending_year_ == rules[i].ending_year_
         {
             rules.insert(rules.begin() + static_cast<difference_type>(k),
                          Rule(rules[i], rules[k].starting_year_,
-                         std::move(rules[i].ending_year_)));
+                              std::move(rules[i].ending_year_)));
             ++k;
             ++e;
             rules[i].ending_year_ = rules[k].starting_year_ - years{1};
@@ -1371,8 +1331,7 @@ detail::Rule::split(std::vector<Rule>& rules, std::size_t i, std::size_t k, std:
     }
 }
 
-void
-detail::Rule::split_overlaps(std::vector<Rule>& rules, std::size_t i, std::size_t& e)
+void detail::Rule::split_overlaps(std::vector<Rule>& rules, std::size_t i, std::size_t& e)
 {
     using difference_type = std::vector<Rule>::iterator::difference_type;
     auto j = i;
@@ -1395,23 +1354,22 @@ detail::Rule::split_overlaps(std::vector<Rule>& rules, std::size_t i, std::size_
     }
 }
 
-void
-detail::Rule::split_overlaps(std::vector<Rule>& rules)
+void detail::Rule::split_overlaps(std::vector<Rule>& rules)
 {
     using difference_type = std::vector<Rule>::iterator::difference_type;
     for (std::size_t i = 0; i < rules.size();)
     {
         auto e = static_cast<std::size_t>(std::upper_bound(
-            rules.cbegin()+static_cast<difference_type>(i), rules.cend(), rules[i].name(),
-            [](const std::string& nm, const Rule& x)
-            {
-                return nm < x.name();
-            }) - rules.cbegin());
+                                              rules.cbegin() + static_cast<difference_type>(i), rules.cend(), rules[i].name(),
+                                              [](const std::string& nm, const Rule& x) {
+                                                  return nm < x.name();
+                                              }) -
+                                          rules.cbegin());
         split_overlaps(rules, i, e);
         auto first_rule = rules.begin() + static_cast<difference_type>(i);
         auto last_rule = rules.begin() + static_cast<difference_type>(e);
         auto t = std::lower_bound(first_rule, last_rule, min_year);
-        if (t > first_rule+1)
+        if (t > first_rule + 1)
         {
             if (t == last_rule || t->starting_year() >= min_year)
                 --t;
@@ -1440,8 +1398,7 @@ detail::Rule::split_overlaps(std::vector<Rule>& rules)
 // that rule.  If there is no previous rule, returns nullptr and year::min().
 // Preconditions:
 //     r->starting_year() <= y && y <= r->ending_year()
-static
-std::pair<const Rule*, date::year>
+static std::pair<const Rule*, date::year>
 find_previous_rule(const Rule* r, date::year y)
 {
     using namespace date;
@@ -1449,7 +1406,7 @@ find_previous_rule(const Rule* r, date::year y)
     if (y == r->starting_year())
     {
         if (r == &rules.front() || r->name() != r[-1].name())
-            std::terminate();  // never called with first rule
+            std::terminate(); // never called with first rule
         --r;
         if (y == r->starting_year())
             return {r, y};
@@ -1476,21 +1433,20 @@ find_previous_rule(const Rule* r, date::year y)
 // Preconditions:
 //     first <= r && r < last && r->starting_year() <= y && y <= r->ending_year()
 //     [first, last) all have the same name
-static
-std::pair<const Rule*, date::year>
+static std::pair<const Rule*, date::year>
 find_next_rule(const Rule* first_rule, const Rule* last_rule, const Rule* r, date::year y)
 {
     using namespace date;
     if (y == r->ending_year())
     {
-        if (r == last_rule-1)
+        if (r == last_rule - 1)
             return {nullptr, year::max()};
         ++r;
         if (y == r->ending_year())
             return {r, y};
         return {r, r->starting_year()};
     }
-    if (r == last_rule-1 || r->ending_year() < r[1].ending_year())
+    if (r == last_rule - 1 || r->ending_year() < r[1].ending_year())
     {
         while (r > first_rule && r->starting_year() == r[-1].starting_year())
             --r;
@@ -1507,8 +1463,7 @@ find_next_rule(const Rule* first_rule, const Rule* last_rule, const Rule* r, dat
 // that rule.  If there is no next rule, return nullptr and year::max().
 // Preconditions:
 //     r->starting_year() <= y && y <= r->ending_year()
-static
-std::pair<const Rule*, date::year>
+static std::pair<const Rule*, date::year>
 find_next_rule(const Rule* r, date::year y)
 {
     using namespace date;
@@ -1534,8 +1489,7 @@ find_next_rule(const Rule* r, date::year y)
     return {r, y};
 }
 
-static
-const Rule*
+static const Rule*
 find_first_std_rule(const std::pair<const Rule*, const Rule*>& eqr)
 {
     auto r = eqr.first;
@@ -1544,14 +1498,12 @@ find_first_std_rule(const std::pair<const Rule*, const Rule*>& eqr)
     {
         std::tie(r, ry) = find_next_rule(eqr.first, eqr.second, r, ry);
         if (r == nullptr)
-            throw std::runtime_error("Could not find standard offset in rule "
-                                     + eqr.first->name());
+            throw std::runtime_error("Could not find standard offset in rule " + eqr.first->name());
     }
     return r;
 }
 
-static
-std::pair<const Rule*, date::year>
+static std::pair<const Rule*, date::year>
 find_rule_for_zone(const std::pair<const Rule*, const Rule*>& eqr,
                    const date::year& y, const std::chrono::seconds& offset,
                    const MonthDayTime& mdt)
@@ -1578,8 +1530,7 @@ find_rule_for_zone(const std::pair<const Rule*, const Rule*>& eqr,
     return {prev_rule, prev_year};
 }
 
-static
-std::pair<const Rule*, date::year>
+static std::pair<const Rule*, date::year>
 find_rule_for_zone(const std::pair<const Rule*, const Rule*>& eqr,
                    const sys_seconds& tp_utc,
                    const local_seconds& tp_std,
@@ -1617,8 +1568,7 @@ find_rule_for_zone(const std::pair<const Rule*, const Rule*>& eqr,
     return {prev_rule, prev_year};
 }
 
-static
-sys_info
+static sys_info
 find_rule(const std::pair<const Rule*, date::year>& first_rule,
           const std::pair<const Rule*, date::year>& last_rule,
           const date::year& y, const std::chrono::seconds& offset,
@@ -1629,7 +1579,7 @@ find_rule(const std::pair<const Rule*, date::year>& first_rule,
     using namespace date;
     auto r = first_rule.first;
     auto ry = first_rule.second;
-    sys_info x{sys_days(year::min()/min_day), sys_days(year::max()/max_day),
+    sys_info x{sys_days(year::min() / min_day), sys_days(year::max() / max_day),
                seconds{0}, initial_save, initial_abbrev};
     while (r != nullptr)
     {
@@ -1645,7 +1595,7 @@ find_rule(const std::pair<const Rule*, date::year>& first_rule,
             }
             if (tx < tr)
             {
-                std::tie(r, ry) = find_previous_rule(r, ry);  // can't return nullptr for r
+                std::tie(r, ry) = find_previous_rule(r, ry); // can't return nullptr for r
                 assert(r != nullptr);
             }
             // r != nullptr && tx >= tr (if tr were to be recomputed)
@@ -1657,16 +1607,16 @@ find_rule(const std::pair<const Rule*, date::year>& first_rule,
             x.abbrev = r->abbrev();
             if (!(r == last_rule.first && ry == last_rule.second))
             {
-                std::tie(r, ry) = find_next_rule(r, ry);  // can't return nullptr for r
+                std::tie(r, ry) = find_next_rule(r, ry); // can't return nullptr for r
                 assert(r != nullptr);
                 x.end = r->mdt().to_sys(ry, offset, x.save);
             }
             else
-                x.end = sys_days(year::max()/max_day);
+                x.end = sys_days(year::max() / max_day);
             break;
         }
         x.save = r->save();
-        std::tie(r, ry) = find_next_rule(r, ry);  // Can't return nullptr for r
+        std::tie(r, ry) = find_next_rule(r, ry); // Can't return nullptr for r
         assert(r != nullptr);
     }
     return x;
@@ -1689,7 +1639,7 @@ detail::zonelet::~zonelet()
 detail::zonelet::zonelet()
 {
 #if !defined(_MSC_VER) || (_MSC_VER >= 1900)
-    ::new(&u.rule_) std::string();
+    ::new (&u.rule_) std::string();
 #endif
 }
 
@@ -1709,9 +1659,9 @@ detail::zonelet::zonelet(const zonelet& i)
 {
 #if !defined(_MSC_VER) || (_MSC_VER >= 1900)
     if (tag_ == has_save)
-        ::new(&u.save_) std::chrono::minutes(i.u.save_);
+        ::new (&u.save_) std::chrono::minutes(i.u.save_);
     else
-        ::new(&u.rule_) std::string(i.u.rule_);
+        ::new (&u.rule_) std::string(i.u.rule_);
 #else
     if (tag_ == has_save)
         u.save_ = i.u.save_;
@@ -1720,7 +1670,7 @@ detail::zonelet::zonelet(const zonelet& i)
 #endif
 }
 
-#endif  // !USE_OS_TZDB
+#endif // !USE_OS_TZDB
 
 // time_zone
 
@@ -1736,73 +1686,58 @@ enum class endian
 {
     native = __BYTE_ORDER__,
     little = __ORDER_LITTLE_ENDIAN__,
-    big    = __ORDER_BIG_ENDIAN__
+    big = __ORDER_BIG_ENDIAN__
 };
 
-static
-inline
-std::uint32_t
+static inline std::uint32_t
 reverse_bytes(std::uint32_t i)
 {
-    return
-        (i & 0xff000000u) >> 24 |
-        (i & 0x00ff0000u) >> 8 |
-        (i & 0x0000ff00u) << 8 |
-        (i & 0x000000ffu) << 24;
+    return (i & 0xff000000u) >> 24 |
+           (i & 0x00ff0000u) >> 8 |
+           (i & 0x0000ff00u) << 8 |
+           (i & 0x000000ffu) << 24;
 }
 
-static
-inline
-std::uint64_t
+static inline std::uint64_t
 reverse_bytes(std::uint64_t i)
 {
-    return
-        (i & 0xff00000000000000ull) >> 56 |
-        (i & 0x00ff000000000000ull) >> 40 |
-        (i & 0x0000ff0000000000ull) >> 24 |
-        (i & 0x000000ff00000000ull) >> 8 |
-        (i & 0x00000000ff000000ull) << 8 |
-        (i & 0x0000000000ff0000ull) << 24 |
-        (i & 0x000000000000ff00ull) << 40 |
-        (i & 0x00000000000000ffull) << 56;
+    return (i & 0xff00000000000000ull) >> 56 |
+           (i & 0x00ff000000000000ull) >> 40 |
+           (i & 0x0000ff0000000000ull) >> 24 |
+           (i & 0x000000ff00000000ull) >> 8 |
+           (i & 0x00000000ff000000ull) << 8 |
+           (i & 0x0000000000ff0000ull) << 24 |
+           (i & 0x000000000000ff00ull) << 40 |
+           (i & 0x00000000000000ffull) << 56;
 }
 
 template <class T>
-static
-inline
-void
+static inline void
 maybe_reverse_bytes(T&, std::false_type)
 {
 }
 
-static
-inline
-void
+static inline void
 maybe_reverse_bytes(std::int32_t& t, std::true_type)
 {
     t = static_cast<std::int32_t>(reverse_bytes(static_cast<std::uint32_t>(t)));
 }
 
-static
-inline
-void
+static inline void
 maybe_reverse_bytes(std::int64_t& t, std::true_type)
 {
     t = static_cast<std::int64_t>(reverse_bytes(static_cast<std::uint64_t>(t)));
 }
 
 template <class T>
-static
-inline
-void
+static inline void
 maybe_reverse_bytes(T& t)
 {
     maybe_reverse_bytes(t, std::integral_constant<bool,
                                                   endian::native == endian::little>{});
 }
 
-static
-void
+static void
 load_header(std::istream& inf)
 {
     // Read TZif
@@ -1823,8 +1758,7 @@ load_header(std::istream& inf)
 #endif
 }
 
-static
-unsigned char
+static unsigned char
 load_version(std::istream& inf)
 {
     // Read version
@@ -1833,19 +1767,17 @@ load_version(std::istream& inf)
     return static_cast<unsigned char>(v);
 }
 
-static
-void
+static void
 skip_reserve(std::istream& inf)
 {
     inf.ignore(15);
 }
 
-static
-void
+static void
 load_counts(std::istream& inf,
             std::int32_t& tzh_ttisgmtcnt, std::int32_t& tzh_ttisstdcnt,
-            std::int32_t& tzh_leapcnt,    std::int32_t& tzh_timecnt,
-            std::int32_t& tzh_typecnt,    std::int32_t& tzh_charcnt)
+            std::int32_t& tzh_leapcnt, std::int32_t& tzh_timecnt,
+            std::int32_t& tzh_typecnt, std::int32_t& tzh_charcnt)
 {
     // Read counts;
     inf.read(reinterpret_cast<char*>(&tzh_ttisgmtcnt), 4);
@@ -1863,8 +1795,7 @@ load_counts(std::istream& inf,
 }
 
 template <class TimeType>
-static
-std::vector<detail::transition>
+static std::vector<detail::transition>
 load_transitions(std::istream& inf, std::int32_t tzh_timecnt)
 {
     // Read transitions
@@ -1883,8 +1814,7 @@ load_transitions(std::istream& inf, std::int32_t tzh_timecnt)
     return transitions;
 }
 
-static
-std::vector<std::uint8_t>
+static std::vector<std::uint8_t>
 load_indices(std::istream& inf, std::int32_t tzh_timecnt)
 {
     // Read indices
@@ -1899,8 +1829,7 @@ load_indices(std::istream& inf, std::int32_t tzh_timecnt)
     return indices;
 }
 
-static
-std::vector<ttinfo>
+static std::vector<ttinfo>
 load_ttinfo(std::istream& inf, std::int32_t tzh_typecnt)
 {
     // Read ttinfo
@@ -1916,8 +1845,7 @@ load_ttinfo(std::istream& inf, std::int32_t tzh_typecnt)
     return ttinfos;
 }
 
-static
-std::string
+static std::string
 load_abbreviations(std::istream& inf, std::int32_t tzh_charcnt)
 {
     // Read abbreviations
@@ -1930,8 +1858,7 @@ load_abbreviations(std::istream& inf, std::int32_t tzh_charcnt)
 #if !MISSING_LEAP_SECONDS
 
 template <class TimeType>
-static
-std::vector<leap_second>
+static std::vector<leap_second>
 load_leaps(std::istream& inf, std::int32_t tzh_leapcnt)
 {
     // Read tzh_leapcnt pairs
@@ -1940,32 +1867,30 @@ load_leaps(std::istream& inf, std::int32_t tzh_leapcnt)
     leap_seconds.reserve(static_cast<std::size_t>(tzh_leapcnt));
     for (std::int32_t i = 0; i < tzh_leapcnt; ++i)
     {
-        TimeType     t0;
+        TimeType t0;
         std::int32_t t1;
         inf.read(reinterpret_cast<char*>(&t0), sizeof(t0));
         inf.read(reinterpret_cast<char*>(&t1), sizeof(t1));
         maybe_reverse_bytes(t0);
         maybe_reverse_bytes(t1);
-        leap_seconds.emplace_back(sys_seconds{seconds{t0 - (t1-1)}},
+        leap_seconds.emplace_back(sys_seconds{seconds{t0 - (t1 - 1)}},
                                   detail::undocumented{});
     }
     return leap_seconds;
 }
 
 template <class TimeType>
-static
-std::vector<leap_second>
+static std::vector<leap_second>
 load_leap_data(std::istream& inf,
                std::int32_t tzh_leapcnt, std::int32_t tzh_timecnt,
                std::int32_t tzh_typecnt, std::int32_t tzh_charcnt)
 {
-    inf.ignore(tzh_timecnt*static_cast<std::int32_t>(sizeof(TimeType)) + tzh_timecnt +
-               tzh_typecnt*6 + tzh_charcnt);
+    inf.ignore(tzh_timecnt * static_cast<std::int32_t>(sizeof(TimeType)) + tzh_timecnt +
+               tzh_typecnt * 6 + tzh_charcnt);
     return load_leaps<TimeType>(inf, tzh_leapcnt);
 }
 
-static
-std::vector<leap_second>
+static std::vector<leap_second>
 load_just_leaps(std::istream& inf)
 {
     // Read tzh_leapcnt pairs
@@ -1973,37 +1898,36 @@ load_just_leaps(std::istream& inf)
     load_header(inf);
     auto v = load_version(inf);
     std::int32_t tzh_ttisgmtcnt, tzh_ttisstdcnt, tzh_leapcnt,
-                 tzh_timecnt,    tzh_typecnt,    tzh_charcnt;
+        tzh_timecnt, tzh_typecnt, tzh_charcnt;
     skip_reserve(inf);
     load_counts(inf, tzh_ttisgmtcnt, tzh_ttisstdcnt, tzh_leapcnt,
-                     tzh_timecnt,    tzh_typecnt,    tzh_charcnt);
+                tzh_timecnt, tzh_typecnt, tzh_charcnt);
     if (v == 0)
         return load_leap_data<int32_t>(inf, tzh_leapcnt, tzh_timecnt, tzh_typecnt,
                                        tzh_charcnt);
 #if !defined(NDEBUG)
-    inf.ignore((4+1)*tzh_timecnt + 6*tzh_typecnt + tzh_charcnt + 8*tzh_leapcnt +
+    inf.ignore((4 + 1) * tzh_timecnt + 6 * tzh_typecnt + tzh_charcnt + 8 * tzh_leapcnt +
                tzh_ttisstdcnt + tzh_ttisgmtcnt);
     load_header(inf);
     auto v2 = load_version(inf);
     assert(v == v2);
     skip_reserve(inf);
 #else  // defined(NDEBUG)
-    inf.ignore((4+1)*tzh_timecnt + 6*tzh_typecnt + tzh_charcnt + 8*tzh_leapcnt +
-               tzh_ttisstdcnt + tzh_ttisgmtcnt + (4+1+15));
-#endif  // defined(NDEBUG)
+    inf.ignore((4 + 1) * tzh_timecnt + 6 * tzh_typecnt + tzh_charcnt + 8 * tzh_leapcnt +
+               tzh_ttisstdcnt + tzh_ttisgmtcnt + (4 + 1 + 15));
+#endif // defined(NDEBUG)
     load_counts(inf, tzh_ttisgmtcnt, tzh_ttisstdcnt, tzh_leapcnt,
-                     tzh_timecnt,    tzh_typecnt,    tzh_charcnt);
+                tzh_timecnt, tzh_typecnt, tzh_charcnt);
     return load_leap_data<int64_t>(inf, tzh_leapcnt, tzh_timecnt, tzh_typecnt,
                                    tzh_charcnt);
 }
 
-#endif  // !MISSING_LEAP_SECONDS
+#endif // !MISSING_LEAP_SECONDS
 
 template <class TimeType>
-void
-time_zone::load_data(std::istream& inf,
-                     std::int32_t tzh_leapcnt, std::int32_t tzh_timecnt,
-                     std::int32_t tzh_typecnt, std::int32_t tzh_charcnt)
+void time_zone::load_data(std::istream& inf,
+                          std::int32_t tzh_leapcnt, std::int32_t tzh_timecnt,
+                          std::int32_t tzh_typecnt, std::int32_t tzh_charcnt)
 {
     using namespace std::chrono;
     transitions_ = load_transitions<TimeType>(inf, tzh_timecnt);
@@ -2027,8 +1951,7 @@ time_zone::load_data(std::istream& inf,
     {
         transitions_.emplace(transitions_.begin(), min_seconds);
         auto tf = std::find_if(ttinfos_.begin(), ttinfos_.end(),
-                               [](const expanded_ttinfo& ti)
-                                   {return ti.is_dst == 0;});
+                               [](const expanded_ttinfo& ti) { return ti.is_dst == 0; });
         if (tf == ttinfos_.end())
             tf = ttinfos_.begin();
         transitions_[i].info = &*tf;
@@ -2038,8 +1961,7 @@ time_zone::load_data(std::istream& inf,
         transitions_[i].info = ttinfos_.data() + indices[j];
 }
 
-void
-time_zone::init_impl()
+void time_zone::init_impl()
 {
     using namespace std;
     using namespace std::chrono;
@@ -2051,10 +1973,10 @@ time_zone::init_impl()
     load_header(inf);
     auto v = load_version(inf);
     std::int32_t tzh_ttisgmtcnt, tzh_ttisstdcnt, tzh_leapcnt,
-                 tzh_timecnt,    tzh_typecnt,    tzh_charcnt;
+        tzh_timecnt, tzh_typecnt, tzh_charcnt;
     skip_reserve(inf);
     load_counts(inf, tzh_ttisgmtcnt, tzh_ttisstdcnt, tzh_leapcnt,
-                     tzh_timecnt,    tzh_typecnt,    tzh_charcnt);
+                tzh_timecnt, tzh_typecnt, tzh_charcnt);
     if (v == 0)
     {
         load_data<int32_t>(inf, tzh_leapcnt, tzh_timecnt, tzh_typecnt, tzh_charcnt);
@@ -2062,18 +1984,18 @@ time_zone::init_impl()
     else
     {
 #if !defined(NDEBUG)
-        inf.ignore((4+1)*tzh_timecnt + 6*tzh_typecnt + tzh_charcnt + 8*tzh_leapcnt +
+        inf.ignore((4 + 1) * tzh_timecnt + 6 * tzh_typecnt + tzh_charcnt + 8 * tzh_leapcnt +
                    tzh_ttisstdcnt + tzh_ttisgmtcnt);
         load_header(inf);
         auto v2 = load_version(inf);
         assert(v == v2);
         skip_reserve(inf);
 #else  // defined(NDEBUG)
-        inf.ignore((4+1)*tzh_timecnt + 6*tzh_typecnt + tzh_charcnt + 8*tzh_leapcnt +
-                   tzh_ttisstdcnt + tzh_ttisgmtcnt + (4+1+15));
-#endif  // defined(NDEBUG)
+        inf.ignore((4 + 1) * tzh_timecnt + 6 * tzh_typecnt + tzh_charcnt + 8 * tzh_leapcnt +
+                   tzh_ttisstdcnt + tzh_ttisgmtcnt + (4 + 1 + 15));
+#endif // defined(NDEBUG)
         load_counts(inf, tzh_ttisgmtcnt, tzh_ttisstdcnt, tzh_leapcnt,
-                         tzh_timecnt,    tzh_typecnt,    tzh_charcnt);
+                    tzh_timecnt, tzh_typecnt, tzh_charcnt);
         load_data<int64_t>(inf, tzh_leapcnt, tzh_timecnt, tzh_typecnt, tzh_charcnt);
     }
 #if !MISSING_LEAP_SECONDS
@@ -2084,24 +2006,23 @@ time_zone::init_impl()
         auto l = itr->date();
         seconds leap_count{0};
         for (auto t = std::upper_bound(transitions_.begin(), transitions_.end(), l,
-                                       [](const sys_seconds& x, const transition& ct)
-                                       {
+                                       [](const sys_seconds& x, const transition& ct) {
                                            return x < ct.timepoint;
                                        });
-                  t != transitions_.end(); ++t)
+             t != transitions_.end(); ++t)
         {
             while (t->timepoint >= l)
             {
                 ++leap_count;
                 if (++itr == leap_seconds.end())
-                    l = sys_days(max_year/max_day);
+                    l = sys_days(max_year / max_day);
                 else
                     l = itr->date() + leap_count;
             }
             t->timepoint -= leap_count;
         }
     }
-#endif  // !MISSING_LEAP_SECONDS
+#endif // !MISSING_LEAP_SECONDS
     auto b = transitions_.begin();
     auto i = transitions_.end();
     if (i != b)
@@ -2116,10 +2037,9 @@ time_zone::init_impl()
     }
 }
 
-void
-time_zone::init() const
+void time_zone::init() const
 {
-    std::call_once(*adjusted_, [this]() {const_cast<time_zone*>(this)->init_impl();});
+    std::call_once(*adjusted_, [this]() { const_cast<time_zone*>(this)->init_impl(); });
 }
 
 sys_info
@@ -2131,17 +2051,15 @@ time_zone::load_sys_info(std::vector<detail::transition>::const_iterator i) cons
     if (i != transitions_.begin())
     {
         r.begin = i[-1].timepoint;
-        r.end = i != transitions_.end() ? i->timepoint :
-                                          sys_seconds(sys_days(year::max()/max_day));
+        r.end = i != transitions_.end() ? i->timepoint : sys_seconds(sys_days(year::max() / max_day));
         r.offset = i[-1].info->offset;
         r.save = i[-1].info->is_dst ? minutes{1} : minutes{0};
         r.abbrev = i[-1].info->abbrev;
     }
     else
     {
-        r.begin = sys_days(year::min()/min_day);
-        r.end = i+1 != transitions_.end() ? i[1].timepoint :
-                                          sys_seconds(sys_days(year::max()/max_day));
+        r.begin = sys_days(year::min() / min_day);
+        r.end = i + 1 != transitions_.end() ? i[1].timepoint : sys_seconds(sys_days(year::max() / max_day));
         r.offset = i[0].info->offset;
         r.save = i[0].info->is_dst ? minutes{1} : minutes{0};
         r.abbrev = i[0].info->abbrev;
@@ -2155,8 +2073,7 @@ time_zone::get_info_impl(sys_seconds tp) const
     using namespace std;
     init();
     return load_sys_info(upper_bound(transitions_.begin(), transitions_.end(), tp,
-                                     [](const sys_seconds& x, const transition& t)
-                                     {
+                                     [](const sys_seconds& x, const transition& t) {
                                          return x < t.timepoint;
                                      }));
 }
@@ -2169,10 +2086,10 @@ time_zone::get_info_impl(local_seconds tp) const
     local_info i;
     i.result = local_info::unique;
     auto tr = upper_bound(transitions_.begin(), transitions_.end(), tp,
-                          [](const local_seconds& x, const transition& t)
-                          {
+                          [](const local_seconds& x, const transition& t) {
                               return sys_seconds{x.time_since_epoch()} -
-                                                         t.info->offset < t.timepoint;
+                                         t.info->offset <
+                                     t.timepoint;
                           });
     i.first = load_sys_info(tr);
     auto tps = sys_seconds{(tp - i.first.offset).time_since_epoch()};
@@ -2182,8 +2099,8 @@ time_zone::get_info_impl(local_seconds tp) const
         tps = sys_seconds{(tp - i.second.offset).time_since_epoch()};
         if (tps < i.second.end && i.first.end != i.second.end)
         {
-           i.result = local_info::ambiguous;
-           std::swap(i.first, i.second);
+            i.result = local_info::ambiguous;
+            std::swap(i.first, i.second);
         }
         else
         {
@@ -2228,7 +2145,7 @@ leap_second::leap_second(const sys_seconds& s, detail::undocumented)
 {
 }
 
-#else  // !USE_OS_TZDB
+#else // !USE_OS_TZDB
 
 time_zone::time_zone(const std::string& s, detail::undocumented)
     : adjusted_(new std::once_flag{})
@@ -2282,8 +2199,7 @@ time_zone::get_info_impl(local_seconds tp) const
     return i;
 }
 
-void
-time_zone::add(const std::string& s)
+void time_zone::add(const std::string& s)
 {
     try
     {
@@ -2302,8 +2218,7 @@ time_zone::add(const std::string& s)
     }
 }
 
-void
-time_zone::parse_info(std::istream& in)
+void time_zone::parse_info(std::istream& in)
 {
     using namespace date;
     using namespace std::chrono;
@@ -2330,12 +2245,11 @@ time_zone::parse_info(std::istream& in)
         zonelet.until_date_.canonicalize(zonelet.until_year_);
     }
     if ((zonelet.until_year_ < min_year) ||
-            (zonelets_.size() > 1 && zonelets_.end()[-2].until_year_ > max_year))
+        (zonelets_.size() > 1 && zonelets_.end()[-2].until_year_ > max_year))
         zonelets_.pop_back();
 }
 
-void
-time_zone::adjust_infos(const std::vector<Rule>& rules)
+void time_zone::adjust_infos(const std::vector<Rule>& rules)
 {
     using namespace std::chrono;
     using namespace date;
@@ -2362,7 +2276,7 @@ time_zone::adjust_infos(const std::vector<Rule>& rules)
 #if !defined(_MSC_VER) || (_MSC_VER >= 1900)
                     z.u.rule_.~string();
                     z.tag_ = zonelet::has_save;
-                    ::new(&z.u.save_) minutes(tmp);
+                    ::new (&z.u.save_) minutes(tmp);
 #else
                     z.u.rule_.clear();
                     z.tag_ = zonelet::has_save;
@@ -2403,8 +2317,8 @@ time_zone::adjust_infos(const std::vector<Rule>& rules)
             if (prev_zonelet != nullptr)
             {
                 z.first_rule_ = find_rule_for_zone(eqr, prev_zonelet->until_utc_,
-                                                        prev_zonelet->until_std_,
-                                                        prev_zonelet->until_loc_);
+                                                   prev_zonelet->until_std_,
+                                                   prev_zonelet->until_loc_);
                 if (z.first_rule_.first != nullptr)
                 {
                     z.initial_save_ = z.first_rule_.first->save();
@@ -2445,10 +2359,9 @@ time_zone::adjust_infos(const std::vector<Rule>& rules)
     }
 }
 
-static
-std::string
+static std::string
 format_abbrev(std::string format, const std::string& variable, std::chrono::seconds off,
-                                                               std::chrono::minutes save)
+              std::chrono::minutes save)
 {
     using namespace std::chrono;
     auto k = format.find("%s");
@@ -2464,7 +2377,7 @@ format_abbrev(std::string format, const std::string& variable, std::chrono::seco
             if (save == minutes{0})
                 format.erase(k);
             else
-                format.erase(0, k+1);
+                format.erase(0, k + 1);
         }
         else
         {
@@ -2515,19 +2428,15 @@ time_zone::get_info_impl(sys_seconds tp, int tz_int) const
     auto y = year_month_day(floor<days>(tp)).year();
     if (y < min_year || y > max_year)
         throw std::runtime_error("The year " + std::to_string(static_cast<int>(y)) +
-            " is out of range:[" + std::to_string(static_cast<int>(min_year)) + ", "
-                                 + std::to_string(static_cast<int>(max_year)) + "]");
+                                 " is out of range:[" + std::to_string(static_cast<int>(min_year)) + ", " + std::to_string(static_cast<int>(max_year)) + "]");
     std::call_once(*adjusted_,
-                   [this]()
-                   {
+                   [this]() {
                        const_cast<time_zone*>(this)->adjust_infos(get_tzdb().rules);
                    });
     auto i = std::upper_bound(zonelets_.begin(), zonelets_.end(), tp,
-        [timezone](sys_seconds t, const zonelet& zl)
-        {
-            return timezone == tz::utc ? t < zl.until_utc_ :
-                                         t < sys_seconds{zl.until_loc_.time_since_epoch()};
-        });
+                              [timezone](sys_seconds t, const zonelet& zl) {
+                                  return timezone == tz::utc ? t < zl.until_utc_ : t < sys_seconds{zl.until_loc_.time_since_epoch()};
+                              });
 
     sys_info r{};
     if (i != zonelets_.end())
@@ -2537,7 +2446,7 @@ time_zone::get_info_impl(sys_seconds tp, int tz_int) const
             if (i != zonelets_.begin())
                 r.begin = i[-1].until_utc_;
             else
-                r.begin = sys_days(year::min()/min_day);
+                r.begin = sys_days(year::min() / min_day);
             r.end = i->until_utc_;
             r.offset = i->gmtoff_ + i->u.save_;
             r.save = i->u.save_;
@@ -2547,7 +2456,7 @@ time_zone::get_info_impl(sys_seconds tp, int tz_int) const
             if (i != zonelets_.begin())
                 r.begin = i[-1].until_utc_;
             else
-                r.begin = sys_days(year::min()/min_day);
+                r.begin = sys_days(year::min() / min_day);
             r.end = i->until_utc_;
             r.offset = i->gmtoff_;
         }
@@ -2577,8 +2486,7 @@ operator<<(std::ostream& os, const time_zone& z)
     os.fill(' ');
     os.flags(std::ios::dec | std::ios::left);
     std::call_once(*z.adjusted_,
-                   [&z]()
-                   {
+                   [&z]() {
                        const_cast<time_zone&>(z).adjust_infos(get_tzdb().rules);
                    });
     os.width(35);
@@ -2597,7 +2505,7 @@ operator<<(std::ostream& os, const time_zone& z)
         {
             std::ostringstream tmp;
             tmp << make_time(s.u.save_);
-            os <<  tmp.str();
+            os << tmp.str();
         }
         os.width(8);
         os << s.format_ << "   ";
@@ -2610,11 +2518,15 @@ operator<<(std::ostream& os, const time_zone& z)
         if (s.first_rule_.first != nullptr)
             os << "   {" << *s.first_rule_.first << ", " << s.first_rule_.second << '}';
         else
-            os << "   {" << "nullptr" << ", " << s.first_rule_.second << '}';
+            os << "   {"
+               << "nullptr"
+               << ", " << s.first_rule_.second << '}';
         if (s.last_rule_.first != nullptr)
             os << "   {" << *s.last_rule_.first << ", " << s.last_rule_.second << '}';
         else
-            os << "   {" << "nullptr" << ", " << s.last_rule_.second << '}';
+            os << "   {"
+               << "nullptr"
+               << ", " << s.last_rule_.second << '}';
         os << '\n';
         if (indent.empty())
             indent = std::string(35, ' ');
@@ -2622,7 +2534,7 @@ operator<<(std::ostream& os, const time_zone& z)
     return os;
 }
 
-#endif  // !USE_OS_TZDB
+#endif // !USE_OS_TZDB
 
 std::ostream&
 operator<<(std::ostream& os, const leap_second& x)
@@ -2633,8 +2545,7 @@ operator<<(std::ostream& os, const leap_second& x)
 
 #if USE_OS_TZDB
 
-static
-std::string
+static std::string
 get_version()
 {
     using namespace std;
@@ -2656,8 +2567,7 @@ get_version()
     return "unknown";
 }
 
-static
-std::vector<leap_second>
+static std::vector<leap_second>
 find_read_and_leap_seconds()
 {
     std::ifstream in(get_tz_dir() + std::string(1, folder_delimiter) + "leapseconds",
@@ -2681,8 +2591,8 @@ find_read_and_leap_seconds()
                     in >> y;
                     m = static_cast<int>(parse_month(in));
                     in >> d;
-                    leap_seconds.push_back(leap_second(sys_days{year{y}/m/d} + days{1},
-                                                                 detail::undocumented{}));
+                    leap_seconds.push_back(leap_second(sys_days{year{y} / m / d} + days{1},
+                                                       detail::undocumented{}));
                 }
                 else
                 {
@@ -2694,12 +2604,12 @@ find_read_and_leap_seconds()
     }
     in.clear();
     in.open(get_tz_dir() + std::string(1, folder_delimiter) + "leap-seconds.list",
-                     std::ios_base::binary);
+            std::ios_base::binary);
     if (in)
     {
         std::vector<leap_second> leap_seconds;
         std::string line;
-        const auto offset = sys_days{1970_y/1/1}-sys_days{1900_y/1/1};
+        const auto offset = sys_days{1970_y / 1 / 1} - sys_days{1900_y / 1 / 1};
         while (in)
         {
             std::getline(in, line);
@@ -2713,21 +2623,21 @@ find_read_and_leap_seconds()
                 if (s == 2272060800)
                     continue;
                 leap_seconds.push_back(leap_second(sys_seconds{seconds{s}} - offset,
-                                                                 detail::undocumented{}));
+                                                   detail::undocumented{}));
             }
         }
         return leap_seconds;
     }
     in.clear();
     in.open(get_tz_dir() + std::string(1, folder_delimiter) + "right/UTC",
-                     std::ios_base::binary);
+            std::ios_base::binary);
     if (in)
     {
         return load_just_leaps(in);
     }
     in.clear();
     in.open(get_tz_dir() + std::string(1, folder_delimiter) + "UTC",
-                     std::ios_base::binary);
+            std::ios_base::binary);
     if (in)
     {
         return load_just_leaps(in);
@@ -2735,13 +2645,12 @@ find_read_and_leap_seconds()
     return {};
 }
 
-static
-std::unique_ptr<tzdb>
+static std::unique_ptr<tzdb>
 init_tzdb()
 {
     std::unique_ptr<tzdb> db(new tzdb);
 
-    //Iterate through folders
+    // Iterate through folders
     std::queue<std::string> subfolders;
     subfolders.emplace(get_tz_dir());
     struct dirent* d;
@@ -2756,32 +2665,32 @@ init_tzdb()
         while ((d = readdir(dir)) != nullptr)
         {
             // Ignore these files:
-            if (d->d_name[0]                      == '.'    || // curdir, prevdir, hidden
-                memcmp(d->d_name, "posix", 5)     == 0      || // starts with posix
-                strcmp(d->d_name, "Factory")      == 0      ||
-                strcmp(d->d_name, "iso3166.tab")  == 0      ||
-                strcmp(d->d_name, "right")        == 0      ||
-                strcmp(d->d_name, "+VERSION")     == 0      ||
-                strcmp(d->d_name, "version")      == 0      ||
-                strcmp(d->d_name, "zone.tab")     == 0      ||
-                strcmp(d->d_name, "zone1970.tab") == 0      ||
-                strcmp(d->d_name, "tzdata.zi")    == 0      ||
-                strcmp(d->d_name, "leapseconds")  == 0      ||
-                strcmp(d->d_name, "leap-seconds.list") == 0   )
+            if (d->d_name[0] == '.' ||                // curdir, prevdir, hidden
+                memcmp(d->d_name, "posix", 5) == 0 || // starts with posix
+                strcmp(d->d_name, "Factory") == 0 ||
+                strcmp(d->d_name, "iso3166.tab") == 0 ||
+                strcmp(d->d_name, "right") == 0 ||
+                strcmp(d->d_name, "+VERSION") == 0 ||
+                strcmp(d->d_name, "version") == 0 ||
+                strcmp(d->d_name, "zone.tab") == 0 ||
+                strcmp(d->d_name, "zone1970.tab") == 0 ||
+                strcmp(d->d_name, "tzdata.zi") == 0 ||
+                strcmp(d->d_name, "leapseconds") == 0 ||
+                strcmp(d->d_name, "leap-seconds.list") == 0)
                 continue;
             auto subname = dirname + folder_delimiter + d->d_name;
-            if(stat(subname.c_str(), &s) == 0)
+            if (stat(subname.c_str(), &s) == 0)
             {
-                if(S_ISDIR(s.st_mode))
+                if (S_ISDIR(s.st_mode))
                 {
-                    if(!S_ISLNK(s.st_mode))
+                    if (!S_ISLNK(s.st_mode))
                     {
                         subfolders.push(subname);
                     }
                 }
                 else
                 {
-                    db->zones.emplace_back(subname.substr(get_tz_dir().size()+1),
+                    db->zones.emplace_back(subname.substr(get_tz_dir().size() + 1),
                                            detail::undocumented{});
                 }
             }
@@ -2795,7 +2704,7 @@ init_tzdb()
     return db;
 }
 
-#else  // !USE_OS_TZDB
+#else // !USE_OS_TZDB
 
 // time_zone_link
 
@@ -2833,8 +2742,7 @@ leap_second::leap_second(const std::string& s, detail::undocumented)
     date_ = date.to_time_point(year(y));
 }
 
-static
-bool
+static bool
 file_exists(const std::string& filename)
 {
 #ifdef _WIN32
@@ -2874,18 +2782,16 @@ struct curl_deleter
     }
 };
 
-}  // unnamed namespace
+} // unnamed namespace
 
-static
-std::unique_ptr<CURL, curl_deleter>
+static std::unique_ptr<CURL, curl_deleter>
 curl_init()
 {
     static const curl_global_init_and_cleanup _{};
     return std::unique_ptr<CURL, curl_deleter>{::curl_easy_init()};
 }
 
-static
-bool
+static bool
 download_to_string(const std::string& url, std::string& str)
 {
     str.clear();
@@ -2896,8 +2802,7 @@ download_to_string(const std::string& url, std::string& str)
     curl_easy_setopt(curl.get(), CURLOPT_USERAGENT, "curl");
     curl_easy_setopt(curl.get(), CURLOPT_URL, url.c_str());
     curl_write_callback write_cb = [](char* contents, std::size_t size, std::size_t nmemb,
-                                      void* userp) -> std::size_t
-    {
+                                      void* userp) -> std::size_t {
         auto& userstr = *static_cast<std::string*>(userp);
         auto realsize = size * nmemb;
         userstr.append(contents, realsize);
@@ -2912,11 +2817,14 @@ download_to_string(const std::string& url, std::string& str)
 
 namespace
 {
-    enum class download_file_options { binary, text };
+enum class download_file_options
+{
+    binary,
+    text
+};
 }
 
-static
-bool
+static bool
 download_to_file(const std::string& url, const std::string& local_filename,
                  download_file_options opts, char* error_buffer)
 {
@@ -2926,10 +2834,9 @@ download_to_file(const std::string& url, const std::string& local_filename,
     curl_easy_setopt(curl.get(), CURLOPT_URL, url.c_str());
     curl_easy_setopt(curl.get(), CURLOPT_SSL_VERIFYPEER, false);
     if (error_buffer)
-       curl_easy_setopt(curl.get(), CURLOPT_ERRORBUFFER, error_buffer);
+        curl_easy_setopt(curl.get(), CURLOPT_ERRORBUFFER, error_buffer);
     curl_write_callback write_cb = [](char* contents, std::size_t size, std::size_t nmemb,
-                                      void* userp) -> std::size_t
-    {
+                                      void* userp) -> std::size_t {
         auto& of = *static_cast<std::ofstream*>(userp);
         auto realsize = size * nmemb;
         of.write(contents, static_cast<std::streamsize>(realsize));
@@ -2939,9 +2846,7 @@ download_to_file(const std::string& url, const std::string& local_filename,
     decltype(curl_easy_perform(curl.get())) res;
     {
         std::ofstream of(local_filename,
-                         opts == download_file_options::binary ?
-                             std::ofstream::out | std::ofstream::binary :
-                             std::ofstream::out);
+                         opts == download_file_options::binary ? std::ofstream::out | std::ofstream::binary : std::ofstream::out);
         of.exceptions(std::ios::badbit);
         curl_easy_setopt(curl.get(), CURLOPT_WRITEDATA, &of);
         res = curl_easy_perform(curl.get());
@@ -2966,7 +2871,6 @@ remote_version()
     return version;
 }
 
-
 // TODO! Using system() create a process and a console window.
 // This is useful to see what errors may occur but is slow and distracting.
 // Consider implementing this functionality more directly, such as
@@ -2974,18 +2878,17 @@ remote_version()
 // But use the current means now as matches Unix implementations and while
 // in proof of concept / testing phase.
 // TODO! Use <filesystem> eventually.
-static
-bool
+static bool
 remove_folder_and_subfolders(const std::string& folder)
 {
-#  ifdef _WIN32
-#    if USE_SHELL_API
+#ifdef _WIN32
+#if USE_SHELL_API
     // Delete the folder contents by deleting the folder.
     std::string cmd = "rd /s /q \"";
     cmd += folder;
     cmd += '\"';
     return std::system(cmd.c_str()) == EXIT_SUCCESS;
-#    else  // !USE_SHELL_API
+#else  // !USE_SHELL_API
     // Create a buffer containing the path to delete. It must be terminated
     // by two nuls. Who designs these API's...
     std::vector<char> from;
@@ -3000,13 +2903,16 @@ remove_folder_and_subfolders(const std::string& folder)
     if (ret == 0 && !fo.fAnyOperationsAborted)
         return true;
     return false;
-#    endif  // !USE_SHELL_API
-#  else   // !_WIN32
-#    if USE_SHELL_API
+#endif // !USE_SHELL_API
+#else  // !_WIN32
+#if USE_SHELL_API
     return std::system(("rm -R " + folder).c_str()) == EXIT_SUCCESS;
-#    else // !USE_SHELL_API
-    struct dir_deleter {
-        dir_deleter() {}
+#else  // !USE_SHELL_API
+    struct dir_deleter
+    {
+        dir_deleter()
+        {
+        }
         void operator()(DIR* d) const
         {
             if (d != nullptr)
@@ -3025,10 +2931,10 @@ remove_folder_and_subfolders(const std::string& folder)
 
     closedir_ptr d(opendir(folder.c_str()));
     bool r = d.get() != nullptr;
-    while (r && (p=readdir(d.get())) != nullptr)
+    while (r && (p = readdir(d.get())) != nullptr)
     {
         if (strcmp(p->d_name, ".") == 0 || strcmp(p->d_name, "..") == 0)
-           continue;
+            continue;
 
         // + 2 for path delimiter and nul terminator.
         std::size_t buf_len = folder_len + strlen(p->d_name) + 2;
@@ -3040,8 +2946,8 @@ remove_folder_and_subfolders(const std::string& folder)
 
         if (stat(filename.c_str(), &statbuf) == 0)
             r = S_ISDIR(statbuf.st_mode)
-              ? remove_folder_and_subfolders(filename)
-              : unlink(filename.c_str()) == 0;
+                    ? remove_folder_and_subfolders(filename)
+                    : unlink(filename.c_str()) == 0;
     }
     d.reset();
 
@@ -3049,84 +2955,79 @@ remove_folder_and_subfolders(const std::string& folder)
         r = rmdir(folder.c_str()) == 0;
 
     return r;
-#    endif // !USE_SHELL_API
-#  endif  // !_WIN32
+#endif // !USE_SHELL_API
+#endif // !_WIN32
 }
 
-static
-bool
+static bool
 make_directory(const std::string& folder)
 {
-#  ifdef _WIN32
-#    if USE_SHELL_API
+#ifdef _WIN32
+#if USE_SHELL_API
     // Re-create the folder.
     std::string cmd = "mkdir \"";
     cmd += folder;
     cmd += '\"';
     return std::system(cmd.c_str()) == EXIT_SUCCESS;
-#    else  // !USE_SHELL_API
+#else  // !USE_SHELL_API
     return _mkdir(folder.c_str()) == 0;
-#    endif // !USE_SHELL_API
-#  else  // !_WIN32
-#    if USE_SHELL_API
+#endif // !USE_SHELL_API
+#else  // !_WIN32
+#if USE_SHELL_API
     return std::system(("mkdir -p " + folder).c_str()) == EXIT_SUCCESS;
-#    else  // !USE_SHELL_API
+#else  // !USE_SHELL_API
     return mkdir(folder.c_str(), 0777) == 0;
-#    endif  // !USE_SHELL_API
-#  endif  // !_WIN32
+#endif // !USE_SHELL_API
+#endif // !_WIN32
 }
 
-static
-bool
+static bool
 delete_file(const std::string& file)
 {
-#  ifdef _WIN32
-#    if USE_SHELL_API
+#ifdef _WIN32
+#if USE_SHELL_API
     std::string cmd = "del \"";
     cmd += file;
     cmd += '\"';
     return std::system(cmd.c_str()) == 0;
-#    else  // !USE_SHELL_API
+#else  // !USE_SHELL_API
     return _unlink(file.c_str()) == 0;
-#    endif // !USE_SHELL_API
-#  else  // !_WIN32
-#    if USE_SHELL_API
+#endif // !USE_SHELL_API
+#else  // !_WIN32
+#if USE_SHELL_API
     return std::system(("rm " + file).c_str()) == EXIT_SUCCESS;
-#    else // !USE_SHELL_API
+#else  // !USE_SHELL_API
     return unlink(file.c_str()) == 0;
-#    endif // !USE_SHELL_API
-#  endif  // !_WIN32
+#endif // !USE_SHELL_API
+#endif // !_WIN32
 }
 
-#  ifdef _WIN32
+#ifdef _WIN32
 
-static
-bool
+static bool
 move_file(const std::string& from, const std::string& to)
 {
-#    if USE_SHELL_API
+#if USE_SHELL_API
     std::string cmd = "move \"";
     cmd += from;
     cmd += "\" \"";
     cmd += to;
     cmd += '\"';
     return std::system(cmd.c_str()) == EXIT_SUCCESS;
-#    else  // !USE_SHELL_API
+#else  // !USE_SHELL_API
     return !!::MoveFile(from.c_str(), to.c_str());
-#    endif // !USE_SHELL_API
+#endif // !USE_SHELL_API
 }
 
 // Usually something like "c:\Program Files".
-static
-std::string
+static std::string
 get_program_folder()
 {
     return get_known_folder(FOLDERID_ProgramFiles);
 }
 
 // Note folder can and usually does contain spaces.
-static
-std::string
+static std::string
 get_unzip_program()
 {
     std::string path;
@@ -3142,7 +3043,7 @@ get_unzip_program()
         DWORD tzi_type = REG_SZ;
         // Testing shows Path key value is "C:\Program Files\7-Zip\" i.e. always with trailing \.
         bool got_value = (RegQueryValueExA(hKey, "Path", nullptr, &tzi_type,
-            reinterpret_cast<LPBYTE>(value_buffer), &size) == ERROR_SUCCESS);
+                                           reinterpret_cast<LPBYTE>(value_buffer), &size) == ERROR_SUCCESS);
         RegCloseKey(hKey); // Close now incase of throw later.
         if (got_value)
         {
@@ -3162,9 +3063,8 @@ get_unzip_program()
     return path;
 }
 
-#    if !USE_SHELL_API
-static
-int
+#if !USE_SHELL_API
+static int
 run_program(const std::string& command)
 {
     STARTUPINFO si{};
@@ -3174,7 +3074,7 @@ run_program(const std::string& command)
     // Allegedly CreateProcess overwrites the command line. Ugh.
     std::string mutable_command(command);
     if (CreateProcess(nullptr, &mutable_command[0],
-        nullptr, nullptr, FALSE, CREATE_NO_WINDOW, nullptr, nullptr, &si, &pi))
+                      nullptr, nullptr, FALSE, CREATE_NO_WINDOW, nullptr, nullptr, &si, &pi))
     {
         WaitForSingleObject(pi.hProcess, INFINITE);
         DWORD exit_code;
@@ -3190,10 +3090,9 @@ run_program(const std::string& command)
     }
     return EXIT_FAILURE;
 }
-#    endif // !USE_SHELL_API
+#endif // !USE_SHELL_API
 
-static
-std::string
+static std::string
 get_download_tar_file(const std::string& version)
 {
     auto file = get_install();
@@ -3204,8 +3103,7 @@ get_download_tar_file(const std::string& version)
     return file;
 }
 
-static
-bool
+static bool
 extract_gz_file(const std::string& version, const std::string& gz_file,
                 const std::string& dest_folder)
 {
@@ -3225,7 +3123,7 @@ extract_gz_file(const std::string& version, const std::string& gz_file,
     cmd += dest_folder;
     cmd += '\"';
 
-#    if USE_SHELL_API
+#if USE_SHELL_API
     // When using shelling out with std::system() extra quotes are required around the
     // whole command. It's weird but necessary it seems, see:
     // http://stackoverflow.com/q/27975969/576911
@@ -3233,10 +3131,10 @@ extract_gz_file(const std::string& version, const std::string& gz_file,
     cmd = "\"" + cmd + "\"";
     if (std::system(cmd.c_str()) == EXIT_SUCCESS)
         unzip_result = true;
-#    else  // !USE_SHELL_API
+#else  // !USE_SHELL_API
     if (run_program(cmd) == EXIT_SUCCESS)
         unzip_result = true;
-#    endif // !USE_SHELL_API
+#endif // !USE_SHELL_API
     if (unzip_result)
         delete_file(gz_file);
 
@@ -3250,14 +3148,14 @@ extract_gz_file(const std::string& version, const std::string& gz_file,
     cmd += "\" -o\"";
     cmd += get_install();
     cmd += '\"';
-#    if USE_SHELL_API
+#if USE_SHELL_API
     cmd = "\"" + cmd + "\"";
     if (std::system(cmd.c_str()) == EXIT_SUCCESS)
         unzip_result = true;
-#    else  // !USE_SHELL_API
+#else  // !USE_SHELL_API
     if (run_program(cmd) == EXIT_SUCCESS)
         unzip_result = true;
-#    endif // !USE_SHELL_API
+#endif // !USE_SHELL_API
 
     if (unzip_result)
         delete_file(tar_file);
@@ -3265,20 +3163,18 @@ extract_gz_file(const std::string& version, const std::string& gz_file,
     return unzip_result;
 }
 
-static
-std::string
+static std::string
 get_download_mapping_file(const std::string& version)
 {
     auto file = get_install() + version + "windowsZones.xml";
     return file;
 }
 
-#  else  // !_WIN32
+#else // !_WIN32
 
-#    if !USE_SHELL_API
-static
-int
-run_program(const char* prog, const char*const args[])
+#if !USE_SHELL_API
+static int
+run_program(const char* prog, const char* const args[])
 {
     pid_t pid = fork();
     if (pid == -1) // Child failed to start.
@@ -3305,7 +3201,6 @@ run_program(const char* prog, const char*const args[])
     }
     else // We are in the child process. Start the program the parent wants to run.
     {
-
         if (execv(prog, const_cast<char**>(args)) == -1) // Does not return.
         {
             perror("unreachable 0\n");
@@ -3319,22 +3214,20 @@ run_program(const char* prog, const char*const args[])
     exit(EXIT_FAILURE);
     return EXIT_FAILURE;
 }
-#    endif // !USE_SHELL_API
+#endif // !USE_SHELL_API
 
-static
-bool
+static bool
 extract_gz_file(const std::string&, const std::string& gz_file, const std::string&)
 {
-#    if USE_SHELL_API
+#if USE_SHELL_API
     bool unzipped = std::system(("tar -xzf " + gz_file + " -C " + get_install()).c_str()) == EXIT_SUCCESS;
-#    else  // !USE_SHELL_API
+#else  // !USE_SHELL_API
     const char prog[] = {"/usr/bin/tar"};
-    const char*const args[] =
-    {
-        prog, "-xzf", gz_file.c_str(), "-C", get_install().c_str(), nullptr
-    };
+    const char* const args[] =
+        {
+            prog, "-xzf", gz_file.c_str(), "-C", get_install().c_str(), nullptr};
     bool unzipped = (run_program(prog, args) == EXIT_SUCCESS);
-#    endif // !USE_SHELL_API
+#endif // !USE_SHELL_API
     if (unzipped)
     {
         delete_file(gz_file);
@@ -3343,16 +3236,15 @@ extract_gz_file(const std::string&, const std::string& gz_file, const std::strin
     return false;
 }
 
-#  endif // !_WIN32
+#endif // !_WIN32
 
-bool
-remote_download(const std::string& version, char* error_buffer)
+bool remote_download(const std::string& version, char* error_buffer)
 {
     assert(!version.empty());
 
-#  ifdef _WIN32
+#ifdef _WIN32
     // Download folder should be always available for Windows
-#  else  // !_WIN32
+#else  // !_WIN32
     // Create download folder if it does not exist on UNIX system
     auto download_folder = get_install();
     if (!file_exists(download_folder))
@@ -3360,13 +3252,13 @@ remote_download(const std::string& version, char* error_buffer)
         if (!make_directory(download_folder))
             return false;
     }
-#  endif  // _WIN32
+#endif // _WIN32
 
     auto url = "https://data.iana.org/time-zones/releases/tzdata" + version +
                ".tar.gz";
     bool result = download_to_file(url, get_download_gz_file(version),
                                    download_file_options::binary, error_buffer);
-#  ifdef _WIN32
+#ifdef _WIN32
     if (result)
     {
         auto mapping_file = get_download_mapping_file(version);
@@ -3375,12 +3267,11 @@ remote_download(const std::string& version, char* error_buffer)
             "common/supplemental/windowsZones.xml",
             mapping_file, download_file_options::text, error_buffer);
     }
-#  endif  // _WIN32
+#endif // _WIN32
     return result;
 }
 
-bool
-remote_install(const std::string& version)
+bool remote_install(const std::string& version)
 {
     auto success = false;
     assert(!version.empty());
@@ -3395,23 +3286,22 @@ remote_install(const std::string& version)
         {
             if (extract_gz_file(version, gz_file, install))
                 success = true;
-#  ifdef _WIN32
+#ifdef _WIN32
             auto mapping_file_source = get_download_mapping_file(version);
             auto mapping_file_dest = get_install();
             mapping_file_dest += folder_delimiter;
             mapping_file_dest += "windowsZones.xml";
             if (!move_file(mapping_file_source, mapping_file_dest))
                 success = false;
-#  endif  // _WIN32
+#endif // _WIN32
         }
     }
     return success;
 }
 
-#endif  // HAS_REMOTE_API
+#endif // HAS_REMOTE_API
 
-static
-std::string
+static std::string
 get_version(const std::string& path)
 {
     std::string version;
@@ -3438,8 +3328,7 @@ get_version(const std::string& path)
     throw std::runtime_error("Unable to get Timezone database version from " + path);
 }
 
-static
-std::unique_ptr<tzdb>
+static std::unique_ptr<tzdb>
 init_tzdb()
 {
     using namespace date;
@@ -3496,13 +3385,12 @@ init_tzdb()
         throw std::runtime_error(msg);
     }
     db->version = get_version(path);
-#endif  // !AUTO_DOWNLOAD
+#endif // !AUTO_DOWNLOAD
 
-    CONSTDATA char*const files[] =
-    {
-        "africa", "antarctica", "asia", "australasia", "backward", "etcetera", "europe",
-        "pacificnew", "northamerica", "southamerica", "systemv", "leapseconds"
-    };
+    CONSTDATA char* const files[] =
+        {
+            "africa", "antarctica", "asia", "australasia", "backward", "etcetera", "europe",
+            "pacificnew", "northamerica", "southamerica", "systemv", "leapseconds"};
 
     for (const auto& filename : files)
     {
@@ -3571,12 +3459,12 @@ reload_tzdb()
     auto const& v = get_tzdb_list().front().version;
     if (!v.empty() && v == remote_version())
         return get_tzdb_list().front();
-#endif  // AUTO_DOWNLOAD
+#endif // AUTO_DOWNLOAD
     tzdb_list::undocumented_helper::push_front(get_tzdb_list(), init_tzdb().release());
     return get_tzdb_list().front();
 }
 
-#endif  // !USE_OS_TZDB
+#endif // !USE_OS_TZDB
 
 const tzdb&
 get_tzdb()
@@ -3593,36 +3481,35 @@ tzdb::locate_zone(const std::string& tz_name) const
 {
     auto zi = std::lower_bound(zones.begin(), zones.end(), tz_name,
 #if HAS_STRING_VIEW
-        [](const time_zone& z, const std::string_view& nm)
+                               [](const time_zone& z, const std::string_view& nm)
 #else
         [](const time_zone& z, const std::string& nm)
 #endif
-        {
-            return z.name() < nm;
-        });
+                               {
+                                   return z.name() < nm;
+                               });
     if (zi == zones.end() || zi->name() != tz_name)
     {
 #if !USE_OS_TZDB
         auto li = std::lower_bound(links.begin(), links.end(), tz_name,
 #if HAS_STRING_VIEW
-        [](const time_zone_link& z, const std::string_view& nm)
+                                   [](const time_zone_link& z, const std::string_view& nm)
 #else
-        [](const time_zone_link& z, const std::string& nm)
+            [](const time_zone_link& z, const std::string& nm)
 #endif
-        {
-            return z.name() < nm;
-        });
+                                   {
+                                       return z.name() < nm;
+                                   });
         if (li != links.end() && li->name() == tz_name)
         {
             zi = std::lower_bound(zones.begin(), zones.end(), li->target(),
-                [](const time_zone& z, const std::string& nm)
-                {
-                    return z.name() < nm;
-                });
+                                  [](const time_zone& z, const std::string& nm) {
+                                      return z.name() < nm;
+                                  });
             if (zi != zones.end() && zi->name() == li->target())
                 return &*zi;
         }
-#endif  // !USE_OS_TZDB
+#endif // !USE_OS_TZDB
         throw std::runtime_error(std::string(tz_name) + " not found in timezone database");
     }
     return &*zi;
@@ -3652,7 +3539,7 @@ operator<<(std::ostream& os, const tzdb& db)
     return os;
 }
 
-#else  // !USE_OS_TZDB
+#else // !USE_OS_TZDB
 
 std::ostream&
 operator<<(std::ostream& os, const tzdb& db)
@@ -3660,8 +3547,11 @@ operator<<(std::ostream& os, const tzdb& db)
     os << "Version: " << db.version << '\n';
     std::string title("--------------------------------------------"
                       "--------------------------------------------\n"
-                      "Name           ""Start Y ""End Y   "
-                      "Beginning                              ""Offset  "
+                      "Name           "
+                      "Start Y "
+                      "End Y   "
+                      "Beginning                              "
+                      "Offset  "
                       "Designator\n"
                       "--------------------------------------------"
                       "--------------------------------------------\n");
@@ -3675,8 +3565,11 @@ operator<<(std::ostream& os, const tzdb& db)
     os << '\n';
     title = std::string("---------------------------------------------------------"
                         "--------------------------------------------------------\n"
-                        "Name                               ""Offset      "
-                        "Rule           ""Abrev      ""Until\n"
+                        "Name                               "
+                        "Offset      "
+                        "Rule           "
+                        "Abrev      "
+                        "Until\n"
                         "---------------------------------------------------------"
                         "--------------------------------------------------------\n");
     count = 0;
@@ -3689,7 +3582,8 @@ operator<<(std::ostream& os, const tzdb& db)
     os << '\n';
     title = std::string("---------------------------------------------------------"
                         "--------------------------------------------------------\n"
-                        "Alias                                   ""To\n"
+                        "Alias                                   "
+                        "To\n"
                         "---------------------------------------------------------"
                         "--------------------------------------------------------\n");
     count = 0;
@@ -3711,14 +3605,13 @@ operator<<(std::ostream& os, const tzdb& db)
     return os;
 }
 
-#endif  // !USE_OS_TZDB
+#endif // !USE_OS_TZDB
 
 // -----------------------
 
 #ifdef _WIN32
 
-static
-std::string
+static std::string
 getTimeZoneKeyName()
 {
     DYNAMIC_TIME_ZONE_INFORMATION dtzi{};
@@ -3728,7 +3621,7 @@ getTimeZoneKeyName()
                                  " reported TIME_ZONE_ID_INVALID.");
     auto wlen = wcslen(dtzi.TimeZoneKeyName);
     char buf[128] = {};
-    assert(sizeof(buf) >= wlen+1);
+    assert(sizeof(buf) >= wlen + 1);
     wcstombs(buf, dtzi.TimeZoneKeyName, wlen);
     if (strcmp(buf, "Coordinated Universal Time") == 0)
         return "UTC";
@@ -3751,12 +3644,11 @@ tzdb::current_zone() const
     return locate_zone(standard_tzid);
 }
 
-#else  // !_WIN32
+#else // !_WIN32
 
 #if HAS_STRING_VIEW
 
-static
-std::string_view
+static std::string_view
 extract_tz_name(char const* rp)
 {
     using namespace std;
@@ -3771,10 +3663,9 @@ extract_tz_name(char const* rp)
     return result;
 }
 
-#else  // !HAS_STRING_VIEW
+#else // !HAS_STRING_VIEW
 
-static
-std::string
+static std::string
 extract_tz_name(char const* rp)
 {
     using namespace std;
@@ -3789,14 +3680,13 @@ extract_tz_name(char const* rp)
     return result;
 }
 
-#endif  // HAS_STRING_VIEW
+#endif // HAS_STRING_VIEW
 
-static
-bool
+static bool
 sniff_realpath(const char* timezone)
 {
     using namespace std;
-    char rp[PATH_MAX+1] = {};
+    char rp[PATH_MAX + 1] = {};
     if (realpath(timezone, rp) == nullptr)
         throw system_error(errno, system_category(), "realpath() failed");
     auto result = extract_tz_name(rp);
@@ -3826,7 +3716,7 @@ tzdb::current_zone() const
         {
             using namespace std;
             static const bool use_realpath = sniff_realpath(timezone);
-            char rp[PATH_MAX+1] = {};
+            char rp[PATH_MAX + 1] = {};
             if (use_realpath)
             {
                 if (realpath(timezone, rp) == nullptr)
@@ -3834,7 +3724,7 @@ tzdb::current_zone() const
             }
             else
             {
-                if (readlink(timezone, rp, sizeof(rp)-1) <= 0)
+                if (readlink(timezone, rp, sizeof(rp) - 1) <= 0)
                     throw system_error(errno, system_category(), "readlink() failed");
             }
             return locate_zone(extract_tz_name(rp));
@@ -3853,11 +3743,12 @@ tzdb::current_zone() const
     {
         struct stat sb;
         CONSTDATA auto timezone = "/etc/TZ";
-        if (lstat(timezone, &sb) == 0 && S_ISLNK(sb.st_mode) && sb.st_size > 0) {
+        if (lstat(timezone, &sb) == 0 && S_ISLNK(sb.st_mode) && sb.st_size > 0)
+        {
             using namespace std;
             string result;
-            char rp[PATH_MAX+1] = {};
-            if (readlink(timezone, rp, sizeof(rp)-1) > 0)
+            char rp[PATH_MAX + 1] = {};
+            if (readlink(timezone, rp, sizeof(rp) - 1) > 0)
                 result = string(rp);
             else
                 throw system_error(errno, system_category(), "readlink() failed");
@@ -3869,9 +3760,9 @@ tzdb::current_zone() const
         }
     }
     {
-    // On some versions of some linux distro's (e.g. Ubuntu),
-    // the current timezone might be in the first line of
-    // the /etc/timezone file.
+        // On some versions of some linux distro's (e.g. Ubuntu),
+        // the current timezone might be in the first line of
+        // the /etc/timezone file.
         std::ifstream timezone_file("/etc/timezone");
         if (timezone_file.is_open())
         {
@@ -3883,9 +3774,9 @@ tzdb::current_zone() const
         // Fall through to try other means.
     }
     {
-    // On some versions of some bsd distro's (e.g. FreeBSD),
-    // the current timezone might be in the first line of
-    // the /var/db/zoneinfo file.
+        // On some versions of some bsd distro's (e.g. FreeBSD),
+        // the current timezone might be in the first line of
+        // the /var/db/zoneinfo file.
         std::ifstream timezone_file("/var/db/zoneinfo");
         if (timezone_file.is_open())
         {
@@ -3897,22 +3788,22 @@ tzdb::current_zone() const
         // Fall through to try other means.
     }
     {
-    // On some versions of some bsd distro's (e.g. iOS),
-    // it is not possible to use file based approach,
-    // we switch to system API, calling functions in
-    // CoreFoundation framework.
+        // On some versions of some bsd distro's (e.g. iOS),
+        // it is not possible to use file based approach,
+        // we switch to system API, calling functions in
+        // CoreFoundation framework.
 #if TARGET_OS_IPHONE
         std::string result = date::iOSUtils::get_current_timezone();
         if (!result.empty())
             return locate_zone(result);
 #endif
-    // Fall through to try other means.
+        // Fall through to try other means.
     }
     {
-    // On some versions of some linux distro's (e.g. Red Hat),
-    // the current timezone might be in the first line of
-    // the /etc/sysconfig/clock file as:
-    // ZONE="US/Eastern"
+        // On some versions of some linux distro's (e.g. Red Hat),
+        // the current timezone might be in the first line of
+        // the /etc/sysconfig/clock file as:
+        // ZONE="US/Eastern"
         std::ifstream timezone_file("/etc/sysconfig/clock");
         std::string result;
         while (timezone_file)
@@ -3921,7 +3812,7 @@ tzdb::current_zone() const
             auto p = result.find("ZONE=\"");
             if (p != std::string::npos)
             {
-                result.erase(p, p+6);
+                result.erase(p, p + 6);
                 result.erase(result.rfind('"'));
                 return locate_zone(result);
             }
@@ -3931,7 +3822,7 @@ tzdb::current_zone() const
     throw std::runtime_error("Could not get current timezone");
 }
 
-#endif  // !_WIN32
+#endif // !_WIN32
 
 const time_zone*
 current_zone()
@@ -3939,8 +3830,8 @@ current_zone()
     return get_tzdb().current_zone();
 }
 
-}  // namespace date
+} // namespace date
 
 #if defined(__GNUC__) && __GNUC__ < 5
-# pragma GCC diagnostic pop
+#pragma GCC diagnostic pop
 #endif

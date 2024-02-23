@@ -31,4 +31,4 @@
 
 #include "date.h"
 
-#endif  // CHRONO_IO_H
+#endif // CHRONO_IO_H

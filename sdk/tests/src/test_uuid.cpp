@@ -1,11 +1,11 @@
 // Copyright 2024 TeiaCare
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,12 +30,12 @@ TEST_F(test_uuid, deafult)
         EXPECT_EQ(uuid.str(), null_uuid_str);
     }
     {
-        tc::sdk::uuid uuid {};
+        tc::sdk::uuid uuid{};
         EXPECT_EQ(uuid, null_uuid);
         EXPECT_EQ(uuid.str(), null_uuid_str);
     }
     {
-        const tc::sdk::uuid uuid {};
+        const tc::sdk::uuid uuid{};
         EXPECT_EQ(uuid, null_uuid);
         EXPECT_EQ(uuid.str(), null_uuid_str);
     }
@@ -47,7 +47,7 @@ TEST_F(test_uuid, assign)
     const auto uuid_1 = create();
     EXPECT_NE(uuid_1, null_uuid);
 
-    tc::sdk::uuid uuid_2 {};
+    tc::sdk::uuid uuid_2{};
     uuid_2 = uuid_1;
     EXPECT_EQ(uuid_1, uuid_2);
 }

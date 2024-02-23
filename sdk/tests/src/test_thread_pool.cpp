@@ -1,11 +1,11 @@
 // Copyright 2024 TeiaCare
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include "test_thread_pool.hpp"
+
 #include <limits>
 #include <semaphore>
 #include <thread>
@@ -37,7 +38,7 @@ TEST_F(test_thread_pool, threads_count_range_max)
 TEST_F(test_thread_pool, start_twice)
 {
     EXPECT_TRUE(tp->start(num_threads));
-    EXPECT_FALSE(tp->start(num_threads+1));
+    EXPECT_FALSE(tp->start(num_threads + 1));
 }
 
 // NOLINTNEXTLINE
@@ -46,11 +47,11 @@ TEST_F(test_thread_pool, start_twice_after_run)
     EXPECT_TRUE(tp->start(num_threads));
 
     std::binary_semaphore sync(0);
-    auto task = [&sync]{ sync.release(); };
+    auto task = [&sync] { sync.release(); };
     tp->run(task);
     sync.acquire();
 
-    EXPECT_FALSE(tp->start(num_threads+1));
+    EXPECT_FALSE(tp->start(num_threads + 1));
 }
 
 // NOLINTNEXTLINE
@@ -73,7 +74,7 @@ TEST_F(test_thread_pool, stop_twice_after_run)
     EXPECT_TRUE(tp->start(num_threads));
 
     std::binary_semaphore sync(0);
-    auto task = [&sync]{ sync.release(); };
+    auto task = [&sync] { sync.release(); };
     tp->run(task);
     sync.acquire();
 
@@ -90,7 +91,7 @@ TEST_F(test_thread_pool, run)
     std::counting_semaphore<task_count> sync(0);
 
     std::atomic_int counter = 0;
-    auto task = [&sync, &counter]{
+    auto task = [&sync, &counter] {
         using namespace std::chrono_literals;
         std::this_thread::sleep_for(10ms);
         ++counter;

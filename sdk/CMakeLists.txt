@@ -83,8 +83,7 @@ endif()
 
 if(TC_ENABLE_CLANG_FORMAT)
     include(clang_format)
-    setup_target_clang_format(${TARGET_NAME} "sdk/include/teiacare/sdk sdk/src")
-    # setup_target_clang_format(${TARGET_NAME} ${ALL_SOURCES_ABS_PATH})
+    setup_target_clang_format(${TARGET_NAME} ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
 if(TC_ENABLE_CLANG_TIDY)

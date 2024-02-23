@@ -46,57 +46,57 @@
 #define HAS_REMOTE_API 0
 
 #ifndef USE_OS_TZDB
-#  define USE_OS_TZDB 0
+#define USE_OS_TZDB 0
 #endif
 
 #ifndef HAS_REMOTE_API
-#  if USE_OS_TZDB == 0
-#    ifdef _WIN32
-#      define HAS_REMOTE_API 0
-#    else
-#      define HAS_REMOTE_API 1
-#    endif
-#  else  // HAS_REMOTE_API makes no since when using the OS timezone database
-#    define HAS_REMOTE_API 0
-#  endif
+#if USE_OS_TZDB == 0
+#ifdef _WIN32
+#define HAS_REMOTE_API 0
+#else
+#define HAS_REMOTE_API 1
+#endif
+#else // HAS_REMOTE_API makes no since when using the OS timezone database
+#define HAS_REMOTE_API 0
+#endif
 #endif
 
 #ifdef __clang__
-# pragma clang diagnostic push
-# pragma clang diagnostic ignored "-Wconstant-logical-operand"
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wconstant-logical-operand"
 #endif
 
 static_assert(!(USE_OS_TZDB && HAS_REMOTE_API),
               "USE_OS_TZDB and HAS_REMOTE_API can not be used together");
 
 #ifdef __clang__
-# pragma clang diagnostic pop
+#pragma clang diagnostic pop
 #endif
 
 #ifndef AUTO_DOWNLOAD
-#  define AUTO_DOWNLOAD HAS_REMOTE_API
+#define AUTO_DOWNLOAD HAS_REMOTE_API
 #endif
 
 static_assert(HAS_REMOTE_API == 0 ? AUTO_DOWNLOAD == 0 : true,
               "AUTO_DOWNLOAD can not be turned on without HAS_REMOTE_API");
 
 #ifndef USE_SHELL_API
-#  define USE_SHELL_API 1
+#define USE_SHELL_API 1
 #endif
 
 #if USE_OS_TZDB
-#  ifdef _WIN32
-#    error "USE_OS_TZDB can not be used on Windows"
-#  endif
+#ifdef _WIN32
+#error "USE_OS_TZDB can not be used on Windows"
+#endif
 #endif
 
 #ifndef HAS_DEDUCTION_GUIDES
-#  if __cplusplus >= 201703
-#    define HAS_DEDUCTION_GUIDES 1
-#  else
-#    define HAS_DEDUCTION_GUIDES 0
-#  endif
-#endif  // HAS_DEDUCTION_GUIDES
+#if __cplusplus >= 201703
+#define HAS_DEDUCTION_GUIDES 1
+#else
+#define HAS_DEDUCTION_GUIDES 0
+#endif
+#endif // HAS_DEDUCTION_GUIDES
 
 #include "date.h"
 
@@ -121,50 +121,54 @@ static_assert(HAS_REMOTE_API == 0 ? AUTO_DOWNLOAD == 0 : true,
 #include <vector>
 
 #ifdef _WIN32
-#  ifdef DATE_BUILD_DLL
-#    define DATE_API __declspec(dllexport)
-#  elif defined(DATE_USE_DLL)
-#    define DATE_API __declspec(dllimport)
-#  else
-#    define DATE_API
-#  endif
+#ifdef DATE_BUILD_DLL
+#define DATE_API __declspec(dllexport)
+#elif defined(DATE_USE_DLL)
+#define DATE_API __declspec(dllimport)
 #else
-#  ifdef DATE_BUILD_DLL
-#    define DATE_API __attribute__ ((visibility ("default")))
-#  else
-#    define DATE_API
-#  endif
+#define DATE_API
+#endif
+#else
+#ifdef DATE_BUILD_DLL
+#define DATE_API __attribute__((visibility("default")))
+#else
+#define DATE_API
+#endif
 #endif
 
 namespace date
 {
 
-enum class choose {earliest, latest};
+enum class choose
+{
+    earliest,
+    latest
+};
 
 namespace detail
 {
-    struct undocumented;
+struct undocumented;
 
-    template<typename T>
-    struct nodeduct
-    {
-       using type = T;
-    };
+template <typename T>
+struct nodeduct
+{
+    using type = T;
+};
 
-    template<typename T>
-    using nodeduct_t = typename nodeduct<T>::type;
+template <typename T>
+using nodeduct_t = typename nodeduct<T>::type;
 }
 
 struct sys_info
 {
-    sys_seconds          begin;
-    sys_seconds          end;
+    sys_seconds begin;
+    sys_seconds end;
     std::chrono::seconds offset;
     std::chrono::minutes save;
-    std::string          abbrev;
+    std::string abbrev;
 };
 
-template<class CharT, class Traits>
+template <class CharT, class Traits>
 std::basic_ostream<CharT, Traits>&
 operator<<(std::basic_ostream<CharT, Traits>& os, const sys_info& r)
 {
@@ -178,12 +182,17 @@ operator<<(std::basic_ostream<CharT, Traits>& os, const sys_info& r)
 
 struct local_info
 {
-    enum {unique, nonexistent, ambiguous} result;
+    enum
+    {
+        unique,
+        nonexistent,
+        ambiguous
+    } result;
     sys_info first;
     sys_info second;
 };
 
-template<class CharT, class Traits>
+template <class CharT, class Traits>
 std::basic_ostream<CharT, Traits>&
 operator<<(std::basic_ostream<CharT, Traits>& os, const local_info& r)
 {
@@ -205,19 +214,17 @@ class nonexistent_local_time
 {
 public:
     template <class Duration>
-        nonexistent_local_time(local_time<Duration> tp, const local_info& i);
+    nonexistent_local_time(local_time<Duration> tp, const local_info& i);
 
 private:
     template <class Duration>
-    static
-    std::string
+    static std::string
     make_msg(local_time<Duration> tp, const local_info& i);
 };
 
 template <class Duration>
-inline
-nonexistent_local_time::nonexistent_local_time(local_time<Duration> tp,
-                                               const local_info& i)
+inline nonexistent_local_time::nonexistent_local_time(local_time<Duration> tp,
+                                                      const local_info& i)
     : std::runtime_error(make_msg(tp, i))
 {
 }
@@ -243,18 +250,16 @@ class ambiguous_local_time
 {
 public:
     template <class Duration>
-        ambiguous_local_time(local_time<Duration> tp, const local_info& i);
+    ambiguous_local_time(local_time<Duration> tp, const local_info& i);
 
 private:
     template <class Duration>
-    static
-    std::string
+    static std::string
     make_msg(local_time<Duration> tp, const local_info& i);
 };
 
 template <class Duration>
-inline
-ambiguous_local_time::ambiguous_local_time(local_time<Duration> tp, const local_info& i)
+inline ambiguous_local_time::ambiguous_local_time(local_time<Duration> tp, const local_info& i)
     : std::runtime_error(make_msg(tp, i))
 {
 }
@@ -268,8 +273,8 @@ ambiguous_local_time::make_msg(local_time<Duration> tp, const local_info& i)
     os << tp << " is ambiguous.  It could be\n"
        << tp << ' ' << i.first.abbrev << " == "
        << tp - i.first.offset << " UTC or\n"
-       << tp << ' ' << i.second.abbrev  << " == "
-       << tp - i.second.offset  << " UTC";
+       << tp << ' ' << i.second.abbrev << " == "
+       << tp - i.second.offset << " UTC";
     return os.str();
 }
 
@@ -291,8 +296,7 @@ struct zoned_traits
 template <>
 struct zoned_traits<const time_zone*>
 {
-    static
-    const time_zone*
+    static const time_zone*
     default_zone()
     {
         return date::locate_zone("Etc/UTC");
@@ -300,39 +304,35 @@ struct zoned_traits<const time_zone*>
 
 #if HAS_STRING_VIEW
 
-    static
-    const time_zone*
+    static const time_zone*
     locate_zone(std::string_view name)
     {
         return date::locate_zone(name);
     }
 
-#else  // !HAS_STRING_VIEW
+#else // !HAS_STRING_VIEW
 
-    static
-    const time_zone*
+    static const time_zone*
     locate_zone(const std::string& name)
     {
         return date::locate_zone(name);
     }
 
-    static
-    const time_zone*
+    static const time_zone*
     locate_zone(const char* name)
     {
         return date::locate_zone(name);
     }
 
-#endif  // !HAS_STRING_VIEW
+#endif // !HAS_STRING_VIEW
 };
 
 template <class Duration, class TimeZonePtr>
 class zoned_time;
 
 template <class Duration1, class Duration2, class TimeZonePtr>
-bool
-operator==(const zoned_time<Duration1, TimeZonePtr>& x,
-           const zoned_time<Duration2, TimeZonePtr>& y);
+bool operator==(const zoned_time<Duration1, TimeZonePtr>& x,
+                const zoned_time<Duration2, TimeZonePtr>& y);
 
 template <class Duration, class TimeZonePtr = const time_zone*>
 class zoned_time
@@ -341,7 +341,7 @@ public:
     using duration = typename std::common_type<Duration, std::chrono::seconds>::type;
 
 private:
-    TimeZonePtr        zone_;
+    TimeZonePtr zone_;
     sys_time<duration> tp_;
 
 public:
@@ -349,327 +349,245 @@ public:
     template <class T = TimeZonePtr,
               class = decltype(zoned_traits<T>::default_zone())>
 #endif
-        zoned_time();
+    zoned_time();
 
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
     template <class T = TimeZonePtr,
               class = decltype(zoned_traits<T>::default_zone())>
 #endif
-        zoned_time(const sys_time<Duration>& st);
+    zoned_time(const sys_time<Duration>& st);
     explicit zoned_time(TimeZonePtr z);
 
 #if HAS_STRING_VIEW
     template <class T = TimeZonePtr,
-              class = typename std::enable_if
-              <
-                  std::is_constructible
-                  <
+              class = typename std::enable_if<
+                  std::is_constructible<
                       zoned_time,
-                      decltype(zoned_traits<T>::locate_zone(std::string_view()))
-                  >::value
-              >::type>
-        explicit zoned_time(std::string_view name);
+                      decltype(zoned_traits<T>::locate_zone(std::string_view()))>::value>::type>
+    explicit zoned_time(std::string_view name);
 #else
-#  if !defined(_MSC_VER) || (_MSC_VER > 1916)
+#if !defined(_MSC_VER) || (_MSC_VER > 1916)
     template <class T = TimeZonePtr,
-              class = typename std::enable_if
-              <
-                  std::is_constructible
-                  <
+              class = typename std::enable_if<
+                  std::is_constructible<
                       zoned_time,
-                      decltype(zoned_traits<T>::locate_zone(std::string()))
-                  >::value
-              >::type>
-#  endif
-        explicit zoned_time(const std::string& name);
+                      decltype(zoned_traits<T>::locate_zone(std::string()))>::value>::type>
+#endif
+    explicit zoned_time(const std::string& name);
 #endif
 
     template <class Duration2,
-              class = typename std::enable_if
-                      <
-                          std::is_convertible<sys_time<Duration2>,
-                                              sys_time<Duration>>::value
-                      >::type>
-        zoned_time(const zoned_time<Duration2, TimeZonePtr>& zt) NOEXCEPT;
+              class = typename std::enable_if<
+                  std::is_convertible<sys_time<Duration2>,
+                                      sys_time<Duration>>::value>::type>
+    zoned_time(const zoned_time<Duration2, TimeZonePtr>& zt) NOEXCEPT;
 
     zoned_time(TimeZonePtr z, const sys_time<Duration>& st);
 
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
     template <class T = TimeZonePtr,
-              class = typename std::enable_if
-              <
-                  std::is_convertible
-                  <
+              class = typename std::enable_if<
+                  std::is_convertible<
                       decltype(std::declval<T&>()->to_sys(local_time<Duration>{})),
-                      sys_time<duration>
-                  >::value
-              >::type>
+                      sys_time<duration>>::value>::type>
 #endif
-        zoned_time(TimeZonePtr z, const local_time<Duration>& tp);
+    zoned_time(TimeZonePtr z, const local_time<Duration>& tp);
 
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
     template <class T = TimeZonePtr,
-              class = typename std::enable_if
-              <
-                  std::is_convertible
-                  <
+              class = typename std::enable_if<
+                  std::is_convertible<
                       decltype(std::declval<T&>()->to_sys(local_time<Duration>{},
                                                           choose::earliest)),
-                      sys_time<duration>
-                  >::value
-              >::type>
+                      sys_time<duration>>::value>::type>
 #endif
-        zoned_time(TimeZonePtr z, const local_time<Duration>& tp, choose c);
+    zoned_time(TimeZonePtr z, const local_time<Duration>& tp, choose c);
 
     template <class Duration2, class TimeZonePtr2,
-              class = typename std::enable_if
-                      <
-                          std::is_convertible<sys_time<Duration2>,
-                                              sys_time<Duration>>::value
-                      >::type>
-        zoned_time(TimeZonePtr z, const zoned_time<Duration2, TimeZonePtr2>& zt);
+              class = typename std::enable_if<
+                  std::is_convertible<sys_time<Duration2>,
+                                      sys_time<Duration>>::value>::type>
+    zoned_time(TimeZonePtr z, const zoned_time<Duration2, TimeZonePtr2>& zt);
 
     template <class Duration2, class TimeZonePtr2,
-              class = typename std::enable_if
-                      <
-                          std::is_convertible<sys_time<Duration2>,
-                                              sys_time<Duration>>::value
-                      >::type>
-        zoned_time(TimeZonePtr z, const zoned_time<Duration2, TimeZonePtr2>& zt, choose);
+              class = typename std::enable_if<
+                  std::is_convertible<sys_time<Duration2>,
+                                      sys_time<Duration>>::value>::type>
+    zoned_time(TimeZonePtr z, const zoned_time<Duration2, TimeZonePtr2>& zt, choose);
 
 #if HAS_STRING_VIEW
 
     template <class T = TimeZonePtr,
-              class = typename std::enable_if
-              <
-                  std::is_constructible
-                  <
+              class = typename std::enable_if<
+                  std::is_constructible<
                       zoned_time,
                       decltype(zoned_traits<T>::locate_zone(std::string_view())),
-                      sys_time<Duration>
-                  >::value
-              >::type>
-        zoned_time(std::string_view name, detail::nodeduct_t<const sys_time<Duration>&> st);
+                      sys_time<Duration>>::value>::type>
+    zoned_time(std::string_view name, detail::nodeduct_t<const sys_time<Duration>&> st);
 
     template <class T = TimeZonePtr,
-              class = typename std::enable_if
-              <
-                  std::is_constructible
-                  <
+              class = typename std::enable_if<
+                  std::is_constructible<
                       zoned_time,
                       decltype(zoned_traits<T>::locate_zone(std::string_view())),
-                      local_time<Duration>
-                  >::value
-              >::type>
-        zoned_time(std::string_view name, detail::nodeduct_t<const local_time<Duration>&> tp);
+                      local_time<Duration>>::value>::type>
+    zoned_time(std::string_view name, detail::nodeduct_t<const local_time<Duration>&> tp);
 
     template <class T = TimeZonePtr,
-              class = typename std::enable_if
-              <
-                  std::is_constructible
-                  <
+              class = typename std::enable_if<
+                  std::is_constructible<
                       zoned_time,
                       decltype(zoned_traits<T>::locate_zone(std::string_view())),
                       local_time<Duration>,
-                      choose
-                  >::value
-              >::type>
-        zoned_time(std::string_view name, detail::nodeduct_t<const local_time<Duration>&> tp, choose c);
+                      choose>::value>::type>
+    zoned_time(std::string_view name, detail::nodeduct_t<const local_time<Duration>&> tp, choose c);
 
     template <class Duration2, class TimeZonePtr2, class T = TimeZonePtr,
-              class = typename std::enable_if
-                      <
-                          std::is_convertible<sys_time<Duration2>,
-                                              sys_time<Duration>>::value &&
-                          std::is_constructible
-                          <
-                              zoned_time,
-                              decltype(zoned_traits<T>::locate_zone(std::string_view())),
-                              zoned_time
-                          >::value
-                      >::type>
-        zoned_time(std::string_view name, const zoned_time<Duration2, TimeZonePtr2>& zt);
+              class = typename std::enable_if<
+                  std::is_convertible<sys_time<Duration2>,
+                                      sys_time<Duration>>::value &&
+                  std::is_constructible<
+                      zoned_time,
+                      decltype(zoned_traits<T>::locate_zone(std::string_view())),
+                      zoned_time>::value>::type>
+    zoned_time(std::string_view name, const zoned_time<Duration2, TimeZonePtr2>& zt);
 
     template <class Duration2, class TimeZonePtr2, class T = TimeZonePtr,
-              class = typename std::enable_if
-                      <
-                          std::is_convertible<sys_time<Duration2>,
-                                              sys_time<Duration>>::value &&
-                          std::is_constructible
-                          <
-                              zoned_time,
-                              decltype(zoned_traits<T>::locate_zone(std::string_view())),
-                              zoned_time,
-                              choose
-                          >::value
-                      >::type>
-        zoned_time(std::string_view name, const zoned_time<Duration2, TimeZonePtr2>& zt, choose);
+              class = typename std::enable_if<
+                  std::is_convertible<sys_time<Duration2>,
+                                      sys_time<Duration>>::value &&
+                  std::is_constructible<
+                      zoned_time,
+                      decltype(zoned_traits<T>::locate_zone(std::string_view())),
+                      zoned_time,
+                      choose>::value>::type>
+    zoned_time(std::string_view name, const zoned_time<Duration2, TimeZonePtr2>& zt, choose);
 
-#else  // !HAS_STRING_VIEW
+#else // !HAS_STRING_VIEW
 
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
     template <class T = TimeZonePtr,
-              class = typename std::enable_if
-              <
-                  std::is_constructible
-                  <
+              class = typename std::enable_if<
+                  std::is_constructible<
                       zoned_time,
                       decltype(zoned_traits<T>::locate_zone(std::string())),
-                      sys_time<Duration>
-                  >::value
-              >::type>
+                      sys_time<Duration>>::value>::type>
 #endif
-        zoned_time(const std::string& name, const sys_time<Duration>& st);
+    zoned_time(const std::string& name, const sys_time<Duration>& st);
 
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
     template <class T = TimeZonePtr,
-              class = typename std::enable_if
-              <
-                  std::is_constructible
-                  <
+              class = typename std::enable_if<
+                  std::is_constructible<
                       zoned_time,
                       decltype(zoned_traits<T>::locate_zone(std::string())),
-                      sys_time<Duration>
-                  >::value
-              >::type>
+                      sys_time<Duration>>::value>::type>
 #endif
-        zoned_time(const char* name, const sys_time<Duration>& st);
+    zoned_time(const char* name, const sys_time<Duration>& st);
 
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
     template <class T = TimeZonePtr,
-              class = typename std::enable_if
-              <
-                  std::is_constructible
-                  <
+              class = typename std::enable_if<
+                  std::is_constructible<
                       zoned_time,
                       decltype(zoned_traits<T>::locate_zone(std::string())),
-                      local_time<Duration>
-                  >::value
-              >::type>
+                      local_time<Duration>>::value>::type>
 #endif
-        zoned_time(const std::string& name, const local_time<Duration>& tp);
+    zoned_time(const std::string& name, const local_time<Duration>& tp);
 
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
     template <class T = TimeZonePtr,
-              class = typename std::enable_if
-              <
-                  std::is_constructible
-                  <
+              class = typename std::enable_if<
+                  std::is_constructible<
                       zoned_time,
                       decltype(zoned_traits<T>::locate_zone(std::string())),
-                      local_time<Duration>
-                  >::value
-              >::type>
+                      local_time<Duration>>::value>::type>
 #endif
-        zoned_time(const char* name, const local_time<Duration>& tp);
+    zoned_time(const char* name, const local_time<Duration>& tp);
 
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
     template <class T = TimeZonePtr,
-              class = typename std::enable_if
-              <
-                  std::is_constructible
-                  <
+              class = typename std::enable_if<
+                  std::is_constructible<
                       zoned_time,
                       decltype(zoned_traits<T>::locate_zone(std::string())),
                       local_time<Duration>,
-                      choose
-                  >::value
-              >::type>
+                      choose>::value>::type>
 #endif
-        zoned_time(const std::string& name, const local_time<Duration>& tp, choose c);
+    zoned_time(const std::string& name, const local_time<Duration>& tp, choose c);
 
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
     template <class T = TimeZonePtr,
-              class = typename std::enable_if
-              <
-                  std::is_constructible
-                  <
+              class = typename std::enable_if<
+                  std::is_constructible<
                       zoned_time,
                       decltype(zoned_traits<T>::locate_zone(std::string())),
                       local_time<Duration>,
-                      choose
-                  >::value
-              >::type>
+                      choose>::value>::type>
 #endif
-        zoned_time(const char* name, const local_time<Duration>& tp, choose c);
+    zoned_time(const char* name, const local_time<Duration>& tp, choose c);
 
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
     template <class Duration2, class TimeZonePtr2, class T = TimeZonePtr,
-              class = typename std::enable_if
-                      <
-                          std::is_convertible<sys_time<Duration2>,
-                                              sys_time<Duration>>::value &&
-                          std::is_constructible
-                          <
-                              zoned_time,
-                              decltype(zoned_traits<T>::locate_zone(std::string())),
-                              zoned_time
-                          >::value
-                      >::type>
+              class = typename std::enable_if<
+                  std::is_convertible<sys_time<Duration2>,
+                                      sys_time<Duration>>::value &&
+                  std::is_constructible<
+                      zoned_time,
+                      decltype(zoned_traits<T>::locate_zone(std::string())),
+                      zoned_time>::value>::type>
 #else
     template <class Duration2, class TimeZonePtr2>
 #endif
-        zoned_time(const std::string& name, const zoned_time<Duration2, TimeZonePtr2>& zt);
+    zoned_time(const std::string& name, const zoned_time<Duration2, TimeZonePtr2>& zt);
 
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
     template <class Duration2, class TimeZonePtr2, class T = TimeZonePtr,
-              class = typename std::enable_if
-                      <
-                          std::is_convertible<sys_time<Duration2>,
-                                              sys_time<Duration>>::value &&
-                          std::is_constructible
-                          <
-                              zoned_time,
-                              decltype(zoned_traits<T>::locate_zone(std::string())),
-                              zoned_time
-                          >::value
-                      >::type>
+              class = typename std::enable_if<
+                  std::is_convertible<sys_time<Duration2>,
+                                      sys_time<Duration>>::value &&
+                  std::is_constructible<
+                      zoned_time,
+                      decltype(zoned_traits<T>::locate_zone(std::string())),
+                      zoned_time>::value>::type>
 #else
     template <class Duration2, class TimeZonePtr2>
 #endif
-        zoned_time(const char* name, const zoned_time<Duration2, TimeZonePtr2>& zt);
+    zoned_time(const char* name, const zoned_time<Duration2, TimeZonePtr2>& zt);
 
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
     template <class Duration2, class TimeZonePtr2, class T = TimeZonePtr,
-              class = typename std::enable_if
-                      <
-                          std::is_convertible<sys_time<Duration2>,
-                                              sys_time<Duration>>::value &&
-                          std::is_constructible
-                          <
-                              zoned_time,
-                              decltype(zoned_traits<T>::locate_zone(std::string())),
-                              zoned_time,
-                              choose
-                          >::value
-                      >::type>
+              class = typename std::enable_if<
+                  std::is_convertible<sys_time<Duration2>,
+                                      sys_time<Duration>>::value &&
+                  std::is_constructible<
+                      zoned_time,
+                      decltype(zoned_traits<T>::locate_zone(std::string())),
+                      zoned_time,
+                      choose>::value>::type>
 #else
     template <class Duration2, class TimeZonePtr2>
 #endif
-        zoned_time(const std::string& name, const zoned_time<Duration2, TimeZonePtr2>& zt,
-                   choose);
+    zoned_time(const std::string& name, const zoned_time<Duration2, TimeZonePtr2>& zt,
+               choose);
 
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
     template <class Duration2, class TimeZonePtr2, class T = TimeZonePtr,
-              class = typename std::enable_if
-                      <
-                          std::is_convertible<sys_time<Duration2>,
-                                              sys_time<Duration>>::value &&
-                          std::is_constructible
-                          <
-                              zoned_time,
-                              decltype(zoned_traits<T>::locate_zone(std::string())),
-                              zoned_time,
-                              choose
-                          >::value
-                      >::type>
+              class = typename std::enable_if<
+                  std::is_convertible<sys_time<Duration2>,
+                                      sys_time<Duration>>::value &&
+                  std::is_constructible<
+                      zoned_time,
+                      decltype(zoned_traits<T>::locate_zone(std::string())),
+                      zoned_time,
+                      choose>::value>::type>
 #else
     template <class Duration2, class TimeZonePtr2>
 #endif
-        zoned_time(const char* name, const zoned_time<Duration2, TimeZonePtr2>& zt,
-                   choose);
+    zoned_time(const char* name, const zoned_time<Duration2, TimeZonePtr2>& zt,
+               choose);
 
-#endif  // !HAS_STRING_VIEW
+#endif // !HAS_STRING_VIEW
 
     zoned_time& operator=(const sys_time<Duration>& st);
     zoned_time& operator=(const local_time<Duration>& ut);
@@ -677,29 +595,27 @@ public:
     explicit operator sys_time<duration>() const;
     explicit operator local_time<duration>() const;
 
-    TimeZonePtr          get_time_zone() const;
+    TimeZonePtr get_time_zone() const;
     local_time<duration> get_local_time() const;
-    sys_time<duration>   get_sys_time() const;
-    sys_info             get_info() const;
+    sys_time<duration> get_sys_time() const;
+    sys_info get_info() const;
 
     template <class Duration1, class Duration2, class TimeZonePtr1>
-    friend
-    bool
+    friend bool
     operator==(const zoned_time<Duration1, TimeZonePtr1>& x,
                const zoned_time<Duration2, TimeZonePtr1>& y);
 
     template <class CharT, class Traits, class Duration1, class TimeZonePtr1>
-    friend
-    std::basic_ostream<CharT, Traits>&
+    friend std::basic_ostream<CharT, Traits>&
     operator<<(std::basic_ostream<CharT, Traits>& os,
                const zoned_time<Duration1, TimeZonePtr1>& t);
 
 private:
-    template <class D, class T> friend class zoned_time;
+    template <class D, class T>
+    friend class zoned_time;
 
     template <class TimeZonePtr2>
-    static
-    TimeZonePtr2&&
+    static TimeZonePtr2&&
     check(TimeZonePtr2&& p);
 };
 
@@ -709,18 +625,16 @@ using zoned_seconds = zoned_time<std::chrono::seconds>;
 
 namespace detail
 {
-   template<typename TimeZonePtrOrName>
-   using time_zone_representation =
-       std::conditional_t
-       <
-           std::is_convertible<TimeZonePtrOrName, std::string_view>::value,
-           time_zone const*,
-           std::remove_cv_t<std::remove_reference_t<TimeZonePtrOrName>>
-       >;
+template <typename TimeZonePtrOrName>
+using time_zone_representation =
+    std::conditional_t<
+        std::is_convertible<TimeZonePtrOrName, std::string_view>::value,
+        time_zone const*,
+        std::remove_cv_t<std::remove_reference_t<TimeZonePtrOrName>>>;
 }
 
 zoned_time()
-    -> zoned_time<std::chrono::seconds>;
+    ->zoned_time<std::chrono::seconds>;
 
 template <class Duration>
 zoned_time(sys_time<Duration>)
@@ -742,11 +656,10 @@ template <class Duration, class TimeZonePtrOrName, class TimeZonePtr2>
 zoned_time(TimeZonePtrOrName&&, zoned_time<Duration, TimeZonePtr2>, choose = choose::earliest)
     -> zoned_time<std::common_type_t<Duration, std::chrono::seconds>, detail::time_zone_representation<TimeZonePtrOrName>>;
 
-#endif  // HAS_DEDUCTION_GUIDES
+#endif // HAS_DEDUCTION_GUIDES
 
 template <class Duration1, class Duration2, class TimeZonePtr>
-inline
-bool
+inline bool
 operator==(const zoned_time<Duration1, TimeZonePtr>& x,
            const zoned_time<Duration2, TimeZonePtr>& y)
 {
@@ -754,8 +667,7 @@ operator==(const zoned_time<Duration1, TimeZonePtr>& x,
 }
 
 template <class Duration1, class Duration2, class TimeZonePtr>
-inline
-bool
+inline bool
 operator!=(const zoned_time<Duration1, TimeZonePtr>& x,
            const zoned_time<Duration2, TimeZonePtr>& y)
 {
@@ -766,104 +678,105 @@ operator!=(const zoned_time<Duration1, TimeZonePtr>& x,
 
 namespace detail
 {
-#  if USE_OS_TZDB
-    struct transition;
-    struct expanded_ttinfo;
-#  else  // !USE_OS_TZDB
-    struct zonelet;
-    class Rule;
-#  endif  // !USE_OS_TZDB
+#if USE_OS_TZDB
+struct transition;
+struct expanded_ttinfo;
+#else  // !USE_OS_TZDB
+struct zonelet;
+class Rule;
+#endif // !USE_OS_TZDB
 }
 
-#endif  // !defined(_MSC_VER) || (_MSC_VER >= 1900)
+#endif // !defined(_MSC_VER) || (_MSC_VER >= 1900)
 
 class time_zone
 {
 private:
-    std::string                          name_;
+    std::string name_;
 #if USE_OS_TZDB
-    std::vector<detail::transition>      transitions_;
+    std::vector<detail::transition> transitions_;
     std::vector<detail::expanded_ttinfo> ttinfos_;
 #else  // !USE_OS_TZDB
-    std::vector<detail::zonelet>         zonelets_;
-#endif  // !USE_OS_TZDB
-    std::unique_ptr<std::once_flag>      adjusted_;
+    std::vector<detail::zonelet> zonelets_;
+#endif // !USE_OS_TZDB
+    std::unique_ptr<std::once_flag> adjusted_;
 
 public:
 #if !defined(_MSC_VER) || (_MSC_VER >= 1900)
     time_zone(time_zone&&) = default;
     time_zone& operator=(time_zone&&) = default;
-#else   // defined(_MSC_VER) && (_MSC_VER < 1900)
+#else  // defined(_MSC_VER) && (_MSC_VER < 1900)
     time_zone(time_zone&& src);
     time_zone& operator=(time_zone&& src);
-#endif  // defined(_MSC_VER) && (_MSC_VER < 1900)
+#endif // defined(_MSC_VER) && (_MSC_VER < 1900)
 
     DATE_API explicit time_zone(const std::string& s, detail::undocumented);
 
     const std::string& name() const NOEXCEPT;
 
-    template <class Duration> sys_info   get_info(sys_time<Duration> st) const;
-    template <class Duration> local_info get_info(local_time<Duration> tp) const;
+    template <class Duration>
+    sys_info get_info(sys_time<Duration> st) const;
+    template <class Duration>
+    local_info get_info(local_time<Duration> tp) const;
 
     template <class Duration>
-        sys_time<typename std::common_type<Duration, std::chrono::seconds>::type>
-        to_sys(local_time<Duration> tp) const;
+    sys_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+    to_sys(local_time<Duration> tp) const;
 
     template <class Duration>
-        sys_time<typename std::common_type<Duration, std::chrono::seconds>::type>
-        to_sys(local_time<Duration> tp, choose z) const;
+    sys_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+    to_sys(local_time<Duration> tp, choose z) const;
 
     template <class Duration>
-        local_time<typename std::common_type<Duration, std::chrono::seconds>::type>
-        to_local(sys_time<Duration> tp) const;
+    local_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+    to_local(sys_time<Duration> tp) const;
 
     friend bool operator==(const time_zone& x, const time_zone& y) NOEXCEPT;
-    friend bool operator< (const time_zone& x, const time_zone& y) NOEXCEPT;
+    friend bool operator<(const time_zone& x, const time_zone& y) NOEXCEPT;
     friend DATE_API std::ostream& operator<<(std::ostream& os, const time_zone& z);
 
 #if !USE_OS_TZDB
     DATE_API void add(const std::string& s);
-#endif  // !USE_OS_TZDB
+#endif // !USE_OS_TZDB
 
 private:
-    DATE_API sys_info   get_info_impl(sys_seconds tp) const;
+    DATE_API sys_info get_info_impl(sys_seconds tp) const;
     DATE_API local_info get_info_impl(local_seconds tp) const;
 
     template <class Duration>
-        sys_time<typename std::common_type<Duration, std::chrono::seconds>::type>
-        to_sys_impl(local_time<Duration> tp, choose z, std::false_type) const;
+    sys_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+    to_sys_impl(local_time<Duration> tp, choose z, std::false_type) const;
     template <class Duration>
-        sys_time<typename std::common_type<Duration, std::chrono::seconds>::type>
-        to_sys_impl(local_time<Duration> tp, choose, std::true_type) const;
+    sys_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+    to_sys_impl(local_time<Duration> tp, choose, std::true_type) const;
 
 #if USE_OS_TZDB
     DATE_API void init() const;
     DATE_API void init_impl();
     DATE_API sys_info
-        load_sys_info(std::vector<detail::transition>::const_iterator i) const;
+    load_sys_info(std::vector<detail::transition>::const_iterator i) const;
 
     template <class TimeType>
     DATE_API void
     load_data(std::istream& inf, std::int32_t tzh_leapcnt, std::int32_t tzh_timecnt,
-                                 std::int32_t tzh_typecnt, std::int32_t tzh_charcnt);
+              std::int32_t tzh_typecnt, std::int32_t tzh_charcnt);
 #else  // !USE_OS_TZDB
-    DATE_API sys_info   get_info_impl(sys_seconds tp, int timezone) const;
+    DATE_API sys_info get_info_impl(sys_seconds tp, int timezone) const;
     DATE_API void adjust_infos(const std::vector<detail::Rule>& rules);
     DATE_API void parse_info(std::istream& in);
-#endif  // !USE_OS_TZDB
+#endif // !USE_OS_TZDB
 };
 
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 
-inline
-time_zone::time_zone(time_zone&& src)
+inline time_zone::time_zone(time_zone&& src)
     : name_(std::move(src.name_))
     , zonelets_(std::move(src.zonelets_))
     , adjusted_(std::move(src.adjusted_))
-    {}
+{
+}
 
-inline
-time_zone&
+inline time_zone&
 time_zone::operator=(time_zone&& src)
 {
     name_ = std::move(src.name_);
@@ -872,50 +785,44 @@ time_zone::operator=(time_zone&& src)
     return *this;
 }
 
-#endif  // defined(_MSC_VER) && (_MSC_VER < 1900)
+#endif // defined(_MSC_VER) && (_MSC_VER < 1900)
 
-inline
-const std::string&
+inline const std::string&
 time_zone::name() const NOEXCEPT
 {
     return name_;
 }
 
 template <class Duration>
-inline
-sys_info
+inline sys_info
 time_zone::get_info(sys_time<Duration> st) const
 {
     return get_info_impl(date::floor<std::chrono::seconds>(st));
 }
 
 template <class Duration>
-inline
-local_info
+inline local_info
 time_zone::get_info(local_time<Duration> tp) const
 {
     return get_info_impl(date::floor<std::chrono::seconds>(tp));
 }
 
 template <class Duration>
-inline
-sys_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline sys_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 time_zone::to_sys(local_time<Duration> tp) const
 {
     return to_sys_impl(tp, choose{}, std::true_type{});
 }
 
 template <class Duration>
-inline
-sys_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline sys_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 time_zone::to_sys(local_time<Duration> tp, choose z) const
 {
     return to_sys_impl(tp, z, std::false_type{});
 }
 
 template <class Duration>
-inline
-local_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline local_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 time_zone::to_local(sys_time<Duration> tp) const
 {
     using LT = local_time<typename std::common_type<Duration, std::chrono::seconds>::type>;
@@ -923,13 +830,31 @@ time_zone::to_local(sys_time<Duration> tp) const
     return LT{(tp + i.offset).time_since_epoch()};
 }
 
-inline bool operator==(const time_zone& x, const time_zone& y) NOEXCEPT {return x.name_ == y.name_;}
-inline bool operator< (const time_zone& x, const time_zone& y) NOEXCEPT {return x.name_ < y.name_;}
+inline bool operator==(const time_zone& x, const time_zone& y) NOEXCEPT
+{
+    return x.name_ == y.name_;
+}
+inline bool operator<(const time_zone& x, const time_zone& y) NOEXCEPT
+{
+    return x.name_ < y.name_;
+}
 
-inline bool operator!=(const time_zone& x, const time_zone& y) NOEXCEPT {return !(x == y);}
-inline bool operator> (const time_zone& x, const time_zone& y) NOEXCEPT {return   y < x;}
-inline bool operator<=(const time_zone& x, const time_zone& y) NOEXCEPT {return !(y < x);}
-inline bool operator>=(const time_zone& x, const time_zone& y) NOEXCEPT {return !(x < y);}
+inline bool operator!=(const time_zone& x, const time_zone& y) NOEXCEPT
+{
+    return !(x == y);
+}
+inline bool operator>(const time_zone& x, const time_zone& y) NOEXCEPT
+{
+    return y < x;
+}
+inline bool operator<=(const time_zone& x, const time_zone& y) NOEXCEPT
+{
+    return !(y < x);
+}
+inline bool operator>=(const time_zone& x, const time_zone& y) NOEXCEPT
+{
+    return !(x < y);
+}
 
 template <class Duration>
 sys_time<typename std::common_type<Duration, std::chrono::seconds>::type>
@@ -967,26 +892,51 @@ class time_zone_link
 private:
     std::string name_;
     std::string target_;
+
 public:
     DATE_API explicit time_zone_link(const std::string& s);
 
-    const std::string& name() const {return name_;}
-    const std::string& target() const {return target_;}
+    const std::string& name() const
+    {
+        return name_;
+    }
+    const std::string& target() const
+    {
+        return target_;
+    }
 
-    friend bool operator==(const time_zone_link& x, const time_zone_link& y) {return x.name_ == y.name_;}
-    friend bool operator< (const time_zone_link& x, const time_zone_link& y) {return x.name_ < y.name_;}
+    friend bool operator==(const time_zone_link& x, const time_zone_link& y)
+    {
+        return x.name_ == y.name_;
+    }
+    friend bool operator<(const time_zone_link& x, const time_zone_link& y)
+    {
+        return x.name_ < y.name_;
+    }
 
     friend DATE_API std::ostream& operator<<(std::ostream& os, const time_zone_link& x);
 };
 
 using link = time_zone_link;
 
-inline bool operator!=(const time_zone_link& x, const time_zone_link& y) {return !(x == y);}
-inline bool operator> (const time_zone_link& x, const time_zone_link& y) {return   y < x;}
-inline bool operator<=(const time_zone_link& x, const time_zone_link& y) {return !(y < x);}
-inline bool operator>=(const time_zone_link& x, const time_zone_link& y) {return !(x < y);}
+inline bool operator!=(const time_zone_link& x, const time_zone_link& y)
+{
+    return !(x == y);
+}
+inline bool operator>(const time_zone_link& x, const time_zone_link& y)
+{
+    return y < x;
+}
+inline bool operator<=(const time_zone_link& x, const time_zone_link& y)
+{
+    return !(y < x);
+}
+inline bool operator>=(const time_zone_link& x, const time_zone_link& y)
+{
+    return !(x < y);
+}
 
-#endif  // !USE_OS_TZDB
+#endif // !USE_OS_TZDB
 
 class leap_second
 {
@@ -1000,31 +950,37 @@ public:
     DATE_API explicit leap_second(const std::string& s, detail::undocumented);
 #endif
 
-    sys_seconds date() const {return date_;}
+    sys_seconds date() const
+    {
+        return date_;
+    }
 
-    friend bool operator==(const leap_second& x, const leap_second& y) {return x.date_ == y.date_;}
-    friend bool operator< (const leap_second& x, const leap_second& y) {return x.date_ < y.date_;}
+    friend bool operator==(const leap_second& x, const leap_second& y)
+    {
+        return x.date_ == y.date_;
+    }
+    friend bool operator<(const leap_second& x, const leap_second& y)
+    {
+        return x.date_ < y.date_;
+    }
 
     template <class Duration>
-    friend
-    bool
+    friend bool
     operator==(const leap_second& x, const sys_time<Duration>& y)
     {
         return x.date_ == y;
     }
 
     template <class Duration>
-    friend
-    bool
-    operator< (const leap_second& x, const sys_time<Duration>& y)
+    friend bool
+    operator<(const leap_second& x, const sys_time<Duration>& y)
     {
         return x.date_ < y;
     }
 
     template <class Duration>
-    friend
-    bool
-    operator< (const sys_time<Duration>& x, const leap_second& y)
+    friend bool
+    operator<(const sys_time<Duration>& x, const leap_second& y)
     {
         return x < y.date_;
     }
@@ -1032,78 +988,81 @@ public:
     friend DATE_API std::ostream& operator<<(std::ostream& os, const leap_second& x);
 };
 
-inline bool operator!=(const leap_second& x, const leap_second& y) {return !(x == y);}
-inline bool operator> (const leap_second& x, const leap_second& y) {return   y < x;}
-inline bool operator<=(const leap_second& x, const leap_second& y) {return !(y < x);}
-inline bool operator>=(const leap_second& x, const leap_second& y) {return !(x < y);}
+inline bool operator!=(const leap_second& x, const leap_second& y)
+{
+    return !(x == y);
+}
+inline bool operator>(const leap_second& x, const leap_second& y)
+{
+    return y < x;
+}
+inline bool operator<=(const leap_second& x, const leap_second& y)
+{
+    return !(y < x);
+}
+inline bool operator>=(const leap_second& x, const leap_second& y)
+{
+    return !(x < y);
+}
 
 template <class Duration>
-inline
-bool
+inline bool
 operator==(const sys_time<Duration>& x, const leap_second& y)
 {
     return y == x;
 }
 
 template <class Duration>
-inline
-bool
+inline bool
 operator!=(const leap_second& x, const sys_time<Duration>& y)
 {
     return !(x == y);
 }
 
 template <class Duration>
-inline
-bool
+inline bool
 operator!=(const sys_time<Duration>& x, const leap_second& y)
 {
     return !(x == y);
 }
 
 template <class Duration>
-inline
-bool
-operator> (const leap_second& x, const sys_time<Duration>& y)
+inline bool
+operator>(const leap_second& x, const sys_time<Duration>& y)
 {
     return y < x;
 }
 
 template <class Duration>
-inline
-bool
-operator> (const sys_time<Duration>& x, const leap_second& y)
+inline bool
+operator>(const sys_time<Duration>& x, const leap_second& y)
 {
     return y < x;
 }
 
 template <class Duration>
-inline
-bool
+inline bool
 operator<=(const leap_second& x, const sys_time<Duration>& y)
 {
     return !(y < x);
 }
 
 template <class Duration>
-inline
-bool
+inline bool
 operator<=(const sys_time<Duration>& x, const leap_second& y)
 {
     return !(y < x);
 }
 
 template <class Duration>
-inline
-bool
+inline bool
 operator>=(const leap_second& x, const sys_time<Duration>& y)
 {
     return !(x < y);
 }
 
 template <class Duration>
-inline
-bool
+inline bool
 operator>=(const sys_time<Duration>& x, const leap_second& y)
 {
     return !(x < y);
@@ -1136,7 +1095,9 @@ namespace detail
 struct timezone_mapping
 {
     timezone_mapping(const char* other, const char* territory, const char* type)
-        : other(other), territory(territory), type(type)
+        : other(other)
+        , territory(territory)
+        , type(type)
     {
     }
     timezone_mapping() = default;
@@ -1145,20 +1106,20 @@ struct timezone_mapping
     std::string type;
 };
 
-}  // detail
+} // detail
 
-#endif  // _WIN32
+#endif // _WIN32
 
 struct tzdb
 {
-    std::string                 version = "unknown";
-    std::vector<time_zone>      zones;
+    std::string version = "unknown";
+    std::vector<time_zone> zones;
 #if !USE_OS_TZDB
     std::vector<time_zone_link> links;
 #endif
-    std::vector<leap_second>    leap_seconds;
+    std::vector<leap_second> leap_seconds;
 #if !USE_OS_TZDB
-    std::vector<detail::Rule>   rules;
+    std::vector<detail::Rule> rules;
 #endif
 #ifdef _WIN32
     std::vector<detail::timezone_mapping> mappings;
@@ -1177,7 +1138,8 @@ struct tzdb
         , leap_seconds(std::move(src.leap_seconds))
         , rules(std::move(src.rules))
         , mappings(std::move(src.mappings))
-    {}
+    {
+    }
 
     tzdb& operator=(tzdb&& src)
     {
@@ -1189,7 +1151,7 @@ struct tzdb
         mappings = std::move(src.mappings);
         return *this;
     }
-#endif  // defined(_MSC_VER) && (_MSC_VER < 1900)
+#endif // defined(_MSC_VER) && (_MSC_VER < 1900)
 
 #if HAS_STRING_VIEW
     const time_zone* locate_zone(std::string_view tz_name) const;
@@ -1215,8 +1177,14 @@ public:
     tzdb_list() = default;
     tzdb_list(tzdb_list&& x) NOEXCEPT;
 
-    const tzdb& front() const NOEXCEPT {return *head_;}
-          tzdb& front()       NOEXCEPT {return *head_;}
+    const tzdb& front() const NOEXCEPT
+    {
+        return *head_;
+    }
+    tzdb& front() NOEXCEPT
+    {
+        return *head_;
+    }
 
     class const_iterator;
 
@@ -1229,6 +1197,7 @@ public:
     const_iterator erase_after(const_iterator p) NOEXCEPT;
 
     struct undocumented_helper;
+
 private:
     void push_front(tzdb* tzdb) NOEXCEPT;
 };
@@ -1237,58 +1206,74 @@ class tzdb_list::const_iterator
 {
     tzdb* p_ = nullptr;
 
-    explicit const_iterator(tzdb* p) NOEXCEPT : p_{p} {}
+    explicit const_iterator(tzdb* p) NOEXCEPT : p_{p}
+    {
+    }
+
 public:
     const_iterator() = default;
 
     using iterator_category = std::forward_iterator_tag;
-    using value_type        = tzdb;
-    using reference         = const value_type&;
-    using pointer           = const value_type*;
-    using difference_type   = std::ptrdiff_t;
+    using value_type = tzdb;
+    using reference = const value_type&;
+    using pointer = const value_type*;
+    using difference_type = std::ptrdiff_t;
 
-    reference operator*() const NOEXCEPT {return *p_;}
-    pointer  operator->() const NOEXCEPT {return p_;}
+    reference operator*() const NOEXCEPT
+    {
+        return *p_;
+    }
+    pointer operator->() const NOEXCEPT
+    {
+        return p_;
+    }
 
-    const_iterator& operator++() NOEXCEPT {p_ = p_->next; return *this;}
-    const_iterator  operator++(int) NOEXCEPT {auto t = *this; ++(*this); return t;}
+    const_iterator& operator++() NOEXCEPT
+    {
+        p_ = p_->next;
+        return *this;
+    }
+    const_iterator operator++(int) NOEXCEPT
+    {
+        auto t = *this;
+        ++(*this);
+        return t;
+    }
 
-    friend
-    bool
+    friend bool
     operator==(const const_iterator& x, const const_iterator& y) NOEXCEPT
-        {return x.p_ == y.p_;}
+    {
+        return x.p_ == y.p_;
+    }
 
-    friend
-    bool
+    friend bool
     operator!=(const const_iterator& x, const const_iterator& y) NOEXCEPT
-        {return !(x == y);}
+    {
+        return !(x == y);
+    }
 
     friend class tzdb_list;
 };
 
-inline
-tzdb_list::const_iterator
+inline tzdb_list::const_iterator
 tzdb_list::begin() const NOEXCEPT
 {
     return const_iterator{head_};
 }
 
-inline
-tzdb_list::const_iterator
+inline tzdb_list::const_iterator
 tzdb_list::end() const NOEXCEPT
 {
     return const_iterator{nullptr};
 }
 
-inline
-tzdb_list::const_iterator
+inline tzdb_list::const_iterator
 tzdb_list::cbegin() const NOEXCEPT
 {
     return begin();
 }
 
-inline
-tzdb_list::const_iterator
+inline tzdb_list::const_iterator
 tzdb_list::cend() const NOEXCEPT
 {
     return end();
@@ -1299,16 +1284,16 @@ DATE_API tzdb_list& get_tzdb_list();
 #if !USE_OS_TZDB
 
 DATE_API const tzdb& reload_tzdb();
-DATE_API void        set_install(const std::string& install);
+DATE_API void set_install(const std::string& install);
 
-#endif  // !USE_OS_TZDB
+#endif // !USE_OS_TZDB
 
 #if HAS_REMOTE_API
 
 DATE_API std::string remote_version();
 // if provided error_buffer size should be at least CURL_ERROR_SIZE
-DATE_API bool        remote_download(const std::string& version, char* error_buffer = nullptr);
-DATE_API bool        remote_install(const std::string& version);
+DATE_API bool remote_download(const std::string& version, char* error_buffer = nullptr);
+DATE_API bool remote_install(const std::string& version);
 
 #endif
 
@@ -1318,28 +1303,25 @@ namespace detail
 {
 
 template <class T>
-inline
-T*
+inline T*
 to_raw_pointer(T* p) NOEXCEPT
 {
     return p;
 }
 
 template <class Pointer>
-inline
-auto
+inline auto
 to_raw_pointer(Pointer p) NOEXCEPT
-    -> decltype(detail::to_raw_pointer(p.operator->()))
+    ->decltype(detail::to_raw_pointer(p.operator->()))
 {
     return detail::to_raw_pointer(p.operator->());
 }
 
-}  // namespace detail
+} // namespace detail
 
 template <class Duration, class TimeZonePtr>
 template <class TimeZonePtr2>
-inline
-TimeZonePtr2&&
+inline TimeZonePtr2&&
 zoned_time<Duration, TimeZonePtr>::check(TimeZonePtr2&& p)
 {
     if (detail::to_raw_pointer(p) == nullptr)
@@ -1352,206 +1334,206 @@ template <class Duration, class TimeZonePtr>
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
 template <class T, class>
 #endif
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time()
+inline zoned_time<Duration, TimeZonePtr>::zoned_time()
     : zone_(check(zoned_traits<TimeZonePtr>::default_zone()))
-    {}
+{
+}
 
 template <class Duration, class TimeZonePtr>
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
 template <class T, class>
 #endif
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(const sys_time<Duration>& st)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(const sys_time<Duration>& st)
     : zone_(check(zoned_traits<TimeZonePtr>::default_zone()))
     , tp_(st)
-    {}
+{
+}
 
 template <class Duration, class TimeZonePtr>
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(TimeZonePtr z)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(TimeZonePtr z)
     : zone_(check(std::move(z)))
-    {}
+{
+}
 
 #if HAS_STRING_VIEW
 
 template <class Duration, class TimeZonePtr>
 template <class T, class>
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(std::string_view name)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(std::string_view name)
     : zoned_time(zoned_traits<TimeZonePtr>::locate_zone(name))
-    {}
+{
+}
 
-#else  // !HAS_STRING_VIEW
+#else // !HAS_STRING_VIEW
 
 template <class Duration, class TimeZonePtr>
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
 template <class T, class>
 #endif
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(const std::string& name)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(const std::string& name)
     : zoned_time(zoned_traits<TimeZonePtr>::locate_zone(name))
-    {}
+{
+}
 
-#endif  // !HAS_STRING_VIEW
+#endif // !HAS_STRING_VIEW
 
 template <class Duration, class TimeZonePtr>
 template <class Duration2, class>
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(const zoned_time<Duration2, TimeZonePtr>& zt) NOEXCEPT
-    : zone_(zt.zone_)
-    , tp_(zt.tp_)
-    {}
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(const zoned_time<Duration2, TimeZonePtr>& zt) NOEXCEPT
+    : zone_(zt.zone_),
+      tp_(zt.tp_)
+{
+}
 
 template <class Duration, class TimeZonePtr>
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(TimeZonePtr z, const sys_time<Duration>& st)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(TimeZonePtr z, const sys_time<Duration>& st)
     : zone_(check(std::move(z)))
     , tp_(st)
-    {}
+{
+}
 
 template <class Duration, class TimeZonePtr>
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
 template <class T, class>
 #endif
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(TimeZonePtr z, const local_time<Duration>& t)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(TimeZonePtr z, const local_time<Duration>& t)
     : zone_(check(std::move(z)))
     , tp_(zone_->to_sys(t))
-    {}
+{
+}
 
 template <class Duration, class TimeZonePtr>
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
 template <class T, class>
 #endif
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(TimeZonePtr z, const local_time<Duration>& t,
-                                              choose c)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(TimeZonePtr z, const local_time<Duration>& t,
+                                                     choose c)
     : zone_(check(std::move(z)))
     , tp_(zone_->to_sys(t, c))
-    {}
+{
+}
 
 template <class Duration, class TimeZonePtr>
 template <class Duration2, class TimeZonePtr2, class>
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(TimeZonePtr z,
-                                              const zoned_time<Duration2, TimeZonePtr2>& zt)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(TimeZonePtr z,
+                                                     const zoned_time<Duration2, TimeZonePtr2>& zt)
     : zone_(check(std::move(z)))
     , tp_(zt.tp_)
-    {}
+{
+}
 
 template <class Duration, class TimeZonePtr>
 template <class Duration2, class TimeZonePtr2, class>
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(TimeZonePtr z,
-                                      const zoned_time<Duration2, TimeZonePtr2>& zt, choose)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(TimeZonePtr z,
+                                                     const zoned_time<Duration2, TimeZonePtr2>& zt, choose)
     : zoned_time(std::move(z), zt)
-    {}
+{
+}
 
 #if HAS_STRING_VIEW
 
 template <class Duration, class TimeZonePtr>
 template <class T, class>
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(std::string_view name,
-                                              detail::nodeduct_t<const sys_time<Duration>&> st)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(std::string_view name,
+                                                     detail::nodeduct_t<const sys_time<Duration>&> st)
     : zoned_time(zoned_traits<TimeZonePtr>::locate_zone(name), st)
-    {}
+{
+}
 
 template <class Duration, class TimeZonePtr>
 template <class T, class>
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(std::string_view name,
-                                              detail::nodeduct_t<const local_time<Duration>&> t)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(std::string_view name,
+                                                     detail::nodeduct_t<const local_time<Duration>&> t)
     : zoned_time(zoned_traits<TimeZonePtr>::locate_zone(name), t)
-    {}
+{
+}
 
 template <class Duration, class TimeZonePtr>
 template <class T, class>
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(std::string_view name,
-                                              detail::nodeduct_t<const local_time<Duration>&> t, choose c)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(std::string_view name,
+                                                     detail::nodeduct_t<const local_time<Duration>&> t, choose c)
     : zoned_time(zoned_traits<TimeZonePtr>::locate_zone(name), t, c)
-    {}
+{
+}
 
 template <class Duration, class TimeZonePtr>
 template <class Duration2, class TimeZonePtr2, class, class>
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(std::string_view name,
-                                              const zoned_time<Duration2, TimeZonePtr2>& zt)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(std::string_view name,
+                                                     const zoned_time<Duration2, TimeZonePtr2>& zt)
     : zoned_time(zoned_traits<TimeZonePtr>::locate_zone(name), zt)
-    {}
+{
+}
 
 template <class Duration, class TimeZonePtr>
 template <class Duration2, class TimeZonePtr2, class, class>
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(std::string_view name,
-                                              const zoned_time<Duration2, TimeZonePtr2>& zt,
-                                              choose c)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(std::string_view name,
+                                                     const zoned_time<Duration2, TimeZonePtr2>& zt,
+                                                     choose c)
     : zoned_time(zoned_traits<TimeZonePtr>::locate_zone(name), zt, c)
-    {}
+{
+}
 
-#else  // !HAS_STRING_VIEW
+#else // !HAS_STRING_VIEW
 
 template <class Duration, class TimeZonePtr>
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
 template <class T, class>
 #endif
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(const std::string& name,
-                                              const sys_time<Duration>& st)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(const std::string& name,
+                                                     const sys_time<Duration>& st)
     : zoned_time(zoned_traits<TimeZonePtr>::locate_zone(name), st)
-    {}
+{
+}
 
 template <class Duration, class TimeZonePtr>
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
 template <class T, class>
 #endif
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(const char* name,
-                                              const sys_time<Duration>& st)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(const char* name,
+                                                     const sys_time<Duration>& st)
     : zoned_time(zoned_traits<TimeZonePtr>::locate_zone(name), st)
-    {}
+{
+}
 
 template <class Duration, class TimeZonePtr>
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
 template <class T, class>
 #endif
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(const std::string& name,
-                                              const local_time<Duration>& t)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(const std::string& name,
+                                                     const local_time<Duration>& t)
     : zoned_time(zoned_traits<TimeZonePtr>::locate_zone(name), t)
-    {}
+{
+}
 
 template <class Duration, class TimeZonePtr>
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
 template <class T, class>
 #endif
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(const char* name,
-                                              const local_time<Duration>& t)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(const char* name,
+                                                     const local_time<Duration>& t)
     : zoned_time(zoned_traits<TimeZonePtr>::locate_zone(name), t)
-    {}
+{
+}
 
 template <class Duration, class TimeZonePtr>
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
 template <class T, class>
 #endif
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(const std::string& name,
-                                              const local_time<Duration>& t, choose c)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(const std::string& name,
+                                                     const local_time<Duration>& t, choose c)
     : zoned_time(zoned_traits<TimeZonePtr>::locate_zone(name), t, c)
-    {}
+{
+}
 
 template <class Duration, class TimeZonePtr>
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
 template <class T, class>
 #endif
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(const char* name,
-                                              const local_time<Duration>& t, choose c)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(const char* name,
+                                                     const local_time<Duration>& t, choose c)
     : zoned_time(zoned_traits<TimeZonePtr>::locate_zone(name), t, c)
-    {}
+{
+}
 
 template <class Duration, class TimeZonePtr>
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
@@ -1559,11 +1541,11 @@ template <class Duration2, class TimeZonePtr2, class, class>
 #else
 template <class Duration2, class TimeZonePtr2>
 #endif
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(const std::string& name,
-                                              const zoned_time<Duration2, TimeZonePtr2>& zt)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(const std::string& name,
+                                                     const zoned_time<Duration2, TimeZonePtr2>& zt)
     : zoned_time(zoned_traits<TimeZonePtr>::locate_zone(name), zt)
-    {}
+{
+}
 
 template <class Duration, class TimeZonePtr>
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
@@ -1571,11 +1553,11 @@ template <class Duration2, class TimeZonePtr2, class, class>
 #else
 template <class Duration2, class TimeZonePtr2>
 #endif
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(const char* name,
-                                              const zoned_time<Duration2, TimeZonePtr2>& zt)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(const char* name,
+                                                     const zoned_time<Duration2, TimeZonePtr2>& zt)
     : zoned_time(zoned_traits<TimeZonePtr>::locate_zone(name), zt)
-    {}
+{
+}
 
 template <class Duration, class TimeZonePtr>
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
@@ -1583,12 +1565,12 @@ template <class Duration2, class TimeZonePtr2, class, class>
 #else
 template <class Duration2, class TimeZonePtr2>
 #endif
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(const std::string& name,
-                                              const zoned_time<Duration2, TimeZonePtr2>& zt,
-                                              choose c)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(const std::string& name,
+                                                     const zoned_time<Duration2, TimeZonePtr2>& zt,
+                                                     choose c)
     : zoned_time(zoned_traits<TimeZonePtr>::locate_zone(name), zt, c)
-    {}
+{
+}
 
 template <class Duration, class TimeZonePtr>
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
@@ -1596,18 +1578,17 @@ template <class Duration2, class TimeZonePtr2, class, class>
 #else
 template <class Duration2, class TimeZonePtr2>
 #endif
-inline
-zoned_time<Duration, TimeZonePtr>::zoned_time(const char* name,
-                                              const zoned_time<Duration2, TimeZonePtr2>& zt,
-                                              choose c)
+inline zoned_time<Duration, TimeZonePtr>::zoned_time(const char* name,
+                                                     const zoned_time<Duration2, TimeZonePtr2>& zt,
+                                                     choose c)
     : zoned_time(zoned_traits<TimeZonePtr>::locate_zone(name), zt, c)
-    {}
+{
+}
 
-#endif  // HAS_STRING_VIEW
+#endif // HAS_STRING_VIEW
 
 template <class Duration, class TimeZonePtr>
-inline
-zoned_time<Duration, TimeZonePtr>&
+inline zoned_time<Duration, TimeZonePtr>&
 zoned_time<Duration, TimeZonePtr>::operator=(const sys_time<Duration>& st)
 {
     tp_ = st;
@@ -1615,8 +1596,7 @@ zoned_time<Duration, TimeZonePtr>::operator=(const sys_time<Duration>& st)
 }
 
 template <class Duration, class TimeZonePtr>
-inline
-zoned_time<Duration, TimeZonePtr>&
+inline zoned_time<Duration, TimeZonePtr>&
 zoned_time<Duration, TimeZonePtr>::operator=(const local_time<Duration>& ut)
 {
     tp_ = zone_->to_sys(ut);
@@ -1624,46 +1604,40 @@ zoned_time<Duration, TimeZonePtr>::operator=(const local_time<Duration>& ut)
 }
 
 template <class Duration, class TimeZonePtr>
-inline
-zoned_time<Duration, TimeZonePtr>::operator local_time<typename zoned_time<Duration, TimeZonePtr>::duration>() const
+inline zoned_time<Duration, TimeZonePtr>::operator local_time<typename zoned_time<Duration, TimeZonePtr>::duration>() const
 {
     return get_local_time();
 }
 
 template <class Duration, class TimeZonePtr>
-inline
-zoned_time<Duration, TimeZonePtr>::operator sys_time<typename zoned_time<Duration, TimeZonePtr>::duration>() const
+inline zoned_time<Duration, TimeZonePtr>::operator sys_time<typename zoned_time<Duration, TimeZonePtr>::duration>() const
 {
     return get_sys_time();
 }
 
 template <class Duration, class TimeZonePtr>
-inline
-TimeZonePtr
+inline TimeZonePtr
 zoned_time<Duration, TimeZonePtr>::get_time_zone() const
 {
     return zone_;
 }
 
 template <class Duration, class TimeZonePtr>
-inline
-local_time<typename zoned_time<Duration, TimeZonePtr>::duration>
+inline local_time<typename zoned_time<Duration, TimeZonePtr>::duration>
 zoned_time<Duration, TimeZonePtr>::get_local_time() const
 {
     return zone_->to_local(tp_);
 }
 
 template <class Duration, class TimeZonePtr>
-inline
-sys_time<typename zoned_time<Duration, TimeZonePtr>::duration>
+inline sys_time<typename zoned_time<Duration, TimeZonePtr>::duration>
 zoned_time<Duration, TimeZonePtr>::get_sys_time() const
 {
     return tp_;
 }
 
 template <class Duration, class TimeZonePtr>
-inline
-sys_info
+inline sys_info
 zoned_time<Duration, TimeZonePtr>::get_info() const
 {
     return zone_->get_info(tp_);
@@ -1671,16 +1645,14 @@ zoned_time<Duration, TimeZonePtr>::get_info() const
 
 // make_zoned_time
 
-inline
-zoned_time<std::chrono::seconds>
+inline zoned_time<std::chrono::seconds>
 make_zoned()
 {
     return zoned_time<std::chrono::seconds>();
 }
 
 template <class Duration>
-inline
-zoned_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline zoned_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 make_zoned(const sys_time<Duration>& tp)
 {
     return zoned_time<typename std::common_type<Duration, std::chrono::seconds>::type>(tp);
@@ -1689,28 +1661,21 @@ make_zoned(const sys_time<Duration>& tp)
 template <class TimeZonePtr
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
 #if !defined(__INTEL_COMPILER) || (__INTEL_COMPILER > 1600)
-          , class = typename std::enable_if
-          <
-            std::is_class
-            <
-                typename std::decay
-                <
-                    decltype(*detail::to_raw_pointer(std::declval<TimeZonePtr&>()))
-                >::type
-            >{}
-          >::type
+          ,
+          class = typename std::enable_if<
+              std::is_class<
+                  typename std::decay<
+                      decltype(*detail::to_raw_pointer(std::declval<TimeZonePtr&>()))>::type>{}>::type
 #endif
 #endif
-         >
-inline
-zoned_time<std::chrono::seconds, TimeZonePtr>
+          >
+inline zoned_time<std::chrono::seconds, TimeZonePtr>
 make_zoned(TimeZonePtr z)
 {
     return zoned_time<std::chrono::seconds, TimeZonePtr>(std::move(z));
 }
 
-inline
-zoned_seconds
+inline zoned_seconds
 make_zoned(const std::string& name)
 {
     return zoned_seconds(name);
@@ -1719,15 +1684,13 @@ make_zoned(const std::string& name)
 template <class Duration, class TimeZonePtr
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
 #if !defined(__INTEL_COMPILER) || (__INTEL_COMPILER > 1600)
-          , class = typename std::enable_if
-          <
-            std::is_class<typename std::decay<decltype(*std::declval<TimeZonePtr&>())>::type>{}
-          >::type
+          ,
+          class = typename std::enable_if<
+              std::is_class<typename std::decay<decltype(*std::declval<TimeZonePtr&>())>::type>{}>::type
 #endif
 #endif
-         >
-inline
-zoned_time<typename std::common_type<Duration, std::chrono::seconds>::type, TimeZonePtr>
+          >
+inline zoned_time<typename std::common_type<Duration, std::chrono::seconds>::type, TimeZonePtr>
 make_zoned(TimeZonePtr zone, const local_time<Duration>& tp)
 {
     return zoned_time<typename std::common_type<Duration, std::chrono::seconds>::type,
@@ -1737,15 +1700,13 @@ make_zoned(TimeZonePtr zone, const local_time<Duration>& tp)
 template <class Duration, class TimeZonePtr
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
 #if !defined(__INTEL_COMPILER) || (__INTEL_COMPILER > 1600)
-          , class = typename std::enable_if
-          <
-            std::is_class<typename std::decay<decltype(*std::declval<TimeZonePtr&>())>::type>{}
-          >::type
+          ,
+          class = typename std::enable_if<
+              std::is_class<typename std::decay<decltype(*std::declval<TimeZonePtr&>())>::type>{}>::type
 #endif
 #endif
-         >
-inline
-zoned_time<typename std::common_type<Duration, std::chrono::seconds>::type, TimeZonePtr>
+          >
+inline zoned_time<typename std::common_type<Duration, std::chrono::seconds>::type, TimeZonePtr>
 make_zoned(TimeZonePtr zone, const local_time<Duration>& tp, choose c)
 {
     return zoned_time<typename std::common_type<Duration, std::chrono::seconds>::type,
@@ -1753,50 +1714,44 @@ make_zoned(TimeZonePtr zone, const local_time<Duration>& tp, choose c)
 }
 
 template <class Duration>
-inline
-zoned_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline zoned_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 make_zoned(const std::string& name, const local_time<Duration>& tp)
 {
     return zoned_time<typename std::common_type<Duration,
-                      std::chrono::seconds>::type>(name, tp);
+                                                std::chrono::seconds>::type>(name, tp);
 }
 
 template <class Duration>
-inline
-zoned_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline zoned_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 make_zoned(const std::string& name, const local_time<Duration>& tp, choose c)
 {
     return zoned_time<typename std::common_type<Duration,
-                      std::chrono::seconds>::type>(name, tp, c);
+                                                std::chrono::seconds>::type>(name, tp, c);
 }
 
 template <class Duration, class TimeZonePtr>
-inline
-zoned_time<Duration, TimeZonePtr>
+inline zoned_time<Duration, TimeZonePtr>
 make_zoned(TimeZonePtr zone, const zoned_time<Duration, TimeZonePtr>& zt)
 {
     return zoned_time<Duration, TimeZonePtr>(std::move(zone), zt);
 }
 
 template <class Duration, class TimeZonePtr>
-inline
-zoned_time<Duration, TimeZonePtr>
+inline zoned_time<Duration, TimeZonePtr>
 make_zoned(const std::string& name, const zoned_time<Duration, TimeZonePtr>& zt)
 {
     return zoned_time<Duration, TimeZonePtr>(name, zt);
 }
 
 template <class Duration, class TimeZonePtr>
-inline
-zoned_time<Duration, TimeZonePtr>
+inline zoned_time<Duration, TimeZonePtr>
 make_zoned(TimeZonePtr zone, const zoned_time<Duration, TimeZonePtr>& zt, choose c)
 {
     return zoned_time<Duration, TimeZonePtr>(std::move(zone), zt, c);
 }
 
 template <class Duration, class TimeZonePtr>
-inline
-zoned_time<Duration, TimeZonePtr>
+inline zoned_time<Duration, TimeZonePtr>
 make_zoned(const std::string& name, const zoned_time<Duration, TimeZonePtr>& zt, choose c)
 {
     return zoned_time<Duration, TimeZonePtr>(name, zt, c);
@@ -1805,15 +1760,13 @@ make_zoned(const std::string& name, const zoned_time<Duration, TimeZonePtr>& zt,
 template <class Duration, class TimeZonePtr
 #if !defined(_MSC_VER) || (_MSC_VER > 1916)
 #if !defined(__INTEL_COMPILER) || (__INTEL_COMPILER > 1600)
-          , class = typename std::enable_if
-          <
-            std::is_class<typename std::decay<decltype(*std::declval<TimeZonePtr&>())>::type>{}
-          >::type
+          ,
+          class = typename std::enable_if<
+              std::is_class<typename std::decay<decltype(*std::declval<TimeZonePtr&>())>::type>{}>::type
 #endif
 #endif
-         >
-inline
-zoned_time<typename std::common_type<Duration, std::chrono::seconds>::type, TimeZonePtr>
+          >
+inline zoned_time<typename std::common_type<Duration, std::chrono::seconds>::type, TimeZonePtr>
 make_zoned(TimeZonePtr zone, const sys_time<Duration>& st)
 {
     return zoned_time<typename std::common_type<Duration, std::chrono::seconds>::type,
@@ -1821,12 +1774,11 @@ make_zoned(TimeZonePtr zone, const sys_time<Duration>& st)
 }
 
 template <class Duration>
-inline
-zoned_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline zoned_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 make_zoned(const std::string& name, const sys_time<Duration>& st)
 {
     return zoned_time<typename std::common_type<Duration,
-                      std::chrono::seconds>::type>(name, st);
+                                                std::chrono::seconds>::type>(name, st);
 }
 
 template <class CharT, class Traits, class Duration, class TimeZonePtr>
@@ -1838,13 +1790,12 @@ to_stream(std::basic_ostream<CharT, Traits>& os, const CharT* fmt,
     using LT = local_time<duration>;
     auto const st = tp.get_sys_time();
     auto const info = tp.get_time_zone()->get_info(st);
-    return to_stream(os, fmt, LT{(st+info.offset).time_since_epoch()},
+    return to_stream(os, fmt, LT{(st + info.offset).time_since_epoch()},
                      &info.abbrev, &info.offset);
 }
 
 template <class CharT, class Traits, class Duration, class TimeZonePtr>
-inline
-std::basic_ostream<CharT, Traits>&
+inline std::basic_ostream<CharT, Traits>&
 operator<<(std::basic_ostream<CharT, Traits>& os, const zoned_time<Duration, TimeZonePtr>& t)
 {
     const CharT fmt[] = {'%', 'F', ' ', '%', 'T', ' ', '%', 'Z', CharT{}};
@@ -1854,37 +1805,33 @@ operator<<(std::basic_ostream<CharT, Traits>& os, const zoned_time<Duration, Tim
 class utc_clock
 {
 public:
-    using duration                  = std::chrono::system_clock::duration;
-    using rep                       = duration::rep;
-    using period                    = duration::period;
-    using time_point                = std::chrono::time_point<utc_clock>;
+    using duration = std::chrono::system_clock::duration;
+    using rep = duration::rep;
+    using period = duration::period;
+    using time_point = std::chrono::time_point<utc_clock>;
     static CONSTDATA bool is_steady = false;
 
     static time_point now();
 
-    template<typename Duration>
-    static
-    std::chrono::time_point<std::chrono::system_clock, typename std::common_type<Duration, std::chrono::seconds>::type>
+    template <typename Duration>
+    static std::chrono::time_point<std::chrono::system_clock, typename std::common_type<Duration, std::chrono::seconds>::type>
     to_sys(const std::chrono::time_point<utc_clock, Duration>&);
 
-    template<typename Duration>
-    static
-    std::chrono::time_point<utc_clock, typename std::common_type<Duration, std::chrono::seconds>::type>
+    template <typename Duration>
+    static std::chrono::time_point<utc_clock, typename std::common_type<Duration, std::chrono::seconds>::type>
     from_sys(const std::chrono::time_point<std::chrono::system_clock, Duration>&);
 
-    template<typename Duration>
-    static
-    std::chrono::time_point<local_t, typename std::common_type<Duration, std::chrono::seconds>::type>
+    template <typename Duration>
+    static std::chrono::time_point<local_t, typename std::common_type<Duration, std::chrono::seconds>::type>
     to_local(const std::chrono::time_point<utc_clock, Duration>&);
 
-    template<typename Duration>
-    static
-    std::chrono::time_point<utc_clock, typename std::common_type<Duration, std::chrono::seconds>::type>
+    template <typename Duration>
+    static std::chrono::time_point<utc_clock, typename std::common_type<Duration, std::chrono::seconds>::type>
     from_local(const std::chrono::time_point<local_t, Duration>&);
 };
 
 template <class Duration>
-    using utc_time = std::chrono::time_point<utc_clock, Duration>;
+using utc_time = std::chrono::time_point<utc_clock, Duration>;
 
 using utc_seconds = utc_time<std::chrono::seconds>;
 
@@ -1896,7 +1843,7 @@ utc_clock::from_sys(const sys_time<Duration>& st)
     using CD = typename std::common_type<Duration, seconds>::type;
     auto const& leaps = get_tzdb().leap_seconds;
     auto const lt = std::upper_bound(leaps.begin(), leaps.end(), st);
-    return utc_time<CD>{st.time_since_epoch() + seconds{lt-leaps.begin()}};
+    return utc_time<CD>{st.time_since_epoch() + seconds{lt - leaps.begin()}};
 }
 
 // Return pair<is_leap_second, seconds{number_of_leap_seconds_since_1970}>
@@ -1911,7 +1858,7 @@ is_leap_second(date::utc_time<Duration> const& ut)
     auto const& leaps = get_tzdb().leap_seconds;
     auto tp = sys_time<duration>{ut.time_since_epoch()};
     auto const lt = std::upper_bound(leaps.begin(), leaps.end(), tp);
-    auto ds = seconds{lt-leaps.begin()};
+    auto ds = seconds{lt - leaps.begin()};
     tp -= ds;
     auto ls = false;
     if (lt > leaps.begin())
@@ -1954,8 +1901,7 @@ utc_clock::to_sys(const utc_time<Duration>& ut)
     return tp;
 }
 
-inline
-utc_clock::time_point
+inline utc_clock::time_point
 utc_clock::now()
 {
     return from_sys(std::chrono::system_clock::now());
@@ -2009,8 +1955,8 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt,
             utc_time<Duration>& tp, std::basic_string<CharT, Traits, Alloc>* abbrev = nullptr,
             std::chrono::minutes* offset = nullptr)
 {
-    using std::chrono::seconds;
     using std::chrono::minutes;
+    using std::chrono::seconds;
     using CT = typename std::common_type<Duration, seconds>::type;
     minutes offset_local{};
     auto offptr = offset ? offset : &offset_local;
@@ -2042,87 +1988,78 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt,
 class tai_clock
 {
 public:
-    using duration                  = std::chrono::system_clock::duration;
-    using rep                       = duration::rep;
-    using period                    = duration::period;
-    using time_point                = std::chrono::time_point<tai_clock>;
-    static const bool is_steady     = false;
+    using duration = std::chrono::system_clock::duration;
+    using rep = duration::rep;
+    using period = duration::period;
+    using time_point = std::chrono::time_point<tai_clock>;
+    static const bool is_steady = false;
 
     static time_point now();
 
-    template<typename Duration>
-    static
-    std::chrono::time_point<utc_clock, typename std::common_type<Duration, std::chrono::seconds>::type>
+    template <typename Duration>
+    static std::chrono::time_point<utc_clock, typename std::common_type<Duration, std::chrono::seconds>::type>
     to_utc(const std::chrono::time_point<tai_clock, Duration>&) NOEXCEPT;
 
-    template<typename Duration>
-    static
-    std::chrono::time_point<tai_clock, typename std::common_type<Duration, std::chrono::seconds>::type>
+    template <typename Duration>
+    static std::chrono::time_point<tai_clock, typename std::common_type<Duration, std::chrono::seconds>::type>
     from_utc(const std::chrono::time_point<utc_clock, Duration>&) NOEXCEPT;
 
-    template<typename Duration>
-    static
-    std::chrono::time_point<local_t, typename std::common_type<Duration, date::days>::type>
+    template <typename Duration>
+    static std::chrono::time_point<local_t, typename std::common_type<Duration, date::days>::type>
     to_local(const std::chrono::time_point<tai_clock, Duration>&) NOEXCEPT;
 
-    template<typename Duration>
-    static
-    std::chrono::time_point<tai_clock, typename std::common_type<Duration, date::days>::type>
+    template <typename Duration>
+    static std::chrono::time_point<tai_clock, typename std::common_type<Duration, date::days>::type>
     from_local(const std::chrono::time_point<local_t, Duration>&) NOEXCEPT;
 };
 
 template <class Duration>
-    using tai_time = std::chrono::time_point<tai_clock, Duration>;
+using tai_time = std::chrono::time_point<tai_clock, Duration>;
 
 using tai_seconds = tai_time<std::chrono::seconds>;
 
 template <class Duration>
-inline
-utc_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline utc_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 tai_clock::to_utc(const tai_time<Duration>& t) NOEXCEPT
 {
     using std::chrono::seconds;
     using CD = typename std::common_type<Duration, seconds>::type;
     return utc_time<CD>{t.time_since_epoch()} -
-            (sys_days(year{1970}/January/1) - sys_days(year{1958}/January/1) + seconds{10});
+           (sys_days(year{1970} / January / 1) - sys_days(year{1958} / January / 1) + seconds{10});
 }
 
 template <class Duration>
-inline
-tai_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline tai_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 tai_clock::from_utc(const utc_time<Duration>& t) NOEXCEPT
 {
     using std::chrono::seconds;
     using CD = typename std::common_type<Duration, seconds>::type;
     return tai_time<CD>{t.time_since_epoch()} +
-            (sys_days(year{1970}/January/1) - sys_days(year{1958}/January/1) + seconds{10});
+           (sys_days(year{1970} / January / 1) - sys_days(year{1958} / January / 1) + seconds{10});
 }
 
-inline
-tai_clock::time_point
+inline tai_clock::time_point
 tai_clock::now()
 {
     return from_utc(utc_clock::now());
 }
 
 template <class Duration>
-inline
-local_time<typename std::common_type<Duration, date::days>::type>
+inline local_time<typename std::common_type<Duration, date::days>::type>
 tai_clock::to_local(const tai_time<Duration>& t) NOEXCEPT
 {
     using CD = typename std::common_type<Duration, date::days>::type;
     return local_time<CD>{t.time_since_epoch()} -
-           (local_days(year{1970}/January/1) - local_days(year{1958}/January/1));
+           (local_days(year{1970} / January / 1) - local_days(year{1958} / January / 1));
 }
 
 template <class Duration>
-inline
-tai_time<typename std::common_type<Duration, date::days>::type>
+inline tai_time<typename std::common_type<Duration, date::days>::type>
 tai_clock::from_local(const local_time<Duration>& t) NOEXCEPT
 {
     using CD = typename std::common_type<Duration, date::days>::type;
     return tai_time<CD>{t.time_since_epoch()} +
-            (local_days(year{1970}/January/1) - local_days(year{1958}/January/1));
+           (local_days(year{1970} / January / 1) - local_days(year{1958} / January / 1));
 }
 
 template <class CharT, class Traits, class Duration>
@@ -2162,91 +2099,81 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt,
 class gps_clock
 {
 public:
-    using duration                  = std::chrono::system_clock::duration;
-    using rep                       = duration::rep;
-    using period                    = duration::period;
-    using time_point                = std::chrono::time_point<gps_clock>;
-    static const bool is_steady     = false;
+    using duration = std::chrono::system_clock::duration;
+    using rep = duration::rep;
+    using period = duration::period;
+    using time_point = std::chrono::time_point<gps_clock>;
+    static const bool is_steady = false;
 
     static time_point now();
 
-    template<typename Duration>
-    static
-    std::chrono::time_point<utc_clock, typename std::common_type<Duration, std::chrono::seconds>::type>
+    template <typename Duration>
+    static std::chrono::time_point<utc_clock, typename std::common_type<Duration, std::chrono::seconds>::type>
     to_utc(const std::chrono::time_point<gps_clock, Duration>&) NOEXCEPT;
 
-    template<typename Duration>
-    static
-    std::chrono::time_point<gps_clock, typename std::common_type<Duration, std::chrono::seconds>::type>
+    template <typename Duration>
+    static std::chrono::time_point<gps_clock, typename std::common_type<Duration, std::chrono::seconds>::type>
     from_utc(const std::chrono::time_point<utc_clock, Duration>&) NOEXCEPT;
 
-    template<typename Duration>
-    static
-    std::chrono::time_point<local_t, typename std::common_type<Duration, date::days>::type>
+    template <typename Duration>
+    static std::chrono::time_point<local_t, typename std::common_type<Duration, date::days>::type>
     to_local(const std::chrono::time_point<gps_clock, Duration>&) NOEXCEPT;
 
-    template<typename Duration>
-    static
-    std::chrono::time_point<gps_clock, typename std::common_type<Duration, date::days>::type>
+    template <typename Duration>
+    static std::chrono::time_point<gps_clock, typename std::common_type<Duration, date::days>::type>
     from_local(const std::chrono::time_point<local_t, Duration>&) NOEXCEPT;
 };
 
 template <class Duration>
-    using gps_time = std::chrono::time_point<gps_clock, Duration>;
+using gps_time = std::chrono::time_point<gps_clock, Duration>;
 
 using gps_seconds = gps_time<std::chrono::seconds>;
 
 template <class Duration>
-inline
-utc_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline utc_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 gps_clock::to_utc(const gps_time<Duration>& t) NOEXCEPT
 {
     using std::chrono::seconds;
     using CD = typename std::common_type<Duration, seconds>::type;
     return utc_time<CD>{t.time_since_epoch()} +
-            (sys_days(year{1980}/January/Sunday[1]) - sys_days(year{1970}/January/1) +
-             seconds{9});
+           (sys_days(year{1980} / January / Sunday[1]) - sys_days(year{1970} / January / 1) +
+            seconds{9});
 }
 
 template <class Duration>
-inline
-gps_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline gps_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 gps_clock::from_utc(const utc_time<Duration>& t) NOEXCEPT
 {
     using std::chrono::seconds;
     using CD = typename std::common_type<Duration, seconds>::type;
     return gps_time<CD>{t.time_since_epoch()} -
-            (sys_days(year{1980}/January/Sunday[1]) - sys_days(year{1970}/January/1) +
-             seconds{9});
+           (sys_days(year{1980} / January / Sunday[1]) - sys_days(year{1970} / January / 1) +
+            seconds{9});
 }
 
-inline
-gps_clock::time_point
+inline gps_clock::time_point
 gps_clock::now()
 {
     return from_utc(utc_clock::now());
 }
 
 template <class Duration>
-inline
-local_time<typename std::common_type<Duration, date::days>::type>
+inline local_time<typename std::common_type<Duration, date::days>::type>
 gps_clock::to_local(const gps_time<Duration>& t) NOEXCEPT
 {
     using CD = typename std::common_type<Duration, date::days>::type;
     return local_time<CD>{t.time_since_epoch()} +
-            (local_days(year{1980}/January/Sunday[1]) - local_days(year{1970}/January/1));
+           (local_days(year{1980} / January / Sunday[1]) - local_days(year{1970} / January / 1));
 }
 
 template <class Duration>
-inline
-gps_time<typename std::common_type<Duration, date::days>::type>
+inline gps_time<typename std::common_type<Duration, date::days>::type>
 gps_clock::from_local(const local_time<Duration>& t) NOEXCEPT
 {
     using CD = typename std::common_type<Duration, date::days>::type;
     return gps_time<CD>{t.time_since_epoch()} -
-            (local_days(year{1980}/January/Sunday[1]) - local_days(year{1970}/January/1));
+           (local_days(year{1980} / January / Sunday[1]) - local_days(year{1970} / January / 1));
 }
-
 
 template <class CharT, class Traits, class Duration>
 std::basic_ostream<CharT, Traits>&
@@ -2284,15 +2211,16 @@ from_stream(std::basic_istream<CharT, Traits>& is, const CharT* fmt,
 
 template <class DstClock, class SrcClock>
 struct clock_time_conversion
-{};
+{
+};
 
 template <>
 struct clock_time_conversion<std::chrono::system_clock, std::chrono::system_clock>
 {
     template <class Duration>
     CONSTCD14
-    sys_time<Duration>
-    operator()(const sys_time<Duration>& st) const
+        sys_time<Duration>
+        operator()(const sys_time<Duration>& st) const
     {
         return st;
     }
@@ -2303,20 +2231,20 @@ struct clock_time_conversion<utc_clock, utc_clock>
 {
     template <class Duration>
     CONSTCD14
-    utc_time<Duration>
-    operator()(const utc_time<Duration>& ut) const
+        utc_time<Duration>
+        operator()(const utc_time<Duration>& ut) const
     {
         return ut;
     }
 };
 
-template<>
+template <>
 struct clock_time_conversion<local_t, local_t>
 {
     template <class Duration>
     CONSTCD14
-    local_time<Duration>
-    operator()(const local_time<Duration>& lt) const
+        local_time<Duration>
+        operator()(const local_time<Duration>& lt) const
     {
         return lt;
     }
@@ -2344,59 +2272,59 @@ struct clock_time_conversion<std::chrono::system_clock, utc_clock>
     }
 };
 
-template<>
+template <>
 struct clock_time_conversion<local_t, std::chrono::system_clock>
 {
     template <class Duration>
     CONSTCD14
-    local_time<Duration>
-    operator()(const sys_time<Duration>& st) const
+        local_time<Duration>
+        operator()(const sys_time<Duration>& st) const
     {
-       return local_time<Duration>{st.time_since_epoch()};
+        return local_time<Duration>{st.time_since_epoch()};
     }
 };
 
-template<>
+template <>
 struct clock_time_conversion<std::chrono::system_clock, local_t>
 {
     template <class Duration>
     CONSTCD14
-    sys_time<Duration>
-    operator()(const local_time<Duration>& lt) const
+        sys_time<Duration>
+        operator()(const local_time<Duration>& lt) const
     {
         return sys_time<Duration>{lt.time_since_epoch()};
     }
 };
 
-template<>
+template <>
 struct clock_time_conversion<utc_clock, local_t>
 {
     template <class Duration>
     utc_time<typename std::common_type<Duration, std::chrono::seconds>::type>
     operator()(const local_time<Duration>& lt) const
     {
-       return utc_clock::from_local(lt);
+        return utc_clock::from_local(lt);
     }
 };
 
-template<>
+template <>
 struct clock_time_conversion<local_t, utc_clock>
 {
     template <class Duration>
     local_time<typename std::common_type<Duration, std::chrono::seconds>::type>
     operator()(const utc_time<Duration>& ut) const
     {
-       return utc_clock::to_local(ut);
+        return utc_clock::to_local(ut);
     }
 };
 
-template<typename Clock>
+template <typename Clock>
 struct clock_time_conversion<Clock, Clock>
 {
     template <class Duration>
     CONSTCD14
-    std::chrono::time_point<Clock, Duration>
-    operator()(const std::chrono::time_point<Clock, Duration>& tp) const
+        std::chrono::time_point<Clock, Duration>
+        operator()(const std::chrono::time_point<Clock, Duration>& tp) const
     {
         return tp;
     }
@@ -2406,18 +2334,18 @@ namespace ctc_detail
 {
 
 template <class Clock, class Duration>
-    using time_point = std::chrono::time_point<Clock, Duration>;
+using time_point = std::chrono::time_point<Clock, Duration>;
 
 using std::declval;
 using std::chrono::system_clock;
 
-//Check if TimePoint is time for given clock,
-//if not emits hard error
+// Check if TimePoint is time for given clock,
+// if not emits hard error
 template <class Clock, class TimePoint>
 struct return_clock_time
 {
     using clock_time_point = time_point<Clock, typename TimePoint::duration>;
-    using type             = TimePoint;
+    using type = TimePoint;
 
     static_assert(std::is_same<TimePoint, clock_time_point>::value,
                   "time point with appropariate clock shall be returned");
@@ -2427,123 +2355,112 @@ struct return_clock_time
 // returning sys_time. If so has nested type member equal to return type to_sys.
 template <class Clock, class Duration, class = void>
 struct return_to_sys
-{};
+{
+};
 
 template <class Clock, class Duration>
-struct return_to_sys
-       <
-           Clock, Duration,
-           decltype(Clock::to_sys(declval<time_point<Clock, Duration> const&>()), void())
-       >
-    : return_clock_time
-      <
+struct return_to_sys<
+    Clock, Duration,
+    decltype(Clock::to_sys(declval<time_point<Clock, Duration> const&>()), void())>
+    : return_clock_time<
           system_clock,
-          decltype(Clock::to_sys(declval<time_point<Clock, Duration> const&>()))
-      >
-{};
+          decltype(Clock::to_sys(declval<time_point<Clock, Duration> const&>()))>
+{
+};
 
 // Similiar to above
 template <class Clock, class Duration, class = void>
 struct return_from_sys
-{};
+{
+};
 
 template <class Clock, class Duration>
-struct return_from_sys
-       <
-           Clock, Duration,
-           decltype(Clock::from_sys(declval<time_point<system_clock, Duration> const&>()),
-                    void())
-       >
-    : return_clock_time
-      <
+struct return_from_sys<
+    Clock, Duration,
+    decltype(Clock::from_sys(declval<time_point<system_clock, Duration> const&>()),
+             void())>
+    : return_clock_time<
           Clock,
-          decltype(Clock::from_sys(declval<time_point<system_clock, Duration> const&>()))
-      >
-{};
+          decltype(Clock::from_sys(declval<time_point<system_clock, Duration> const&>()))>
+{
+};
 
 // Similiar to above
 template <class Clock, class Duration, class = void>
 struct return_to_utc
-{};
+{
+};
 
 template <class Clock, class Duration>
-struct return_to_utc
-       <
-           Clock, Duration,
-           decltype(Clock::to_utc(declval<time_point<Clock, Duration> const&>()), void())
-       >
-    : return_clock_time
-      <
+struct return_to_utc<
+    Clock, Duration,
+    decltype(Clock::to_utc(declval<time_point<Clock, Duration> const&>()), void())>
+    : return_clock_time<
           utc_clock,
           decltype(Clock::to_utc(declval<time_point<Clock, Duration> const&>()))>
-{};
+{
+};
 
 // Similiar to above
 template <class Clock, class Duration, class = void>
 struct return_from_utc
-{};
+{
+};
 
 template <class Clock, class Duration>
-struct return_from_utc
-       <
-           Clock, Duration,
-           decltype(Clock::from_utc(declval<time_point<utc_clock, Duration> const&>()),
-                    void())
-       >
-    : return_clock_time
-      <
+struct return_from_utc<
+    Clock, Duration,
+    decltype(Clock::from_utc(declval<time_point<utc_clock, Duration> const&>()),
+             void())>
+    : return_clock_time<
           Clock,
-          decltype(Clock::from_utc(declval<time_point<utc_clock, Duration> const&>()))
-      >
-{};
+          decltype(Clock::from_utc(declval<time_point<utc_clock, Duration> const&>()))>
+{
+};
 
 // Similiar to above
-template<typename Clock, typename Duration, typename = void>
+template <typename Clock, typename Duration, typename = void>
 struct return_to_local
-{};
+{
+};
 
-template<typename Clock, typename Duration>
-struct return_to_local
-       <
-          Clock, Duration,
-          decltype(Clock::to_local(declval<time_point<Clock, Duration> const&>()),
-                   void())
-       >
-     : return_clock_time
-       <
-           local_t,
-           decltype(Clock::to_local(declval<time_point<Clock, Duration> const&>()))
-       >
-{};
+template <typename Clock, typename Duration>
+struct return_to_local<
+    Clock, Duration,
+    decltype(Clock::to_local(declval<time_point<Clock, Duration> const&>()),
+             void())>
+    : return_clock_time<
+          local_t,
+          decltype(Clock::to_local(declval<time_point<Clock, Duration> const&>()))>
+{
+};
 
 // Similiar to above
-template<typename Clock, typename Duration, typename = void>
+template <typename Clock, typename Duration, typename = void>
 struct return_from_local
-{};
+{
+};
 
-template<typename Clock, typename Duration>
-struct return_from_local
-       <
-           Clock, Duration,
-           decltype(Clock::from_local(declval<time_point<local_t, Duration> const&>()),
-                    void())
-       >
-     : return_clock_time
-       <
-           Clock,
-           decltype(Clock::from_local(declval<time_point<local_t, Duration> const&>()))
-       >
-{};
+template <typename Clock, typename Duration>
+struct return_from_local<
+    Clock, Duration,
+    decltype(Clock::from_local(declval<time_point<local_t, Duration> const&>()),
+             void())>
+    : return_clock_time<
+          Clock,
+          decltype(Clock::from_local(declval<time_point<local_t, Duration> const&>()))>
+{
+};
 
-}  // namespace ctc_detail
+} // namespace ctc_detail
 
 template <class SrcClock>
 struct clock_time_conversion<std::chrono::system_clock, SrcClock>
 {
     template <class Duration>
     CONSTCD14
-    typename ctc_detail::return_to_sys<SrcClock, Duration>::type
-    operator()(const std::chrono::time_point<SrcClock, Duration>& tp) const
+        typename ctc_detail::return_to_sys<SrcClock, Duration>::type
+        operator()(const std::chrono::time_point<SrcClock, Duration>& tp) const
     {
         return SrcClock::to_sys(tp);
     }
@@ -2554,8 +2471,8 @@ struct clock_time_conversion<DstClock, std::chrono::system_clock>
 {
     template <class Duration>
     CONSTCD14
-    typename ctc_detail::return_from_sys<DstClock, Duration>::type
-    operator()(const sys_time<Duration>& st) const
+        typename ctc_detail::return_from_sys<DstClock, Duration>::type
+        operator()(const sys_time<Duration>& st) const
     {
         return DstClock::from_sys(st);
     }
@@ -2566,8 +2483,8 @@ struct clock_time_conversion<utc_clock, SrcClock>
 {
     template <class Duration>
     CONSTCD14
-    typename ctc_detail::return_to_utc<SrcClock, Duration>::type
-    operator()(const std::chrono::time_point<SrcClock, Duration>& tp) const
+        typename ctc_detail::return_to_utc<SrcClock, Duration>::type
+        operator()(const std::chrono::time_point<SrcClock, Duration>& tp) const
     {
         return SrcClock::to_utc(tp);
     }
@@ -2578,32 +2495,32 @@ struct clock_time_conversion<DstClock, utc_clock>
 {
     template <class Duration>
     CONSTCD14
-    typename ctc_detail::return_from_utc<DstClock, Duration>::type
-    operator()(const utc_time<Duration>& ut) const
+        typename ctc_detail::return_from_utc<DstClock, Duration>::type
+        operator()(const utc_time<Duration>& ut) const
     {
         return DstClock::from_utc(ut);
     }
 };
 
-template<typename SrcClock>
+template <typename SrcClock>
 struct clock_time_conversion<local_t, SrcClock>
 {
     template <class Duration>
     CONSTCD14
-    typename ctc_detail::return_to_local<SrcClock, Duration>::type
-    operator()(const std::chrono::time_point<SrcClock, Duration>& tp) const
+        typename ctc_detail::return_to_local<SrcClock, Duration>::type
+        operator()(const std::chrono::time_point<SrcClock, Duration>& tp) const
     {
         return SrcClock::to_local(tp);
     }
 };
 
-template<typename DstClock>
+template <typename DstClock>
 struct clock_time_conversion<DstClock, local_t>
 {
     template <class Duration>
     CONSTCD14
-    typename ctc_detail::return_from_local<DstClock, Duration>::type
-    operator()(const local_time<Duration>& lt) const
+        typename ctc_detail::return_from_local<DstClock, Duration>::type
+        operator()(const local_time<Duration>& lt) const
     {
         return DstClock::from_local(lt);
     }
@@ -2613,75 +2530,68 @@ namespace clock_cast_detail
 {
 
 template <class Clock, class Duration>
-    using time_point = std::chrono::time_point<Clock, Duration>;
+using time_point = std::chrono::time_point<Clock, Duration>;
 using std::chrono::system_clock;
 
 template <class DstClock, class SrcClock, class Duration>
-CONSTCD14
-auto
+CONSTCD14 auto
 conv_clock(const time_point<SrcClock, Duration>& t)
     -> decltype(std::declval<clock_time_conversion<DstClock, SrcClock>>()(t))
 {
     return clock_time_conversion<DstClock, SrcClock>{}(t);
 }
 
-//direct trait conversion, 1st candidate
+// direct trait conversion, 1st candidate
 template <class DstClock, class SrcClock, class Duration>
-CONSTCD14
-auto
+CONSTCD14 auto
 cc_impl(const time_point<SrcClock, Duration>& t, const time_point<SrcClock, Duration>*)
     -> decltype(conv_clock<DstClock>(t))
 {
     return conv_clock<DstClock>(t);
 }
 
-//conversion through sys, 2nd candidate
+// conversion through sys, 2nd candidate
 template <class DstClock, class SrcClock, class Duration>
-CONSTCD14
-auto
+CONSTCD14 auto
 cc_impl(const time_point<SrcClock, Duration>& t, const void*)
     -> decltype(conv_clock<DstClock>(conv_clock<system_clock>(t)))
 {
     return conv_clock<DstClock>(conv_clock<system_clock>(t));
 }
 
-//conversion through utc, 2nd candidate
+// conversion through utc, 2nd candidate
 template <class DstClock, class SrcClock, class Duration>
-CONSTCD14
-auto
+CONSTCD14 auto
 cc_impl(const time_point<SrcClock, Duration>& t, const void*)
-    -> decltype(0,  // MSVC_WORKAROUND
+    -> decltype(0, // MSVC_WORKAROUND
                 conv_clock<DstClock>(conv_clock<utc_clock>(t)))
 {
     return conv_clock<DstClock>(conv_clock<utc_clock>(t));
 }
 
-//conversion through sys and utc, 3rd candidate
+// conversion through sys and utc, 3rd candidate
 template <class DstClock, class SrcClock, class Duration>
-CONSTCD14
-auto
+CONSTCD14 auto
 cc_impl(const time_point<SrcClock, Duration>& t, ...)
     -> decltype(conv_clock<DstClock>(conv_clock<utc_clock>(conv_clock<system_clock>(t))))
 {
     return conv_clock<DstClock>(conv_clock<utc_clock>(conv_clock<system_clock>(t)));
 }
 
-//conversion through utc and sys, 3rd candidate
+// conversion through utc and sys, 3rd candidate
 template <class DstClock, class SrcClock, class Duration>
-CONSTCD14
-auto
+CONSTCD14 auto
 cc_impl(const time_point<SrcClock, Duration>& t, ...)
-    -> decltype(0,  // MSVC_WORKAROUND
+    -> decltype(0, // MSVC_WORKAROUND
                 conv_clock<DstClock>(conv_clock<system_clock>(conv_clock<utc_clock>(t))))
 {
     return conv_clock<DstClock>(conv_clock<system_clock>(conv_clock<utc_clock>(t)));
 }
 
-}  // namespace clock_cast_detail
+} // namespace clock_cast_detail
 
 template <class DstClock, class SrcClock, class Duration>
-CONSTCD14
-auto
+CONSTCD14 auto
 clock_cast(const std::chrono::time_point<SrcClock, Duration>& tp)
     -> decltype(clock_cast_detail::cc_impl<DstClock>(tp, &tp))
 {
@@ -2691,104 +2601,89 @@ clock_cast(const std::chrono::time_point<SrcClock, Duration>& tp)
 // Deprecated API
 
 template <class Duration>
-inline
-sys_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline sys_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 to_sys_time(const utc_time<Duration>& t)
 {
     return utc_clock::to_sys(t);
 }
 
 template <class Duration>
-inline
-sys_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline sys_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 to_sys_time(const tai_time<Duration>& t)
 {
     return utc_clock::to_sys(tai_clock::to_utc(t));
 }
 
 template <class Duration>
-inline
-sys_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline sys_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 to_sys_time(const gps_time<Duration>& t)
 {
     return utc_clock::to_sys(gps_clock::to_utc(t));
 }
 
-
 template <class Duration>
-inline
-utc_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline utc_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 to_utc_time(const sys_time<Duration>& t)
 {
     return utc_clock::from_sys(t);
 }
 
 template <class Duration>
-inline
-utc_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline utc_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 to_utc_time(const tai_time<Duration>& t)
 {
     return tai_clock::to_utc(t);
 }
 
 template <class Duration>
-inline
-utc_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline utc_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 to_utc_time(const gps_time<Duration>& t)
 {
     return gps_clock::to_utc(t);
 }
 
-
 template <class Duration>
-inline
-tai_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline tai_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 to_tai_time(const sys_time<Duration>& t)
 {
     return tai_clock::from_utc(utc_clock::from_sys(t));
 }
 
 template <class Duration>
-inline
-tai_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline tai_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 to_tai_time(const utc_time<Duration>& t)
 {
     return tai_clock::from_utc(t);
 }
 
 template <class Duration>
-inline
-tai_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline tai_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 to_tai_time(const gps_time<Duration>& t)
 {
     return tai_clock::from_utc(gps_clock::to_utc(t));
 }
 
-
 template <class Duration>
-inline
-gps_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline gps_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 to_gps_time(const sys_time<Duration>& t)
 {
     return gps_clock::from_utc(utc_clock::from_sys(t));
 }
 
 template <class Duration>
-inline
-gps_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline gps_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 to_gps_time(const utc_time<Duration>& t)
 {
     return gps_clock::from_utc(t);
 }
 
 template <class Duration>
-inline
-gps_time<typename std::common_type<Duration, std::chrono::seconds>::type>
+inline gps_time<typename std::common_type<Duration, std::chrono::seconds>::type>
 to_gps_time(const tai_time<Duration>& t)
 {
     return gps_clock::from_utc(tai_clock::to_utc(t));
 }
 
-}  // namespace date
+} // namespace date
 
-#endif  // TZ_H
+#endif // TZ_H

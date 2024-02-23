@@ -1,11 +1,11 @@
 // Copyright 2024 TeiaCare
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,13 +21,13 @@ TEST_F(test_task_scheduler, start_stop)
 {
     EXPECT_TRUE(ts->start());
     EXPECT_FALSE(ts->start());
-    
+
     EXPECT_TRUE(ts->stop());
     EXPECT_FALSE(ts->stop());
 
     EXPECT_TRUE(ts->start(1));
     EXPECT_FALSE(ts->start(1));
-    
+
     EXPECT_TRUE(ts->stop());
     EXPECT_TRUE(ts->start(std::numeric_limits<unsigned>::max()));
 
@@ -40,7 +40,7 @@ TEST_F(test_task_scheduler, run_after_stop)
 {
     EXPECT_TRUE(ts->start());
     EXPECT_TRUE(ts->stop());
-    
+
     ts->every("TASK_ID", 10ms, simple_task);
 
     EXPECT_EQ(ts->tasks_size(), 0);
@@ -66,13 +66,13 @@ TEST_F(test_task_scheduler, tasks_size_different_id)
 
     EXPECT_TRUE(ts->start());
     EXPECT_EQ(ts->tasks_size(), 0);
-    
+
     for (auto n = 0; n < task_count; ++n)
     {
         EXPECT_EQ(ts->tasks_size(), n);
         auto task_id = std::to_string(n);
         ts->every(std::move(task_id), 10ms, simple_task);
-        EXPECT_EQ(ts->tasks_size(), n+1);
+        EXPECT_EQ(ts->tasks_size(), n + 1);
     }
 
     EXPECT_EQ(ts->tasks_size(), task_count);
@@ -113,7 +113,7 @@ TEST_F(test_task_scheduler, scheduled_tasks)
 
     EXPECT_TRUE(ts->start());
     EXPECT_EQ(ts->tasks_size(), 0);
-    
+
     for (auto n = 0; n < task_count; ++n)
     {
         auto task_id = std::to_string(n);
@@ -145,7 +145,7 @@ TEST_F(test_task_scheduler, enabled_tasks)
 
     EXPECT_TRUE(ts->start());
     EXPECT_EQ(ts->tasks_size(), 0);
-    
+
     for (auto n = 0; n < task_count; ++n)
     {
         auto task_id = std::to_string(n);
@@ -177,7 +177,7 @@ TEST_F(test_task_scheduler, disabled_tasks)
 
     EXPECT_TRUE(ts->start());
     EXPECT_EQ(ts->tasks_size(), 0);
-    
+
     for (auto n = 0; n < task_count; ++n)
     {
         auto task_id = std::to_string(n);
@@ -196,7 +196,6 @@ TEST_F(test_task_scheduler, disabled_tasks)
 // NOLINTNEXTLINE
 TEST_F(test_task_scheduler, reenabled_tasks)
 {
-
     const auto scheduled_task_id = "TASK_1";
     const auto not_scheduled_task_id = "TASK_2";
 
@@ -223,7 +222,7 @@ TEST_F(test_task_scheduler, removed_tasks)
 
     EXPECT_TRUE(ts->start());
     EXPECT_EQ(ts->tasks_size(), 0);
-    
+
     for (auto n = 0; n < task_count; ++n)
     {
         auto task_id = std::to_string(n);
@@ -255,8 +254,8 @@ TEST_F(test_task_scheduler, removed_missing_tasks)
 
     EXPECT_FALSE(ts->is_scheduled(scheduled_task_id));
     EXPECT_FALSE(ts->is_scheduled(not_scheduled_task_id));
-    
-    ts->every(std::move(scheduled_task_id), 10ms, simple_task);    
+
+    ts->every(std::move(scheduled_task_id), 10ms, simple_task);
     EXPECT_TRUE(ts->is_scheduled(scheduled_task_id));
     EXPECT_EQ(ts->tasks_size(), 1);
 }
@@ -269,16 +268,18 @@ TEST_F(test_task_scheduler, remove_last_scheduled_task)
 ///////////////////////////////////////////////////////////
 // IN
 ///////////////////////////////////////////////////////////
-class test_task_scheduler_in : public test_task_scheduler_api {};
+class test_task_scheduler_in : public test_task_scheduler_api
+{
+};
 
 // NOLINTNEXTLINE
 TEST_F(test_task_scheduler_in, simple)
 {
     ts->start();
     ts->in(3ms, task);
-    // This must be evaluated as a XOR since we cannot be sure if 
+    // This must be evaluated as a XOR since we cannot be sure if
     // the task has already been executed or not.
-    // In any case either the task is already executed (thus the tasks_size must be zero) 
+    // In any case either the task is already executed (thus the tasks_size must be zero)
     // or the the tasks_size is equal to one and the task has not been executed yet.
     EXPECT_TRUE(is_executed() ^ is_pending());
 
@@ -308,7 +309,7 @@ TEST_F(test_task_scheduler_in, task_arguments)
 {
     ts->start();
 
-    tc::sdk::tests::test_task_scheduler_api::DummyClass dummy_obj{.ok=true};
+    tc::sdk::tests::test_task_scheduler_api::DummyClass dummy_obj{.ok = true};
     ts->in(3ms, task_with_arguments, "dummy", dummy_obj, std::string("dummy"));
     EXPECT_TRUE(is_executed() ^ is_pending());
 
@@ -384,7 +385,9 @@ TEST_F(test_task_scheduler_in, wait_completion)
 ///////////////////////////////////////////////////////////
 // AT
 ///////////////////////////////////////////////////////////
-class test_task_scheduler_at : public test_task_scheduler_api {};
+class test_task_scheduler_at : public test_task_scheduler_api
+{
+};
 
 // NOLINTNEXTLINE
 TEST_F(test_task_scheduler_at, simple)
@@ -419,7 +422,7 @@ TEST_F(test_task_scheduler_at, task_arguments)
 {
     ts->start();
 
-    tc::sdk::tests::test_task_scheduler_api::DummyClass dummy_obj{.ok=true};
+    tc::sdk::tests::test_task_scheduler_api::DummyClass dummy_obj{.ok = true};
     ts->at(tc::sdk::clock::now() + 3ms, task_with_arguments, "dummy", dummy_obj, std::string("dummy"));
     EXPECT_TRUE(is_executed() ^ is_pending());
 
@@ -495,7 +498,9 @@ TEST_F(test_task_scheduler_at, wait_completion)
 ///////////////////////////////////////////////////////////
 // EVERY
 ///////////////////////////////////////////////////////////
-class test_task_scheduler_every : public test_task_scheduler_api {};
+class test_task_scheduler_every : public test_task_scheduler_api
+{
+};
 
 // NOLINTNEXTLINE
 TEST_F(test_task_scheduler_every, simple)
@@ -505,7 +510,7 @@ TEST_F(test_task_scheduler_every, simple)
     EXPECT_TRUE(is_executed() ^ is_pending());
 
     wait_execution();
-    
+
     EXPECT_TRUE(is_executed());
     EXPECT_TRUE(is_pending());
 }
@@ -530,7 +535,7 @@ TEST_F(test_task_scheduler_every, task_arguments)
 {
     ts->start();
 
-    tc::sdk::tests::test_task_scheduler_api::DummyClass dummy_obj{.ok=true};
+    tc::sdk::tests::test_task_scheduler_api::DummyClass dummy_obj{.ok = true};
     EXPECT_TRUE(ts->every(5ms, task_with_arguments, "dummy", dummy_obj, std::string("dummy")));
     EXPECT_TRUE(is_executed() ^ is_pending());
 
@@ -593,11 +598,11 @@ TEST_F(test_task_scheduler_every, delay)
 {
     ts->start();
     EXPECT_TRUE(ts->every(
-        "TASK_ID", 
-        tc::sdk::task_scheduler::interval_t{5ms}, 
-        tc::sdk::task_scheduler::delay_t{100ms}, 
+        "TASK_ID",
+        tc::sdk::task_scheduler::interval_t{5ms},
+        tc::sdk::task_scheduler::delay_t{100ms},
         task));
-    
+
     wait_execution();
 
     EXPECT_TRUE(is_executed());
@@ -609,12 +614,12 @@ TEST_F(test_task_scheduler_every, self_removing)
 {
     ts->start();
     EXPECT_TRUE(ts->every(
-        "TASK_ID", 
-        tc::sdk::task_scheduler::interval_t{5ms}, 
-        tc::sdk::task_scheduler::delay_t{100ms}, 
+        "TASK_ID",
+        tc::sdk::task_scheduler::interval_t{5ms},
+        tc::sdk::task_scheduler::delay_t{100ms},
         self_removing_task,
         std::string("TASK_ID")));
-    
+
     wait_execution();
 
     EXPECT_TRUE(is_executed());

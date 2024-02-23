@@ -1,11 +1,11 @@
 // Copyright 2024 TeiaCare
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,7 +45,7 @@ TEST_F(test_stopwatch, staret_time_increases_on_reset)
     constexpr int total_count = 1'000;
     for (auto i = 0; i < total_count; ++i)
     {
-        auto start = s.start_time();    
+        auto start = s.start_time();
         s.reset();
         ASSERT_GT(s.start_time(), start);
     }
@@ -80,10 +80,9 @@ TYPED_TEST(test_stopwatch_duration_t, elapsed_duration_types)
     EXPECT_NEAR(
         std::chrono::duration_cast<duration_t>(this->s.elapsed()).count(),
         (this->s.template elapsed<duration_t>()).count(),
-        abs_error
-    );
-    
-    // see why the template syntax this->s.template elapsed<duration_t>() must be used here: 
+        abs_error);
+
+    // see why the template syntax this->s.template elapsed<duration_t>() must be used here:
     // https://stackoverflow.com/questions/610245/where-and-why-do-i-have-to-put-the-template-and-typename-keywords
 }
 

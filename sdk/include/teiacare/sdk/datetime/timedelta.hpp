@@ -1,11 +1,11 @@
 // Copyright 2024 TeiaCare
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,7 @@
 #include "date/date.h"
 #include <ostream>
 
-namespace tc::sdk  
+namespace tc::sdk
 {
 class TimeDelta
 {
@@ -27,67 +27,94 @@ class TimeDelta
 public:
     explicit TimeDelta();
 
-    template<class ... Durations>
+    template <class... Durations>
     explicit TimeDelta(const Durations&... durations);
 
-    template<class ... Durations>
+    template <class... Durations>
     explicit TimeDelta(Durations&&... durations);
 
     constexpr bool is_valid() const;
 
-    std::chrono::hours hours() const 
+    std::chrono::hours hours() const
     {
         return std::chrono::hh_mm_ss<DurationT>(_duration).hours();
     }
 
-    std::chrono::minutes minutes() const 
+    std::chrono::minutes minutes() const
     {
         return std::chrono::hh_mm_ss<DurationT>(_duration).minutes();
     }
 
-    std::chrono::seconds seconds() const 
+    std::chrono::seconds seconds() const
     {
         return std::chrono::hh_mm_ss<DurationT>(_duration).seconds();
     }
 
-    std::chrono::milliseconds milliseconds() const 
+    std::chrono::milliseconds milliseconds() const
     {
         return std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::hh_mm_ss<DurationT>(_duration - std::chrono::floor<std::chrono::seconds>(_duration)).subseconds());
     }
 
-    std::chrono::microseconds microseconds() const    
+    std::chrono::microseconds microseconds() const
     {
         return std::chrono::duration_cast<std::chrono::microseconds>(
             std::chrono::hh_mm_ss<DurationT>(_duration - std::chrono::floor<std::chrono::milliseconds>(_duration)).subseconds());
     }
 
-    std::chrono::nanoseconds nanoseconds() const 
+    std::chrono::nanoseconds nanoseconds() const
     {
         return std::chrono::duration_cast<std::chrono::nanoseconds>(
             std::chrono::hh_mm_ss<DurationT>(_duration - std::chrono::floor<std::chrono::microseconds>(_duration)).subseconds());
     }
 
-    template<class Duration = typename TimeDelta::DurationT>
+    template <class Duration = typename TimeDelta::DurationT>
     Duration total_duration() const
     {
         return std::chrono::duration_cast<Duration>(_duration);
     }
 
-    std::chrono::years total_years() const { return total_duration<std::chrono::years>(); }
-    std::chrono::months total_months() const { return total_duration<std::chrono::months>(); }
-    std::chrono::days total_days() const { return total_duration<std::chrono::days>(); }
-    std::chrono::hours total_hours() const { return total_duration<std::chrono::hours>(); }
-    std::chrono::minutes total_minutes() const { return total_duration<std::chrono::minutes>(); }
-    std::chrono::seconds total_seconds() const { return total_duration<std::chrono::seconds>(); }
-    std::chrono::milliseconds total_milliseconds() const { return total_duration<std::chrono::milliseconds>(); }
-    std::chrono::microseconds total_microseconds() const { return total_duration<std::chrono::microseconds>(); }
-    std::chrono::nanoseconds total_nanoseconds() const { return total_duration<std::chrono::nanoseconds>(); }
+    std::chrono::years total_years() const
+    {
+        return total_duration<std::chrono::years>();
+    }
+    std::chrono::months total_months() const
+    {
+        return total_duration<std::chrono::months>();
+    }
+    std::chrono::days total_days() const
+    {
+        return total_duration<std::chrono::days>();
+    }
+    std::chrono::hours total_hours() const
+    {
+        return total_duration<std::chrono::hours>();
+    }
+    std::chrono::minutes total_minutes() const
+    {
+        return total_duration<std::chrono::minutes>();
+    }
+    std::chrono::seconds total_seconds() const
+    {
+        return total_duration<std::chrono::seconds>();
+    }
+    std::chrono::milliseconds total_milliseconds() const
+    {
+        return total_duration<std::chrono::milliseconds>();
+    }
+    std::chrono::microseconds total_microseconds() const
+    {
+        return total_duration<std::chrono::microseconds>();
+    }
+    std::chrono::nanoseconds total_nanoseconds() const
+    {
+        return total_duration<std::chrono::nanoseconds>();
+    }
 
     // TODO: move to protected
     const DurationT duration() const;
-protected:
 
+protected:
 public:
     friend bool operator==(const TimeDelta& td1, const TimeDelta& td2);
     friend std::ostream& operator<<(std::ostream& os, const TimeDelta& td);
@@ -102,19 +129,19 @@ public:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 TimeDelta::TimeDelta()
-    : _duration{ DurationT::min() }
+    : _duration{DurationT::min()}
 {
 }
 
-template<class ... Durations>
-TimeDelta::TimeDelta(const Durations& ... durations)
-    : _duration{ (durations + ...) }
+template <class... Durations>
+TimeDelta::TimeDelta(const Durations&... durations)
+    : _duration{(durations + ...)}
 {
 }
 
-template<class ... Durations>
-TimeDelta::TimeDelta(Durations&& ... durations)
-    : _duration{ (std::forward<Durations&&>(durations) + ...) }
+template <class... Durations>
+TimeDelta::TimeDelta(Durations&&... durations)
+    : _duration{(std::forward<Durations&&>(durations) + ...)}
 {
 }
 
@@ -163,17 +190,17 @@ std::ostream& operator<<(std::ostream& os, const TimeDelta& t)
 
 TimeDelta operator+(const TimeDelta& t1, const TimeDelta& t2)
 {
-    return TimeDelta{ t1.duration() + t2.duration() };
+    return TimeDelta{t1.duration() + t2.duration()};
 }
 
 TimeDelta operator-(const TimeDelta& t1, const TimeDelta& t2)
 {
-    return TimeDelta{ t1.duration() - t2.duration() };
+    return TimeDelta{t1.duration() - t2.duration()};
 }
 
 TimeDelta operator*(const TimeDelta& t, int64_t multiplier)
 {
-    return TimeDelta{ t.duration() * multiplier };
+    return TimeDelta{t.duration() * multiplier};
 }
 
 TimeDelta operator*(int64_t multiplier, const TimeDelta& t)

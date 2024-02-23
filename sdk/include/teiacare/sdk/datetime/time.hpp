@@ -1,11 +1,11 @@
 // Copyright 2024 TeiaCare
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,13 +14,14 @@
 
 #pragma once
 
-#include "date/date.h"
-#include <ostream>
 #include <teiacare/sdk/datetime/timedelta.hpp>
 
-namespace tc::sdk 
+#include "date/date.h"
+#include <ostream>
+
+namespace tc::sdk
 {
-class Time 
+class Time
 {
     using DurationT = std::chrono::system_clock::duration;
     const std::chrono::hh_mm_ss<DurationT> _hh_mm_ss;
@@ -28,10 +29,10 @@ class Time
 public:
     explicit Time();
 
-    template<class ... Durations>
+    template <class... Durations>
     explicit Time(const Durations&... durations);
 
-    template<class ... Durations>
+    template <class... Durations>
     explicit Time(Durations&&... durations);
 
     constexpr bool is_valid() const;
@@ -43,11 +44,11 @@ public:
     std::chrono::microseconds microseconds() const;
     std::chrono::nanoseconds nanoseconds() const;
 
-    template<class Duration = typename Time::DurationT>
+    template <class Duration = typename Time::DurationT>
     std::string to_string(const char* fmt = "%T") const; // equivalent to "%H:%M:%S"
     std::string iso_string() const;
-    
-    template<class Duration = typename Time::DurationT>
+
+    template <class Duration = typename Time::DurationT>
     static Time now();
 
     // TODO!
@@ -62,7 +63,7 @@ public:
     friend std::ostream& operator<<(std::ostream& os, const Time& time);
     friend Time operator+(const Time& time, const TimeDelta& time_delta);
     friend Time operator+(const TimeDelta& time_delta, const Time& time);
-    friend Time operator-(const Time& time, const TimeDelta& time_delta);    
+    friend Time operator-(const Time& time, const TimeDelta& time_delta);
     friend TimeDelta operator-(const Time& t1, const Time& t2);
 };
 
@@ -71,19 +72,19 @@ public:
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 Time::Time()
-    : _hh_mm_ss{ DurationT::min() }
+    : _hh_mm_ss{DurationT::min()}
 {
 }
 
-template<class ... Durations>
-Time::Time(const Durations& ... durations)
-    : _hh_mm_ss{ (durations + ...) % std::chrono::hours(24) }
+template <class... Durations>
+Time::Time(const Durations&... durations)
+    : _hh_mm_ss{(durations + ...) % std::chrono::hours(24)}
 {
 }
 
-template<class ... Durations>
-Time::Time(Durations&& ... durations)
-    : _hh_mm_ss{ (std::forward<Durations&&>(durations) + ...) % std::chrono::hours(24) }
+template <class... Durations>
+Time::Time(Durations&&... durations)
+    : _hh_mm_ss{(std::forward<Durations&&>(durations) + ...) % std::chrono::hours(24)}
 {
 }
 
@@ -132,17 +133,17 @@ std::string Time::iso_string() const
     return to_string<std::chrono::seconds>("%H:%M:%S");
 }
 
-template<class Duration>
+template <class Duration>
 std::string Time::to_string(const char* fmt) const
 {
     return date::format(fmt, std::chrono::floor<Duration>(_hh_mm_ss.to_duration()));
 }
 
-template<class Duration>
-Time Time::now() 
+template <class Duration>
+Time Time::now()
 {
     auto now = std::chrono::system_clock::now();
-    return Time{ std::chrono::floor<Duration>(now) - std::chrono::floor<std::chrono::days>(now) };
+    return Time{std::chrono::floor<Duration>(now) - std::chrono::floor<std::chrono::days>(now)};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -161,7 +162,7 @@ std::ostream& operator<<(std::ostream& os, const Time& time)
 
 Time operator+(const Time& time, const TimeDelta& time_delta)
 {
-    return Time{ time.hh_mm_ss().to_duration() + time_delta.duration() };
+    return Time{time.hh_mm_ss().to_duration() + time_delta.duration()};
 }
 
 Time operator+(const TimeDelta& time_delta, const Time& time)
@@ -171,12 +172,12 @@ Time operator+(const TimeDelta& time_delta, const Time& time)
 
 Time operator-(const Time& time, const TimeDelta& time_delta)
 {
-    return Time{ time.hh_mm_ss().to_duration() - time_delta.duration() };
+    return Time{time.hh_mm_ss().to_duration() - time_delta.duration()};
 }
 
 TimeDelta operator-(const Time& t1, const Time& t2)
 {
-    return TimeDelta{ t1.hh_mm_ss().to_duration() - t2.hh_mm_ss().to_duration() };
+    return TimeDelta{t1.hh_mm_ss().to_duration() - t2.hh_mm_ss().to_duration()};
 }
 
 }

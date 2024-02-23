@@ -1,11 +1,11 @@
 // Copyright 2024 TeiaCare
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -13,16 +13,18 @@
 // limitations under the License.
 
 #include <teiacare/sdk/version.hpp>
+
 #include <iostream>
 
-int main() 
+int main()
 {
     std::cout << tc::sdk::info::name << "\n";
     std::cout << "Version: " << tc::sdk::info::version << "\n";
 
-    std::cout << "\n" << tc::sdk::info::project_description << "\n";
+    std::cout << "\n"
+              << tc::sdk::info::project_description << "\n";
     std::cout << tc::sdk::info::project_url << "\n";
-    
+
     std::cout << "\nBuild Type: " << tc::sdk::info::build_type << "\n";
     std::cout << "Compiler: " << tc::sdk::info::compiler_name << " " << tc::sdk::info::compiler_version << "\n";
     std::cout << "Compiler Flags: " << tc::sdk::info::cxx_flags << "\n";

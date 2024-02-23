@@ -8,4 +8,11 @@ KeepEmptyLinesAtTheStartOfBlocks: 'false'
 PointerAlignment: Left
 UseTab: Never
 FixNamespaceComments: 'false'
+IncludeBlocks: 'Regroup'
+IncludeCategories:
+  - Regex:           '^(<|")teiacare/'
+    Priority:        1
+    CaseSensitive:   true
+  - Regex:           '.*'
+    Priority:        2
 ...
