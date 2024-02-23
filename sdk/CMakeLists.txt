@@ -83,14 +83,13 @@ endif()
 
 if(TC_ENABLE_CLANG_FORMAT)
     include(clang_format)
-    setup_target_clang_format(${TARGET_NAME} sdk/include sdk/src)
+    setup_target_clang_format(${TARGET_NAME} "sdk/include/teiacare/sdk sdk/src")
     # setup_target_clang_format(${TARGET_NAME} ${ALL_SOURCES_ABS_PATH})
 endif()
 
 if(TC_ENABLE_CLANG_TIDY)
     include(clang_tidy)
-    setup_target_clang_tidy(${TARGET_NAME} sdk/include sdk/src)
-    set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY} -header-filter=.*)
+    setup_target_clang_tidy(${TARGET_NAME})
 endif()
 
 if(TC_ENABLE_CPPCHECK)

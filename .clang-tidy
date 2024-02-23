@@ -1,10 +1,8 @@
 ---
 Checks: > 
-  clang-diagnostic-*,
-  clang-analyzer-*,
+  clang-*,
   modernize-*',
   
-WarningsAsErrors: true
-HeaderFilterRegex: ''
-AnalyzeTemporaryDtors: false
+WarningsAsErrors: '*'
+HeaderFilterRegex: '.*'
 ...

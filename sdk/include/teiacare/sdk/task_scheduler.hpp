@@ -73,8 +73,8 @@ private:
         explicit schedulable_task(FunctionType&& f, size_t hash, tc::sdk::clock::duration interval) 
         : _task{std::make_shared<tc::sdk::task>(std::forward<FunctionType>(f))}
         , _is_enabled{true}
-        , _hash{hash}
         , _interval{interval}
+        , _hash{hash}
         {
         }
 
@@ -356,7 +356,7 @@ public:
             return t(); 
         };
 
-        return add_task(std::move(tc::sdk::clock::now()), schedulable_task(std::move(task), interval));
+        return add_task(tc::sdk::clock::now(), schedulable_task(std::move(task), interval));
     }
 
     /*!
@@ -372,7 +372,7 @@ public:
             return std::apply(t, params);
         };
         
-        return add_task(std::move(tc::sdk::clock::now()), schedulable_task(std::move(task), interval));
+        return add_task(tc::sdk::clock::now(), schedulable_task(std::move(task), interval));
     }
 
     /*!
@@ -388,7 +388,7 @@ public:
             return std::apply(t, params);
         };
         
-        return add_task(std::move(tc::sdk::clock::now()), schedulable_task(std::move(task), _hasher(task_id), interval));
+        return add_task(tc::sdk::clock::now(), schedulable_task(std::move(task), _hasher(task_id), interval));
     }
 
     /*!
@@ -404,7 +404,7 @@ public:
             return std::apply(t, params);
         };
         
-        return add_task(std::move(tc::sdk::clock::now() + delay), schedulable_task(std::move(task), _hasher(task_id), interval));
+        return add_task(tc::sdk::clock::now() + delay, schedulable_task(std::move(task), _hasher(task_id), interval));
     }
 
 private:
