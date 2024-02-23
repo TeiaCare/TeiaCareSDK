@@ -7,7 +7,6 @@ if(NOT CLANG_FORMAT)
 else()
 	message(STATUS "clang-format: " ${CLANG_FORMAT})
 	execute_process(COMMAND ${CLANG_FORMAT} --version)
-    message(STATUS "\n")
 
     if(NOT EXISTS "${CMAKE_SOURCE_DIR}/.clang-format")
         message(FATAL_ERROR "'${CMAKE_SOURCE_DIR}/.clang-format' configuration file not found!")

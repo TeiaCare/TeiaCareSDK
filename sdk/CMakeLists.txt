@@ -93,8 +93,7 @@ endif()
 
 if(TC_ENABLE_CPPCHECK)
     include(cppcheck)
-    setup_target_cppcheck(${TARGET_NAME} ${TARGET_SRC})
-    set(CMAKE_CXX_CPPCHECK cppcheck) # --enable=all --suppress=missingIncludeSystem
+    setup_target_cppcheck(${TARGET_NAME})
 endif()
 
 if(TC_ENABLE_CPPLINT)

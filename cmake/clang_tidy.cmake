@@ -7,7 +7,6 @@ if(NOT CLANG_TIDY)
 else()
 	message(STATUS "clang-tidy: " ${CLANG_TIDY})
 	execute_process(COMMAND ${CLANG_TIDY} --version)
-    message(STATUS "\n")
 
     if(NOT EXISTS "${CMAKE_SOURCE_DIR}/.clang-tidy")
         message(FATAL_ERROR "'${CMAKE_SOURCE_DIR}/.clang-tidy' configuration file not found!")

@@ -150,7 +150,7 @@ python scripts/cmake/install.py <Debug|Release>
 ```bash
 python scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --unit_tests --warnings
 python scripts/cmake/build.py <Debug|Release>
-python ./scripts/cmake/install.py <Debug|Release>
+python scripts/cmake/install.py <Debug|Release>
 python scripts/tools/run_unit_tests.py <Debug|Release>
 ```
 Examples are installed in $PWD/install/unit_tests.
@@ -163,7 +163,7 @@ Note that code coverage is not available on Windows.
 ```bash
 python scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --coverage --warnings
 python scripts/cmake/build.py <Debug|Release>
-python ./scripts/cmake/install.py <Debug|Release>
+python scripts/cmake/install.py <Debug|Release>
 python scripts/tools/run_unit_tests.py <Debug|Release>
 python scripts/tools/run_coverage.py <COMPILER_NAME> <COMPILER_VERSION>
 ```
@@ -172,44 +172,45 @@ Coverage results are available in $PWD/results/coverage.
 
 ## Examples
 ```bash
-python ./scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --examples --warnings
-python ./scripts/cmake/build.py <Debug|Release>
-python ./scripts/cmake/install.py <Debug|Release>
+python scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --examples --warnings
+python scripts/cmake/build.py <Debug|Release>
+python scripts/cmake/install.py <Debug|Release>
 ```
 Examples are installed in $PWD/install/examples.
 
 ## Benchmarks
 ```bash
-python ./scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --benchmarks --warnings
-python ./scripts/cmake/build.py <Debug|Release>
-python ./scripts/cmake/install.py <Debug|Release> 
+python scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --benchmarks --warnings
+python scripts/cmake/build.py <Debug|Release>
+python scripts/cmake/install.py <Debug|Release> 
 ```
 Benchmarks are installed in $PWD/install/benchmarks.
 
-## Code Formatting (clang-format)
+## Code Formatting
+- [clang-format](https://clang.llvm.org/docs/ClangFormat.html)
 ```bash
-python ./scripts/tools/run_clang_format.py -r -i sdk
+python scripts/tools/run_clang_format.py -r -i sdk
 ```
 
-## Code Analysis (clang-tidy) 
+## Code Analysis
+- [clang-tidy](https://clang.llvm.org/extra/clang-tidy/)
 ```bash
-python ./scripts/tools/run_clang_tidy.py -header-filter=.* sdk
+python scripts/tools/run_clang_tidy.py -header-filter=.* sdk
 ```
 
-## Code Analysis (cppcheck) [TODO: Review]
+- [cppcheck](http://cppcheck.net/)
+```bash
+python scripts/tools/run_cppcheck.py <Debug|Release>
+```
+
+- [cpplint](https://github.com/cpplint/cpplint) [TODO: Review]
 ```bash
 # TODO: add python script.
-```
-
-## Code Analysis (cpplint) [TODO: Review]
-```bash
-# TODO: add python script.
-
 cpplint --counting=detailed  $(find teiacore_sdk* -type f -name "*.hpp" -or -name "*.cpp")
 ```
 
 ## Generate Documentation
-First install and setup doxygen from your OS package manager.
+First install and setup *Doxygen* from your OS package manager.
 ```bash
 # Linux
 apt-get install doxygen graphviz

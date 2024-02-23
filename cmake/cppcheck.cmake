@@ -1,13 +1,11 @@
-include(FindPythonInterp)
 find_program(CPPCHECK NAMES "cppcheck")
+find_package(Python3)
 
 if(NOT CPPCHECK)
     message(WARNING "cppcheck not found!")
 else()
 	message(STATUS "cppcheck: " ${CPPCHECK})
     execute_process(COMMAND ${CPPCHECK} --version)
-    message(STATUS "\n")
-
 endif()
 
 function(setup_target_cppcheck TARGET)
@@ -15,9 +13,18 @@ function(setup_target_cppcheck TARGET)
         message(WARNING "cppcheck not found!")
         return()
     endif()
-    add_custom_target(${TARGET}_cppcheck ALL
-        COMMAND ${CPPCHECK} ${ARGN}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        COMMENT "Running ${CPPCHECK} on ${TARGET}"
+
+    if(NOT ${PYTHON_FOUND})
+        message(WARNING "python3 not found!")
+        return()
+    endif()
+
+    add_custom_target(${TARGET_NAME}_cppcheck ALL
+        COMMAND ${Python3_EXECUTABLE}
+            ${CMAKE_SOURCE_DIR}/scripts/tools/run_cppcheck.py
+            ${CMAKE_BUILD_TYPE}
+        DEPENDS ${TARGET_NAME}
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Running ${CPPCHECK} on ${TARGET_NAME}"
     )
 endfunction()
