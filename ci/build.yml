@@ -172,9 +172,9 @@ jobs:
           $(ACTIVATE_VIRTUAL_ENV)
           $(SETUP_BUILD_ENV)
           python3 scripts/conan/create.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) --install_dir $(Build.SourcesDirectory)
-        # cd sdk_package_test
-        # python3 build.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION)
-        # install/teiacore_sdk_client_package_test 
+          conan remote add artifactory $(ARTIFACTORY_HOST)/artifactory/api/conan/conan False
+          conan user $(ARTIFACTORY_USERNAME) -r artifactory -p $(ARTIFACTORY_PASSWORD)
+          python3 scripts/conan/upload.py --version_file=VERSION --remote_name=artifactory-remote
         displayName: 'Conan Package'
         timeoutInMinutes: 5
         env:
