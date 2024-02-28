@@ -1,5 +1,5 @@
 [requires]
-teiacore_sdk/1.0.0
+teiacare_sdk/1.0.0
 
 [generators]
 CMakeDeps

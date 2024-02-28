@@ -21,13 +21,13 @@ def get_project_version():
         # TODO: validate Regex format
         return version_file.read().strip()
 
-class TeiaCoreSDK(ConanFile):
-    name = "teiacore_sdk"
+class TeiaCareSDK(ConanFile):
+    name = "teiacare_sdk"
     version = get_project_version()
     license = "" # TODO: add this
     author = "TeiaCare"
-    url = "https://dev.azure.com/teiacare/Ancelia/_git/TeiaCoreSDK"
-    description = "TeiaCoreSDK is a collection of reusable C++ components"
+    url = "https://dev.azure.com/teiacare/Ancelia/_git/TeiaCareSDK"
+    description = "TeiaCareSDK is a collection of reusable C++ components"
     topics = ("sdk")
     exports = "VERSION"
     exports_sources = "CMakeLists.txt", "README.md", "VERSION", "sdk/*", "cmake/*"
@@ -72,6 +72,6 @@ class TeiaCoreSDK(ConanFile):
         cmake.install()
 
     def package_info(self):
-        self.cpp_info.libs = ["teiacore_sdk"]
-        self.cpp_info.set_property("cmake_file_name", "teiacore_sdk")
-        self.cpp_info.set_property("cmake_target_name", "teiacore::sdk")
+        self.cpp_info.libs = ["teiacare_sdk"]
+        self.cpp_info.set_property("cmake_file_name", "teiacare_sdk")
+        self.cpp_info.set_property("cmake_target_name", "teiacare::sdk")

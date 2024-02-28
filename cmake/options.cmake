@@ -35,7 +35,7 @@ cmake_print_variables(TC_ENABLE_CLANG_FORMAT)
 option(TC_ENABLE_CLANG_TIDY "Enable Clang Tidy" True)
 cmake_print_variables(TC_ENABLE_CLANG_TIDY)
 
-option(TC_ENABLE_CPPCHECK "Enable Cppcheck" False)
+option(TC_ENABLE_CPPCHECK "Enable Cppcheck" True)
 cmake_print_variables(TC_ENABLE_CPPCHECK)
 
 option(TC_ENABLE_CPPLINT "Enable Cpplint" False)

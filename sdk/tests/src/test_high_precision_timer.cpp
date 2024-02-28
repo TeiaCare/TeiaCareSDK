@@ -1,11 +1,11 @@
 // Copyright 2024 TeiaCare
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -13,9 +13,9 @@
 // limitations under the License.
 
 #include "test_high_precision_timer.hpp"
+
 #include "utils.hpp"
 #include <gmock/gmock.h>
-
 #include <semaphore>
 // #include <chrono>
 // #include <future>
@@ -41,7 +41,7 @@ TEST_F(test_high_precision_timer, start)
     const auto interval = 250ms;
     EXPECT_FALSE(t.start(interval));
 
-    auto callback = [](){};
+    auto callback = []() {};
     t.set_callback(callback);
 
     EXPECT_TRUE(t.start(interval));
@@ -60,7 +60,7 @@ TEST_F(test_high_precision_timer, stop_before_start_without_callback)
 // NOLINTNEXTLINE
 TEST_F(test_high_precision_timer, start_multiple_times)
 {
-    auto callback = [](){};
+    auto callback = []() {};
     t.set_callback(callback);
 
     const auto interval = 250ms;
@@ -73,17 +73,17 @@ TEST_F(test_high_precision_timer, start_multiple_times)
 TEST_F(test_high_precision_timer, start_callback_with_simple_arguments)
 {
     const auto interval = 250ms;
-    
+
     std::binary_semaphore sync(0);
     auto callback_count = 0;
-    auto callback = [&sync, &callback_count](float f, const std::string& s){
+    auto callback = [&sync, &callback_count](float f, const std::string& s) {
         EXPECT_EQ(f, 1.2345f);
         EXPECT_EQ(s, "__hello__");
         ++callback_count;
         sync.release();
     };
 
-    t.set_callback(callback, 1.2345f, "__hello__"); //NOLINT
+    t.set_callback(callback, 1.2345f, "__hello__"); // NOLINT
 
     EXPECT_TRUE(t.start(interval));
     sync.acquire();
@@ -106,7 +106,7 @@ TEST_F(test_high_precision_timer, start_callback_with_custom_arguments)
 
     std::binary_semaphore sync(0);
     auto callback_count = 0;
-    auto callback = [&sync, &callback_count](const foo_t& foo1, foo_t foo2, foo_t foo3){
+    auto callback = [&sync, &callback_count](const foo_t& foo1, foo_t foo2, foo_t foo3) {
         EXPECT_EQ(foo1.i, 98765);
         EXPECT_EQ(foo2.i, 98765);
         EXPECT_EQ(foo3.i, 1);
@@ -132,7 +132,7 @@ TEST_F(test_high_precision_timer, start_callback_with_custom_arguments)
 TEST_F(test_high_precision_timer, callback_count_delay)
 {
     uint64_t callback_count = 0;
-    auto callback = [&callback_count]{
+    auto callback = [&callback_count] {
         const auto execution_duration = 25ms;
         ++callback_count;
         std::this_thread::sleep_for(execution_duration * callback_count);
@@ -153,22 +153,22 @@ TEST_F(test_high_precision_timer, callback_count_delay)
 // NOLINTNEXTLINE
 TEST_F(test_high_precision_timer, callback_invoked_count)
 {
-/*
-    execution_duration < execution_interval
+    /*
+        execution_duration < execution_interval
 
-    - invoked_callback_count == 5
-        Every callback must be executed and completed before the next one so each of the 5 callbacks is invoked.
+        - invoked_callback_count == 5
+            Every callback must be executed and completed before the next one so each of the 5 callbacks is invoked.
 
-    - missed_callback_count == 0
-        No scheduled callback is missed since the execution_duration (10ms) of a single callback is less than the execution_interval (100ms)
-*/
+        - missed_callback_count == 0
+            No scheduled callback is missed since the execution_duration (10ms) of a single callback is less than the execution_interval (100ms)
+    */
 
     const auto execution_duration = 10ms;
-    t.set_callback([&]{ std::this_thread::sleep_for(execution_duration); });
-    
+    t.set_callback([&] { std::this_thread::sleep_for(execution_duration); });
+
     const auto execution_interval = 100ms;
     t.start(execution_interval);
-    
+
     const auto test_duration_time = 500ms;
     std::this_thread::sleep_for(test_duration_time);
     t.stop();
@@ -180,21 +180,21 @@ TEST_F(test_high_precision_timer, callback_invoked_count)
 // NOLINTNEXTLINE
 TEST_F(test_high_precision_timer, callback_missed_count)
 {
-/*
-    execution_duration > test_duration_time
+    /*
+        execution_duration > test_duration_time
 
-    - invoked_callback_count == 1 
-        Only the first callback can be invoked because of the execution_duration longer than the 
-        test_duration_time (i.e. when the test finishes the first callback is still running)
+        - invoked_callback_count == 1
+            Only the first callback can be invoked because of the execution_duration longer than the
+            test_duration_time (i.e. when the test finishes the first callback is still running)
 
-    - missed_callback_count == 10
-        Since the execution_duration of a single callback is 1s it is possible to execute one
-        callback (with execution_interval=100ms) every 10 callbacks.
-*/
+        - missed_callback_count == 10
+            Since the execution_duration of a single callback is 1s it is possible to execute one
+            callback (with execution_interval=100ms) every 10 callbacks.
+    */
 
     const auto execution_duration = 1s;
-    t.set_callback([&]{ std::this_thread::sleep_for(execution_duration); });
-    
+    t.set_callback([&] { std::this_thread::sleep_for(execution_duration); });
+
     const auto execution_interval = 100ms;
     t.start(execution_interval);
 
@@ -209,24 +209,24 @@ TEST_F(test_high_precision_timer, callback_missed_count)
 // NOLINTNEXTLINE
 TEST_F(test_high_precision_timer, callback_invoked_missed_count)
 {
-/*
-[timeline]:     0...1...2...3...4...5...6...7...8...9...
-(millis)        |   |   |   |   |   |   |   |   |   |
-                |   |   |   |   |   |   |   |   |   |
-Required Ticks: T---T---T---T---T---T---T---T---T---T---
-(@10ms=10 ticks)|   |   |   |   |   |   |   |   |   |
-                |   |   |   |   |   |   |   |   |   |   
-Executed Ticks: OOOOOOO-OOOOOOO-OOOOOOO-OOOOOOO-OOOOOOO-
-(due to delay)  |   |   |   |   |   |   |   |   |   |
-                |   |   |   |   |   |   |   |   |   |   
-Missed Ticks:   ----X-------X-------X-------X-------X---
-*/
+    /*
+    [timeline]:     0...1...2...3...4...5...6...7...8...9...
+    (millis)        |   |   |   |   |   |   |   |   |   |
+                    |   |   |   |   |   |   |   |   |   |
+    Required Ticks: T---T---T---T---T---T---T---T---T---T---
+    (@10ms=10 ticks)|   |   |   |   |   |   |   |   |   |
+                    |   |   |   |   |   |   |   |   |   |
+    Executed Ticks: OOOOOOO-OOOOOOO-OOOOOOO-OOOOOOO-OOOOOOO-
+    (due to delay)  |   |   |   |   |   |   |   |   |   |
+                    |   |   |   |   |   |   |   |   |   |
+    Missed Ticks:   ----X-------X-------X-------X-------X---
+    */
 
     const auto interval = 100ms;
 
     auto callback_count = 0;
-    auto callback = [&callback_count]{
-        std::this_thread::sleep_for(150ms); //NOLINT
+    auto callback = [&callback_count] {
+        std::this_thread::sleep_for(150ms); // NOLINT
         ++callback_count;
     };
 
@@ -237,7 +237,7 @@ Missed Ticks:   ----X-------X-------X-------X-------X---
     std::this_thread::sleep_for(test_duration_time);
     t.stop();
 
-    EXPECT_THAT(callback_count, RANGE(4, 5)); 
+    EXPECT_THAT(callback_count, RANGE(4, 5));
     EXPECT_THAT(t.invoked_callback_count(), RANGE(4, 5));
     EXPECT_THAT(t.missed_callback_count(), RANGE(4, 5));
 }
@@ -249,7 +249,7 @@ TEST_F(test_high_precision_timer, reset_callback)
     const int total_count = 10;
 
     auto callback_count_1 = 0;
-    auto callback_1 = [&sync, &callback_count_1]{
+    auto callback_1 = [&sync, &callback_count_1] {
         ++callback_count_1;
         sync.release();
     };
@@ -257,14 +257,14 @@ TEST_F(test_high_precision_timer, reset_callback)
     t.set_callback(callback_1);
     const auto interval1 = 100ms;
     EXPECT_TRUE(t.start(interval1));
-    for(int i = 1; i < total_count; ++i)
+    for (int i = 1; i < total_count; ++i)
     {
         sync.acquire();
         EXPECT_EQ(callback_count_1, i);
     }
 
     auto callback_count_2 = 0;
-    auto callback_2 = [&sync, &callback_count_2]{
+    auto callback_2 = [&sync, &callback_count_2] {
         ++callback_count_2;
         sync.release();
     };
@@ -272,7 +272,7 @@ TEST_F(test_high_precision_timer, reset_callback)
     const auto interval2 = 200ms;
     t.set_callback(callback_2);
     EXPECT_TRUE(t.start(interval2));
-    for(int i = 1; i < total_count; ++i)
+    for (int i = 1; i < total_count; ++i)
     {
         sync.acquire();
         EXPECT_EQ(callback_count_2, i);

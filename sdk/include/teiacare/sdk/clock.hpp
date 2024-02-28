@@ -1,11 +1,11 @@
 // Copyright 2024 TeiaCare
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,18 +32,29 @@ using time_duration = std::chrono::steady_clock::duration;
 
 // Clock traits
 template <typename T>
-struct is_duration : std::false_type {};
+struct is_duration : std::false_type
+{
+};
 
 template <typename T>
-struct is_duration<std::chrono::duration<tc::sdk::clock::rep, T>> : std::true_type {};
+struct is_duration<std::chrono::duration<tc::sdk::clock::rep, T>> : std::true_type
+{
+};
 
 template <typename T>
-struct is_time_point : std::false_type {};
+struct is_time_point : std::false_type
+{
+};
 
 template <typename T>
-struct is_time_point<std::chrono::time_point<tc::sdk::clock, T>> : std::true_type {};
+struct is_time_point<std::chrono::time_point<tc::sdk::clock, T>> : std::true_type
+{
+};
 
 template <typename T>
-struct is_std_chrono { static constexpr bool value = is_duration<T>::value || is_time_point<T>::value; };
+struct is_std_chrono
+{
+    static constexpr bool value = is_duration<T>::value || is_time_point<T>::value;
+};
 
 }

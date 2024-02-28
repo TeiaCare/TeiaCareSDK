@@ -1,11 +1,11 @@
 // Copyright 2024 TeiaCare
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,14 +29,14 @@ class stopwatch : private non_copyable, private non_moveable
 public:
     /*!
      * \brief Constructor.
-     * 
-     * Creates a tc::sdk::stopwatch instance. 
+     *
+     * Creates a tc::sdk::stopwatch instance.
      */
     explicit stopwatch() = default;
 
     /*!
      * \brief Destructor.
-     * 
+     *
      * Destructs this.
      */
     ~stopwatch() noexcept = default;
@@ -62,14 +62,14 @@ public:
     /*!
      * \brief Get the elapsed time.
      * \return elapsed time_duration
-     * 
+     *
      * Override to require the elapsed time with a gived duration type (i.e. std::chrono::milliseconds)
      */
-    template<class DurationT>
+    template <class DurationT>
     [[nodiscard]] DurationT elapsed() const noexcept
     {
-        static_assert(tc::sdk::is_duration<DurationT>::value, 
-            "\nDurationT must be a duration type");
+        static_assert(tc::sdk::is_duration<DurationT>::value,
+                      "\nDurationT must be a duration type");
 
         return std::chrono::duration_cast<DurationT>(elapsed());
     }

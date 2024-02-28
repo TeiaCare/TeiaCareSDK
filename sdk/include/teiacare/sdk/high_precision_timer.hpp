@@ -1,11 +1,11 @@
 // Copyright 2024 TeiaCare
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,15 +15,15 @@
 #pragma once
 
 #include <teiacare/sdk/clock.hpp>
-#include <teiacare/sdk/task.hpp>
 #include <teiacare/sdk/non_copyable.hpp>
 #include <teiacare/sdk/non_moveable.hpp>
+#include <teiacare/sdk/task.hpp>
 
 #include <atomic>
+#include <condition_variable>
+#include <memory>
 #include <mutex>
 #include <thread>
-#include <memory>
-#include <condition_variable>
 
 namespace tc::sdk
 {
@@ -39,14 +39,14 @@ class high_precision_timer : private non_copyable, private non_moveable
 public:
     /*!
      * \brief Constructor
-     * 
-     * Creates a tc::sdk::high_precision_timer instance. 
+     *
+     * Creates a tc::sdk::high_precision_timer instance.
      */
     explicit high_precision_timer();
 
     /*!
      * \brief Destructor
-     * 
+     *
      * Destructs this. If the high_precision_timer is running its task is stopped before deletion.
      */
     ~high_precision_timer();
@@ -78,10 +78,9 @@ public:
      * This function does not start the worker thread but only sets the user callback.
      */
     template <typename TaskFunction, typename... Args>
-    void set_callback(TaskFunction &&func, Args &&... args)
+    void set_callback(TaskFunction&& func, Args&&... args)
     {
-        auto task_func = [t = std::forward<TaskFunction>(func), params = std::make_tuple(std::forward<Args&&>(args)...)] 
-        {
+        auto task_func = [t = std::forward<TaskFunction>(func), params = std::make_tuple(std::forward<Args&&>(args)...)] {
             return std::apply(t, params);
         };
 

@@ -1,11 +1,11 @@
 // Copyright 2024 TeiaCare
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,21 +17,21 @@
 #include <teiacare/sdk/non_copyable.hpp>
 #include <teiacare/sdk/non_moveable.hpp>
 
-#include <queue>
-#include <mutex>
-#include <condition_variable>
-#include <optional>
 #include <algorithm>
+#include <condition_variable>
+#include <mutex>
+#include <optional>
+#include <queue>
 
 namespace tc::sdk
 {
-/*! 
+/*!
  * \class blocking_queue
  * \brief Thread safe, blocking queue
  * \tparam T Queue items type
- * 
- * The queue has a fixed capacity (i.e. maximum number of items that can be hold).  
- * When the queue is full and a new item is needs to be inserted via blocking_queue::push() the queue blocks until an item is popped.  
+ *
+ * The queue has a fixed capacity (i.e. maximum number of items that can be hold).
+ * When the queue is full and a new item is needs to be inserted via blocking_queue::push() the queue blocks until an item is popped.
  * Viceversa, when the queue is empty and an item is required via blocking_queue::pop(), the queue blocks until the first item is pushed.
  */
 template <typename T>
@@ -41,8 +41,8 @@ public:
     /*!
      * \brief Constructor
      * \param capacity set the maximum number of items the queue can hold
-     * 
-     * Creates a tc::sdk::blocking_queue instance. 
+     *
+     * Creates a tc::sdk::blocking_queue instance.
      */
     explicit blocking_queue(size_t capacity)
         : _capacity(std::clamp(capacity, size_t{1}, std::numeric_limits<size_t>::max()))
@@ -51,7 +51,7 @@ public:
 
     /*!
      * \brief Destructor
-     * 
+     *
      * Destructs this.
      */
     ~blocking_queue() = default;
@@ -65,9 +65,9 @@ public:
     void push(const T& item)
     {
         std::unique_lock lock(_mutex);
-        if(is_full())
+        if (is_full())
             _last_item_popped.wait(lock, [this] { return !is_full(); });
-    
+
         _queue.push(item);
         push_impl(std::move(lock));
     }
@@ -82,9 +82,9 @@ public:
     void push(T&& item)
     {
         std::unique_lock lock(_mutex);
-        if(is_full())
+        if (is_full())
             _last_item_popped.wait(lock, [this] { return !is_full(); });
-        
+
         _queue.emplace(item);
         push_impl(std::move(lock));
     }
@@ -105,7 +105,7 @@ public:
 
         _queue.push(item);
         push_impl(std::move(lock));
-        
+
         return true;
     }
 
@@ -126,7 +126,7 @@ public:
 
         _queue.emplace(item);
         push_impl(std::move(lock));
-        
+
         return true;
     }
 
@@ -141,7 +141,7 @@ public:
         std::unique_lock lock(_mutex);
         if (is_empty())
             _first_item_pushed.wait(lock, [this] { return !is_empty(); });
-    
+
         T item = _queue.front();
         _queue.pop();
         pop_impl(std::move(lock));
@@ -165,7 +165,7 @@ public:
         T item = _queue.front();
         _queue.pop();
         pop_impl(std::move(lock));
-        
+
         return std::move(std::optional(item));
     }
 
@@ -196,11 +196,11 @@ private:
     std::condition_variable _first_item_pushed;
     const size_t _capacity;
 
-    inline void push_impl(std::unique_lock<std::mutex>&& lock) 
+    inline void push_impl(std::unique_lock<std::mutex>&& lock)
     {
         const bool is_first_item_pushed = _queue.size() == 1;
         lock.unlock();
-        
+
         if (is_first_item_pushed)
             _first_item_pushed.notify_all();
     }
@@ -209,13 +209,19 @@ private:
     {
         const bool is_last_item_popped = _queue.size() == _capacity - 1;
         lock.unlock();
-        
-        if(is_last_item_popped)
+
+        if (is_last_item_popped)
             _last_item_popped.notify_all();
     }
 
-    inline bool is_empty() const { return _queue.empty(); }
-    inline bool is_full() const { return _queue.size() >= _capacity; }
+    inline bool is_empty() const
+    {
+        return _queue.empty();
+    }
+    inline bool is_full() const
+    {
+        return _queue.size() >= _capacity;
+    }
 };
 
 }

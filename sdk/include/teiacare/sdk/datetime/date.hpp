@@ -1,11 +1,11 @@
 // Copyright 2024 TeiaCare
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,13 +14,14 @@
 
 #pragma once
 
-#include "date/date.h"
-#include <ostream>
 #include <teiacare/sdk/datetime/timedelta.hpp>
 
-namespace tc::sdk  
+#include "date/date.h"
+#include <ostream>
+
+namespace tc::sdk
 {
-class Date 
+class Date
 {
     const std::chrono::year_month_day _ymd;
 
@@ -32,7 +33,7 @@ public:
     explicit Date(std::chrono::year&& y, std::chrono::month&& m, std::chrono::day&& d);
 
     constexpr bool is_valid() const;
-    
+
     std::chrono::year year() const;
     std::chrono::month month() const;
     std::chrono::day day() const;
@@ -49,7 +50,7 @@ public:
     // TODO!
     static Date from_string(const char* str);
     static Date from_string(const std::string& str);
-    
+
 protected:
     const std::chrono::year_month_day& year_month_day() const;
 
@@ -66,28 +67,28 @@ public:
 // Date impl
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Date::Date() 
-    : _ymd{ } 
+Date::Date()
+    : _ymd{}
 {
 }
 
-Date::Date(const std::chrono::year_month_day& ymd) 
-    : _ymd{ ymd } 
+Date::Date(const std::chrono::year_month_day& ymd)
+    : _ymd{ymd}
 {
 }
 
-Date::Date(std::chrono::year_month_day&& ymd) 
-    : _ymd{ std::move(ymd) }
+Date::Date(std::chrono::year_month_day&& ymd)
+    : _ymd{std::move(ymd)}
 {
 }
 
-Date::Date(const std::chrono::year& y, const std::chrono::month& m, const std::chrono::day& d) 
-    : _ymd{ y, m, d }
+Date::Date(const std::chrono::year& y, const std::chrono::month& m, const std::chrono::day& d)
+    : _ymd{y, m, d}
 {
 }
 
-Date::Date(std::chrono::year&& y, std::chrono::month&& m, std::chrono::day&& d) 
-    : _ymd{ std::move(y), std::move(m), std::move(d) }
+Date::Date(std::chrono::year&& y, std::chrono::month&& m, std::chrono::day&& d)
+    : _ymd{std::move(y), std::move(m), std::move(d)}
 {
 }
 
@@ -96,12 +97,12 @@ constexpr bool Date::is_valid() const
     return _ymd.ok();
 }
 
-Date Date::today() 
+Date Date::today()
 {
-    return Date{ std::chrono::floor<std::chrono::days>(std::chrono::system_clock::now()) };
+    return Date{std::chrono::floor<std::chrono::days>(std::chrono::system_clock::now())};
 }
 
-const std::chrono::year_month_day& Date::year_month_day() const 
+const std::chrono::year_month_day& Date::year_month_day() const
 {
     return _ymd;
 }
@@ -165,7 +166,7 @@ Date Date::from_duration(const std::chrono::system_clock::duration& d)
 
 Date Date::from_timepoint(const std::chrono::system_clock::time_point& tp)
 {
-    return Date{ std::chrono::floor<std::chrono::days>(tp) };
+    return Date{std::chrono::floor<std::chrono::days>(tp)};
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -185,7 +186,7 @@ std::ostream& operator<<(std::ostream& os, const Date& date)
 Date operator+(const Date& date, const TimeDelta& time_delta)
 {
     const auto time_point = std::chrono::sys_days(date.year_month_day()) + time_delta.duration();
-    return Date{ std::chrono::time_point_cast<std::chrono::days>(time_point) };
+    return Date{std::chrono::time_point_cast<std::chrono::days>(time_point)};
 }
 
 Date operator+(const TimeDelta& time_delta, const Date& date)
@@ -196,16 +197,15 @@ Date operator+(const TimeDelta& time_delta, const Date& date)
 Date operator-(const Date& date, const TimeDelta& time_delta)
 {
     const auto time_point = std::chrono::sys_days(date.year_month_day()) - time_delta.duration();
-    return Date{ std::chrono::time_point_cast<std::chrono::days>(time_point) };
+    return Date{std::chrono::time_point_cast<std::chrono::days>(time_point)};
 }
 
 TimeDelta operator-(const Date& d1, const Date& d2)
 {
-    return TimeDelta{ std::chrono::sys_days(d1.year_month_day()) - std::chrono::sys_days(d2.year_month_day()) };
+    return TimeDelta{std::chrono::sys_days(d1.year_month_day()) - std::chrono::sys_days(d2.year_month_day())};
 }
 
-} 
-
+}
 
 std::ostream& operator<<(std::ostream& os, const std::chrono::year& y)
 {
@@ -226,7 +226,7 @@ std::ostream& operator<<(std::ostream& os, const std::chrono::month& m)
     if (!m.ok())
         os << static_cast<unsigned>(m) << " is not a valid month";
     else
-        os << date::format("%b", date::month(static_cast<unsigned>(m)));    
+        os << date::format("%b", date::month(static_cast<unsigned>(m)));
     return os;
 }
 
@@ -237,7 +237,7 @@ std::ostream& operator<<(std::ostream& os, const std::chrono::day& d)
     os.width(2 + (d < std::chrono::day{0}));
     os.imbue(std::locale::classic());
     os << static_cast<unsigned>(d);
-    
+
     if (!d.ok())
         os << " is not a valid day";
 

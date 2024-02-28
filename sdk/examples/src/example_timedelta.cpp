@@ -1,11 +1,11 @@
 // Copyright 2024 TeiaCare
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -13,6 +13,7 @@
 // limitations under the License.
 
 #include <teiacare/sdk/datetime/timedelta.hpp>
+
 #include <iostream>
 
 using namespace std::chrono_literals;
@@ -29,15 +30,16 @@ int main()
 
     {
         auto t = tc::sdk::TimeDelta(std::chrono::days(1), 25h, 61min, 61s, 1001ms, 1001us
-    #if defined (_MSC_VER)
-            ); // Visual Studio seems to not support nanoseconds (!?)
-    #else
-            , 1001ns);
-    #endif
+#if defined(_MSC_VER)
+        ); // Visual Studio seems to not support nanoseconds (!?)
+#else
+                                    ,
+                                    1001ns);
+#endif
 
         std::cout
             << "\nTimeDelta(std::chrono::days(1), 25h, 61min, 61s, 1001ms, 1001us, 1001ns): " << t << std::endl
-            
+
             << "\nhours(): " << t.hours() << std::endl
             << "minutes(): " << t.minutes() << std::endl
             << "seconds(): " << t.seconds() << std::endl
@@ -59,10 +61,10 @@ int main()
 
         std::cout
             << std::boolalpha
-            << "\nTimeDelta(std::chrono::days(1), 25h, 61min, 61s, 1001ms, 1002us)" 
+            << "\nTimeDelta(std::chrono::days(1), 25h, 61min, 61s, 1001ms, 1002us)"
             << "\n is equal to: "
             << "\nTimeDelta(std::chrono::days(2),  2h,  2min,  2s,    2ms,    2us)\n"
-            << (t1==t2)
+            << (t1 == t2)
             << std::endl;
     }
 

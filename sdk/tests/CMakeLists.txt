@@ -4,7 +4,7 @@ if(TC_ENABLE_UNIT_TESTS_COVERAGE)
 endif()
 
 include(unit_tests)
-set(TEIACORE_UNIT_TESTS_SRC
+set(UNIT_TESTS_SRC
     src/main.cpp
     src/test_blocking_queue.cpp
     src/test_blocking_queue.hpp
@@ -33,4 +33,4 @@ set(TEIACORE_UNIT_TESTS_SRC
     src/test_uuid.cpp
     src/test_uuid.hpp
 )
-setup_unit_tests(${TARGET_NAME} ${TEIACORE_UNIT_TESTS_SRC})
+setup_unit_tests(${TARGET_NAME} ${UNIT_TESTS_SRC})

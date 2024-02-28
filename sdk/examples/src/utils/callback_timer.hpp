@@ -1,11 +1,11 @@
 // Copyright 2024 TeiaCare
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,10 +14,10 @@
 
 #pragma once
 
-#include <functional>
-#include <thread>
 #include <atomic>
 #include <chrono>
+#include <functional>
+#include <thread>
 
 namespace tc::sdk::examples::utils
 {
@@ -25,8 +25,8 @@ class callback_timer
 {
 public:
     explicit callback_timer(std::chrono::duration<double> tick_rate, std::function<void(unsigned)> callback)
-        : _is_running{ false }
-        , _callback{ callback }
+        : _is_running{false}
+        , _callback{callback}
     {
         start(tick_rate);
     }
@@ -56,7 +56,7 @@ protected:
         if (!_is_running)
             return;
 
-        _is_running.store(false);        
+        _is_running.store(false);
         if (_callback_timer_thread.joinable())
             _callback_timer_thread.join();
     }
@@ -64,8 +64,8 @@ protected:
 protected:
     void tick(std::chrono::duration<double> tick_rate) const
     {
-        unsigned tick_count = 0; 
-        while(_is_running) 
+        unsigned tick_count = 0;
+        while (_is_running)
         {
             _callback(tick_count);
             std::this_thread::sleep_for(tick_rate);

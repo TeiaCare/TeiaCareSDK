@@ -1,11 +1,11 @@
 // Copyright 2024 TeiaCare
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,7 +23,7 @@ TEST(test_task, explicit_ctor)
 {
     bool task_invoked = false;
 
-    auto t = tc::sdk::task([&]{ task_invoked = true; });
+    auto t = tc::sdk::task([&] { task_invoked = true; });
     t();
 
     EXPECT_TRUE(task_invoked);
@@ -34,7 +34,7 @@ TEST(test_task, move_ctor)
 {
     bool task_invoked = false;
 
-    auto t = tc::sdk::task([&]{ task_invoked = true; });
+    auto t = tc::sdk::task([&] { task_invoked = true; });
     auto t_move(std::move(t));
     t_move();
 
@@ -46,7 +46,7 @@ TEST(test_task, invoke)
 {
     bool task_invoked = false;
 
-    auto t = tc::sdk::task([&]{ task_invoked = true; });
+    auto t = tc::sdk::task([&] { task_invoked = true; });
     t.invoke();
 
     EXPECT_TRUE(task_invoked);
@@ -57,7 +57,7 @@ TEST(test_task, operator_call)
 {
     bool task_invoked = false;
 
-    auto t = tc::sdk::task([&]{ task_invoked = true; });
+    auto t = tc::sdk::task([&] { task_invoked = true; });
     t();
 
     EXPECT_TRUE(task_invoked);
@@ -68,7 +68,7 @@ TEST(test_task, std_function)
 {
     bool task_invoked = false;
 
-    std::function<void()> func = [&]{ task_invoked = true; };
+    std::function<void()> func = [&] { task_invoked = true; };
     auto t = tc::sdk::task(std::move(func));
     t();
 
@@ -80,7 +80,7 @@ TEST(test_task, lambda_move)
 {
     bool task_invoked = false;
 
-    auto lambda = [&]{ task_invoked = true; };
+    auto lambda = [&] { task_invoked = true; };
     auto t = tc::sdk::task(std::move(lambda));
     t();
 

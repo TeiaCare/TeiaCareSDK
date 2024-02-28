@@ -1,11 +1,11 @@
 // Copyright 2024 TeiaCare
-// 
+//
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
-// 
+//
 //     http://www.apache.org/licenses/LICENSE-2.0
-// 
+//
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,15 +14,17 @@
 
 #pragma once
 
-#include <gtest/gtest.h>
 #include <teiacare/sdk/uuid_generator.hpp>
+
+#include <gtest/gtest.h>
 
 namespace tc::sdk::tests
 {
 class test_uuid_generator : public ::testing::Test
 {
 protected:
-    explicit test_uuid_generator() : g{ tc::sdk::uuid_generator::instance() }
+    explicit test_uuid_generator()
+        : g{tc::sdk::uuid_generator::instance()}
     {
     }
 
@@ -38,5 +40,8 @@ protected:
 
 namespace tc::sdk
 {
-    bool operator==(const tc::sdk::uuid_generator& g1, const tc::sdk::uuid_generator& g2) { return &g1 == &g2; }
+bool operator==(const tc::sdk::uuid_generator& g1, const tc::sdk::uuid_generator& g2)
+{
+    return &g1 == &g2;
+}
 }

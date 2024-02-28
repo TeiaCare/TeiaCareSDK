@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.21 FATAL_ERROR)
 file(STRINGS "VERSION" VERSION_STR)
-project(teiacore_sdk
+project(teiacare_sdk
     VERSION ${VERSION_STR}
     LANGUAGES CXX
-    HOMEPAGE_URL "https://dev.azure.com/teiacare/Ancelia/_git/TeiaCoreSDK"
-    DESCRIPTION "TeiaCoreSDK is a collection of reusable C++ components"
+    HOMEPAGE_URL "https://dev.azure.com/teiacare/Ancelia/_git/TeiaCareSDK"
+    DESCRIPTION "TeiaCareSDK is a collection of reusable C++ components"
 )
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
