@@ -28,20 +28,17 @@ def parse():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("version_file", help="Path to the package version file")
     parser.add_argument("remote_name", help="Conan remote name")
-    parser.add_argument("build_type", help="Debug or Release", choices=['Debug', 'Release'])
-    parser.add_argument("compiler", help="Compiler name", choices=['gcc', 'clang', 'visual_studio'])
-    parser.add_argument("compiler_version", help="Compiler version")
     return parser.parse_args()
 
 def run(command):
         ret = subprocess.run(command)
         ret.check_returncode()
 
-def conan_create(remote_name, package_version, build_type, compiler, compiler_version):
+def conan_create(remote_name, package_version):
     if package_version.startswith('v'):
         package_version = package_version[1:]
     command = [
-        'conan', 'upload', '-c', '-r', remote_name, f'teiacore_sdk/{package_version}', '-q', f'\'build_type={build_type} AND compiler={compiler}{compiler_version}\''
+        'conan', 'upload', '-c', '-r', remote_name, f'teiacore_sdk/{package_version}'
     ]
     run(command)
 
@@ -56,7 +53,7 @@ def main():
     version_file = open(args.version_file, "r")
     package_version = version_file.read()
 
-    conan_create(args.remote_name, package_version, args.build_type, args.compiler, args.compiler_version)
+    conan_create(args.remote_name, package_version)
 
 if __name__ == '__main__':
     sys.exit(main())

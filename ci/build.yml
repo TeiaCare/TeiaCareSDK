@@ -160,7 +160,7 @@ jobs:
           python3 scripts/conan/create.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) --install_dir $(Build.SourcesDirectory)
           conan remote add artifactory $(ARTIFACTORY_HOST)/artifactory/api/conan/conan False
           conan user $(ARTIFACTORY_USERNAME) -r artifactory -p $(ARTIFACTORY_PASSWORD)
-          python3 scripts/conan/upload.py VERSION artifactory-remote Debug gcc 12
+          python3 scripts/conan/upload.py VERSION artifactory
         displayName: 'Conan Package'
         timeoutInMinutes: 5
         env:
