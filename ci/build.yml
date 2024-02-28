@@ -175,6 +175,20 @@ jobs:
       COMPILER_VERSION: 12
       ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
     steps:
+      - task: UsePythonVersion@0
+        displayName: Set Python version (3.10)
+        inputs:
+          versionSpec: '3.10'
+          addToPath: true
+          architecture: 'x64'
+
+      - script: |
+          python3 -m venv .venv
+          $(ACTIVATE_VIRTUAL_ENV)
+          pip3 install -r scripts/requirements.txt
+          python3 scripts/conan/setup.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION)
+
+        displayName: 'Virtual Environment'
       - script: |
           $(ACTIVATE_VIRTUAL_ENV)
           python3 scripts/conan/create.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) --install_dir $(Build.SourcesDirectory)
