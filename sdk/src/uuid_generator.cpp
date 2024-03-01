@@ -95,10 +95,8 @@ uuid uuid_generator::from_string(const std::string& s)
 
 uuid uuid_generator::from_string(const char* raw)
 {
-    __m128i uuid_bytes = stom128i(raw);
-
     tc::sdk::uuid uuid;
-    _mm_store_si128((__m128i*)uuid.data, uuid_bytes);
+    _mm_store_si128((__m128i*)uuid.data, stom128i(raw));
     return uuid;
 }
 

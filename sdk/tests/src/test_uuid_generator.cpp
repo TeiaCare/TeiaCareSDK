@@ -41,6 +41,34 @@ TEST_F(test_uuid_generator, create_unique)
 }
 
 // NOLINTNEXTLINE
+TEST_F(test_uuid_generator, format_and_size_null)
+{
+    const auto uuid = tc::sdk::uuid();
+    check_format_and_size(uuid.str());
+}
+
+// NOLINTNEXTLINE
+TEST_F(test_uuid_generator, format_and_size_create)
+{
+    const auto uuid = g.create();
+    check_format_and_size(uuid.str());
+}
+
+// NOLINTNEXTLINE
+TEST_F(test_uuid_generator, format_and_size_from_null_string)
+{
+    const auto uuid = g.from_string(null_uuid_str);
+    check_format_and_size(uuid.str());
+}
+
+// NOLINTNEXTLINE
+TEST_F(test_uuid_generator, format_and_size_from_valid_string)
+{
+    const auto uuid = g.from_string("6951298d-38b2-4758-840d-6c362a27c5a8");
+    check_format_and_size(uuid.str());
+}
+
+// NOLINTNEXTLINE
 TEST_F(test_uuid_generator, from_string_null)
 {
     {
@@ -75,7 +103,10 @@ TEST_F(test_uuid_generator, from_string_valid_uuid)
 
     {
         const auto uuid = g.from_string(std::string(uuid_str));
-        EXPECT_EQ(uuid.str(), uuid_str);
+        std::cout << uuid << "\n";
+        std::cout << uuid.str() << "\n";
+        std::cout << uuid_str << "\n";
+        EXPECT_EQ(uuid.str(), std::string(uuid_str));
     }
 
     {
