@@ -3,8 +3,7 @@ Welcome to TeiaCareSDK!
 
 TeiaCareSDK is a collection of well-crafted C++ modules designed to make your development journey smoother, faster, and more enjoyable. With its modular approach and extensive features, TeiaCareSDK empowers you to focus on the core functionality of your application while providing essential building blocks for common tasks.
 
-## Key Features:
-
+## Key Features
 * **Date & Time:** Master dates, times, and durations with ease using dedicated classes for manipulation, validation, formatting, conversions, timezones, and arithmetic operations.
 * **Concurrency:** Take control of concurrent execution with thread-safe modules for managing tasks, queues, events, and thread pools, enabling efficient parallel processing.
 * **Synchronization & Control:** Maintain data integrity and program flow with modules for rate limiting, observing data changes, and accurately measuring elapsed time, ensuring thread safety and coordinated execution.
@@ -26,7 +25,7 @@ TeiaCareSDK is a collection of well-crafted C++ modules designed to make your de
 
 ## What’s included in the SDK
 | **Component**        | **Description**                                                                                                                      |
-|----------------------|--------------------------------------------------------------------------------------------------------------------------------------|
+|:--------------------:|--------------------------------------------------------------------------------------------------------------------------------------|
 | Datetime             | Classes for date, time, and duration handling, including validation, formatting, conversions, timezones, and arithmetic operations.  |
 | Blocking Queue       | Thread-safe blocking queue with fixed capacity, offering blocking push/pop and optional try_push/try_pop.                            |
 | Clock                | Wrappers and utilities steady_clock, time_point and duration.                                                                        |
@@ -50,7 +49,7 @@ TeiaCareSDK is a collection of well-crafted C++ modules designed to make your de
 | Version              | Namespace with details about project, build, and operating system.                                                                   |
 
 ## Supported Platforms
-[![Build Status](https://dev.azure.com/teiacare/Ancelia/_apis/build/status%2FTeiaCare%2Fv3%2FTeiaCareSDK?branchName=develop)](https://dev.azure.com/teiacare/Ancelia/_build/latest?definitionId=65&branchName=develop)
+[![Build Status](https://dev.azure.com/teiacare/Ancelia/_apis/build/status%2FTeiaCore%2Fv3%2FTeiaCoreSDK?branchName=develop)](https://dev.azure.com/teiacare/Ancelia/_build/latest?definitionId=65&branchName=develop)
 
 
 | **OS**               | **Compiler**       | **Support** |
@@ -124,7 +123,7 @@ When building from command line on Windows it is necessary to activate the Visua
 Depending on the version of Visual Studio compiler and on its install location it is required to run *vcvars64.bat* script the set the development environment properly.  
 *Note*: using Visual Studio IDE or the CMake extension for VSCode this step is already managed in the background.  
 
-Examples
+Examples:
 
 ```bash
 # Visual Studio 2022 - Build Tools
@@ -145,6 +144,15 @@ python scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERS
 python scripts/cmake/build.py <Debug|Release>
 python scripts/cmake/install.py <Debug|Release>
 ```
+
+
+## Examples
+```bash
+python scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --examples --warnings
+python scripts/cmake/build.py <Debug|Release>
+python scripts/cmake/install.py <Debug|Release>
+```
+Examples are installed in $PWD/install/examples.
 
 ## Unit Tests
 ```bash
@@ -169,14 +177,6 @@ python scripts/tools/run_coverage.py <COMPILER_NAME> <COMPILER_VERSION>
 ```
 Unit tests results are available in $PWD/results/unit_tests.  
 Coverage results are available in $PWD/results/coverage.
-
-## Examples
-```bash
-python scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --examples --warnings
-python scripts/cmake/build.py <Debug|Release>
-python scripts/cmake/install.py <Debug|Release>
-```
-Examples are installed in $PWD/install/examples.
 
 ## Benchmarks
 ```bash
@@ -240,6 +240,7 @@ cd TeiaCareSDK
 #    So, in order to install the package in the Conan cache of the current repository, it is required to set --install_dir $PWD
 # 2) The Conan package tests are automatically run during package creation.
 #    The directory test_package contains a test project that is built to validate the proper package creation.
+
 python ./scripts/conan/create.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --install_dir <INSTALL_DIR_PATH>
 ```
 
@@ -257,12 +258,12 @@ $PWD/install/teiacare_sdk_client_package_test
 ```
 
 ## Contributing
-In order to contribute to TeiaCareSDK, please follow our [contribution guidelines](CONTRIBUTING.md).
+In order to contribute to TeiaCareSDK, please follow our [contribution guidelines](./CONTRIBUTING).  
 
-[![Contributions](https://img.shields.io/badge/Contributions-Welcome-green.svg)](CONTRIBUTING.md) 
+[![Contributions](https://img.shields.io/badge/Contributions-Welcome-green.svg)](./CONTRIBUTING) 
 
 ## License
-This project is licensed under the [Apache License, Version 2.0](LICENSE).  
+This project is licensed under the [Apache License, Version 2.0](./LICENSE).  
 Copyright © 2024 [TeiaCare](https://teiacare.com/)
 
-[![License](https://img.shields.io/badge/License-Apache_v2-blue)](LICENSE) 
+[![License](https://img.shields.io/badge/License-Apache_v2-blue)](./LICENSE) 

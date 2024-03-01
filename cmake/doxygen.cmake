@@ -6,7 +6,12 @@ function(setup_docs TARGET_NAME TARGET_HEADERS TARGET_HEADERS_DIRECTORY DOXYFILE
         return()
     endif()
 
-    set(DOXYGEN_INPUT_DIR ${TARGET_HEADERS_DIRECTORY})
+    set(DOXYGEN_INPUT_DIR
+        ${TARGET_HEADERS_DIRECTORY}
+        ${CMAKE_SOURCE_DIR}/README.md
+    )
+    string(REPLACE ";" " " DOXYGEN_INPUT_DIR "${DOXYGEN_INPUT_DIR}")
+
     set(DOXYGEN_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/docs)
     set(DOXYGEN_INDEX_FILE ${DOXYGEN_OUTPUT_DIR}/html/index.html)
     set(DOXYFILE_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
@@ -15,18 +20,18 @@ function(setup_docs TARGET_NAME TARGET_HEADERS TARGET_HEADERS_DIRECTORY DOXYFILE
     set(DOXYFILE_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/docs/style/header.html)
     set(DOXYFILE_FOOTER ${CMAKE_CURRENT_SOURCE_DIR}/docs/style/footer.html)
 
-    set(DOXYFILE_EXTRA_FILES 
-        ${CMAKE_CURRENT_SOURCE_DIR}/docs/style/doxygen-awesome-darkmode-toggle.js
-        ${CMAKE_CURRENT_SOURCE_DIR}/docs/style/doxygen-awesome-fragment-copy-button.js
-    )
-    string(REPLACE ";" " " DOXYFILE_EXTRA_FILES "${DOXYFILE_EXTRA_FILES}")
+    # set(DOXYFILE_EXTRA_FILES 
+    #     ${CMAKE_CURRENT_SOURCE_DIR}/docs/style/doxygen-awesome-darkmode-toggle.js
+    #     ${CMAKE_CURRENT_SOURCE_DIR}/docs/style/doxygen-awesome-fragment-copy-button.js
+    # )
+    # string(REPLACE ";" " " DOXYFILE_EXTRA_FILES "${DOXYFILE_EXTRA_FILES}")
 
-    set(DOXYFILE_EXTRA_STYLESHEET
-        ${CMAKE_CURRENT_SOURCE_DIR}/docs/style/doxygen-awesome.css
-        ${CMAKE_CURRENT_SOURCE_DIR}/docs/style/doxygen-awesome-sidebar-only.css
-        ${CMAKE_CURRENT_SOURCE_DIR}/docs/style/doxygen-awesome-sidebar-only-darkmode-toggle.css
-    )
-    string(REPLACE ";" " " DOXYFILE_EXTRA_STYLESHEET "${DOXYFILE_EXTRA_STYLESHEET}")
+    # set(DOXYFILE_EXTRA_STYLESHEET
+    #     ${CMAKE_CURRENT_SOURCE_DIR}/docs/style/doxygen-awesome.css
+    #     ${CMAKE_CURRENT_SOURCE_DIR}/docs/style/doxygen-awesome-sidebar-only.css
+    #     ${CMAKE_CURRENT_SOURCE_DIR}/docs/style/doxygen-awesome-sidebar-only-darkmode-toggle.css
+    # )
+    # string(REPLACE ";" " " DOXYFILE_EXTRA_STYLESHEET "${DOXYFILE_EXTRA_STYLESHEET}")
 
     file(MAKE_DIRECTORY ${DOXYGEN_OUTPUT_DIR})
     configure_file(${DOXYFILE_IN} ${DOXYFILE_OUT} @ONLY)
