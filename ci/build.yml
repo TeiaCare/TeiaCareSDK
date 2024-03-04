@@ -174,10 +174,10 @@ jobs:
           docker build -f Dockerfile-conan-upload --build-arg COMPILER=$(COMPILER) --build-arg COMPILER_VERSION=$(COMPILER_VERSION) --build-arg BUILD_TYPE=$(BUILD_TYPE) -t teiacore_sdk_conan_upload .
         displayName: 'Build Docker Image'
       - script: |
-          docker run --rm teiacore_sdk_conan python3 scripts/conan/create.py Release $(COMPILER) $(COMPILER_VERSION) --install_dir . && \
-                                             conan remote add artifactory $(ARTIFACTORY_HOST)/artifactory/api/conan/conan False && \
-                                             conan user $(ARTIFACTORY_USERNAME) -r artifactory -p $(ARTIFACTORY_PASSWORD) && \
-                                             python3 scripts/conan/upload.py artifactory
+          docker run --rm teiacore_sdk_conan sh -c "python3 scripts/conan/create.py Release $(COMPILER) $(COMPILER_VERSION) --install_dir . && \
+                                                    conan remote add artifactory $(ARTIFACTORY_HOST)/artifactory/api/conan/conan False && \
+                                                    conan user $(ARTIFACTORY_USERNAME) -r artifactory -p $(ARTIFACTORY_PASSWORD) && \
+                                                    python3 scripts/conan/upload.py artifactory"
         displayName: 'Create and Upload Package'
         timeoutInMinutes: 5
         env:
