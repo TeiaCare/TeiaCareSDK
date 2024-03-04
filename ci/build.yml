@@ -16,7 +16,6 @@ variables:
 
 jobs:
   - job: Build
-    condition: false
     strategy:
       matrix:
 
