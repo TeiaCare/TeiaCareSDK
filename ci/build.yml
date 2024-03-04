@@ -155,24 +155,13 @@ jobs:
         env:
           CONAN_USER_HOME: $(Build.SourcesDirectory)
 
-      - script: |
-          $(ACTIVATE_VIRTUAL_ENV)
-          $(SETUP_BUILD_ENV)
-          python3 scripts/conan/create.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) --install_dir $(Build.SourcesDirectory)
-        #conan remote add artifactory $(ARTIFACTORY_HOST)/artifactory/api/conan/conan False
-        #conan user $(ARTIFACTORY_USERNAME) -r artifactory -p $(ARTIFACTORY_PASSWORD)
-        #python3 scripts/conan/upload.py VERSION artifactory
-        displayName: 'Conan Package'
-        timeoutInMinutes: 5
-        env:
-          CONAN_USER_HOME: $(Build.SourcesDirectory)
-
   - job: Conan
     pool:
       name: TeiaCare Build Pool
     variables:
       COMPILER: gcc
       COMPILER_VERSION: 12
+      BUILD_TYPE: Release
       ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
     steps:
       - task: UsePythonVersion@0
@@ -181,21 +170,15 @@ jobs:
           versionSpec: '3.10'
           addToPath: true
           architecture: 'x64'
-
       - script: |
-          python3 -m venv .venv
-          $(ACTIVATE_VIRTUAL_ENV)
-          pip3 install -r scripts/requirements.txt
-          python3 scripts/conan/setup.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION)
-
-        displayName: 'Virtual Environment'
+          docker build -f Dockerfile-conan-upload --build-arg COMPILER=$(COMPILER) --build-arg COMPILER_VERSION=$(COMPILER_VERSION) --build-arg BUILD_TYPE=$(BUILD_TYPE) -t teiacore_sdk_conan_upload .
+        displayName: 'Build Docker Image'
       - script: |
-          $(ACTIVATE_VIRTUAL_ENV)
-          python3 scripts/conan/create.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) --install_dir $(Build.SourcesDirectory)
-          conan remote add artifactory $(ARTIFACTORY_HOST)/artifactory/api/conan/conan False
-          conan user $(ARTIFACTORY_USERNAME) -r artifactory -p $(ARTIFACTORY_PASSWORD)
-          python3 scripts/conan/upload.py VERSION artifactory
-        displayName: 'Conan Package'
+          docker run --rm teiacore_sdk_conan python3 scripts/conan/create.py Release $(COMPILER) $(COMPILER_VERSION) --install_dir . && \
+                                             conan remote add artifactory $(ARTIFACTORY_HOST)/artifactory/api/conan/conan False && \
+                                             conan user $(ARTIFACTORY_USERNAME) -r artifactory -p $(ARTIFACTORY_PASSWORD) && \
+                                             python3 scripts/conan/upload.py artifactory
+        displayName: 'Create and Upload Package'
         timeoutInMinutes: 5
         env:
           CONAN_USER_HOME: $(Build.SourcesDirectory)

@@ -26,19 +26,16 @@ def setup_conan_home():
 
 def parse():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("version_file", help="Path to the package version file")
     parser.add_argument("remote_name", help="Conan remote name")
     return parser.parse_args()
 
 def run(command):
-        ret = subprocess.run(command)
-        ret.check_returncode()
+    ret = subprocess.run(command)
+    ret.check_returncode()
 
-def conan_create(remote_name, package_version):
-    if package_version.startswith('v'):
-        package_version = package_version[1:]
+def conan_create(remote_name):
     command = [
-        'conan', 'upload', '-c', '-r', remote_name, f'teiacore_sdk/{package_version}'
+        'conan', 'upload', '-c', '-r', remote_name, 'teiacare_sdk'
     ]
     run(command)
 
@@ -49,11 +46,7 @@ def get_profile_path(profile_name):
 def main():
     setup_conan_home()
     args = parse()
-    
-    version_file = open(args.version_file, "r")
-    package_version = version_file.read()
-
-    conan_create(args.remote_name, package_version)
+    conan_create(args.remote_name)
 
 if __name__ == '__main__':
     sys.exit(main())
