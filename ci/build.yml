@@ -146,7 +146,7 @@ jobs:
           failTaskOnFailedTests: false
           failTaskOnFailureToPublishResults: false
           failTaskOnMissingResultsFile: true
-          testRunTitle: 'TeiaCareSDK $(Build.BuildId)'
+          testRunTitle: 'TeiaCareSDK $(Agent.JobName) $(Build.BuildId)'
           buildPlatform: $(Agent.OS)
           buildConfiguration: $(BUILD_TYPE)
 
