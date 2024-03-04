@@ -19,11 +19,8 @@ def parse():
     return parser.parse_args()
 
 def run(command):
-    try:
-        ret = subprocess.run(command)
-        ret.check_returncode()
-    except Exception as e:
-        print(f'Unhandled Exception: {e}')
+    ret = subprocess.run(command)
+    ret.check_returncode()
 
 def conan_create(conanfile_directory, profile_path, build_type):
     command = [
