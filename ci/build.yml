@@ -127,6 +127,7 @@ jobs:
           python3 scripts/cmake/configure.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) --unit_tests
           python3 scripts/cmake/build.py $(BUILD_TYPE)
           python3 scripts/cmake/install.py $(BUILD_TYPE)
+          python3 scripts/tools/run_unit_tests.py $(BUILD_TYPE)
         displayName: 'Unit Tests'
         timeoutInMinutes: 5
         env:
