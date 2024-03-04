@@ -171,7 +171,7 @@ jobs:
           addToPath: true
           architecture: 'x64'
       - script: |
-          docker build -f Dockerfile-conan-upload --build-arg COMPILER=$(COMPILER) --build-arg COMPILER_VERSION=$(COMPILER_VERSION) --build-arg BUILD_TYPE=$(BUILD_TYPE) -t teiacore_sdk_conan_upload .
+          docker build -f Dockerfile-conan --build-arg COMPILER=$(COMPILER) --build-arg COMPILER_VERSION=$(COMPILER_VERSION) --build-arg BUILD_TYPE=$(BUILD_TYPE) -t teiacore_sdk_conan_upload .
         displayName: 'Build Docker Image'
       - script: |
           docker run --rm teiacore_sdk_conan python3 scripts/conan/create.py Release $(COMPILER) $(COMPILER_VERSION) --install_dir . && \
