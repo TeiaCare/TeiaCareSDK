@@ -144,7 +144,7 @@ jobs:
           buildPlatform: $(Agent.OS)
           buildConfiguration: $(BUILD_TYPE)
 
-      - ${{ if eq(Agent.OS, Linux)}}
+      - ${{ if eq(variables['Agent.OS'], 'Linux') }}:
         - script: |
             $(ACTIVATE_VIRTUAL_ENV)
             $(SETUP_BUILD_ENV)
