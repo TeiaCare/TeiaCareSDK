@@ -16,7 +16,6 @@ variables:
 
 jobs:
   - job: Build
-    condition: false
     strategy:
       matrix:
 
@@ -208,7 +207,6 @@ jobs:
       #     CONAN_USER_HOME: $(Build.SourcesDirectory)
 
   - job: Conan
-    condition: true
     strategy:
       matrix:
         gcc12_release:
