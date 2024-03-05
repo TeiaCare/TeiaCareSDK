@@ -227,6 +227,7 @@ jobs:
           COMPILER: clang
           COMPILER_VERSION: 15
           BUILD_TYPE: Debug
+      maxParallel: 1
     pool:
       name: TeiaCare Build Pool
       ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
