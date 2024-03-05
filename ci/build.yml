@@ -230,14 +230,22 @@ jobs:
     pool:
       name: TeiaCare Build Pool
       ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
+    variables:
+      - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}: 
+        - name: FORCE_UPLOAD
+          value: "true"
+          readonly: true
+      - ${{ if ne(variables['Build.SourceBranchName'], 'develop') }}: 
+        - name: FORCE_UPLOAD
+          value: "false"
+          readonly: true
     steps:
-
       - script: |
           docker build -f Dockerfile-conan --build-arg COMPILER=$(COMPILER) --build-arg COMPILER_VERSION=$(COMPILER_VERSION) --build-arg BUILD_TYPE=$(BUILD_TYPE) -t teiacore_sdk_conan .
         displayName: 'Build Docker Image'
       
       - script: |
-          docker run --rm -v $PWD/ci:/teiacare_sdk/ci teiacore_sdk_conan ci/publish_conan_package.sh $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) $(ARTIFACTORY_HOST) $(ARTIFACTORY_USERNAME) $(ARTIFACTORY_PASSWORD)
+          docker run --rm -v $PWD/ci:/teiacare_sdk/ci teiacore_sdk_conan ci/publish_conan_package.sh $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) $(ARTIFACTORY_HOST) $(ARTIFACTORY_USERNAME) $(ARTIFACTORY_PASSWORD) $(FORCE_UPLOAD)
         displayName: 'Create and Upload Package'
 
       - script: |
