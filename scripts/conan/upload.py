@@ -27,16 +27,19 @@ def setup_conan_home():
 def parse():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("remote_name", help="Conan remote name")
+    parser.add_argument("--force", default=False, action="store_true", help="Force to upload the package")
     return parser.parse_args()
 
 def run(command):
     ret = subprocess.run(command)
     ret.check_returncode()
 
-def conan_create(remote_name):
+def conan_create(remote_name, force):
     command = [
         'conan', 'upload', '--all', '-c', '-r', remote_name, 'teiacare_sdk'
     ]
+    if force:
+        command.append("--force")
     run(command)
 
 def get_profile_path(profile_name):
@@ -46,7 +49,7 @@ def get_profile_path(profile_name):
 def main():
     setup_conan_home()
     args = parse()
-    conan_create(args.remote_name)
+    conan_create(args.remote_name, args.force)
 
 if __name__ == '__main__':
     sys.exit(main())
