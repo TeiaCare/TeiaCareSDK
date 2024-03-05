@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # Check the number of parameters
 if [ $# -ne 6 ]; then
@@ -17,7 +18,7 @@ artifactory_password="$6"
 
 # Rest of your script...
 
-python3 scripts/conan/create.py "$build_type" "$compiler" "$compiler_version" --install_dir . && \
-conan remote add artifactory "$artifactory_host"/artifactory/api/conan/conan False && \
-conan user "$artifactory_username" -r artifactory -p "$artifactory_password" && \
+python3 scripts/conan/create.py "$build_type" "$compiler" "$compiler_version" --install_dir .
+conan remote add artifactory "$artifactory_host"/artifactory/api/conan/conan False
+conan user "$artifactory_username" -r artifactory -p "$artifactory_password"
 python3 scripts/conan/upload.py artifactory

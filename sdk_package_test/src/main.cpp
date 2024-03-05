@@ -17,6 +17,6 @@
 
 int main(int, char**)
 {
-    std::cout << tc::sdk::name << " v" << tc::sdk::version << std::endl;
+    std::cout << tc::sdk::info::name << " v" << tc::sdk::info::version << std::endl;
     return 0;
 }
