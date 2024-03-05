@@ -223,11 +223,11 @@ jobs:
         displayName: 'Build Docker Image'
       
       - script: |
-          docker run --rm teiacore_sdk_conan ci/publish_conan_package.sh $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) $(ARTIFACTORY_HOST) $(ARTIFACTORY_USERNAME) $(ARTIFACTORY_PASSWORD)
+          docker run --rm -v $PWD/ci:/teiacare_sdk/ci teiacore_sdk_conan ci/publish_conan_package.sh $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) $(ARTIFACTORY_HOST) $(ARTIFACTORY_USERNAME) $(ARTIFACTORY_PASSWORD)
         displayName: 'Create and Upload Package'
 
       - script: |
-          docker run --rm teiacore_sdk_conan ci/test_conan_package.sh $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) $(ARTIFACTORY_HOST) $(ARTIFACTORY_USERNAME) $(ARTIFACTORY_PASSWORD)
-        displayName: 'Test Uploaded Conan Package'
+          docker run --rm -v $PWD/ci:/teiacare_sdk/ci -v $PWD/sdk_package_test:/teiacare_sdk/sdk_package_test teiacore_sdk_conan ci/test_conan_package.sh $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) $(ARTIFACTORY_HOST) $(ARTIFACTORY_USERNAME) $(ARTIFACTORY_PASSWORD)
+        displayName: 'Test Package'
 
 
