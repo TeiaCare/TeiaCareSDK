@@ -35,7 +35,7 @@ def run(command):
 
 def conan_create(remote_name):
     command = [
-        'conan', 'upload', '-c', '-r', remote_name, 'teiacare_sdk'
+        'conan', 'upload', '--all', '-c', '-r', remote_name, 'teiacare_sdk'
     ]
     run(command)
 
