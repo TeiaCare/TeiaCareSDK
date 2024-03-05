@@ -218,7 +218,7 @@ jobs:
         gcc12_debug:
           COMPILER: gcc
           COMPILER_VERSION: 12
-          BUILD_TYPE: Release
+          BUILD_TYPE: Debug
         clang15_release:
           COMPILER: clang
           COMPILER_VERSION: 15
@@ -226,7 +226,7 @@ jobs:
         clang15_debug:
           COMPILER: clang
           COMPILER_VERSION: 15
-          BUILD_TYPE: Release
+          BUILD_TYPE: Debug
     pool:
       name: TeiaCare Build Pool
       ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
