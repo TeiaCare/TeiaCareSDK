@@ -209,12 +209,26 @@ jobs:
 
   - job: Conan
     condition: true
+    strategy:
+      matrix:
+        gcc12_release:
+          COMPILER: gcc
+          COMPILER_VERSION: 12
+          BUILD_TYPE: Release
+        gcc12_debug:
+          COMPILER: gcc
+          COMPILER_VERSION: 12
+          BUILD_TYPE: Release
+        clang15_release:
+          COMPILER: clang
+          COMPILER_VERSION: 15
+          BUILD_TYPE: Release
+        clang15_debug:
+          COMPILER: gcc
+          COMPILER_VERSION: 15
+          BUILD_TYPE: Release
     pool:
       name: TeiaCare Build Pool
-    variables:
-      COMPILER: gcc
-      COMPILER_VERSION: 12
-      BUILD_TYPE: Release
       ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
     steps:
 
