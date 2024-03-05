@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * @example example_uuid.cpp
+ * @brief Simple example of tc::sdk::uuid and tc::sdk::uuid_generator
+ */
+
 #include <teiacare/sdk/uuid.hpp>
 #include <teiacare/sdk/uuid_generator.hpp>
 

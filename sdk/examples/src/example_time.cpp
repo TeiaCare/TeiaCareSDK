@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * @example example_time.cpp
+ * @brief Simple example of tc::sdk::time
+ */
+
 #include <teiacare/sdk/datetime/time.hpp>
 
 #include <iostream>

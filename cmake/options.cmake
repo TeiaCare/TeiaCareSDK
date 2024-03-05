@@ -53,8 +53,4 @@ function(validate_project_options)
     if(TC_ENABLE_UNIT_TESTS_COVERAGE AND TC_ENABLE_BENCHMARKS)
         message(FATAL_ERROR "Code Coverage cannot be enabled with Benchmarks")
     endif()
-    
-    # if(TC_ENABLE_UNIT_TESTS_COVERAGE AND TC_ENABLE_EXAMPLES)
-    #     message(FATAL_ERROR "Code Coverage cannot be enabled with Examples")
-    # endif()
 endfunction()

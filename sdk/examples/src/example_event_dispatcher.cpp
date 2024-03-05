@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * @example example_event_dispatcher.cpp
+ * @brief Simple example of tc::sdk::event_dispatcher
+ */
+
 #include <teiacare/sdk/event_dispatcher.hpp>
 
 #include <functional>
@@ -19,6 +24,10 @@
 
 using namespace std::chrono_literals;
 
+/**
+ * @cond SKIP_DOXYGEN
+ * This section won't be documented.
+ */
 void free_function(float f, int i)
 {
     spdlog::info("free_function - {} {}", f, i);
@@ -44,6 +53,7 @@ public:
         spdlog::info("class_method_t - {}", t);
     }
 };
+/** @endcond */
 
 int main()
 {

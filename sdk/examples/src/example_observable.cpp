@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * @example example_observable.cpp
+ * @brief Simple example of tc::sdk::observable
+ */
+
 #include <teiacare/sdk/observable.hpp>
 
 #include <spdlog/spdlog.h>
