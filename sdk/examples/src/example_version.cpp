@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * @example example_version.cpp
+ * @brief Simple example of tc::sdk::info namespace
+ */
+
 #include <teiacare/sdk/version.hpp>
 
 #include <iostream>

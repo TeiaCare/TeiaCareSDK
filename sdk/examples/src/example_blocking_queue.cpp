@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * @example example_blocking_queue.cpp
+ * @brief Simple example of tc::sdk::blocking_queue
+ */
+
 #include <teiacare/sdk/blocking_queue.hpp>
 
 #include <spdlog/fmt/fmt.h>
@@ -19,6 +24,9 @@
 
 using namespace std::chrono_literals;
 
+/**
+ * @cond SKIP_DOXYGEN
+ */
 template <typename T>
 struct fmt::formatter<tc::sdk::blocking_queue<T>>
 {
@@ -41,6 +49,7 @@ struct fmt::formatter<tc::sdk::blocking_queue<T>>
         return fmt::format_to(ctx.out(), "[{}]", os.str());
     }
 };
+/** @endcond */
 
 int main()
 {

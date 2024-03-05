@@ -16,7 +16,6 @@ variables:
 
 jobs:
   - job: Build
-    condition: false
     strategy:
       matrix:
 
@@ -38,12 +37,12 @@ jobs:
 
         # Full path to MSVC 2019 build environment setup script:
         # https://github.com/actions/runner-images/blob/main/images/windows/Windows2019-Readme.md#visual-studio-enterprise-2019
-        windows2019_msvc2019:
-          AGENT: 'windows-2019'
-          COMPILER: visual_studio
-          COMPILER_VERSION: 16
-          SETUP_BUILD_ENV: 'call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"'
-          ACTIVATE_VIRTUAL_ENV: 'call ".venv\Scripts\activate.bat"'
+        # # windows2019_msvc2019:
+        # #   AGENT: 'windows-2019'
+        # #   COMPILER: visual_studio
+        # #   COMPILER_VERSION: 16
+        # #   SETUP_BUILD_ENV: 'call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"'
+        # #   ACTIVATE_VIRTUAL_ENV: 'call ".venv\Scripts\activate.bat"'
 
         # windows2019_clang16:
         #   AGENT: 'windows-2019'
@@ -52,12 +51,12 @@ jobs:
         #   SETUP_BUILD_ENV: 'call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"'
         #   ACTIVATE_VIRTUAL_ENV: 'call ".venv\Scripts\activate.bat"'
 
-        ubuntu2204_gcc13:
-          AGENT: 'ubuntu-22.04'
-          COMPILER: gcc
-          COMPILER_VERSION: 13
-          SETUP_BUILD_ENV: 'echo $(COMPILER) $(COMPILER_VERSION)'
-          ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
+        # # ubuntu2204_gcc13:
+        # #   AGENT: 'ubuntu-22.04'
+        # #   COMPILER: gcc
+        # #   COMPILER_VERSION: 13
+        # #   SETUP_BUILD_ENV: 'echo $(COMPILER) $(COMPILER_VERSION)'
+        # #   ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
 
         ubuntu2204_gcc12:
           AGENT: 'ubuntu-22.04'
@@ -128,34 +127,87 @@ jobs:
           python3 scripts/cmake/configure.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) --unit_tests
           python3 scripts/cmake/build.py $(BUILD_TYPE)
           python3 scripts/cmake/install.py $(BUILD_TYPE)
+          python3 scripts/tools/run_unit_tests.py $(BUILD_TYPE)
         displayName: 'Unit Tests'
         timeoutInMinutes: 5
+        continueOnError: True
         env:
           CONAN_USER_HOME: $(Build.SourcesDirectory)
+
+      # TODO: 
+      # failTaskOnFailedTests: true
+      # failTaskOnFailureToPublishResults: true
+      - task: PublishTestResults@2
+        continueOnError: True
+        inputs:
+          testResultsFormat: 'JUnit'
+          testResultsFiles: 'results/unit_tests/unit_tests.xml'
+          searchFolder: '$(Build.SourcesDirectory)'
+          failTaskOnFailedTests: false
+          failTaskOnFailureToPublishResults: false
+          failTaskOnMissingResultsFile: true
+          testRunTitle: 'TeiaCareSDK $(Agent.JobName) $(Build.BuildId)'
+          buildPlatform: $(Agent.OS)
+          buildConfiguration: $(BUILD_TYPE)
 
       - script: |
           $(ACTIVATE_VIRTUAL_ENV)
           $(SETUP_BUILD_ENV)
-          python3 scripts/cmake/configure.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) --benchmarks
+          python3 scripts/cmake/configure.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) --coverage
           python3 scripts/cmake/build.py $(BUILD_TYPE)
           python3 scripts/cmake/install.py $(BUILD_TYPE)
-        displayName: 'Benchmarks'
+          python3 scripts/tools/run_unit_tests.py $(BUILD_TYPE)
+          python3 scripts/tools/run_coverage.py $(COMPILER) $(COMPILER_VERSION)
+        displayName: 'Code Coverage'
         timeoutInMinutes: 5
+        continueOnError: True
+        condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
         env:
           CONAN_USER_HOME: $(Build.SourcesDirectory)
 
-      - script: |
-          $(ACTIVATE_VIRTUAL_ENV)
-          $(SETUP_BUILD_ENV)
-          python3 scripts/cmake/configure.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) --examples
-          python3 scripts/cmake/build.py $(BUILD_TYPE)
-          python3 scripts/cmake/install.py $(BUILD_TYPE)
-        displayName: 'Examples'
-        timeoutInMinutes: 5
-        env:
-          CONAN_USER_HOME: $(Build.SourcesDirectory)
+      - task: PublishCodeCoverageResults@2
+        condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+        inputs:
+          summaryFileLocation: '$(Build.SourcesDirectory)/results/coverage/cobertura.xml'
+          pathToSources: '$(Build.SourcesDirectory)'
+          failIfCoverageEmpty: true
+
+      # - script: |
+      #     $(ACTIVATE_VIRTUAL_ENV)
+      #     $(SETUP_BUILD_ENV)
+      #     python3 scripts/cmake/configure.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) --benchmarks
+      #     python3 scripts/cmake/build.py $(BUILD_TYPE)
+      #     python3 scripts/cmake/install.py $(BUILD_TYPE)
+      #   displayName: 'Benchmarks'
+      #   timeoutInMinutes: 5
+      #   env:
+      #     CONAN_USER_HOME: $(Build.SourcesDirectory)
+
+      # - script: |
+      #     $(ACTIVATE_VIRTUAL_ENV)
+      #     $(SETUP_BUILD_ENV)
+      #     python3 scripts/cmake/configure.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) --examples
+      #     python3 scripts/cmake/build.py $(BUILD_TYPE)
+      #     python3 scripts/cmake/install.py $(BUILD_TYPE)
+      #   displayName: 'Examples'
+      #   timeoutInMinutes: 5
+      #   env:
+      #     CONAN_USER_HOME: $(Build.SourcesDirectory)
+
+      # - script: |
+      #     $(ACTIVATE_VIRTUAL_ENV)
+      #     $(SETUP_BUILD_ENV)
+      #     python3 scripts/conan/create.py $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) --install_dir $(Build.SourcesDirectory)
+      #   #conan remote add artifactory $(ARTIFACTORY_HOST)/artifactory/api/conan/conan False
+      #   #conan user $(ARTIFACTORY_USERNAME) -r artifactory -p $(ARTIFACTORY_PASSWORD)
+      #   #python3 scripts/conan/upload.py VERSION artifactory
+      #   displayName: 'Conan Package'
+      #   timeoutInMinutes: 5
+      #   env:
+      #     CONAN_USER_HOME: $(Build.SourcesDirectory)
 
   - job: Conan
+    condition: false
     pool:
       name: TeiaCare Build Pool
     variables:

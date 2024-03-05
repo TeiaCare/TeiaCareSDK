@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * @example example_high_precision_timer.cpp
+ * @brief Simple example of tc::sdk::high_precision_timer
+ */
+
 #include <teiacare/sdk/high_precision_timer.hpp>
 
 #include "utils/callback_timer.hpp"

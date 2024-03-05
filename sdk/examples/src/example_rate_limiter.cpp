@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * @example example_rate_limiter.cpp
+ * @brief Simple example of tc::sdk::rate_limiter
+ */
+
 #include <teiacare/sdk/clock.hpp>
 #include <teiacare/sdk/rate_limiter.hpp>
 

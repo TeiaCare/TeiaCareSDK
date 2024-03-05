@@ -12,10 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * @example example_service_locator.cpp
+ * @brief Simple example of tc::sdk::service_locator
+ */
+
 #include <teiacare/sdk/service_locator.hpp>
 
 #include <iostream>
 #include <string>
+
+/**
+ * @cond SKIP_DOXYGEN
+ */
 
 struct IService
 {
@@ -60,6 +69,7 @@ private:
     std::string _x = "";
     double _y = 0.0;
 };
+/** @endcond */
 
 auto main(int argc, char** argv) -> int
 {

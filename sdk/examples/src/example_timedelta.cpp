@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * @example example_timedelta.cpp
+ * @brief Simple example of tc::sdk::timedelta
+ */
+
 #include <teiacare/sdk/datetime/timedelta.hpp>
 
 #include <iostream>

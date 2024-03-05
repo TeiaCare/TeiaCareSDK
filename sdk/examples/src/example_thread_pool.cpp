@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * @example example_thread_pool.cpp
+ * @brief Simple example of tc::sdk::thread_pool
+ */
+
 #include <teiacare/sdk/thread_pool.hpp>
 
 #include "utils/callback_timer.hpp"
@@ -19,6 +24,10 @@
 
 using namespace std::chrono_literals;
 
+/**
+ * @cond SKIP_DOXYGEN
+ * This section won't be documented.
+ */
 class Foo
 {
 public:
@@ -38,6 +47,7 @@ public:
 private:
     int x;
 };
+/** @endcond */
 
 int main()
 {

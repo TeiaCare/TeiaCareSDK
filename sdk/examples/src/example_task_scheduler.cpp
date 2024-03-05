@@ -12,6 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+/**
+ * @example example_task_scheduler.cpp
+ * @brief Simple example of tc::sdk::task_scheduler
+ */
+
 #include <teiacare/sdk/task_scheduler.hpp>
 
 #include "utils/callback_timer.hpp"
@@ -19,6 +24,10 @@
 
 using namespace std::chrono_literals;
 
+/**
+ * @cond SKIP_DOXYGEN
+ * This section won't be documented.
+ */
 class Foo
 {
 public:
@@ -44,6 +53,7 @@ void recursive_lambda(tc::sdk::task_scheduler& s, const std::string& str)
     spdlog::info(str);
     s.in("recursive_lambda", 1s, [&s, str] { recursive_lambda(s, str); });
 }
+/** @endcond */
 
 int main()
 {
