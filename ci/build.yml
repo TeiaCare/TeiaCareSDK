@@ -208,7 +208,7 @@ jobs:
       #     CONAN_USER_HOME: $(Build.SourcesDirectory)
 
   - job: Conan
-    condition: false
+    condition: true
     pool:
       name: TeiaCare Build Pool
     variables:
