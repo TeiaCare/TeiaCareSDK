@@ -224,7 +224,7 @@ jobs:
           COMPILER_VERSION: 15
           BUILD_TYPE: Release
         clang15_debug:
-          COMPILER: gcc
+          COMPILER: clang
           COMPILER_VERSION: 15
           BUILD_TYPE: Release
     pool:
