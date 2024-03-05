@@ -27,13 +27,14 @@ def run(command):
         print(f'Unhandled Exception: {e}')
 
 def conan_profile_create(profile_name, args):
+    run([ 'conan', 'config', 'set', 'general.revisions_enabled=1'])
     run([ 'conan', 'profile', 'new', f'{profile_name}', '--force', '--detect'])
     run([ 'conan', 'profile', 'update', f'settings.compiler={args.compiler}', f'{profile_name}' ])
     run([ 'conan', 'profile', 'update', f'settings.compiler.version={args.compiler_version}', f'{profile_name}'])
     run([ 'conan', 'profile', 'update', f'env.CONAN_CMAKE_GENERATOR=Ninja', f'{profile_name}']) # for conan v1 recipes
     run([ 'conan', 'profile', 'update', f'conf.tools.cmake.cmaketoolchain:generator=Ninja', f'{profile_name}']) # for conan v2 recipes
     run([ 'conan', 'profile', 'update', f'conf.tools.system.package_manager:mode=install', f'{profile_name}'])
-    run([ 'conan', 'profile', 'update', f'conf.tools.system.package_manager:sudo=True', f'{profile_name}'])
+    run([ 'conan', 'profile', 'update', f'conf.tools.system.package_manager:sudo=True', f'{profile_name}'])    
 
     if args.compiler == 'clang':
         if platform.system() == 'Linux':
@@ -103,6 +104,7 @@ def get_conanfile_directories(args):
     if not args.directories:
         conanfile_directories_include = set(current_working_directory.glob('**/conanfile.txt'))
         conanfile_directories_exclude = set(current_working_directory.glob('**/.conan/**/conanfile.*'))
+        conanfile_directories_exclude.add(current_working_directory / 'sdk_package_test/conanfile.txt')
         conanfile_directories = conanfile_directories_include - conanfile_directories_exclude
     else:
         conanfile_directories = args.directories
