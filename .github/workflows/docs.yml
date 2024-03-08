@@ -43,10 +43,13 @@ jobs:
           outputs: 'type=local,dest=docs'
 
       - name: Upload Docs
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v2
         with:
+          name: github-pages
           path: 'docs/'
-          
+      
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v3
+        with:
+          artifact_name: github-pages
