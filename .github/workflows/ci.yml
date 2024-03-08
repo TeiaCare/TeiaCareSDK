@@ -14,7 +14,7 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.OS }}
+    runs-on: ${{matrix.OS}}
 
     strategy:
       matrix: 
@@ -30,14 +30,14 @@ jobs:
             OS: 'ubuntu-22.04'
             COMPILER: 'gcc'
             COMPILER_VERSION: 12
-            SETUP_BUILD_ENV: 'echo ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}}'
+            SETUP_BUILD_ENV: 'echo gcc 12'
             ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
             
           - NAME: ubuntu2204_clang15
             OS: 'ubuntu-22.04'
             COMPILER: 'clang'
             COMPILER_VERSION: 15
-            SETUP_BUILD_ENV: 'echo ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}}'
+            SETUP_BUILD_ENV: 'echo clang 15'
             ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
 
     env:
@@ -54,7 +54,7 @@ jobs:
 
       - name: Print Configuration
         run: |
-          echo OS - ${{ matrix.OS }}
+          echo OS - ${{matrix.OS}}
           echo Compiler - ${{matrix.COMPILER}}
           echo Version - ${{matrix.COMPILER_VERSION}}
           
