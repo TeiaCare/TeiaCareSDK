@@ -35,21 +35,23 @@ jobs:
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
 
-      - name: Build Docs
-        uses: docker/build-push-action@v5
-        with:
-          file: Dockerfile.docs
-          target: docs
-          outputs: 'type=local,dest=docs'
-      
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v4
+  #    - name: Build Docs
+  #      uses: docker/build-push-action@v5
+  #      with:
+  #        file: Dockerfile.docs
+  #        target: docs
+  #        outputs: 'type=local,dest=docs'
 
+      - name: Create dummy Docs
+        run: |
+          mkdir d
+          cp README.md d
+          
       - name: Upload Docs
         uses: actions/upload-pages-artifact@v3
         with:
           name: github-pages
-          path: 'README.md'
+          path: 'd'
       
       - name: Deploy to GitHub Pages
         id: deployment
