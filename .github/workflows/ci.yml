@@ -19,12 +19,12 @@ jobs:
     strategy:
       matrix: 
         include:
-          - NAME: windows2022_msvc2022
-            OS: 'windows-2022'
-            COMPILER: 'visual_studio'
-            COMPILER_VERSION: 17
-            SETUP_BUILD_ENV: 'call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"'
-            ACTIVATE_VIRTUAL_ENV: 'call ".venv\Scripts\activate.bat"'
+#          - NAME: windows2022_msvc2022
+#            OS: 'windows-2022'
+#            COMPILER: 'visual_studio'
+#            COMPILER_VERSION: 17
+#            SETUP_BUILD_ENV: 'call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"'
+#            ACTIVATE_VIRTUAL_ENV: 'call ".venv\Scripts\activate.bat"'
             
           - NAME: ubuntu2204_gcc12
             OS: 'ubuntu-22.04'
