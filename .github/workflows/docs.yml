@@ -21,7 +21,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  Docs:
     runs-on: ubuntu-latest
     
     environment:
@@ -41,11 +41,16 @@ jobs:
           file: Dockerfile.docs
           target: docs
           outputs: 'type=local,dest=docs'
+
+      - name: List Docs Files
+        run: |
+          cd docs
+          ls
           
       - name: Upload Docs
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v2
         with:
-          path: 'docs/'
+          path: docs/
           
       - name: Deploy to GitHub Pages
         id: deployment
