@@ -61,33 +61,33 @@ jobs:
       - name: Install Dependencies
         run: |
           python -m venv .venv
-          source .venv/bin/activate
+          ${{matrix.ACTIVATE_VIRTUAL_ENV}}
           pip install -r scripts/requirements.txt
           python scripts/conan/setup.py $BUILD_TYPE ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}}
 
       - name: Build
         run: |
-          source .venv/bin/activate
+          ${{matrix.ACTIVATE_VIRTUAL_ENV}}
           python scripts/cmake/configure.py $BUILD_TYPE ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}}
           python scripts/cmake/build.py $BUILD_TYPE
           python scripts/cmake/install.py $BUILD_TYPE
 
       - name: Run Unit Tests
+        continue-on-error: true
         run: |
-          source .venv/bin/activate
+          ${{matrix.ACTIVATE_VIRTUAL_ENV}}
           python scripts/cmake/configure.py $BUILD_TYPE ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}} --unit_tests
           python scripts/cmake/build.py $BUILD_TYPE
           python scripts/cmake/install.py $BUILD_TYPE
           python scripts/tools/run_unit_tests.py $BUILD_TYPE
-        continue-on-error: true
 
       - name: Run Code Coverage
+        continue-on-error: true
+        if: ${{matrix.OS}} == 'ubuntu-22.04'
         run: |
-          source .venv/bin/activate
+          ${{matrix.ACTIVATE_VIRTUAL_ENV}}
           python scripts/cmake/configure.py $BUILD_TYPE ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}} --coverage
           python scripts/cmake/build.py $BUILD_TYPE
           python scripts/cmake/install.py $BUILD_TYPE
           python scripts/tools/run_unit_tests.py $BUILD_TYPE
           python scripts/tools/run_coverage.py ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}}
-        continue-on-error: true
-        if: matrix.OS == 'ubuntu-22.04' && success()
