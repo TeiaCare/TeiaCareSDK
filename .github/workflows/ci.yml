@@ -59,6 +59,8 @@ jobs:
           echo Version - ${{matrix.COMPILER_VERSION}}
           
       - name: Install Dependencies
+        env:
+          CONAN_USER_HOME: $GITHUB_WORKSPACE
         run: |
           python -m venv .venv
           ${{matrix.ACTIVATE_VIRTUAL_ENV}}
@@ -66,16 +68,22 @@ jobs:
           python scripts/conan/setup.py $BUILD_TYPE ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}}
 
       - name: Build
+        env:
+          CONAN_USER_HOME: $GITHUB_WORKSPACE
         run: |
           ${{matrix.ACTIVATE_VIRTUAL_ENV}}
+          ${{SETUP_BUILD_ENV}}
           python scripts/cmake/configure.py $BUILD_TYPE ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}}
           python scripts/cmake/build.py $BUILD_TYPE
           python scripts/cmake/install.py $BUILD_TYPE
 
       - name: Run Unit Tests
         continue-on-error: true
+        env:
+          CONAN_USER_HOME: $GITHUB_WORKSPACE
         run: |
           ${{matrix.ACTIVATE_VIRTUAL_ENV}}
+          ${{SETUP_BUILD_ENV}}
           python scripts/cmake/configure.py $BUILD_TYPE ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}} --unit_tests
           python scripts/cmake/build.py $BUILD_TYPE
           python scripts/cmake/install.py $BUILD_TYPE
@@ -84,10 +92,14 @@ jobs:
       - name: Run Code Coverage
         continue-on-error: true
         if: ${{matrix.OS}} == 'ubuntu-22.04'
+        env:
+          CONAN_USER_HOME: $GITHUB_WORKSPACE
         run: |
           ${{matrix.ACTIVATE_VIRTUAL_ENV}}
+          ${{SETUP_BUILD_ENV}}
           python scripts/cmake/configure.py $BUILD_TYPE ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}} --coverage
           python scripts/cmake/build.py $BUILD_TYPE
           python scripts/cmake/install.py $BUILD_TYPE
           python scripts/tools/run_unit_tests.py $BUILD_TYPE
           python scripts/tools/run_coverage.py ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}}
+
