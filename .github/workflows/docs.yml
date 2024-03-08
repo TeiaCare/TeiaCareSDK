@@ -32,7 +32,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       
-      - name: Setup Pages
+      - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
 
       - name: Build Docs
@@ -41,6 +41,9 @@ jobs:
           file: Dockerfile.docs
           target: docs
           outputs: 'type=local,dest=docs'
+      
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v4
 
       - name: Upload Docs
         uses: actions/upload-pages-artifact@v2
@@ -48,11 +51,8 @@ jobs:
           name: github-pages
           path: 'docs/'
       
-      - name: Configure Pages
-        uses: actions/configure-pages@v4
-      
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v3
         with:
           artifact_name: github-pages
