@@ -63,8 +63,8 @@ jobs:
 
       - name: Build
         run: |
-          ${{matrix.ACTIVATE_VIRTUAL_ENV}}
           ${{matrix.SETUP_BUILD_ENV}}
+          ${{matrix.ACTIVATE_VIRTUAL_ENV}}
           python scripts/cmake/configure.py ${{env.BUILD_TYPE}} ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}}
           python scripts/cmake/build.py ${{env.BUILD_TYPE}}
           python scripts/cmake/install.py ${{env.BUILD_TYPE}}
@@ -72,8 +72,8 @@ jobs:
       - name: Run Unit Tests
         continue-on-error: true
         run: |
-          ${{matrix.ACTIVATE_VIRTUAL_ENV}}
           ${{matrix.SETUP_BUILD_ENV}}
+          ${{matrix.ACTIVATE_VIRTUAL_ENV}}
           python scripts/cmake/configure.py ${{env.BUILD_TYPE}} ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}} --unit_tests
           python scripts/cmake/build.py ${{env.BUILD_TYPE}}
           python scripts/cmake/install.py ${{env.BUILD_TYPE}}
