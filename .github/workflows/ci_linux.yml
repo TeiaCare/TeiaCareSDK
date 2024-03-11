@@ -1,8 +1,15 @@
-name: CI
+name: CI Linux
 
 on:
   workflow_dispatch:
-  pull_request:
+  pull_request: 
+    branches:
+      - 'develop'
+      - 'feature/*'
+      - 'release/*'
+      - 'hotfix/*'
+    tags:
+      - 'v*'
   push:
     branches:
       - 'develop'
@@ -15,17 +22,11 @@ on:
 jobs:
   build:
     runs-on: ${{matrix.OS}}
-
+    name: ${{matrix.NAME}}
     strategy:
+      fail-fast: false
       matrix: 
         include:
-          - NAME: windows2022_msvc2022
-            OS: 'windows-2022'
-            COMPILER: 'visual_studio'
-            COMPILER_VERSION: 17
-            SETUP_BUILD_ENV: '& "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"'
-            ACTIVATE_VIRTUAL_ENV: '& ".venv\Scripts\activate.bat"'
-            
           - NAME: ubuntu2204_gcc12
             OS: 'ubuntu-22.04'
             COMPILER: 'gcc'
@@ -52,14 +53,9 @@ jobs:
         uses: actions/setup-python@v5.0.0
         with:
           python-version: '3.10'
-
-      - name: Print Configuration
-        run: |
-          echo OS - ${{matrix.OS}}
-          echo Compiler - ${{matrix.COMPILER}}
-          echo Version - ${{matrix.COMPILER_VERSION}}
           
       - name: Install Dependencies
+        shell: cmd
         run: |
           python -m venv .venv
           ${{matrix.ACTIVATE_VIRTUAL_ENV}}
@@ -67,8 +63,7 @@ jobs:
           python scripts/conan/setup.py $BUILD_TYPE ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}}
 
       - name: Build
-        env:
-          CONAN_USER_HOME: ${{github.workspace}}
+        shell: cmd
         run: |
           ${{matrix.ACTIVATE_VIRTUAL_ENV}}
           ${{matrix.SETUP_BUILD_ENV}}
@@ -78,8 +73,7 @@ jobs:
 
       - name: Run Unit Tests
         continue-on-error: true
-        env:
-          CONAN_USER_HOME: ${{github.workspace}}
+        shell: cmd
         run: |
           ${{matrix.ACTIVATE_VIRTUAL_ENV}}
           ${{matrix.SETUP_BUILD_ENV}}
@@ -87,18 +81,3 @@ jobs:
           python scripts/cmake/build.py $BUILD_TYPE
           python scripts/cmake/install.py $BUILD_TYPE
           python scripts/tools/run_unit_tests.py $BUILD_TYPE
-
-      - name: Run Code Coverage
-        continue-on-error: true
-        if: ${{matrix.OS}} == 'ubuntu-22.04'
-        env:
-          CONAN_USER_HOME: ${{github.workspace}}
-        run: |
-          ${{matrix.ACTIVATE_VIRTUAL_ENV}}
-          ${{matrix.SETUP_BUILD_ENV}}
-          python scripts/cmake/configure.py $BUILD_TYPE ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}} --coverage
-          python scripts/cmake/build.py $BUILD_TYPE
-          python scripts/cmake/install.py $BUILD_TYPE
-          python scripts/tools/run_unit_tests.py $BUILD_TYPE
-          python scripts/tools/run_coverage.py ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}}
-
