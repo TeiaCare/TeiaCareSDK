@@ -52,18 +52,14 @@ jobs:
         run: |
           ${{env.ACTIVATE_VIRTUAL_ENV}}
           ${{env.SETUP_BUILD_ENV}}
-          python scripts/cmake/configure.py ${{env.BUILD_TYPE}} ${{env.COMPILER}} ${{env.COMPILER_VERSION}}
+          python scripts/cmake/configure.py ${{env.BUILD_TYPE}} ${{env.COMPILER}} ${{env.COMPILER_VERSION}} --coverage
           python scripts/cmake/build.py ${{env.BUILD_TYPE}}
-          python scripts/cmake/install.py ${{env.BUILD_TYPE}}
 
       - name: Run Code Coverage
         continue-on-error: true
         run: |
           ${{env.ACTIVATE_VIRTUAL_ENV}}
           ${{env.SETUP_BUILD_ENV}}
-          python scripts/cmake/configure.py ${{env.BUILD_TYPE}} ${{env.COMPILER}} ${{env.COMPILER_VERSION}} --coverage
-          python scripts/cmake/build.py ${{env.BUILD_TYPE}}
-          python scripts/cmake/install.py ${{env.BUILD_TYPE}}
           python scripts/tools/run_unit_tests.py ${{env.BUILD_TYPE}}
           python scripts/tools/run_coverage.py ${{env.COMPILER}} ${{env.COMPILER_VERSION}}
           echo
@@ -71,7 +67,7 @@ jobs:
           echo
           cat ./results/coverage/cobertura.xml
 
-      - name: Codecov
+      - name: Upload Code Coverage
         uses: codecov/codecov-action@v4
         with:
           files: './results/coverage/cobertura.xml'
