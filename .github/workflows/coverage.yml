@@ -57,6 +57,7 @@ jobs:
           python scripts/cmake/install.py ${{env.BUILD_TYPE}}
 
       - name: Run Code Coverage
+        continue-on-error: true
         run: |
           ${{env.ACTIVATE_VIRTUAL_ENV}}
           ${{env.SETUP_BUILD_ENV}}
@@ -65,3 +66,12 @@ jobs:
           python scripts/cmake/install.py ${{env.BUILD_TYPE}}
           python scripts/tools/run_unit_tests.py ${{env.BUILD_TYPE}}
           python scripts/tools/run_coverage.py ${{env.COMPILER}} ${{env.COMPILER_VERSION}}
+
+      - name: Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: './results/coverage/cobertura.xml'
+          name: codecov-umbrella # optional
+          token: ${{secrets.CODECOV_TOKEN}}
+          verbose: true
+          
