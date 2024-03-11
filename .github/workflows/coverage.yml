@@ -71,7 +71,8 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           files: './results/coverage/cobertura.xml'
-          name: codecov-umbrella # optional
+          name: TeiaCareSDK
+          slug: TeiaCare/TeiaCareSDK
           token: ${{secrets.CODECOV_TOKEN}}
           verbose: true
           
