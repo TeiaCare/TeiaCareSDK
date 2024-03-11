@@ -31,15 +31,15 @@ jobs:
             OS: 'windows-2022'
             COMPILER: 'visual_studio'
             COMPILER_VERSION: 17
-            SETUP_BUILD_ENV: '& "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"'
-            ACTIVATE_VIRTUAL_ENV: '.venv\Scripts\activate.ps1'
+            SETUP_BUILD_ENV: 'call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"'
+            ACTIVATE_VIRTUAL_ENV: ' call ".venv\Scripts\activate.bat"'
 
           - NAME: windows2019_msvc2019
             OS: 'windows-2019'
             COMPILER: visual_studio
             COMPILER_VERSION: 16
-            SETUP_BUILD_ENV: '& "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"'
-            ACTIVATE_VIRTUAL_ENV: '.venv\Scripts\activate.ps1'
+            SETUP_BUILD_ENV: 'call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"'
+            ACTIVATE_VIRTUAL_ENV: 'call ".venv\Scripts\activate.bat"'
 
     env:
       BUILD_TYPE: Release
@@ -55,6 +55,7 @@ jobs:
           python-version: '3.10'
           
       - name: Install Dependencies
+        shell: cmd
         run: |
           python -m venv .venv
           ${{matrix.ACTIVATE_VIRTUAL_ENV}}
@@ -62,18 +63,20 @@ jobs:
           python scripts/conan/setup.py ${{env.BUILD_TYPE}} ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}}
 
       - name: Build
+        shell: cmd
         run: |
-          ${{matrix.SETUP_BUILD_ENV}}
           ${{matrix.ACTIVATE_VIRTUAL_ENV}}
+          ${{matrix.SETUP_BUILD_ENV}}
           python scripts/cmake/configure.py ${{env.BUILD_TYPE}} ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}}
           python scripts/cmake/build.py ${{env.BUILD_TYPE}}
           python scripts/cmake/install.py ${{env.BUILD_TYPE}}
 
       - name: Run Unit Tests
+        shell: cmd
         continue-on-error: true
         run: |
-          ${{matrix.SETUP_BUILD_ENV}}
           ${{matrix.ACTIVATE_VIRTUAL_ENV}}
+          ${{matrix.SETUP_BUILD_ENV}}    
           python scripts/cmake/configure.py ${{env.BUILD_TYPE}} ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}} --unit_tests
           python scripts/cmake/build.py ${{env.BUILD_TYPE}}
           python scripts/cmake/install.py ${{env.BUILD_TYPE}}
