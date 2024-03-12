@@ -105,21 +105,21 @@ jobs:
           path: 'results/unit_tests/unit_tests.xml'
 
   publish-test-results:
-    name: "Publish Tests Results"
+    name: 'Publish Unit Tests Results'
     needs: build
     runs-on: ubuntu-22.04
+    if: always()
     permissions:
       checks: write
       pull-requests: write
       
-    if: always()
     steps:
-      - name: Download Artifacts
+      - name: Download Unit Tests Results
         uses: actions/download-artifact@v4
         with:
           path: 'unit_test_reports'
 
-      - name: Publish Test Results
+      - name: Publish Unit Tests Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
           files: "unit_test_reports/**/*.xml"
