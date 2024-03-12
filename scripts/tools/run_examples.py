@@ -2,11 +2,15 @@
 import argparse
 from command import run
 import pathlib
+import os
 
 def parse():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)    
     parser.add_argument("examples_directory", help="Examples Directory")
     return parser.parse_args()
+
+def is_executable(file_path):
+    return os.access(file_path, os.X_OK)
 
 def examples(args):
     examples_path = pathlib.Path(args.examples_directory).absolute()
@@ -15,8 +19,9 @@ def examples(args):
         return
 
     for example in examples_path.iterdir():
-        print('#'*80 + f'\n{example.name}\n' + '#'*80)
-        run(example)
+        if example.is_file() and is_executable(example):
+            print('#'*80 + f'\n{example.name}\n' + '#'*80)
+            run(example)
 
 if __name__ == '__main__':
     examples(parse())
