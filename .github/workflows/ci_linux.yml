@@ -40,7 +40,6 @@ jobs:
       pull-requests: write
       
     env:
-      BUILD_TYPE: Release
       CONAN_USER_HOME: ${{github.workspace}}
       ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
 
