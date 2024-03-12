@@ -22,28 +22,23 @@ on:
 jobs:
   build:
     runs-on: ${{matrix.OS}}
-    name: ${{matrix.NAME}}
+    name: '${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}} - ${{matrix.BUILD_TYPE}}'
     strategy:
       fail-fast: false
-      matrix: 
+      matrix:
+        BUILD_TYPE: [Debug, Release]
+        COMPILER: [gcc, clang]
+        OS: [ubuntu-22.04]
         include:
-          - NAME: ubuntu2204_gcc12
-            OS: 'ubuntu-22.04'
-            COMPILER: 'gcc'
-            COMPILER_VERSION: 12
-            SETUP_BUILD_ENV: 'g++-12 --version'
-            ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
-            
-          - NAME: ubuntu2204_clang15
-            OS: 'ubuntu-22.04'
-            COMPILER: 'clang'
-            COMPILER_VERSION: 15
-            SETUP_BUILD_ENV: 'clang++-15 --version'
-            ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
+         - COMPILER: gcc
+           COMPILER_VERSION: 12
+         - COMPILER: clang
+           COMPILER_VERSION: 15
 
     env:
       BUILD_TYPE: Release
       CONAN_USER_HOME: ${{github.workspace}}
+      ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
 
     steps:
       - name: Checkout Repository
@@ -58,15 +53,14 @@ jobs:
         shell: bash
         run: |
           python -m venv .venv
-          ${{matrix.ACTIVATE_VIRTUAL_ENV}}
+          ${{env.ACTIVATE_VIRTUAL_ENV}}
           pip install -r scripts/requirements.txt
           python scripts/conan/setup.py ${{env.BUILD_TYPE}} ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}}
 
       - name: Build
         shell: bash
         run: |
-          ${{matrix.ACTIVATE_VIRTUAL_ENV}}
-          ${{matrix.SETUP_BUILD_ENV}}
+          ${{env.ACTIVATE_VIRTUAL_ENV}}
           python scripts/cmake/configure.py ${{env.BUILD_TYPE}} ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}}
           python scripts/cmake/build.py ${{env.BUILD_TYPE}}
           python scripts/cmake/install.py ${{env.BUILD_TYPE}}
@@ -75,9 +69,14 @@ jobs:
         continue-on-error: true
         shell: bash
         run: |
-          ${{matrix.ACTIVATE_VIRTUAL_ENV}}
-          ${{matrix.SETUP_BUILD_ENV}}
+          ${{env.ACTIVATE_VIRTUAL_ENV}}
           python scripts/cmake/configure.py ${{env.BUILD_TYPE}} ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}} --unit_tests
           python scripts/cmake/build.py ${{env.BUILD_TYPE}}
           python scripts/cmake/install.py ${{env.BUILD_TYPE}}
           python scripts/tools/run_unit_tests.py ${{env.BUILD_TYPE}}
+
+      - name: Upload Unit Tests results
+        uses: actions/upload-artifact@v2
+        with:
+          name: '${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}} - ${{matrix.BUILD_TYPE}}'
+          path: 'results/unit_tests/unit_tests.xml'
