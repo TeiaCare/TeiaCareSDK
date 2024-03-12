@@ -46,7 +46,7 @@ jobs:
           python -m venv .venv
           ${{env.ACTIVATE_VIRTUAL_ENV}}
           pip install -r scripts/requirements.txt
-          python scripts/conan/setup.py ${{env.BUILD_TYPE}} ${{env.COMPILER}} ${{env.COMPILER_VERSION}} --directories tests
+          python scripts/conan/setup.py ${{env.BUILD_TYPE}} ${{env.COMPILER}} ${{env.COMPILER_VERSION}} --directories sdk/tests
 
       - name: Build
         run: |
