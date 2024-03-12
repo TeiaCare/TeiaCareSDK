@@ -111,8 +111,13 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
-          path: unit_test_reports
-          pattern: 'Unit Tests - *'
+          merge-multiple: true
+          path: 'unit_test_reports'
+
+      - name: Print Artifacts
+        shell: bash
+        run: |
+          ls unit_test_reports
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
