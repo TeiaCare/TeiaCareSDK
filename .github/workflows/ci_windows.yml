@@ -3,21 +3,21 @@ name: CI Windows
 on:
   workflow_dispatch:
   pull_request: 
-    branches:
-      - 'develop'
-      - 'feature/*'
-      - 'release/*'
-      - 'hotfix/*'
-    tags:
-      - 'v*'
+  #  branches:
+  #    - 'develop'
+  #    - 'feature/*'
+  #    - 'release/*'
+  #    - 'hotfix/*'
+  #  tags:
+  #    - 'v*'
   push:
-    branches:
-      - 'develop'
-      - 'feature/*'
-      - 'release/*'
-      - 'hotfix/*'
-    tags:
-      - 'v*'
+  #  branches:
+  #    - 'develop'
+  #    - 'feature/*'
+  #    - 'release/*'
+  #    - 'hotfix/*'
+  #  tags:
+  #    - 'v*'
 
 jobs:
   build:
