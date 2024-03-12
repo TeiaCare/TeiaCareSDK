@@ -35,10 +35,6 @@ jobs:
          - COMPILER: clang
            COMPILER_VERSION: 15
 
-    permissions:
-      checks: write
-      pull-requests: write
-      
     env:
       CONAN_USER_HOME: ${{github.workspace}}
       ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
