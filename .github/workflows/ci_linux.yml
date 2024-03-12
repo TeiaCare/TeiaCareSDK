@@ -35,6 +35,10 @@ jobs:
          - COMPILER: clang
            COMPILER_VERSION: 15
 
+    permissions:
+      checks: write
+      pull-requests: write
+      
     env:
       BUILD_TYPE: Release
       CONAN_USER_HOME: ${{github.workspace}}
@@ -94,9 +98,23 @@ jobs:
           name: 'Unit Tests - ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}} - ${{matrix.BUILD_TYPE}}'
           path: 'results/unit_tests/unit_tests.xml'
 
-      - name: Publish Unit Tests Results
-        uses: EnricoMi/publish-unit-test-result-action@v2
-        if: always()
+  publish-test-results:
+    name: "Publish Tests Results"
+    needs: build
+    runs-on: ubuntu-22.04
+    permissions:
+      checks: write
+      pull-requests: write
+      
+    if: always()
+    steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v4
         with:
-          check_name: 'Unit Tests - ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}} - ${{matrix.BUILD_TYPE}}'
-          files: 'results/unit_tests/unit_tests.xml'
+          path: artifacts
+
+      - name: Publish Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: "artifacts/**/*.xml"
+          
