@@ -111,10 +111,11 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
         with:
-          path: artifacts
+          path: unit_test_reports
+          pattern: 'Unit Tests - *'
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
-          files: "artifacts/**/*.xml"
+          files: "unit_test_reports/**/*.xml"
           
