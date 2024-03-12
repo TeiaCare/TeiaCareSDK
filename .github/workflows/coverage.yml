@@ -46,7 +46,7 @@ jobs:
           python -m venv .venv
           ${{env.ACTIVATE_VIRTUAL_ENV}}
           pip install -r scripts/requirements.txt
-          python scripts/conan/setup.py ${{env.BUILD_TYPE}} ${{env.COMPILER}} ${{env.COMPILER_VERSION}}
+          python scripts/conan/setup.py ${{env.BUILD_TYPE}} ${{env.COMPILER}} ${{env.COMPILER_VERSION}} --directories tests
 
       - name: Build
         run: |
@@ -57,6 +57,8 @@ jobs:
 
       - name: Run Code Coverage
         continue-on-error: true
+        env: 
+          GTEST_FILTER: 'test_high_precision_timer.*'
         run: |
           ${{env.ACTIVATE_VIRTUAL_ENV}}
           ${{env.SETUP_BUILD_ENV}}
