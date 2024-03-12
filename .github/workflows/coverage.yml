@@ -58,7 +58,7 @@ jobs:
       - name: Run Code Coverage
         continue-on-error: true
         env: 
-          GTEST_FILTER: 'test_high_precision_timer.*'
+          GTEST_FILTER: '-test_high_precision_timer.start'
         run: |
           ${{env.ACTIVATE_VIRTUAL_ENV}}
           ${{env.SETUP_BUILD_ENV}}
