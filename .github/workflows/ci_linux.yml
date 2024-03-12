@@ -93,7 +93,7 @@ jobs:
           python scripts/tools/run_unit_tests.py ${{env.BUILD_TYPE}}
 
       - name: Upload Unit Tests Results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: 'Unit Tests - ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}} - ${{matrix.BUILD_TYPE}}'
           path: 'results/unit_tests/unit_tests.xml'
@@ -113,11 +113,6 @@ jobs:
         with:
           merge-multiple: true
           path: 'unit_test_reports'
-
-      - name: Print Artifacts
-        shell: bash
-        run: |
-          ls unit_test_reports
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
