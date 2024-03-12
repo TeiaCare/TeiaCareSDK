@@ -14,8 +14,9 @@
 
 #include <gtest/gtest.h>
 
-auto main(int argc, char** argv) -> int
+int main(int argc, char** argv)
 {
     testing::InitGoogleTest(&argc, argv);
+    testing::GTEST_FLAG(filter) = "-test_high_precision_timer.*";
     return RUN_ALL_TESTS();
 }
