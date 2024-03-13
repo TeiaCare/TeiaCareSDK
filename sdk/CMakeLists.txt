@@ -99,7 +99,6 @@ endif()
 if(TC_ENABLE_CPPLINT)
     include(cpplint)
     setup_target_cpplint(${TARGET_NAME} ${TARGET_SRC})
-    set(CMAKE_CXX_CPPLINT cpplint)
 endif()
 
 if(TC_ENABLE_UNIT_TESTS)

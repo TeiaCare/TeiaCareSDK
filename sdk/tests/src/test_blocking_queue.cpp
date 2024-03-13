@@ -136,7 +136,7 @@ template <>
 blocking_queue_params_factory<int>::Items blocking_queue_params_factory<int>::create_items()
 {
     Items items;
-    for (int idx = 0; idx < blocking_queue_params_factory::ItemsSize; idx++)
+    for (size_t idx = 0; idx < blocking_queue_params_factory::ItemsSize; idx++)
         items.at(idx) = idx;
     return items;
 }
@@ -169,7 +169,7 @@ template <>
 blocking_queue_params_factory<const char*>::Items blocking_queue_params_factory<const char*>::create_items()
 {
     Items items;
-    for (int idx = 0; idx < blocking_queue_params_factory::ItemsSize; idx++)
+    for (size_t idx = 0; idx < blocking_queue_params_factory::ItemsSize; idx++)
         items.at(idx) = std::to_string(idx).c_str();
     return items;
 }
@@ -202,7 +202,7 @@ template <>
 blocking_queue_params_factory<std::string>::Items blocking_queue_params_factory<std::string>::create_items()
 {
     Items items;
-    for (int idx = 0; idx < blocking_queue_params_factory::ItemsSize; idx++)
+    for (size_t idx = 0; idx < blocking_queue_params_factory::ItemsSize; idx++)
         items.at(idx) = std::to_string(idx);
     return items;
 }

@@ -1,22 +1,24 @@
-// Copyright 2024 TeiaCare
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/* Copyright 2024 TeiaCare
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "test_high_precision_timer.hpp"
 
 #include "utils.hpp"
 #include <gmock/gmock.h>
 #include <semaphore>
+#include <thread>
 // #include <chrono>
 // #include <future>
 // #include <latch>
@@ -41,7 +43,7 @@ TEST_F(test_high_precision_timer, start)
     const auto interval = 250ms;
     EXPECT_FALSE(t.start(interval));
 
-    auto callback = []() {};
+    auto callback = []() { static int i = 0; i++; (void)i; };
     t.set_callback(callback);
 
     EXPECT_TRUE(t.start(interval));
@@ -60,7 +62,7 @@ TEST_F(test_high_precision_timer, stop_before_start_without_callback)
 // NOLINTNEXTLINE
 TEST_F(test_high_precision_timer, start_multiple_times)
 {
-    auto callback = []() {};
+    auto callback = []() { static int i = 0; i++; (void)i; };
     t.set_callback(callback);
 
     const auto interval = 250ms;

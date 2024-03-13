@@ -86,7 +86,7 @@ private:
     void bytes(char* bytes) const;
     void str(char* res) const;
 
-    alignas(128) uint8_t data[16]; // NOLINT
+    alignas(128) uint8_t data[16] = {}; // NOLINT
 };
 
 }

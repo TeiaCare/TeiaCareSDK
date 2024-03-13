@@ -88,7 +88,6 @@ TYPED_TEST(test_stopwatch_duration_t, elapsed_duration_types)
 
 TYPED_TEST(test_stopwatch_duration_t, elapsed_reset_duration_types)
 {
-    using duration_t = TypeParam;
     constexpr int total_count = 1'000;
 
     for (auto i = 0; i < total_count; ++i)

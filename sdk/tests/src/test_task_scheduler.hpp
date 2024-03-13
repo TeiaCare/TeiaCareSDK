@@ -78,7 +78,7 @@ protected:
         bool ok = false;
     };
     std::function<void(const char*, DummyClass, const std::string&)> task_with_arguments =
-        [this](const char* cc, DummyClass dd, const std::string& ss) {
+        [this](const char*, DummyClass dd, const std::string&) {
             std::this_thread::sleep_for(sleep_time);
             _is_executed = true;
             EXPECT_TRUE(dd.ok);

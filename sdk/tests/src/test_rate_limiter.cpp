@@ -67,7 +67,7 @@ TEST(test_rate_limiter, sync_fractional_duration)
     const auto rate = 1;
     tc::sdk::rate_limiter limiter(rate);
 
-    const auto timing_duration = 0.25;                          // 1/4 second
+    // const auto timing_duration = 0.25;                       // 1/4 second
     auto timer = elapsed_timer(std::chrono::milliseconds(250)); // NOLINT
 
     auto tick_counter = 0;

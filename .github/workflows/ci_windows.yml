@@ -42,7 +42,7 @@ jobs:
         shell: cmd
         run: |
           python -m venv .venv
-          ${{matrix.ACTIVATE_VIRTUAL_ENV}}
+          ${{env.ACTIVATE_VIRTUAL_ENV}}
           pip install -r scripts/requirements.txt
           python scripts/conan/setup.py ${{matrix.BUILD_TYPE}} ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}}
 
@@ -51,7 +51,7 @@ jobs:
         run: |
           ${{env.ACTIVATE_VIRTUAL_ENV}}
           ${{matrix.SETUP_BUILD_ENV}}
-          python scripts/cmake/configure.py ${{matrix.BUILD_TYPE}} ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}}
+          python scripts/cmake/configure.py ${{matrix.BUILD_TYPE}} ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}} --warnings
           python scripts/cmake/build.py ${{matrix.BUILD_TYPE}}
           python scripts/cmake/install.py ${{matrix.BUILD_TYPE}}
 
@@ -60,7 +60,7 @@ jobs:
         run: |
           ${{env.ACTIVATE_VIRTUAL_ENV}}
           ${{matrix.SETUP_BUILD_ENV}}
-          python scripts/cmake/configure.py ${{matrix.BUILD_TYPE}} ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}} --examples
+          python scripts/cmake/configure.py ${{matrix.BUILD_TYPE}} ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}} --warnings --examples
           python scripts/cmake/build.py ${{matrix.BUILD_TYPE}}
           python scripts/cmake/install.py ${{matrix.BUILD_TYPE}}
 
@@ -76,7 +76,7 @@ jobs:
         run: |
           ${{env.ACTIVATE_VIRTUAL_ENV}}
           ${{matrix.SETUP_BUILD_ENV}}
-          python scripts/cmake/configure.py ${{matrix.BUILD_TYPE}} ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}} --unit_tests
+          python scripts/cmake/configure.py ${{matrix.BUILD_TYPE}} ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}} --warnings --unit_tests
           python scripts/cmake/build.py ${{matrix.BUILD_TYPE}}
           python scripts/cmake/install.py ${{matrix.BUILD_TYPE}}
 
