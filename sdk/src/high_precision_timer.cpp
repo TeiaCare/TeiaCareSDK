@@ -21,7 +21,7 @@ namespace tc::sdk
 high_precision_timer::high_precision_timer()
     : _is_running{true}
     , _interval{clock::duration::max()}
-    , _task{ nullptr }
+    , _task{nullptr}
 {
 }
 

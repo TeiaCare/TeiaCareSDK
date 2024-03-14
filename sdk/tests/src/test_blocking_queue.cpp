@@ -135,10 +135,10 @@ class test_blocking_queue_producer_consumer_int
 template <>
 blocking_queue_params_factory<int>::Items blocking_queue_params_factory<int>::create_items()
 {
-    Items items;
+    Items queue_items;
     for (size_t idx = 0; idx < blocking_queue_params_factory::ItemsSize; idx++)
-        items.at(idx) = idx;
-    return items;
+        queue_items.at(idx) = static_cast<int>(idx);
+    return queue_items;
 }
 
 // NOLINTNEXTLINE
@@ -168,10 +168,10 @@ class test_blocking_queue_producer_consumer_const_char_ptr
 template <>
 blocking_queue_params_factory<const char*>::Items blocking_queue_params_factory<const char*>::create_items()
 {
-    Items items;
+    Items queue_items;
     for (size_t idx = 0; idx < blocking_queue_params_factory::ItemsSize; idx++)
-        items.at(idx) = std::to_string(idx).c_str();
-    return items;
+        queue_items.at(idx) = std::to_string(idx).c_str();
+    return queue_items;
 }
 
 // NOLINTNEXTLINE
@@ -201,10 +201,10 @@ class test_blocking_queue_producer_consumer_string
 template <>
 blocking_queue_params_factory<std::string>::Items blocking_queue_params_factory<std::string>::create_items()
 {
-    Items items;
+    Items queue_items;
     for (size_t idx = 0; idx < blocking_queue_params_factory::ItemsSize; idx++)
-        items.at(idx) = std::to_string(idx);
-    return items;
+        queue_items.at(idx) = std::to_string(idx);
+    return queue_items;
 }
 
 // NOLINTNEXTLINE

@@ -14,6 +14,8 @@
 
 #include "test_stopwatch.hpp"
 
+#include <thread>
+
 using namespace std::chrono_literals;
 
 namespace tc::sdk::tests
@@ -78,9 +80,9 @@ TYPED_TEST(test_stopwatch_duration_t, elapsed_duration_types)
     ASSERT_TRUE(this->s.elapsed() > tc::sdk::time_duration::min());
     ASSERT_TRUE(this->s.elapsed() > std::chrono::duration_cast<duration_t>(tc::sdk::time_duration::min()));
     EXPECT_NEAR(
-        std::chrono::duration_cast<duration_t>(this->s.elapsed()).count(),
-        (this->s.template elapsed<duration_t>()).count(),
-        abs_error);
+        static_cast<double>(std::chrono::duration_cast<duration_t>(this->s.elapsed()).count()),
+        static_cast<double>((this->s.template elapsed<duration_t>()).count()),
+        static_cast<double>(abs_error));
 
     // see why the template syntax this->s.template elapsed<duration_t>() must be used here:
     // https://stackoverflow.com/questions/610245/where-and-why-do-i-have-to-put-the-template-and-typename-keywords

@@ -8,7 +8,7 @@ set(CONAN_CMAKE_SILENT_OUTPUT ON)
 option(TC_ENABLE_UNIT_TESTS "Enable Unit Tests" True)
 cmake_print_variables(TC_ENABLE_UNIT_TESTS)
 
-option(TC_ENABLE_UNIT_TESTS_COVERAGE "Enable Unit Tests Coverage" True)
+option(TC_ENABLE_UNIT_TESTS_COVERAGE "Enable Unit Tests Coverage" False)
 cmake_print_variables(TC_ENABLE_UNIT_TESTS_COVERAGE)
 
 option(TC_ENABLE_BENCHMARKS "Enable Benchmarks" False)
