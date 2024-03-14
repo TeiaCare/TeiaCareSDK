@@ -188,17 +188,33 @@ Benchmarks are installed in $PWD/install/benchmarks.
 
 ## Code Formatting
 - [clang-format](https://clang.llvm.org/docs/ClangFormat.html)
+
+*clang-format* can be installed via *pip* using the provided *scripts/requirements.txt*
+
 ```bash
 python scripts/tools/run_clang_format.py -r -i sdk
 ```
 
 ## Code Analysis
 - [clang-tidy](https://clang.llvm.org/extra/clang-tidy/)
+
+*clang-tidy* can be installed via *pip* using the provided *scripts/requirements.txt*
+
 ```bash
 python scripts/tools/run_clang_tidy.py -header-filter=.* sdk
 ```
 
 - [cppcheck](http://cppcheck.net/)
+
+First install and setup *cppcheck* from your OS package manager.
+```bash
+# Linux
+sudo apt install cppcheck
+
+# Windows
+winget install cppcheck
+```
+
 ```bash
 python scripts/tools/run_cppcheck.py <Debug|Release>
 ```
