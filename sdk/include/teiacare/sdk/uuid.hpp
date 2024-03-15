@@ -48,8 +48,7 @@ public:
     uuid(const uuid& other);
 
     /*!
-     * \brief Assignment operator
-     *
+     * \brief Assignment operator.  
      * Assign a tc::sdk::uuid instance to another one.
      */
     uuid& operator=(const uuid& other);

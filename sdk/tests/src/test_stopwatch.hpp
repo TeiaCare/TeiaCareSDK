@@ -31,7 +31,7 @@ protected:
     {
     }
 
-    tc::sdk::stopwatch s;
+    tc::sdk::stopwatch s{};
 };
 
 template <class DurationT>

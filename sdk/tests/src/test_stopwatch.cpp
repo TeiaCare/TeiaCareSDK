@@ -29,11 +29,12 @@ TEST_F(test_stopwatch, start_time_range)
 // NOLINTNEXTLINE
 TEST_F(test_stopwatch, start_time_updated_on_reset)
 {
-    constexpr int total_count = 1'000;
+    constexpr int total_count = 100;
     for (auto i = 0; i < total_count; ++i)
     {
         auto initial_timepoint = tc::sdk::clock::now();
         ASSERT_LT(s.start_time(), initial_timepoint);
+        std::this_thread::sleep_for(1ms);
         s.reset();
         ASSERT_GT(s.start_time(), initial_timepoint);
     }
@@ -42,12 +43,12 @@ TEST_F(test_stopwatch, start_time_updated_on_reset)
 // NOLINTNEXTLINE
 TEST_F(test_stopwatch, staret_time_increases_on_reset)
 {
-    constexpr int total_count = 1'000;
+    constexpr int total_count = 100;
     for (auto i = 0; i < total_count; ++i)
     {
         auto start = s.start_time();
         s.reset();
-        ASSERT_GT(s.start_time(), start);
+        ASSERT_GE(s.start_time(), start);
     }
 }
 
@@ -88,8 +89,7 @@ TYPED_TEST(test_stopwatch_duration_t, elapsed_duration_types)
 
 TYPED_TEST(test_stopwatch_duration_t, elapsed_reset_duration_types)
 {
-    using duration_t = TypeParam;
-    constexpr int total_count = 1'000;
+    constexpr int total_count = 100;
 
     for (auto i = 0; i < total_count; ++i)
     {

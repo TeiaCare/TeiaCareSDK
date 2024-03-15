@@ -10,8 +10,10 @@ set(UNIT_TESTS_SRC
     src/test_blocking_queue.hpp
     src/test_event_dispatcher.cpp
     src/test_event_dispatcher.hpp
+    src/test_geometry_point.cpp
+    src/test_geometry_point.hpp
     src/test_high_precision_timer.cpp
-    src/test_high_precision_timer.cpp
+    src/test_high_precision_timer.hpp
     src/test_observable.cpp
     src/test_observable.hpp
     src/test_rate_limiter.cpp
