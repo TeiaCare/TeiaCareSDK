@@ -14,9 +14,7 @@
 
 #pragma once
 
-#include <compare>
 #include <string>
-#include <ostream>
 
 namespace tc::sdk
 {
@@ -62,8 +60,7 @@ public:
     point& operator=(const point&) = default;
 
     /*!
-     * \brief Move assignment operator.
-     * Assign a tc::sdk::point instance to another one.
+     * \brief Move assignment operator. Assign a tc::sdk::point instance to another one.
      */
     point& operator=(point&&) = default;
 
@@ -115,8 +112,7 @@ public:
     }
 
     /*!
-     * \brief X coordinate setter.
-     * Set the X coordinate of the point.
+     * \brief X coordinate setter. Set the X coordinate of the point.
      */
     inline void set_x(T x) noexcept
     {
@@ -124,8 +120,7 @@ public:
     }
 
     /*!
-     * \brief Y coordinate setter.
-     * Set the Y coordinate of the point.
+     * \brief Y coordinate setter. Set the Y coordinate of the point.
      */
     inline void set_y(T y) noexcept
     {

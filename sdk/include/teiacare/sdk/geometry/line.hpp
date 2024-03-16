@@ -88,30 +88,44 @@ public:
      * \brief Check if the line is a point.
      * \return true if the start and end points are the same.
      */
-    constexpr bool is_point() const noexcept
+    constexpr bool is_null() const noexcept
     {
         return _start == _end;
     }
 
-    /** Returns true if the line's start and end x coordinates are the same. */
+    /*!
+     * \brief Check if the line is vertical.
+     * \return true if the start and end points have the same x coordinate.
+     */
     bool is_vertical() const noexcept
     {
         return _start.x() == _end.x();
     }
 
-    /** Returns true if the line's start and end y coordinates are the same. */
+    /*!
+     * \brief Check if the line is horizontal.
+     * \return true if the start and end points have the same y coordinate.
+     */
     bool is_horizontal() const noexcept
     {
         return _start.y() == _end.y();
     }
 
-    /** Compares two lines. */
+    /*!
+     * \brief Equality operator.
+     * \param other the line to compare against.
+     * \return true if the two lines have the same start and end points.
+     */
     bool operator==(line other) const noexcept
     {
         return _start == other._start && _end == other._end;
     }
 
-    /** Compares two lines. */
+    /*!
+     * \brief Inequality operator.
+     * \param other the line to compare against.
+     * \return true if the two lines have the different start or end points.
+     */
     bool operator!=(line other) const noexcept
     {
         return _start != other._start || _end != other._end;
