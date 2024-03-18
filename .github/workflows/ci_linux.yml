@@ -58,7 +58,8 @@ jobs:
           python scripts/cmake/build.py ${{matrix.BUILD_TYPE}}
           python scripts/cmake/install.py ${{matrix.BUILD_TYPE}}
 
-      - name: Set cores to get stored in /cores
+      - name: Setup Core Dumps
+        shell: bash
         run: |
           sudo mkdir /cores
           sudo chmod 777 /cores
@@ -66,15 +67,15 @@ jobs:
           sudo bash -c 'echo "/cores/%e.%p.%t" > /proc/sys/kernel/core_pattern'
 
       - name: Run Examples
-        continue-on-error: true
         shell: bash
         run: |
           ${{env.ACTIVATE_VIRTUAL_ENV}}
           ulimit -c unlimited
           python scripts/tools/run_examples.py install/examples
 
-      - uses: actions/upload-artifact@v3
-        if: ${{ failure() }}  # Run only if something went wrong
+      - name: Upload Core Dumps
+        uses: actions/upload-artifact@v3
+        if: ${{ failure() }}
         with:
           name: cores
           path: /cores
