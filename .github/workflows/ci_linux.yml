@@ -58,7 +58,7 @@ jobs:
           python scripts/cmake/build.py ${{matrix.BUILD_TYPE}}
           python scripts/cmake/install.py ${{matrix.BUILD_TYPE}}
 
-      - name: Setup Core Dumps
+      - name: Setup Examples Core Dumps
         shell: bash
         run: |
           sudo mkdir /cores
@@ -71,14 +71,15 @@ jobs:
         run: |
           ${{env.ACTIVATE_VIRTUAL_ENV}}
           ulimit -c unlimited
+          # Copy the examples executables into the core dump directory
           cp -r install/examples /cores/bin
           python scripts/tools/run_examples.py install/examples
 
-      - name: Upload Core Dumps
+      - name: Upload Examples Core Dumps
         uses: actions/upload-artifact@v3
         if: ${{ failure() }}
         with:
-          name: cores_${{matrix.BUILD_TYPE}}
+          name: Examples Core Dumps - ${{matrix.BUILD_TYPE}} ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}}
           path: /cores
 
       - name: Build Unit Tests
