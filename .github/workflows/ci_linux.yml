@@ -78,7 +78,7 @@ jobs:
         uses: actions/upload-artifact@v3
         if: ${{ failure() }}
         with:
-          name: cores
+          name: cores_${{matrix.BUILD_TYPE}}
           path: /cores
 
       - name: Build Unit Tests
