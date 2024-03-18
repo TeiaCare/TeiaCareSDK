@@ -19,7 +19,7 @@ from command import run, check_venv
 
 def parse():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("build_type", choices=['Debug', 'Release'])
+    parser.add_argument("build_type", choices=['Debug', 'Release', 'RelWithDebInfo'])
     parser.add_argument("--build_dir", help="Build Directory", required=False, default='./build')
     parser.add_argument("--install_dir", help="Install Directory", required=False, default='./install')
     return parser.parse_args()

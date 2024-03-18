@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        BUILD_TYPE: [Debug, Release]
+        BUILD_TYPE: [Debug, Release, RelWithDebInfo]
         COMPILER: [gcc, clang]
         OS: [ubuntu-22.04]
         include:
