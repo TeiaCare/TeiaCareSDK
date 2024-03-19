@@ -16,6 +16,8 @@
 
 #include <teiacare/sdk/geometry/point.hpp>
 
+#include <string>
+
 namespace tc::sdk
 {
 /*!

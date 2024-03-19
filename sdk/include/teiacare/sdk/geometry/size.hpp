@@ -93,39 +93,39 @@ public:
         return _width == 0 && _height == 0;
     }
 
-    // /*!
-    //  * \brief X coordinate getter.
-    //  * \return X coordinate of the size.
-    //  */
-    // constexpr inline T x() const noexcept
-    // {
-    //     return _x;
-    // }
+    /*!
+     * \brief Width dimension getter.
+     * \return Width dimension of the size.
+     */
+    constexpr inline T width() const noexcept
+    {
+        return _width;
+    }
 
-    // /*!
-    //  * \brief Y coordinate getter.
-    //  * \return Y coordinate of the size.
-    //  */
-    // constexpr inline T y() const noexcept
-    // {
-    //     return _y;
-    // }
+    /*!
+     * \brief Height dimension getter.
+     * \return Height dimension of the size.
+     */
+    constexpr inline T height() const noexcept
+    {
+        return _height;
+    }
 
-    // /*!
-    //  * \brief X coordinate setter. Set the X coordinate of the size.
-    //  */
-    // inline void set_x(T x) noexcept
-    // {
-    //     _x = x;
-    // }
+    /*!
+     * \brief Width coordinate setter. Set the width dimension of the size.
+     */
+    inline void set_width(T width) noexcept
+    {
+        _width = width;
+    }
 
-    // /*!
-    //  * \brief Y coordinate setter. Set the Y coordinate of the size.
-    //  */
-    // inline void set_y(T y) noexcept
-    // {
-    //     _y = y;
-    // }
+    /*!
+     * \brief Height coordinate setter. Set the height dimension of the size.
+     */
+    inline void set_height(T height) noexcept
+    {
+        _height = height;
+    }
 
     /*!
      * \brief Get the size string representation

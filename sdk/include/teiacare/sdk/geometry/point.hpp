@@ -15,6 +15,7 @@
 #pragma once
 
 #include <string>
+#include <cmath>
 
 namespace tc::sdk
 {
@@ -128,25 +129,25 @@ public:
     }
 
     /*!
-     * \brief Increments point's coordinate of x_delta and y_delta values.
-     * \param x_delta Value to be added to the current X coordinate.
-     * \param y_delta Value to be added to the current Y coordinate.
+     * \brief Increments point's coordinate of delta_x and delta_y values.
+     * \param delta_x Value to be added to the current X coordinate.
+     * \param delta_y Value to be added to the current Y coordinate.
      */
-    void add_delta(T x_delta, T y_delta) noexcept
+    void add_delta(T delta_x, T delta_y) noexcept
     {
-        _x += x_delta;
-        _y += y_delta;
+        _x += delta_x;
+        _y += delta_y;
     }
 
     /*!
-     * \brief Decrements point's coordinate of x_delta and y_delta values.
-     * \param x_delta Value to be added to the current X coordinate.
-     * \param y_delta Value to be added to the current Y coordinate.
+     * \brief Decrements point's coordinate of delta_x and delta_y values.
+     * \param delta_x Value to be added to the current X coordinate.
+     * \param delta_y Value to be added to the current Y coordinate.
      */
-    void sub_delta(T x_delta, T y_delta) noexcept
+    void sub_delta(T delta_x, T delta_y) noexcept
     {
-        _x -= x_delta;
-        _y -= y_delta;
+        _x -= delta_x;
+        _y -= delta_y;
     }
 
     /*!

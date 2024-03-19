@@ -13,6 +13,7 @@ set(TARGET_HEADERS
     include/teiacare/sdk/datetime/time.hpp
     include/teiacare/sdk/datetime/timedelta.hpp
 
+    include/teiacare/sdk/geometry/line.hpp
     include/teiacare/sdk/geometry/point.hpp
     include/teiacare/sdk/geometry/range.hpp
     include/teiacare/sdk/geometry/rectangle.hpp

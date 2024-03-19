@@ -159,8 +159,7 @@ public:
      */
     constexpr inline bool contains(range other) const noexcept
     {
-        // TODO
-        return true;
+        return _min <= other._min && _max >= other._max;
     }
 
     /*!
@@ -229,7 +228,7 @@ public:
     }
 
 
-    friend std::ostream& operator<<(std::ostream& stream, const range& p)
+    friend std::ostream& operator<<(std::ostream& stream, const range& r)
     {
         return stream << r.str();
     }
