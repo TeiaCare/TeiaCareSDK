@@ -24,7 +24,7 @@ namespace tc::sdk
  * \tparam T Value type.
  *
  */
-template<typename T>
+template <typename T>
 class range
 {
 public:
@@ -112,7 +112,7 @@ public:
     }
 
     /*!
-     * \brief Min value setter. Set the Min value of the range. 
+     * \brief Min value setter. Set the Min value of the range.
      * If the new min value is higher than the max value the two value will be set both to the new min (i.e. creating a null range).
      */
     inline void set_min(T min) noexcept
@@ -123,8 +123,8 @@ public:
     }
 
     /*!
-     * \brief Max value setter. Set the Max value of the range. 
-    * If the new max value is lower than the min value the two values will be set both to the new max (i.e. creating a null range).
+     * \brief Max value setter. Set the Max value of the range.
+     * If the new max value is lower than the min value the two values will be set both to the new max (i.e. creating a null range).
      */
     inline void set_max(T max) noexcept
     {
@@ -226,7 +226,6 @@ public:
     {
         return std::string("(" + std::to_string(_min) + ":" + std::to_string(_max) + ")");
     }
-
 
     friend std::ostream& operator<<(std::ostream& stream, const range& r)
     {

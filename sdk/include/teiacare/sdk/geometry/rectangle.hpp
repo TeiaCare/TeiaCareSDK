@@ -16,6 +16,7 @@
 
 #include <teiacare/sdk/geometry/point.hpp>
 #include <teiacare/sdk/geometry/size.hpp>
+#include <teiacare/sdk/math.hpp>
 
 #include <string>
 
@@ -107,7 +108,7 @@ public:
 
     /*!
      * \brief Check if the rectangle is the null.
-     * \return true if both width and height are zero.
+     * \return true if both width and height are zero or negative.
      */
     constexpr bool is_null() const noexcept
     {
@@ -235,12 +236,101 @@ public:
      * \param point The point that is checked.
      * \return true if the point is strictly contained in the current rectangle.
      */
-    constexpr inline bool contains(const tc::sdk::point<T>& point) const noexcept
+    bool contains(tc::sdk::point<T> point) const noexcept
     {
-        return point.x() > top_left().x() &&
-               point.x() < bottom_right().x() &&
-               point.y() > top_left().y() &&
-               point.y() < bottom_right().y();
+        return point.x() > _position.x() &&
+               point.y() > _position.y() &&
+               point.x() < _position.x() + _width &&
+               point.y() < _position.y() + _height;
+    }
+
+    /*!
+     * \brief Check if the given rectangle is strictly contained within the current rectangle.
+     * \param other The rectangle that is checked.
+     * \return true if the other rectangle is strictly contained in the current rectangle.
+     */
+    bool contains(tc::sdk::rectangle<T> other) const noexcept
+    {
+        return _position.x() < other._position.x() &&
+               _position.y() < other._position.y() &&
+               _position.x() + _width >= other._position.x() + other._width &&
+               _position.y() + _height >= other._position.y() + other._height;
+    }
+
+    /*!
+     * \brief Check if the given rectangle overlaps the current rectangle.
+     * \param other The rectangle to check the intersection with.
+     * \return true if this and the other rectangles are overlapped.
+     */
+    bool intersects(tc::sdk::rectangle<T> other) const noexcept
+    {
+        return _position.x() + w > other._position.x() &&
+               _position.y() + h > other._position.y() &&
+               _position.x() < other._position.x() + other._width &&
+               _position.y() < other._position.y() + other._height &&
+               !other.is_null() &&
+               !is_null();
+    }
+
+    /*!
+     * \brief Check if the given line pass through the current rectangle.
+     * \param line The line to check the intersection with.
+     * \return true if the given line intersects the current rectangle.
+     */
+    bool intersects(tc::sdk::line<T> line) const noexcept
+    {
+        return contains(line.start()) ||
+               contains(line.end()) ||
+               line.intersects(tc::sdk::line<T>(top_left(), top_right())) ||
+               line.intersects(tc::sdk::line<T>(top_right(), bottom_right())) ||
+               line.intersects(tc::sdk::line<T>(bottom_right(), bottom_left())) ||
+               line.intersects(tc::sdk::line<T>(bottom_left(), top_left()));
+    }
+
+    /** Returns the region that is the overlap between this and another rectangle.
+        If the two rectangles don't overlap, the rectangle returned will be empty.
+    */
+    tc::sdk::rectangle<T> get_intersection(tc::sdk::rectangle<T> other) const noexcept
+    {
+        if (is_null() || other.is_null())
+            return tc::sdk::rectangle<T>{};
+
+        auto intersection_x = tc::sdk::max(_position.x(), other._position.x());
+        auto intersection_y = tc::sdk::max(_position.y(), other._position.y());
+
+        auto intersection_width = tc::sdk::min(_position.x() + _width, other._position.x() + other._width) - intersection_x;
+        if (intersection_width < T())
+            return tc::sdk::rectangle<T>{};
+
+        auto intersection_height = tc::sdk::min(_position.y() + h, other._position.y() + other._height) - intersection_y;
+        if (intersection_height < T())
+            return tc::sdk::rectangle<T>{};
+
+        tc::sdk::point<T> intersection_position(intersection_x, intersection_y);
+        return tc::sdk::rectangle<T>(intersection_position, intersection_width, intersection_height);
+    }
+
+    /** Returns the smallest rectangle that contains both this one and the one passed-in.
+
+        If either this or the other rectangle are empty, they will not be counted as
+        part of the resulting region.
+    */
+    tc::sdk::rectangle<T> get_union(tc::sdk::rectangle<T> other) const noexcept
+    {
+        if (other.is_null())
+            return *this;
+
+        if (is_null())
+            return other;
+
+        auto union_x = tc::sdk::min(_position.x(), other._position.x());
+        auto union_y = tc::sdk::min(_position.y(), other._position.y());
+
+        auto union_width = tc::sdk::max(_position.x() + _width, other._position.x() + other._width) - union_x;
+        auto union_height = tc::sdk::max(_position.y() + _height, other._position.y() + other._height) - union_y;
+
+        tc::sdk::point<T> union_position(union_x, union_y);
+        return tc::sdk::rectangle<T>(union_position, union_width, union_height);
     }
 
     /*!
@@ -248,9 +338,22 @@ public:
      * \param point The point that is checked.
      * \return true if the point is strictly contained in the current rectangle.
      */
-    inline void translate(T delta_x, T delta_y) noexcept
+    void translate(T delta_x, T delta_y) noexcept
     {
         _position.add_delta(delta_x, delta_y);
+    }
+
+    /*!
+     * \brief TODO
+     * \param TODO
+     * \return TODO
+     */
+    tc::sdk::rect<T> normalize(tc::sdk::size<T> norm_size) const
+    {
+        auto norm_position_x = _position.x() / norm_size.width();
+        auto norm_position_y = _position.y() / norm_size.height();
+
+        return tc::sdk::rect<T>(tc::sdk::point<T>(norm_position_x, norm_position_y), _width / norm_size.width, _height / norm_size.height);
     }
 
     /*!

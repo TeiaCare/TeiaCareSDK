@@ -17,6 +17,7 @@
 #include <teiacare/sdk/geometry/point.hpp>
 
 #include <string>
+#include <optional>
 
 namespace tc::sdk
 {
@@ -165,6 +166,53 @@ public:
     inline void set_end(tc::sdk::point<T> end) noexcept
     {
         _end = end;
+    }
+
+    /*!
+     * \brief TODO
+     */
+    bool intersects(tc::sdk::line<T> other) const noexcept
+    {
+        return get_intersection(other) != std::nullopt;
+    }
+
+    /*!
+     * \brief TODO
+     */
+    std::optional<tc::sdk::point<T>> get_intersection(tc::sdk::line<T> other) const noexcept
+    {
+        // https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection#Given_two_points_on_each_line_segment
+
+        auto is_unit_range = [](T value) {
+            return T(0) <= value && value <= T(1);
+        };
+
+        T x_A = _start.x();
+        T y_A = _start.y();
+
+        T x_B = _end.x();
+        T y_B = _end.y();
+
+        T x_C = other._start.x();
+        T y_C = other._start.y();
+
+        T x_D = other._end.x();
+        T y_D = other._end.y();
+
+        T denom = ((x_A - x_B) * (y_C - y_D) - (y_A - y_B) * (x_C - x_D));
+
+        T t = ((x_A - x_C) * (y_C - y_D) - (y_A - y_C) * (x_C - x_D)) / denom;
+        if (!is_unit_range(t))
+            return std::nullopt;
+
+        T u = ((x_A - x_B) * (y_A - y_C) - (y_A - y_B) * (x_A - x_C)) / denom;
+        if (!is_unit_range(-u))
+            return std::nullopt;
+
+        T intersection_x = x_A + t * (x_B - x_A);
+        T intersection_y = y_A + t * (y_B - y_A);
+
+        return tc::sdk::point<T>(intersection_x, intersection_y);
     }
 
     /*!

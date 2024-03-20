@@ -24,6 +24,7 @@ set(TARGET_HEADERS
     include/teiacare/sdk/event_dispatcher.hpp
     include/teiacare/sdk/function_traits.hpp
     include/teiacare/sdk/high_precision_timer.hpp
+    include/teiacare/sdk/math.hpp
     include/teiacare/sdk/non_copyable.hpp
     include/teiacare/sdk/non_moveable.hpp
     include/teiacare/sdk/observable.hpp
