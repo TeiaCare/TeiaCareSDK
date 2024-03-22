@@ -68,8 +68,9 @@ int main()
     // Bind class member
     {
         Foo foo(0);
-        s.every(1s, std::bind(&Foo::update, &foo));
+        s.every("task_id", 1s, std::bind(&Foo::update, &foo));
         std::this_thread::sleep_for(3s);
+        s.remove_task("task_id");
 
         spdlog::info("foo: {}", foo.get());
     }
