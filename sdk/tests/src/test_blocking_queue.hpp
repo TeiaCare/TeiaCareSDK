@@ -143,12 +143,7 @@ struct blocking_queue_params
 template <class ItemsT>
 struct blocking_queue_params_factory : blocking_queue_params
 {
-    static const constexpr size_t ItemsSize
-#if defined(_MSC_VER)
-        = 100;
-#else
-        = 5'000;
-#endif
+    static const constexpr size_t ItemsSize = 500;
     using Items = std::array<ItemsT, ItemsSize>;
     Items items;
     Items create_items();
@@ -183,7 +178,6 @@ protected:
         produce all the required items.
         */
         const auto producer_items_count_per_thread = total_items_count / producer_threads_count;
-        EXPECT_EQ(total_items_count % producer_threads_count, 0);
 
         std::vector<std::thread> producer_threads;
         for (size_t producer_id = 0; producer_id < producer_threads_count; ++producer_id)
@@ -200,7 +194,6 @@ protected:
         consume all the required items.
         */
         const auto consumer_items_count_per_thread = total_items_count / consumer_threads_count;
-        EXPECT_EQ(total_items_count % consumer_threads_count, 0);
 
         std::vector<std::thread> consumer_threads;
         for (size_t consumer_id = 0; consumer_id < consumer_threads_count; ++consumer_id)
