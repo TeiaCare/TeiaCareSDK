@@ -12,7 +12,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        BUILD_TYPE: [Debug, Release]
+        BUILD_TYPE: [Debug, Release, RelWithDebInfo]
         COMPILER: [gcc, clang]
         OS: [ubuntu-22.04]
         include:
@@ -58,17 +58,41 @@ jobs:
           python scripts/cmake/build.py ${{matrix.BUILD_TYPE}}
           python scripts/cmake/install.py ${{matrix.BUILD_TYPE}}
 
+      - name: Setup Examples Core Dumps
+        shell: bash
+        run: |
+          sudo mkdir /cores
+          sudo chmod 777 /cores
+          # Core filenames will be of the form executable.pid.timestamp:
+          sudo bash -c 'echo "/cores/%e.%p.%t" > /proc/sys/kernel/core_pattern'
+
       - name: Run Examples
         shell: bash
         run: |
           ${{env.ACTIVATE_VIRTUAL_ENV}}
+          ulimit -c unlimited
+          # Copy the examples executables into the core dump directory
+          cp -r install/examples /cores/bin
           python scripts/tools/run_examples.py install/examples
+
+      - name: Upload Examples Core Dumps
+        uses: actions/upload-artifact@v3
+        if: ${{ failure() }}
+        with:
+          name: Examples Core Dumps - ${{matrix.BUILD_TYPE}} ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}}
+          path: /cores
 
       - name: Build Unit Tests
         shell: bash
         run: |
           ${{env.ACTIVATE_VIRTUAL_ENV}}
-          python scripts/cmake/configure.py ${{matrix.BUILD_TYPE}} ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}} --warnings --unit_tests
+          if [ "${{matrix.COMPILER}}" == "gcc" ] && [ "${{matrix.BUILD_TYPE}}" == "Release" ]; then
+            # Removed --warnings argument that adds the -Wall compiler flag, due to a bug in GTest 1.14.0 in Release
+            # https://github.com/google/googletest/issues/4108
+            python scripts/cmake/configure.py ${{matrix.BUILD_TYPE}} ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}} --unit_tests
+          else
+            python scripts/cmake/configure.py ${{matrix.BUILD_TYPE}} ${{matrix.COMPILER}} ${{matrix.COMPILER_VERSION}} --warnings --unit_tests
+          fi
           python scripts/cmake/build.py ${{matrix.BUILD_TYPE}}
           python scripts/cmake/install.py ${{matrix.BUILD_TYPE}}
 

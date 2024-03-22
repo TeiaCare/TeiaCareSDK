@@ -22,7 +22,7 @@ def check():
 
 def parse():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("build_type", help="Debug or Release", choices=['Debug', 'Release'])
+    parser.add_argument("build_type", help="Debug or Release", choices=['Debug', 'Release', 'RelWithDebInfo'])
     return parser.parse_args()
 
 def cppcheck(args):
