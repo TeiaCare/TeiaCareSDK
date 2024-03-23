@@ -28,4 +28,7 @@ include(options)
 validate_project_options()
 
 enable_testing()
-add_subdirectory(sdk)
+# add_subdirectory(sdk)
+
+add_executable(uuid_v2 sdk/main_uuid.cpp)
+target_compile_features(uuid_v2 PUBLIC cxx_std_20)
