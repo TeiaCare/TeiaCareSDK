@@ -35,21 +35,25 @@ TEST_F(test_stopwatch, start_time_updated_on_reset)
     for (auto i = 0; i < total_count; ++i)
     {
         auto initial_timepoint = tc::sdk::clock::now();
-        ASSERT_LT(s.start_time(), initial_timepoint);
+
+        auto start_before_reset = s.start_time();
+        ASSERT_LT(start_before_reset, initial_timepoint);
         s.reset();
-        ASSERT_GT(s.start_time(), initial_timepoint);
+        auto start_sfter_reset = s.start_time();
+        ASSERT_GT(start_after_reset, initial_timepoint);
     }
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_stopwatch, staret_time_increases_on_reset)
+TEST_F(test_stopwatch, start_time_increases_on_reset)
 {
     constexpr int total_count = 1'000;
     for (auto i = 0; i < total_count; ++i)
     {
-        auto start = s.start_time();
+        auto start_before_reset = s.start_time();
         s.reset();
-        ASSERT_GT(s.start_time(), start);
+        auto start_sfter_reset = s.start_time();
+        ASSERT_GT(start_after_reset, start_before_reset);
     }
 }
 
