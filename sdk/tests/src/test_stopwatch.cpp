@@ -40,7 +40,7 @@ TEST_F(test_stopwatch, start_time_updated_on_reset)
         ASSERT_LT(start_before_reset, initial_timepoint);
         s.reset();
         auto start_after_reset = s.start_time();
-        ASSERT_GT(start_sfter_reset, initial_timepoint);
+        ASSERT_GT(start_after_reset, initial_timepoint);
     }
 }
 
