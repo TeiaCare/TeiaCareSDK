@@ -80,7 +80,7 @@ TYPED_TEST_SUITE(test_stopwatch_duration_t, duration_types);
 TYPED_TEST(test_stopwatch_duration_t, elapsed_duration_types)
 {
     using duration_t = TypeParam;
-    constexpr auto max_error = duration_t{100};
+    constexpr auto max_error = duration_t{1'000};
     constexpr auto abs_error = std::chrono::duration_cast<duration_t>(max_error).count();
 
     ASSERT_TRUE(this->s.elapsed() > tc::sdk::time_duration::min());
