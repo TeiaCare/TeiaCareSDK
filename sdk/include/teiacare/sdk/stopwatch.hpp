@@ -32,8 +32,8 @@ public:
      *
      * Creates a tc::sdk::stopwatch instance.
      */
-    explicit stopwatch() // = default;
-      : _start_time{ tc::sdk::clock::now() }
+    explicit stopwatch()
+        : _start_time{tc::sdk::clock::now()}
     {
     }
 
@@ -86,7 +86,7 @@ public:
     }
 
 private:
-    tc::sdk::time_point _start_time; // = tc::sdk::clock::now();
+    tc::sdk::time_point _start_time;
 };
 
 }

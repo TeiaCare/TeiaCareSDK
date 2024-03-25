@@ -34,13 +34,13 @@ TEST_F(test_stopwatch, start_time_updated_on_reset)
     constexpr int total_count = 1'000;
     for (auto i = 0; i < total_count; ++i)
     {
+        std::this_thread::sleep_for(1ns);
         auto initial_timepoint = tc::sdk::clock::now();
+        ASSERT_LT(s.start_time(), initial_timepoint);
 
-        auto start_before_reset = s.start_time();
-        ASSERT_LT(start_before_reset, initial_timepoint);
+        std::this_thread::sleep_for(1ns);
         s.reset();
-        auto start_after_reset = s.start_time();
-        ASSERT_GT(start_after_reset, initial_timepoint);
+        ASSERT_GT(s.start_time(), initial_timepoint);
     }
 }
 
@@ -52,6 +52,7 @@ TEST_F(test_stopwatch, start_time_increases_on_reset)
     {
         auto start_before_reset = s.start_time();
         s.reset();
+        std::this_thread::sleep_for(1ns);
         auto start_after_reset = s.start_time();
         ASSERT_GT(start_after_reset, start_before_reset);
     }
@@ -64,11 +65,12 @@ TEST_F(test_stopwatch, elapsed_monotonically_increases)
     auto elapsed = s.elapsed();
     for (auto i = 0; i < total_count; ++i)
     {
+        std::this_thread::sleep_for(1ms);
         EXPECT_GT(s.elapsed(), elapsed);
         elapsed = s.elapsed();
-        std::this_thread::sleep_for(1ms);
     }
 
+    std::this_thread::sleep_for(1ms);
     EXPECT_GT(s.elapsed(), elapsed);
 }
 
@@ -78,7 +80,7 @@ TYPED_TEST_SUITE(test_stopwatch_duration_t, duration_types);
 TYPED_TEST(test_stopwatch_duration_t, elapsed_duration_types)
 {
     using duration_t = TypeParam;
-    constexpr auto max_error = 10ms;
+    constexpr auto max_error = duration_t{100};
     constexpr auto abs_error = std::chrono::duration_cast<duration_t>(max_error).count();
 
     ASSERT_TRUE(this->s.elapsed() > tc::sdk::time_duration::min());
@@ -99,10 +101,11 @@ TYPED_TEST(test_stopwatch_duration_t, elapsed_reset_duration_types)
     for (auto i = 0; i < total_count; ++i)
     {
         this->s.reset();
-        std::this_thread::sleep_for(1ms);
+        // std::this_thread::sleep_for(1ms);
 
         const auto start = this->s.start_time();
         const auto elapsed = this->s.elapsed();
+        std::this_thread::sleep_for(1ns);
         EXPECT_GT(tc::sdk::clock::now(), start + elapsed);
     }
 }

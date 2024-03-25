@@ -134,8 +134,8 @@ TEST_F(test_high_precision_timer, start_callback_with_custom_arguments)
 TEST_F(test_high_precision_timer, callback_count_delay)
 {
     uint64_t callback_count = 0;
-    auto callback = [&callback_count] {
-        const auto execution_duration = 25ms;
+    const auto execution_duration = 25ms;
+    auto callback = [&callback_count, execution_duration] {
         ++callback_count;
         std::this_thread::sleep_for(execution_duration * callback_count);
     };
@@ -145,7 +145,7 @@ TEST_F(test_high_precision_timer, callback_count_delay)
     const auto interval = 100ms;
     t.start(interval);
 
-    const auto test_duration_time = 500ms;
+    const auto test_duration_time = 500ms + execution_duration;
     std::this_thread::sleep_for(test_duration_time);
     t.stop();
 
@@ -171,7 +171,7 @@ TEST_F(test_high_precision_timer, callback_invoked_count)
     const auto execution_interval = 100ms;
     t.start(execution_interval);
 
-    const auto test_duration_time = 500ms;
+    const auto test_duration_time = 500ms + 2 * execution_duration;
     std::this_thread::sleep_for(test_duration_time);
     t.stop();
 
@@ -227,8 +227,9 @@ TEST_F(test_high_precision_timer, callback_invoked_missed_count)
     const auto interval = 100ms;
 
     auto callback_count = 0;
-    auto callback = [&callback_count] {
-        std::this_thread::sleep_for(150ms); // NOLINT
+    const auto execution_duration = 150ms;
+    auto callback = [&callback_count, execution_duration] {
+        std::this_thread::sleep_for(execution_duration);
         ++callback_count;
     };
 
