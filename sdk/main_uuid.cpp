@@ -4,48 +4,19 @@
 #include <limits>
 #include <optional>
 
-template <typename TChar>
-[[nodiscard]] constexpr inline unsigned char hex2char(TChar const ch) noexcept
-{
-    if (ch >= static_cast<TChar>('0') && ch <= static_cast<TChar>('9'))
-        return static_cast<unsigned char>(ch - static_cast<TChar>('0'));
-    if (ch >= static_cast<TChar>('a') && ch <= static_cast<TChar>('f'))
-        return static_cast<unsigned char>(10 + ch - static_cast<TChar>('a'));
-    if (ch >= static_cast<TChar>('A') && ch <= static_cast<TChar>('F'))
-        return static_cast<unsigned char>(10 + ch - static_cast<TChar>('A'));
-    return 0;
-}
-
-template <typename TChar>
-[[nodiscard]] constexpr inline bool is_hex(TChar const ch) noexcept
-{
-    return (ch >= static_cast<TChar>('0') && ch <= static_cast<TChar>('9')) ||
-           (ch >= static_cast<TChar>('a') && ch <= static_cast<TChar>('f')) ||
-           (ch >= static_cast<TChar>('A') && ch <= static_cast<TChar>('F'));
-}
-
-template <typename TChar>
-[[nodiscard]] constexpr std::basic_string_view<TChar> to_string_view(TChar const* str) noexcept
-{
-    if (str)
-        return str;
-    return {};
-}
-
 class uuid
 {
 public:
-    static inline constexpr char null[37] = "00000000-0000-0000-0000-000000000000";
-
     constexpr explicit uuid(const std::array<uint8_t, 16>& bytes) noexcept
-        : data{bytes}
+        : _bytes{bytes}
     {
     }
 
-    [[nodiscard]] inline std::string to_string() const
+    [[nodiscard]] constexpr inline std::string to_string() const
     {
-        static constexpr char guid_encoder[17] = "0123456789abcdef";
-        std::string uuid_str{uuid::null};
+        constexpr char uuid_characters[17] = "0123456789abcdef";
+        constexpr char null[37] = "00000000-0000-0000-0000-000000000000";
+        std::string uuid_str{null};
 
         for (size_t i = 0, index = 0; i < 36; ++i)
         {
@@ -54,117 +25,42 @@ public:
                 continue;
             }
 
-            uuid_str[i] = guid_encoder[data[index] >> 4 & 0x0f];
-            uuid_str[++i] = guid_encoder[data[index] & 0x0f];
+            uuid_str[i] = uuid_characters[_bytes[index] >> 4 & 0x0f];
+            uuid_str[++i] = uuid_characters[_bytes[index] & 0x0f];
             index++;
         }
 
         return uuid_str;
     }
 
-    template <typename StringType>
-    [[nodiscard]] constexpr static bool is_valid(StringType const& in_str) noexcept
-    {
-        auto str = to_string_view(in_str);
-        bool firstDigit = true;
-        size_t hasBraces = 0;
-        size_t index = 0;
-
-        if (str.empty())
-            return false;
-
-        if (str.front() == '{')
-            hasBraces = 1;
-        if (hasBraces && str.back() != '}')
-            return false;
-
-        for (size_t i = hasBraces; i < str.size() - hasBraces; ++i)
-        {
-            if (str[i] == '-')
-                continue;
-
-            if (index >= 16 || !is_hex(str[i]))
-            {
-                return false;
-            }
-
-            if (firstDigit)
-            {
-                firstDigit = false;
-            }
-            else
-            {
-                index++;
-                firstDigit = true;
-            }
-        }
-
-        if (index < 16)
-        {
-            return false;
-        }
-
-        return true;
-    }
-
-    template <typename StringType>
-    [[nodiscard]] constexpr static std::optional<uuid> from_string(StringType const& in_str) noexcept
-    {
-        auto str = to_string_view(in_str);
-        bool is_first_digit = true;
-        size_t has_braces = 0;
-        size_t index = 0;
-
-        std::array<uint8_t, 16> data{{0}};
-
-        if (str.empty())
-            return {};
-
-        if (str.front() == '{')
-            has_braces = 1;
-        
-        if (has_braces && str.back() != '}')
-            return {};
-
-        for (size_t i = has_braces; i < str.size() - has_braces; ++i)
-        {
-            if (str[i] == '-')
-                continue;
-
-            if (index >= 16 || !is_hex(str[i]))
-            {
-                return {};
-            }
-
-            if (is_first_digit)
-            {
-                data[index] = static_cast<uint8_t>(hex2char(str[i]) << 4);
-                is_first_digit = false;
-            }
-            else
-            {
-                data[index] = static_cast<uint8_t>(data[index] | hex2char(str[i]));
-                index++;
-                is_first_digit = true;
-            }
-        }
-
-        if (index < 16)
-        {
-            return {};
-        }
-
-        return uuid{data};
-    }
-
     bool operator==(const uuid& other)
     {
-        return data == other.data;
+        return _bytes == other._bytes;
     }
 
     bool operator!=(const uuid& other)
     {
         return !operator==(other);
+    }
+
+    bool operator<(const uuid& other)
+    {
+        return _bytes < other._bytes;
+    }
+
+    bool operator>(const uuid& other)
+    {
+        return _bytes > other._bytes;
+    }
+
+    bool operator<=(const uuid& other)
+    {
+        return !operator>(other);
+    }
+
+    bool operator>=(const uuid& other)
+    {
+        return !operator<(other);
     }
 
     friend std::ostream& operator<<(std::ostream& stream, const uuid& u)
@@ -173,7 +69,7 @@ public:
     }
 
 private:
-    alignas(uint32_t) std::array<uint8_t, 16> data;
+    alignas(uint32_t) std::array<uint8_t, 16> _bytes;
 };
 
 class uuid_random_generator
@@ -203,9 +99,140 @@ public:
         return uuid{bytes};
     }
 
+    [[nodiscard]] constexpr uuid from_string(std::string_view str) const
+    {
+        if (str.empty())
+            throw std::runtime_error("Invalid uuid format: unable to generate uuid from an empty string");
+
+        size_t has_braces = 0;
+        if (str.front() == '{')
+            has_braces = 1;
+
+        if (has_braces && str.back() != '}')
+            throw std::runtime_error("Invalid uuid format: first character is '{' but there is not a matching '}' as last character");
+
+        size_t byte_index = 0;
+        bool is_first_digit = true;
+        alignas(uint32_t) std::array<uint8_t, 16> bytes;
+
+        for (size_t i = has_braces; i < str.size() - has_braces; ++i)
+        {
+            if (str[i] == '-')
+                continue;
+
+            if (byte_index >= 16)
+            {
+                throw std::runtime_error("Invalid uuid format: uuid size is greater than 16 bytes");
+            }
+
+            if (!is_hex(str[i]))
+            {
+                throw std::runtime_error("Invalid uuid format: invalid character found: " + std::to_string(str[i]));
+            }
+
+            if (is_first_digit)
+            {
+                bytes[byte_index] = hex_to_uint8(str[i]) << 4;
+                is_first_digit = false;
+            }
+            else
+            {
+                bytes[byte_index] = bytes[byte_index] | hex_to_uint8(str[i]);
+                byte_index++;
+                is_first_digit = true;
+            }
+        }
+
+        if (byte_index < 16)
+        {
+            throw std::runtime_error("Invalid uuid format: uuid size is less than 16 bytes");
+        }
+
+        return uuid{bytes};
+    }
+
+    [[nodiscard]] constexpr bool is_valid(std::string_view str) const noexcept
+    {
+        if (str.empty())
+            return false;
+
+        size_t has_braces = 0;
+        if (str.front() == '{')
+            has_braces = 1;
+
+        if (has_braces && str.back() != '}')
+            return false;
+
+        size_t byte_index = 0;
+        bool is_first_digit = true;
+
+        for (size_t i = has_braces; i < str.size() - has_braces; ++i)
+        {
+            if (str[i] == '-')
+                continue;
+
+            if (byte_index >= 16 || !is_hex(str[i]))
+            {
+                return false;
+            }
+
+            if (is_first_digit)
+            {
+                is_first_digit = false;
+            }
+            else
+            {
+                byte_index++;
+                is_first_digit = true;
+            }
+        }
+
+        if (byte_index < 16)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
 private:
     std::mt19937 generator;
     std::uniform_int_distribution<uint32_t> distribution;
+
+    [[nodiscard]] constexpr inline bool is_hex(const char c) noexcept
+    {
+        return (c >= char('0') && c <= char('9')) ||
+            (c >= char('a') && c <= char('f')) ||
+            (c >= char('A') && c <= char('F'));
+    }
+
+    [[nodiscard]] constexpr inline unsigned char hex_to_uchar(const char ch) noexcept
+    {
+        if (ch >= char('0') && ch <= char('9'))
+            return static_cast<unsigned char>(ch - char('0'));
+
+        if (ch >= char('a') && ch <= char('f'))
+            return static_cast<unsigned char>(10 + ch - char('a'));
+
+        if (ch >= char('A') && ch <= char('F'))
+            return static_cast<unsigned char>(10 + ch - char('A'));
+
+        return 0;
+    }
+
+    [[nodiscard]] constexpr inline uint8_t hex_to_uint8(const char ch) noexcept
+    {
+        if (ch >= char('0') && ch <= char('9'))
+            return static_cast<uint8_t>(ch - char('0'));
+
+        if (ch >= char('a') && ch <= char('f'))
+            return static_cast<uint8_t>(10 + ch - char('a'));
+
+        if (ch >= char('A') && ch <= char('F'))
+            return static_cast<uint8_t>(10 + ch - char('A'));
+
+        return 0;
+    }
 };
 
 int main()
@@ -220,10 +247,17 @@ int main()
     auto g = uuid_random_generator{};
 
     auto u = g.create();
-    auto str = u.to_string();
-    std::cout << str << std::endl;
+    auto u_str = u.to_string();
+    std::cout << u_str << std::endl;
 
-    // std::cout << CppCommon::UUID::Nil() << std::endl;
+    auto u2 = g.from_string("376c4c64-a180-48ae-9f4a-b645e120d790");
+    std::cout << "376c4c64-a180-48ae-9f4a-b645e120d790: " << u2.to_string() << std::endl;
+
+    std::cout << "376c4c64-a180-48ae-9f4a-b645e120d790 is valid: " << g.is_valid("376c4c64-a180-48ae-9f4a-b645e120d790") << std::endl;
+    std::cout << "{376c4c64-a180-48ae-9f4a-b645e120d790} is valid: " << g.is_valid("{376c4c64-a180-48ae-9f4a-b645e120d790}") << std::endl;
+    std::cout << "376c4c64-xxxx-yyyy-9f4a-b645e120d790 is valid: " << g.is_valid("376c4c64-xxxx-yyyy-9f4a-b645e120d790") << std::endl;
+
+    std::string_view sw = "123abc";
 
     return 0;
 }

@@ -22,7 +22,7 @@ namespace tc::sdk
 {
 /*!
  * \class uuid_generator
- * \brief UUID Generator used to create tc::sdk::uuid objects
+ * \brief UUID Generator used to create and validate tc::sdk::uuid objects
  *
  * This class is a singleton that must be used to create instances of tc::sdk::uuid objects.
  */
@@ -30,36 +30,38 @@ class uuid_generator
 {
 public:
     /*!
-     * \brief Static method to retrieve the single instance to the underlying generator
-     * \return the uuid_generator unique instance
-     *
-     * Note that the constructor is private, thus it is not possible to create multiple uuid_generator instances.
+     * \brief Static method to retrieve the single instance to the underlying generator. Note that the constructor is private, thus it is not possible to create multiple uuid_generator instances.
+     * \return a reference to the uuid_generator unique instance
      */
     static uuid_generator& instance();
 
     /*!
      * \brief Create a random uuid V4.
      */
-    uuid create();
+    [[nodiscard]] tc::sdk::uuid create();
 
     /*!
-     * \brief Create a tc::sdk::uuid object from a std::string
-     *
-     * In case the provided string is not a valid uuid V4 a new valid uuid is returned.
+     * \brief Create a tc::sdk::uuid object from a std::string or a const char*.
+     * \param str the input string.
+     * \return the uuid object parsed from the input string.
+     * \throw std::runtime_error if the input string is not convertible to a valid uuid.
      */
-    uuid from_string(const std::string& s);
+    [[nodiscard]] tc::sdk::uuid from_string(std::string_view str) const;
 
     /*!
-     * \brief Create a tc::sdk::uuid object from a const char*
-     *
-     * In case the provided string is not a valid uuid V4 a new valid uuid is returned.
+     * \brief Check if a string is a valid uuid.
+     * \param str the input string.
+     * \return true if the string can be translated into a uuid object.
      */
-    uuid from_string(const char* raw);
+    [[nodiscard]] bool is_valid(std::string_view str) const noexcept;
 
 private:
-    uuid_generator();
-    std::mt19937_64 _generator;
-    std::uniform_int_distribution<uint64_t> _distribution;
+    explicit uuid_generator() noexcept;
+    [[nodiscard]] inline bool is_hex(const char c) const noexcept;
+    [[nodiscard]] inline uint8_t hex_to_uint8(const char c) const noexcept;
+
+    std::mt19937 _generator;
+    std::uniform_int_distribution<uint32_t> _distribution;
 };
 
 }
