@@ -62,7 +62,7 @@ TEST_F(test_task_scheduler, stop_immediate_while_running)
 TEST_F(test_task_scheduler, tasks_size_different_id)
 {
     EXPECT_EQ(ts->tasks_size(), 0);
-    constexpr size_t task_count = 32;
+    constexpr int task_count = 32;
 
     EXPECT_TRUE(ts->start());
     EXPECT_EQ(ts->tasks_size(), 0);
@@ -89,7 +89,7 @@ TEST_F(test_task_scheduler, tasks_size_same_id)
     EXPECT_TRUE(ts->start());
     EXPECT_EQ(ts->tasks_size(), 0);
 
-    constexpr size_t task_count = 32;
+    constexpr int task_count = 32;
 
     for (auto n = 0; n < task_count; ++n)
     {
@@ -109,7 +109,7 @@ TEST_F(test_task_scheduler, tasks_size_same_id)
 // NOLINTNEXTLINE
 TEST_F(test_task_scheduler, scheduled_tasks)
 {
-    constexpr size_t task_count = 32;
+    constexpr int task_count = 32;
 
     EXPECT_TRUE(ts->start());
     EXPECT_EQ(ts->tasks_size(), 0);
@@ -141,7 +141,7 @@ TEST_F(test_task_scheduler, scheduled_tasks)
 // NOLINTNEXTLINE
 TEST_F(test_task_scheduler, enabled_tasks)
 {
-    constexpr size_t task_count = 32;
+    constexpr int task_count = 32;
 
     EXPECT_TRUE(ts->start());
     EXPECT_EQ(ts->tasks_size(), 0);
@@ -173,7 +173,7 @@ TEST_F(test_task_scheduler, enabled_tasks)
 // NOLINTNEXTLINE
 TEST_F(test_task_scheduler, disabled_tasks)
 {
-    constexpr size_t task_count = 32;
+    constexpr int task_count = 32;
 
     EXPECT_TRUE(ts->start());
     EXPECT_EQ(ts->tasks_size(), 0);
@@ -218,7 +218,7 @@ TEST_F(test_task_scheduler, reenabled_tasks)
 // NOLINTNEXTLINE
 TEST_F(test_task_scheduler, removed_tasks)
 {
-    constexpr size_t task_count = 32;
+    constexpr int task_count = 32;
 
     EXPECT_TRUE(ts->start());
     EXPECT_EQ(ts->tasks_size(), 0);

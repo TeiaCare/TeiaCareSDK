@@ -20,7 +20,7 @@ uuid::uuid(const std::array<uint8_t, 16>& bytes) noexcept
     : _bytes{bytes}
 {
 }
-
+ 
 std::string uuid::to_string() const
 {
     constexpr char uuid_characters[17] = "0123456789abcdef";

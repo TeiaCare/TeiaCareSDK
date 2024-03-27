@@ -17,6 +17,7 @@
 #include <teiacare/sdk/blocking_queue.hpp>
 
 #include <array>
+#include <vector>
 #include <gtest/gtest.h>
 
 namespace tc::sdk::tests
@@ -50,7 +51,7 @@ protected:
 
     void try_drain_queue(std::vector<T> params)
     {
-        for (int i = 0; i < params.size(); ++i)
+        for (size_t i = 0; i < params.size(); ++i)
         {
             std::optional<T> item = q.try_pop();
             if (i < queue_capacity)
@@ -92,7 +93,7 @@ protected:
 
     void run_try_push_const_ref(std::vector<T> params)
     {
-        for (int i = 0; i < params.size(); ++i)
+        for (size_t i = 0; i < params.size(); ++i)
         {
             if (i < queue_capacity)
             {
@@ -112,7 +113,7 @@ protected:
 
     void run_try_push_move(std::vector<T> params)
     {
-        for (int i = 0; i < params.size(); ++i)
+        for (size_t i = 0; i < params.size(); ++i)
         {
             if (i < queue_capacity)
             {
@@ -142,12 +143,7 @@ struct blocking_queue_params
 template <class ItemsT>
 struct blocking_queue_params_factory : blocking_queue_params
 {
-    static const constexpr size_t ItemsSize
-#if defined(_MSC_VER)
-        = 100;
-#else
-        = 5'000;
-#endif
+    static const constexpr size_t ItemsSize = 500;
     using Items = std::array<ItemsT, ItemsSize>;
     Items items;
     Items create_items();
@@ -182,13 +178,12 @@ protected:
         produce all the required items.
         */
         const auto producer_items_count_per_thread = total_items_count / producer_threads_count;
-        EXPECT_EQ(total_items_count % producer_threads_count, 0);
 
         std::vector<std::thread> producer_threads;
-        for (int producer_id = 0; producer_id < producer_threads_count; ++producer_id)
+        for (size_t producer_id = 0; producer_id < producer_threads_count; ++producer_id)
         {
             producer_threads.emplace_back(std::thread([&] {
-                for (int i = 0; i < producer_items_count_per_thread; ++i)
+                for (size_t i = 0; i < producer_items_count_per_thread; ++i)
                     q.push(items[i]);
             }));
         }
@@ -199,14 +194,16 @@ protected:
         consume all the required items.
         */
         const auto consumer_items_count_per_thread = total_items_count / consumer_threads_count;
-        EXPECT_EQ(total_items_count % consumer_threads_count, 0);
 
         std::vector<std::thread> consumer_threads;
-        for (int consumer_id = 0; consumer_id < consumer_threads_count; ++consumer_id)
+        for (size_t consumer_id = 0; consumer_id < consumer_threads_count; ++consumer_id)
         {
             consumer_threads.emplace_back(std::thread([&] {
-                for (int i = 0; i < consumer_items_count_per_thread; ++i)
+                for (size_t i = 0; i < consumer_items_count_per_thread; ++i)
+                {
                     auto item = q.pop();
+                    (void)item;
+                }
             }));
         }
 

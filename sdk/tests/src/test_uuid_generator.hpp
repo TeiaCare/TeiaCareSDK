@@ -49,7 +49,7 @@ protected:
             // TODO: perform explicit check to verify that each i-th items of the string
             // satisfies the alphanumeric regex [0-9][a-z][A-Z]
 
-            // 0-7 
+            // 0-7
             for (int index = 0; index <= 7; ++index)
                 EXPECT_NE('-', uuid_str[index]);
 
@@ -64,7 +64,7 @@ protected:
             // 19-22
             for (int index = 19; index <= 22; ++index)
                 EXPECT_NE('-', uuid_str[index]);
-            
+
             // 23-35
             for (int index = 24; index <= 35; ++index)
                 EXPECT_NE('-', uuid_str[index]);
