@@ -29,13 +29,3 @@ validate_project_options()
 
 enable_testing()
 add_subdirectory(sdk)
-
-# add_executable(uuid_v2 sdk/main_uuid.cpp)
-# target_compile_features(uuid_v2 PUBLIC cxx_std_20)
-
-# include(warnings)
-# add_warnings(uuid_v2)
-# add_warnings_as_errors(uuid_v2)
-
-# include(sanitizer_address)
-# add_sanitizer_address(uuid_v2)
