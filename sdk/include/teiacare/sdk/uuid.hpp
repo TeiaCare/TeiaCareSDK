@@ -16,6 +16,7 @@
 
 #include <stdint.h>
 #include <string>
+#include <array>
 
 namespace tc::sdk
 {
@@ -34,71 +35,106 @@ class uuid
 
 public:
     /*!
-     * \brief Constructor
-     *
-     * Create an empty instance of a tc::sdk::uuid object.
+     * \brief Constructor. Create an empty instance of a tc::sdk::uuid object.
      */
-    explicit uuid() = default;
+    explicit constexpr uuid() noexcept
+        : _bytes{std::array<uint8_t, 16>()}
+    {
+    }
 
     /*!
-     * \brief Copy constructor
-     *
-     * Copy a tc::sdk::uuid instance to another one.
+     * \brief Copy constructor. Copy a tc::sdk::uuid instance to another one.
      */
-    uuid(const uuid& other);
+    uuid(const uuid& other) = default;
 
     /*!
-     * \brief Assignment operator
-     *
-     * Assign a tc::sdk::uuid instance to another one.
+     * \brief Move constructor. Move a tc::sdk::uuid instance to another one.
      */
-    uuid& operator=(const uuid& other);
+    uuid(uuid&& other) = default;
 
     /*!
-     * \brief Get the uuid bytes representation.
+     * \brief Move assignment operator. Move a tc::sdk::uuid instance to another one.
      */
-    std::string bytes() const;
+    uuid& operator=(uuid&& other) = default;
+
+    /*!
+     * \brief Copy assignment operator. Copy a tc::sdk::uuid instance to another one.
+     */
+    uuid& operator=(const uuid& other) = default;
 
     /*!
      * \brief Get the uuid string representation
      */
-    std::string str() const;
+    [[nodiscard]] std::string to_string() const;
 
     /*!
-     * \brief Get the uuid hash representation
+     * \brief Equality operator.
+     * \param other the uuid to compare against.
+     * \return true if the two uuid have the same bytes.
      */
-    size_t hash() const;
+    constexpr inline bool operator==(const uuid& other) const noexcept
+    {
+        return _bytes == other._bytes;
+    }
 
-    friend bool operator==(const uuid& lhs, const uuid& rhs);
-    friend bool operator<(const uuid& lhs, const uuid& rhs);
-    friend bool operator!=(const uuid& lhs, const uuid& rhs);
-    friend bool operator>(const uuid& lhs, const uuid& rhs);
-    friend bool operator<=(const uuid& lhs, const uuid& rhs);
-    friend bool operator>=(const uuid& lhs, const uuid& rhs);
+    /*!
+     * \brief Inequality operator.
+     * \param other the uuid to compare against.
+     * \return true if the two lines have different bytes.
+     */
+    constexpr inline bool operator!=(const uuid& other) const noexcept
+    {
+        return !operator==(other);
+    }
 
-    friend std::ostream& operator<<(std::ostream& stream, const uuid& uuid);
+    /*!
+     * \brief Comparison operator less.
+     * \param other the uuid to compare against.
+     * \return true if this instance has a byte payload less than the other instance.
+     */
+    constexpr inline bool operator<(const uuid& other) const noexcept
+    {
+        return _bytes < other._bytes;
+    }
+
+    /*!
+     * \brief Comparison operator greater.
+     * \param other the uuid to compare against.
+     * \return true if this instance has a byte payload greater than the other instance.
+     */
+    constexpr inline bool operator>(const uuid& other) const noexcept
+    {
+        return _bytes > other._bytes;
+    }
+
+    /*!
+     * \brief Comparison operator less or equal.
+     * \param other the uuid to compare against.
+     * \return true if this instance has a byte payload less or equal than the other instance.
+     */
+    constexpr inline bool operator<=(const uuid& other) const noexcept
+    {
+        return !operator>(other);
+    }
+
+    /*!
+     * \brief Comparison operator greater or equal.
+     * \param other the uuid to compare against.
+     * \return true if this instance has a byte payload greater or equal than the other instance.
+     */
+    constexpr inline bool operator>=(const uuid& other) const noexcept
+    {
+        return !operator<(other);
+    }
+
+    friend std::ostream& operator<<(std::ostream& stream, const uuid& u) noexcept
+    {
+        return stream << u.to_string();
+    }
 
 private:
-    uuid(uint64_t x, uint64_t y);
-    uuid(const uint8_t* bytes);
-    uuid(const std::string& bytes);
-
-    void bytes(char* bytes) const;
-    void str(char* res) const;
-
-    alignas(128) uint8_t data[16]; // NOLINT
+    explicit uuid(const std::array<uint8_t, 16>& bytes) noexcept;
+    alignas(uint32_t) std::array<uint8_t, 16> _bytes;
 };
 
 }
-
-// namespace std
-// {
-// template <>
-// struct hash<tc::sdk::uuid>
-// {
-//     size_t operator()(const tc::sdk::uuid& uuid) const
-//     {
-//         return uuid.hash();
-//     }
-// };
-// }
