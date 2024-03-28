@@ -87,4 +87,15 @@ TEST_F(test_uuid, str)
     EXPECT_NE(uuid_2.to_string(), null_uuid.to_string());
 }
 
+// NOLINTNEXTLINE
+TEST_F(test_uuid, ostream)
+{
+    const auto uuid = create();
+    const auto s = uuid.to_string();
+
+    std::stringstream stream;
+    stream << uuid.to_string();
+    EXPECT_STREQ(stream.str().c_str(), uuid.to_string().c_str());
+}
+
 }

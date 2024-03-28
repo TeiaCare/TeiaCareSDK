@@ -261,6 +261,20 @@ TEST_F(test_task_scheduler, removed_missing_tasks)
 }
 
 // NOLINTNEXTLINE
+TEST_F(test_task_scheduler, duplicate_task_id)
+{
+    const char* task_id = "TASK_ID";
+    EXPECT_FALSE(ts->is_scheduled(task_id));
+
+    ts->start();
+
+    EXPECT_TRUE(ts->in(task_id, 3min, simple_task).has_value());
+    EXPECT_FALSE(ts->in(task_id, 3min, simple_task).has_value());
+
+    EXPECT_TRUE(ts->is_scheduled(task_id));
+}
+
+// NOLINTNEXTLINE
 TEST_F(test_task_scheduler, remove_last_scheduled_task)
 {
 }
@@ -332,12 +346,15 @@ TEST_F(test_task_scheduler_in, task_id)
     EXPECT_TRUE(ts->is_enabled(task_id));
     EXPECT_TRUE(ts->set_enabled(task_id, false));
     EXPECT_FALSE(ts->is_enabled(task_id));
+    EXPECT_FALSE(ts->get_interval(task_id).has_value());
     EXPECT_FALSE(ts->update_interval(task_id, 3ms)); // Can be updated for "every()" api only
+    EXPECT_FALSE(ts->get_interval(task_id).has_value());
     EXPECT_TRUE(ts->remove_task(task_id));
     EXPECT_FALSE(ts->remove_task(task_id));
     EXPECT_FALSE(ts->is_scheduled(task_id));
     EXPECT_FALSE(is_pending());
     EXPECT_FALSE(ts->update_interval(task_id, 3ms));
+    EXPECT_FALSE(ts->get_interval(task_id).has_value());
 
     ts->in("TASK_ID", 3ms, task);
     wait_execution();
@@ -445,12 +462,15 @@ TEST_F(test_task_scheduler_at, task_id)
     EXPECT_TRUE(ts->is_enabled(task_id));
     EXPECT_TRUE(ts->set_enabled(task_id, false));
     EXPECT_FALSE(ts->is_enabled(task_id));
+    EXPECT_FALSE(ts->get_interval(task_id).has_value());
     EXPECT_FALSE(ts->update_interval(task_id, 3ms)); // Can be updated for "every()" api only
+    EXPECT_FALSE(ts->get_interval(task_id).has_value());
     EXPECT_TRUE(ts->remove_task(task_id));
     EXPECT_FALSE(ts->remove_task(task_id));
     EXPECT_FALSE(ts->is_scheduled(task_id));
     EXPECT_FALSE(is_pending());
     EXPECT_FALSE(ts->update_interval(task_id, 3ms));
+    EXPECT_FALSE(ts->get_interval(task_id).has_value());
 
     ts->at("TASK_ID", tc::sdk::clock::now() + 3ms, task);
     wait_execution();
@@ -492,6 +512,40 @@ TEST_F(test_task_scheduler_at, wait_completion)
 
     EXPECT_TRUE(result.has_value());
     result->wait();
+    EXPECT_TRUE(is_executed());
+}
+
+// NOLINTNEXTLINE
+TEST_F(test_task_scheduler_at, add_before_start)
+{
+    std::optional<std::future<void>> result;
+
+    result = ts->at(tc::sdk::clock::now() + 5ms, task);
+    EXPECT_FALSE(result.has_value());
+    EXPECT_FALSE(is_executed());
+
+    result = ts->at(tc::sdk::clock::now() + 5ms, task_with_argument, 42);
+    EXPECT_FALSE(result.has_value());
+    EXPECT_FALSE(is_executed());
+
+    result = ts->at("task_id", tc::sdk::clock::now() + 5ms, task_with_argument, 42);
+    EXPECT_FALSE(result.has_value());
+    EXPECT_FALSE(is_executed());
+
+    ts->start();
+
+    result = ts->at(tc::sdk::clock::now() + 5ms, task);
+    EXPECT_TRUE(result.has_value());
+    result->wait();
+
+    result = ts->at(tc::sdk::clock::now() + 5ms, task_with_argument, 42);
+    EXPECT_TRUE(result.has_value());
+    result->wait();
+
+    result = ts->at("task_id", tc::sdk::clock::now() + 5ms, task_with_argument, 42);
+    EXPECT_TRUE(result.has_value());
+    result->wait();
+
     EXPECT_TRUE(is_executed());
 }
 
@@ -558,12 +612,15 @@ TEST_F(test_task_scheduler_every, task_id)
     EXPECT_TRUE(ts->is_enabled(task_id));
     EXPECT_TRUE(ts->set_enabled(task_id, false));
     EXPECT_FALSE(ts->is_enabled(task_id));
+    EXPECT_EQ(ts->get_interval(task_id).value(), 2min);
     EXPECT_TRUE(ts->update_interval(task_id, 5ms));
+    EXPECT_EQ(ts->get_interval(task_id).value(), 5ms);
     EXPECT_TRUE(ts->remove_task(task_id));
     EXPECT_FALSE(ts->remove_task(task_id));
     EXPECT_FALSE(ts->is_scheduled(task_id));
     EXPECT_FALSE(is_pending());
     EXPECT_FALSE(ts->update_interval(task_id, 5ms));
+    EXPECT_FALSE(ts->get_interval(task_id).has_value());
 
     EXPECT_TRUE(ts->every("TASK_ID", 2min, task));
     EXPECT_TRUE(ts->update_interval(task_id, 5ms));
