@@ -14,7 +14,7 @@ TeiaCareSDK is a collection of reusable C++ components designed to make your dev
 * **Date & Time:** Master dates, times, and durations with ease using dedicated classes for manipulation, validation, formatting, conversions, timezones, and arithmetic operations.
 * **Concurrency:** Take control of concurrent execution with thread-safe modules for managing tasks, queues, events, and thread pools, enabling efficient parallel processing.
 * **Synchronization & Control:** Maintain data integrity and program flow with modules for rate limiting, observing data changes, and accurately measuring elapsed time, ensuring thread safety and coordinated execution.
-* **Platform Agnostic:** Benefit from cross-platform compatibility with modules that adapt to your system's specifics, like endianness and version information, guaranteeing seamless code execution across different environments.
+* **Platform Agnostic:** Benefit from cross-platform compatibility with modules that adapt to your system's specifics, like version information, guaranteeing seamless code execution across different environments.
 * **Singletons & Services:** Create and manage global instances effectively with a dedicated module, and organize your application logic with a service locator, achieving centralized access to essential services and a clean code structure.
 * **Enhanced Code Safety:** Enforce best practices with base classes that prevent copying and moving objects, use a module to signal unexpected code paths, and leverage metaprogramming techniques for function analysis in unit testing, promoting robust and secure code.
 * **Unique Identifier Generation:** Easily generate and manage Universally Unique Identifiers (UUIDs) with dedicated classes, allowing for effortless creation and tracking of unique identifiers for your entities.
@@ -36,7 +36,6 @@ TeiaCareSDK is a collection of reusable C++ components designed to make your dev
 | Datetime             | Classes for date, time, and duration handling, including validation, formatting, conversions, timezones, and arithmetic operations.  |
 | Blocking Queue       | Thread-safe blocking queue with fixed capacity, offering blocking push/pop and optional try_push/try_pop.                            |
 | Clock                | Wrappers and utilities steady_clock, time_point and duration.                                                                        |
-| Endianess            | Cross-platform endianness detection and byte-swapping header.                                                                        |
 | Event Dispatcher     | Event dispatcher with thread pool, supporting handler registration, event emission, and removal with various argument types.         |
 | Function Traits      | Template metaprogramming to extract function information and create std::function wrappers.                                          |
 | High Precision Timer | High-precision timer with millisecond accuracy, offering start/stop, callback setting, and missed/invoked callback counts.           |
