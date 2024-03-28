@@ -15,7 +15,6 @@
 
 #include "test_high_precision_timer.hpp"
 
-#include "utils.hpp"
 #include <gmock/gmock.h>
 #include <semaphore>
 #include <thread>
