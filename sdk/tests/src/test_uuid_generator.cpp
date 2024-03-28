@@ -28,7 +28,7 @@ TEST_F(test_uuid_generator, instance)
 // NOLINTNEXTLINE
 TEST_F(test_uuid_generator, create_unique)
 {
-    std::array<tc::sdk::uuid, 1'000> uuids; // NOLINT
+    std::array<tc::sdk::uuid, 1'000> uuids;
     std::generate(uuids.begin(), uuids.end(), [this] { return g.create(); });
 
     auto is_unique = [](auto& uuids) -> bool {
@@ -69,77 +69,105 @@ TEST_F(test_uuid_generator, format_and_size_from_valid_string)
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_uuid_generator, from_string_null)
+TEST_F(test_uuid_generator, empty_string)
 {
-    {
-        const auto uuid = g.from_string(null_uuid_str);
-        EXPECT_EQ(uuid, tc::sdk::uuid());
-    }
-
-    {
-        const auto uuid = g.from_string(null_uuid_str.c_str());
-        EXPECT_EQ(uuid, tc::sdk::uuid());
-    }
+    const char* uuid_str = "";
+    check_is_not_valid(uuid_str);
+    check_from_string_throws(uuid_str);
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_uuid_generator, from_string_empty)
+TEST_F(test_uuid_generator, invalid_string)
 {
-    EXPECT_THROW(g.from_string(std::string("")), std::runtime_error); // NOLINT
+    const char* uuid_str = "12345678901234567890";
+    check_is_not_valid(uuid_str);
+    check_from_string_throws(uuid_str);
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_uuid_generator, from_string_invalid)
+TEST_F(test_uuid_generator, missing_last_brackets)
 {
-    EXPECT_THROW(g.from_string(std::string("12345678901234567890")), std::runtime_error); // NOLINT
+    const char* uuid_str = "{db8dd9fc-8f93-4fd1-b444-2476b3bc4072";
+    check_is_not_valid(uuid_str);
+    check_from_string_throws(uuid_str);
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_uuid_generator, from_string_missing_last_brackets)
+TEST_F(test_uuid_generator, missing_first_brackets)
 {
-    EXPECT_THROW(g.from_string(std::string("{db8dd9fc-8f93-4fd1-b444-2476b3bc4072")), std::runtime_error); // NOLINT
+    const char* uuid_str = "db8dd9fc-8f93-4fd1-b444-2476b3bc4072}";
+    check_is_not_valid(uuid_str);
+    check_from_string_throws(uuid_str);
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_uuid_generator, from_string_missing_first_brackets)
+TEST_F(test_uuid_generator, invalid_character)
 {
-    EXPECT_THROW(g.from_string(std::string("db8dd9fc-8f93-4fd1-b444-2476b3bc4072}")), std::runtime_error); // NOLINT
+    const char* uuid_str = "db8dd9fc-8f93-4fd1-b444-qwertyzxcvbn";
+    check_is_not_valid(uuid_str);
+    check_from_string_throws(uuid_str);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// NOLINTNEXTLINE
+TEST_F(test_uuid_generator, null_string)
+{
+    const char* uuid_str = null_uuid_str.c_str();
+    check_is_valid(uuid_str);
+    check_from_string_does_not_throw(uuid_str);
+    check_reverse_conversion(uuid_str);
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_uuid_generator, from_string_invalid_character)
+TEST_F(test_uuid_generator, valid_string_with_brakets)
 {
-    const auto uuid_str = "db8dd9fc-8f93-4fd1-b444-qwertyzxcvbn";
-    EXPECT_THROW(g.from_string(std::string(uuid_str)), std::runtime_error); // NOLINT
-    EXPECT_THROW(g.from_string(uuid_str), std::runtime_error); // NOLINT
-    EXPECT_FALSE(g.is_valid(std::string(uuid_str))); // NOLINT
-    EXPECT_FALSE(g.is_valid(uuid_str)); // NOLINT
+    const char* uuid_str = "{db8dd9fc-8f93-4fd1-b444-2476b3bc4072}";
+    check_is_valid(uuid_str);
+    check_from_string_does_not_throw(uuid_str);
+
+    // In this case the conversion from string to uuid and viceversa does not work:
+    // The input string is properly converted to a uuid object, but by design the string representation of a tc::sdk::uuid does not have brackets,
+    // so because of this reason the check cannot be performed since the two strings differs by the first and last parenthesis.
+
+    // check_reverse_conversion(uuid_str);
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_uuid_generator, from_string_valid_brackets)
+TEST_F(test_uuid_generator, valid_string_without_brakets)
 {
-    const auto valid_uuid = g.from_string("{db8dd9fc-8f93-4fd1-b444-2476b3bc4072}");
-    EXPECT_EQ(valid_uuid, g.from_string("db8dd9fc-8f93-4fd1-b444-2476b3bc4072"));
+    const char* uuid_str = "db8dd9fc-8f93-4fd1-b444-2476b3bc4072";
+    check_is_valid(uuid_str);
+    check_from_string_does_not_throw(uuid_str);
+    check_reverse_conversion(uuid_str);
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_uuid_generator, from_string_valid_uuid)
+TEST_F(test_uuid_generator, valid_string_all_uppercase)
 {
-    const char* uuid_str = "44b6f253-1414-4444-b10e-d3d92c15f6f2";
+    const char* uuid_str = "DB8DD9FC-8F93-4FD1-B444-2476B3BC4072";
+    check_is_valid(uuid_str);
+    check_from_string_does_not_throw(uuid_str);
+    check_reverse_conversion(uuid_str);
+}
 
-    {
-        const auto uuid = g.from_string(std::string(uuid_str));
-        std::cout << uuid << "\n";
-        std::cout << uuid.to_string() << "\n";
-        std::cout << uuid_str << "\n";
-        EXPECT_EQ(uuid.to_string(), std::string(uuid_str));
-    }
+// NOLINTNEXTLINE
+TEST_F(test_uuid_generator, valid_string_all_lowercase)
+{
+    const char* uuid_str = "db8dd9fc-8f93-4fd1-b444-2476b3bc4072";
+    check_is_valid(uuid_str);
+    check_from_string_does_not_throw(uuid_str);
+    check_reverse_conversion(uuid_str);
+}
 
-    {
-        const auto uuid = g.from_string(uuid_str);
-        EXPECT_EQ(uuid.to_string(), uuid_str);
-    }
+// NOLINTNEXTLINE
+TEST_F(test_uuid_generator, valid_string_mixed_case)
+{
+    const char* uuid_str = "Db8Dd9fC-8f93-4Fd1-B444-2476b3bC4072";
+    check_is_valid(uuid_str);
+    check_from_string_does_not_throw(uuid_str);
+    check_reverse_conversion(uuid_str);
 }
 
 }

@@ -14,9 +14,10 @@
 
 #pragma once
 
+#include <array>
+#include <ostream>
 #include <stdint.h>
 #include <string>
-#include <array>
 
 namespace tc::sdk
 {

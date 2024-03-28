@@ -31,7 +31,7 @@ int main()
     spdlog::info("\n\ntc::sdk::uuid::uuid() [null/empty UUID]");
     auto null = tc::sdk::uuid();
     spdlog::info(null.to_string());
-    
+
     spdlog::info("\n\ntc::sdk::uuid_generator::from_string()");
     auto uuidstr = uuid_generator.from_string("a142011e-58fa-4415-a0ea-e3ace6597fc8");
     spdlog::info(uuidstr.to_string());
