@@ -26,7 +26,7 @@ def parse():
 def run_ctest(args):
     run([
         'ctest',
-        '--parallel', '4',
+        '--parallel', '1',
         '--test-dir', f'{args.test_dir}/{args.build_type}',
         '--output-junit', args.xml_results_path,
         '--timeout', '30', # seconds

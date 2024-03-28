@@ -1,7 +1,14 @@
 # TeiaCareSDK
 Welcome to TeiaCareSDK!
 
-TeiaCareSDK is a collection of well-crafted C++ modules designed to make your development journey smoother, faster, and more enjoyable. With its modular approach and extensive features, TeiaCareSDK empowers you to focus on the core functionality of your application while providing essential building blocks for common tasks.
+
+TeiaCareSDK is a collection of reusable C++ components designed to make your development journey smoother, faster, and more enjoyable. With its modular approach and extensive features, TeiaCareSDK empowers you to focus on the core functionality of your application while providing essential building blocks for common tasks.
+
+<br>
+
+![TeiaCareSDK](https://socialify.git.ci/TeiaCare/TeiaCareSDK/image?description=1&font=Raleway&name=1&pattern=Solid&theme=Dark)
+
+<br>
 
 ## Key Features
 * **Date & Time:** Master dates, times, and durations with ease using dedicated classes for manipulation, validation, formatting, conversions, timezones, and arithmetic operations.

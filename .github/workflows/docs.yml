@@ -1,0 +1,59 @@
+name: Docs
+
+on:
+  push:
+    branches:
+      - 'develop'
+      - 'feature/docs'
+  
+  workflow_dispatch:
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: Build Docs
+        uses: docker/build-push-action@v5
+        with:
+          file: Dockerfile.docs
+          target: docs
+          outputs: 'type=local,dest=docs'
+
+      - name: Create dummy Docs
+        run: |
+          sudo chmod a+rwx docs
+          
+      - name: Upload Docs
+        uses: actions/upload-pages-artifact@v3
+        with:
+          name: github-pages
+          path: 'docs'
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: github-pages
