@@ -16,8 +16,8 @@
 
 namespace tc::sdk::tests
 {
-using point_types = testing::Types<int, unsigned int, float, double, long>;
-TYPED_TEST_SUITE(test_geometry_point_t, point_types);
+using types = testing::Types<int, unsigned int, float, double, long>;
+TYPED_TEST_SUITE(test_geometry_point_t, types);
 
 TYPED_TEST(test_geometry_point_t, create)
 {
@@ -221,24 +221,35 @@ TYPED_TEST(test_geometry_point_t, to_string)
         // = 4294967292
         auto x =  std::numeric_limits<unsigned int>::max() + 1 + p1.x();
         auto y =  std::numeric_limits<unsigned int>::max() + 1 + p1.y();
-        EXPECT_EQ(p1.str(), "(" + std::to_string(x) + ", " + std::to_string(y) + ")");
+        EXPECT_EQ(p1.to_string(), "(" + std::to_string(x) + ", " + std::to_string(y) + ")");
 
         // No overflow on positive values.
-        EXPECT_EQ(p0.str(), "(1, 2)");
+        EXPECT_EQ(p0.to_string(), "(1, 2)");
     }
 
     if constexpr(std::is_same_v<PointT, int> || std::is_same_v<PointT, long>)
     {
-        EXPECT_EQ(p0.str(), "(1, 2)");
-        EXPECT_EQ(p1.str(), "(-3, -4)");
+        EXPECT_EQ(p0.to_string(), "(1, 2)");
+        EXPECT_EQ(p1.to_string(), "(-3, -4)");
     }
 
     if constexpr(std::is_same_v<PointT, float> || std::is_same_v<PointT, double>)
     {
-        EXPECT_EQ(p0.str(), "(1.000000, 2.000000)");
-        EXPECT_EQ(p1.str(), "(-3.000000, -4.000000)");
+        EXPECT_EQ(p0.to_string(), "(1.000000, 2.000000)");
+        EXPECT_EQ(p1.to_string(), "(-3.000000, -4.000000)");
     }
     
+}
+
+// NOLINTNEXTLINE
+TYPED_TEST(test_geometry_point_t, ostream)
+{
+    using PointT = TypeParam;
+    tc::sdk::point<PointT> p(1, 2);
+
+    std::stringstream stream;
+    stream << p.to_string();
+    EXPECT_STREQ(stream.str().c_str(), p.to_string().c_str());
 }
 
 }

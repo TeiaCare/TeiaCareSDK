@@ -2,22 +2,8 @@ name: Coverage
 
 on:
   workflow_dispatch:
-  pull_request: 
-    branches:
-      - 'develop'
-      - 'feature/*'
-      - 'release/*'
-      - 'hotfix/*'
-    tags:
-      - 'v*'
+  pull_request:
   push:
-    branches:
-      - 'develop'
-      - 'feature/*'
-      - 'release/*'
-      - 'hotfix/*'
-    tags:
-      - 'v*'
 
 jobs:
   coverage:

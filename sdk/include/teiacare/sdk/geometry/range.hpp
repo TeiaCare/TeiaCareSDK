@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <teiacare/sdk/math.hpp>
+
 #include <string>
 
 namespace tc::sdk
@@ -187,49 +189,53 @@ public:
      * \param value the value to map.
      * \return the value remapped to the current range.
      */
-    constexpr inline T map(T value) const
+    constexpr inline T map(double value) const
     {
         // static_assert(value >= T(0) && value <= T(1));
         return _min + value * (_max - _min);
     }
 
-    // TODO
-    constexpr range get_intersection(range) const noexcept
+    /*!
+     * \brief Range intersection.
+     * \param other range to use to compute the intersection with the current one.
+     * \return The range resulting from the intersection of this and the other range.
+     */
+    constexpr range get_intersection(range other) const noexcept
     {
-        return {};
+        if (!intersects(other))
+            return tc::sdk::range<T>();
+        
+        return tc::sdk::range<T>(tc::sdk::max(_min, other._min), tc::sdk::min(_max, other._max));
     }
 
-    // TODO
-    constexpr range get_union(range) const noexcept
+    /*!
+     * \brief Range union.
+     * \param other range to use to compute the union with the current one.
+     * \return The range resulting from the union of this and the other range.
+     */
+    constexpr range get_union(range other) const noexcept
     {
-        return {};
-    }
-
-    // TODO
-    constexpr range lower_range(T value) const noexcept
-    {
-        // from min to value
-        return {};
-    }
-
-    constexpr range upper_range(T value) const noexcept
-    {
-        // from value to max
-        return {};
+        return tc::sdk::range<T>(tc::sdk::min(_min, other._min), tc::sdk::max(_max, other._max));
     }
 
     /*!
      * \brief Get the range string representation
      * \return String representation of the current range.
      */
-    constexpr std::string str() const
+    constexpr std::string to_string() const
     {
         return std::string("(" + std::to_string(_min) + ":" + std::to_string(_max) + ")");
     }
 
+    /*!
+     * \brief Output stream operator.
+     * \param stream the output stream to write into.
+     * \param r the range object to stream.
+     * \return reference to the output stream operator, with the range string representation written into it.
+     */
     friend std::ostream& operator<<(std::ostream& stream, const range& r)
     {
-        return stream << r.str();
+        return stream << r.to_string();
     }
 
 private:

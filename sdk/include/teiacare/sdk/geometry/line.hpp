@@ -74,7 +74,8 @@ public:
      */
     constexpr inline bool operator==(const line& other) const noexcept
     {
-        return _start == other._start && _end == other._end;
+        return (_start == other._start && _end == other._end) ||
+            (_start == other._end && _end == other._start);
     }
 
     /*!
@@ -112,26 +113,6 @@ public:
     bool is_horizontal() const noexcept
     {
         return _start.y() == _end.y();
-    }
-
-    /*!
-     * \brief Equality operator.
-     * \param other the line to compare against.
-     * \return true if the two lines have the same start and end points.
-     */
-    bool operator==(line other) const noexcept
-    {
-        return _start == other._start && _end == other._end;
-    }
-
-    /*!
-     * \brief Inequality operator.
-     * \param other the line to compare against.
-     * \return true if the two lines have the different start or end points.
-     */
-    bool operator!=(line other) const noexcept
-    {
-        return _start != other._start || _end != other._end;
     }
 
     /*!
@@ -219,14 +200,20 @@ public:
      * \brief Get the line string representation
      * \return String representation of the current line.
      */
-    constexpr std::string str() const
+    constexpr std::string to_string() const
     {
-        return std::string("(" + _start.str() + " : " + _end.str() + ")");
+        return std::string("(" + _start.to_string() + " : " + _end.to_string() + ")");
     }
 
+    /*!
+     * \brief Output stream operator.
+     * \param stream the output stream to write into.
+     * \param l the line object to stream.
+     * \return reference to the output stream operator, with the line string representation written into it.
+     */
     friend std::ostream& operator<<(std::ostream& stream, const line& l)
     {
-        return stream << l.str();
+        return stream << l.to_string();
     }
 
 private:

@@ -9,9 +9,17 @@ set(UNIT_TESTS_SRC
     src/test_blocking_queue.cpp
     src/test_blocking_queue.hpp
     src/test_event_dispatcher.cpp
-    src/test_event_dispatcher.hpp
+    src/test_event_dispatcher.hpp    
+    src/test_geometry_line.cpp
+    src/test_geometry_line.hpp
     src/test_geometry_point.cpp
     src/test_geometry_point.hpp
+    src/test_geometry_range.cpp
+    src/test_geometry_range.hpp
+    src/test_geometry_rectangle.cpp
+    src/test_geometry_rectangle.hpp
+    src/test_geometry_size.cpp
+    src/test_geometry_size.hpp
     src/test_high_precision_timer.cpp
     src/test_high_precision_timer.hpp
     src/test_observable.cpp
@@ -37,7 +45,9 @@ set(UNIT_TESTS_SRC
 )
 setup_unit_tests(${TARGET_NAME} ${UNIT_TESTS_SRC})
 
-if(TC_ENABLE_WARNINGS_ERROR)
+# Disable warnings on GCC (-Wall compiler flag), due to a bug in GTest 1.14.0 in Release with GCC 12 and std=c++20
+# https://github.com/google/googletest/issues/4108
+if(TC_ENABLE_WARNINGS_ERROR AND NOT ${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     include(warnings)
     add_warnings(${TARGET_NAME}_unit_tests)
     add_warnings_as_errors(${TARGET_NAME}_unit_tests)

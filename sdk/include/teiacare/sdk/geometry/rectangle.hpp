@@ -361,14 +361,20 @@ public:
      * \brief Get the rectangle string representation
      * \return String representation of the current rectangle.
      */
-    constexpr std::string str() const
+    constexpr std::string to_string() const
     {
-        return std::string(_position.str() + " : (" + std::to_string(_width) + "x" + std::to_string(_height) + ")");
+        return std::string(_position.to_string() + " : (" + std::to_string(_width) + "x" + std::to_string(_height) + ")");
     }
 
+    /*!
+     * \brief Output stream operator.
+     * \param stream the output stream to write into.
+     * \param r the rectangle object to stream.
+     * \return reference to the output stream operator, with the rectangle string representation written into it.
+     */
     friend std::ostream& operator<<(std::ostream& stream, const rectangle& r)
     {
-        return stream << r.str();
+        return stream << r.to_string();
     }
 
 private:

@@ -128,6 +128,12 @@ public:
         return !operator<(other);
     }
 
+    /*!
+     * \brief Output stream operator.
+     * \param stream the output stream to write into.
+     * \param u the uuid object to stream.
+     * \return reference to the output stream operator, with the uuid string representation written into it.
+     */
     friend std::ostream& operator<<(std::ostream& stream, const uuid& u) noexcept
     {
         return stream << u.to_string();

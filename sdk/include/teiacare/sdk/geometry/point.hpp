@@ -267,14 +267,20 @@ public:
      * \brief Get the point string representation
      * \return String representation of the current point.
      */
-    constexpr std::string str() const
+    constexpr std::string to_string() const
     {
         return std::string("(" + std::to_string(_x) + ", " + std::to_string(_y) + ")");
     }
 
+    /*!
+     * \brief Output stream operator.
+     * \param stream the output stream to write into.
+     * \param p the point object to stream.
+     * \return reference to the output stream operator, with the point string representation written into it.
+     */
     friend std::ostream& operator<<(std::ostream& stream, const point& p)
     {
-        return stream << p.str();
+        return stream << p.to_string();
     }
 
 private:
