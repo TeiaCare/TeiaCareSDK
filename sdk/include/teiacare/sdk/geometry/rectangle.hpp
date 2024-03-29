@@ -16,6 +16,7 @@
 
 #include <teiacare/sdk/geometry/point.hpp>
 #include <teiacare/sdk/geometry/size.hpp>
+#include <teiacare/sdk/geometry/line.hpp>
 #include <teiacare/sdk/math.hpp>
 
 #include <string>
@@ -264,8 +265,8 @@ public:
      */
     bool intersects(tc::sdk::rectangle<T> other) const noexcept
     {
-        return _position.x() + w > other._position.x() &&
-               _position.y() + h > other._position.y() &&
+        return _position.x() + _width > other._position.x() &&
+               _position.y() + _height > other._position.y() &&
                _position.x() < other._position.x() + other._width &&
                _position.y() < other._position.y() + other._height &&
                !other.is_null() &&
@@ -302,7 +303,7 @@ public:
         if (intersection_width < T())
             return tc::sdk::rectangle<T>{};
 
-        auto intersection_height = tc::sdk::min(_position.y() + h, other._position.y() + other._height) - intersection_y;
+        auto intersection_height = tc::sdk::min(_position.y() + _height, other._position.y() + other._height) - intersection_y;
         if (intersection_height < T())
             return tc::sdk::rectangle<T>{};
 
@@ -348,12 +349,12 @@ public:
      * \param TODO
      * \return TODO
      */
-    tc::sdk::rect<T> normalize(tc::sdk::size<T> norm_size) const
+    tc::sdk::rectangle<T> normalize(tc::sdk::size<T> norm_size) const
     {
         auto norm_position_x = _position.x() / norm_size.width();
         auto norm_position_y = _position.y() / norm_size.height();
 
-        return tc::sdk::rect<T>(tc::sdk::point<T>(norm_position_x, norm_position_y), _width / norm_size.width, _height / norm_size.height);
+        return tc::sdk::rectangle<T>(tc::sdk::point<T>(norm_position_x, norm_position_y), _width / norm_size.width, _height / norm_size.height);
     }
 
     /*!
