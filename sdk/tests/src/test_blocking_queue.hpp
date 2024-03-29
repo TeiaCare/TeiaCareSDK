@@ -16,9 +16,9 @@
 
 #include <teiacare/sdk/blocking_queue.hpp>
 
+#include <gtest/gtest.h>
 #include <array>
 #include <vector>
-#include <gtest/gtest.h>
 
 namespace tc::sdk::tests
 {

@@ -15,14 +15,11 @@
 
 #include "test_high_precision_timer.hpp"
 
-#include "utils.hpp"
 #include <gmock/gmock.h>
 #include <semaphore>
 #include <thread>
-// #include <chrono>
-// #include <future>
-// #include <latch>
-// #include <barrier>
+
+#define RANGE(lo, hi) testing::AllOf(testing::Ge(lo), testing::Le(hi))
 
 using namespace std::chrono_literals;
 

@@ -9,7 +9,7 @@
             "type": "lldb",
             "request": "launch",
             "cwd": "${workspaceFolder}/build/Debug/sdk",
-            "program": "${workspaceFolder}/build/Debug/sdk/tests/teiacore_sdk_unit_tests",
+            "program": "${workspaceFolder}/build/Debug/sdk/tests/teiacare_sdk_unit_tests",
         },
         {
             "name": "unit_tests (gdb)",
@@ -19,7 +19,7 @@
             "MIMode": "gdb",
             "setupCommands": [{ "text": "-enable-pretty-printing" }],
             "cwd": "${workspaceFolder}/build/Debug/sdk",
-            "program": "${workspaceFolder}/build/Debug/sdk/tests/teiacore_sdk_unit_tests",
+            "program": "${workspaceFolder}/build/Debug/sdk/tests/teiacare_sdk_unit_tests",
         },
         {
             "name": "unit_tests (msvc)",
@@ -27,7 +27,7 @@
             "request": "launch",
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/build/Debug/sdk",
-            "program": "${workspaceFolder}/build/Debug/sdk/tests/teiacore_sdk_unit_tests",
+            "program": "${workspaceFolder}/build/Debug/sdk/tests/teiacare_sdk_unit_tests",
         }
     ]
 }

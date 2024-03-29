@@ -1,11 +1,9 @@
 # https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_COMPILER_ID.html
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
     # GCC options
-    add_compile_options(-march=native) # Add support for compiler intrinsics (SIMD)
 elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
     # Clang options
     add_compile_options(-fstandalone-debug) # Add support for std::string debug
-    add_compile_options(-march=native) # Add support for compiler intrinsics (SIMD)
 elseif(${CMAKE_CXX_COMPILER_ID} STREQUAL "MSVC")
     # MSVC options
 endif()
