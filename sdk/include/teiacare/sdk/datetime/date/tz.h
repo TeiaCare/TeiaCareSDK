@@ -634,7 +634,7 @@ using time_zone_representation =
 }
 
 zoned_time()
-    ->zoned_time<std::chrono::seconds>;
+    -> zoned_time<std::chrono::seconds>;
 
 template <class Duration>
 zoned_time(sys_time<Duration>)

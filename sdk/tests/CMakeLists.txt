@@ -36,3 +36,9 @@ set(UNIT_TESTS_SRC
     src/test_uuid.hpp
 )
 setup_unit_tests(${TARGET_NAME} ${UNIT_TESTS_SRC})
+
+if(TC_ENABLE_WARNINGS_ERROR)
+    include(warnings)
+    add_warnings(${TARGET_NAME}_unit_tests)
+    add_warnings_as_errors(${TARGET_NAME}_unit_tests)
+endif()

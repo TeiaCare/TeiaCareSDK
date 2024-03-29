@@ -32,6 +32,40 @@ protected:
     {
     }
 
+    void check_is_valid(const char* uuid_str)
+    {
+        EXPECT_TRUE(g.is_valid(uuid_str));
+        EXPECT_TRUE(g.is_valid(std::string(uuid_str)));
+        EXPECT_TRUE(g.is_valid(std::string_view(uuid_str)));
+    }
+
+    void check_from_string_does_not_throw(const char* uuid_str)
+    {
+        EXPECT_NO_THROW({ auto u = g.from_string(uuid_str); (void)u; });
+        EXPECT_NO_THROW({ auto u = g.from_string(std::string(uuid_str)); (void)u; });
+        EXPECT_NO_THROW({ auto u = g.from_string(std::string_view(uuid_str)); (void)u; });
+    }
+
+    void check_reverse_conversion(const char* uuid_str)
+    {
+        const tc::sdk::uuid u = g.from_string(uuid_str);
+        EXPECT_STRCASEEQ(uuid_str, u.to_string().c_str());
+    }
+
+    void check_is_not_valid(const char* uuid_str)
+    {
+        EXPECT_FALSE(g.is_valid(uuid_str));
+        EXPECT_FALSE(g.is_valid(std::string(uuid_str)));
+        EXPECT_FALSE(g.is_valid(std::string_view(uuid_str)));
+    }
+
+    void check_from_string_throws(const char* uuid_str)
+    {
+        EXPECT_THROW({ auto u = g.from_string(uuid_str); (void)u; }, std::runtime_error);
+        EXPECT_THROW({ auto u = g.from_string(std::string(uuid_str)); (void)u; }, std::runtime_error);
+        EXPECT_THROW({ auto u = g.from_string(std::string_view(uuid_str)); (void)u; }, std::runtime_error);
+    }
+
     void check_format_and_size(const std::string& uuid_str)
     {
         EXPECT_EQ(uuid_str.size(), 36);
@@ -49,7 +83,7 @@ protected:
             // TODO: perform explicit check to verify that each i-th items of the string
             // satisfies the alphanumeric regex [0-9][a-z][A-Z]
 
-            // 0-7 
+            // 0-7
             for (int index = 0; index <= 7; ++index)
                 EXPECT_NE('-', uuid_str[index]);
 
@@ -64,7 +98,7 @@ protected:
             // 19-22
             for (int index = 19; index <= 22; ++index)
                 EXPECT_NE('-', uuid_str[index]);
-            
+
             // 23-35
             for (int index = 24; index <= 35; ++index)
                 EXPECT_NE('-', uuid_str[index]);

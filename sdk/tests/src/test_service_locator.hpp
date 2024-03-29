@@ -66,12 +66,13 @@ struct ServiceX : IService
 
 struct IAnotherService
 {
+    virtual ~IAnotherService() = default;
     virtual std::string call() const = 0;
 };
 
 struct AnotherService : public IAnotherService
 {
-    virtual std::string call() const
+    std::string call() const override
     {
         return "AnotherService";
     }

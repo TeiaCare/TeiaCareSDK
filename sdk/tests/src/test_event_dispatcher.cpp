@@ -100,7 +100,7 @@ TEST_F(test_event_dispatcher, add_event_handler_twice_same_name_different_type)
     auto id1 = e->add_handler(event_name, []() {});
     EXPECT_EQ(id1, 1);
 
-    auto id2 = e->add_handler<std::string>(event_name, [](const std::string& s) {});
+    auto id2 = e->add_handler<std::string>(event_name, [](const std::string&) {});
     EXPECT_EQ(id2, 2);
 }
 
@@ -140,8 +140,8 @@ TEST_F(test_event_dispatcher, add_event_handler_twice_different_name)
 // NOLINTNEXTLINE
 TEST_F(test_event_dispatcher, add_event_handler_twice_different_name_same_type)
 {
-    EXPECT_TRUE(e->add_handler<std::string>("1", [](const std::string& s) {}));
-    EXPECT_TRUE(e->add_handler<std::string>("2", [](const std::string& s) {}));
+    EXPECT_TRUE(e->add_handler<std::string>("1", [](const std::string&) {}));
+    EXPECT_TRUE(e->add_handler<std::string>("2", [](const std::string&) {}));
 }
 
 // NOLINTNEXTLINE
@@ -253,27 +253,27 @@ TEST_F(test_event_dispatcher, push_event_n_times_same_payload)
 TEST_F(test_event_dispatcher, add_same_event_name_same_handler_types)
 {
     const auto event_name = "EVENT_NAME";
-    EXPECT_TRUE(e->add_handler<int>(event_name, [](int i) {}));
-    EXPECT_TRUE(e->add_handler<int>(event_name, [](int i) {}));
+    EXPECT_TRUE(e->add_handler<int>(event_name, [](int) {}));
+    EXPECT_TRUE(e->add_handler<int>(event_name, [](int) {}));
 
-    EXPECT_TRUE(e->add_handler<std::string>(event_name, [](const std::string& s) {}));
-    EXPECT_TRUE(e->add_handler<std::string>(event_name, [](const std::string& s) {}));
+    EXPECT_TRUE(e->add_handler<std::string>(event_name, [](const std::string&) {}));
+    EXPECT_TRUE(e->add_handler<std::string>(event_name, [](const std::string&) {}));
 }
 
 // NOLINTNEXTLINE
 TEST_F(test_event_dispatcher, add_same_event_name_different_handler_types)
 {
     const auto event_name = "EVENT_NAME";
-    EXPECT_TRUE(e->add_handler<int>(event_name, [](int i) {}));
-    EXPECT_TRUE(e->add_handler<unsigned int>(event_name, [](unsigned int i) {}));
-    EXPECT_TRUE(e->add_handler<unsigned long>(event_name, [](unsigned long i) {}));
-    EXPECT_TRUE(e->add_handler<long long>(event_name, [](long long i) {}));
+    EXPECT_TRUE(e->add_handler<int>(event_name, [](int) {}));
+    EXPECT_TRUE(e->add_handler<unsigned int>(event_name, [](unsigned int) {}));
+    EXPECT_TRUE(e->add_handler<unsigned long>(event_name, [](unsigned long) {}));
+    EXPECT_TRUE(e->add_handler<long long>(event_name, [](long long) {}));
 
-    EXPECT_TRUE(e->add_handler<std::string>(event_name, [](std::string s) {}));
-    EXPECT_TRUE(e->add_handler<std::string&>(event_name, [](std::string& s) {}));
-    EXPECT_TRUE(e->add_handler<std::string&&>(event_name, [](std::string&& s) {}));
-    EXPECT_TRUE(e->add_handler<const std::string&>(event_name, [](const std::string& s) {}));
-    EXPECT_TRUE(e->add_handler<std::string>(event_name, [](const std::string s) {}));
+    EXPECT_TRUE(e->add_handler<std::string>(event_name, [](std::string) {}));
+    EXPECT_TRUE(e->add_handler<std::string&>(event_name, [](std::string&) {}));
+    EXPECT_TRUE(e->add_handler<std::string&&>(event_name, [](std::string&&) {}));
+    EXPECT_TRUE(e->add_handler<const std::string&>(event_name, [](const std::string&) {}));
+    EXPECT_TRUE(e->add_handler<std::string>(event_name, [](const std::string) {}));
 }
 
 // NOLINTNEXTLINE
@@ -371,7 +371,7 @@ TEST_F(test_event_dispatcher, push_event_consecutive_start_stop)
 TEST_F(test_event_dispatcher, sync_multiple_events_on_multiple_threads)
 {
     const auto event_name = "EVENT_NAME";
-    constexpr unsigned int dispatcher_threads = 4;
+    constexpr int dispatcher_threads = 4;
     e->start(dispatcher_threads);
 
     std::atomic<int> call_count = 0;
@@ -379,7 +379,7 @@ TEST_F(test_event_dispatcher, sync_multiple_events_on_multiple_threads)
 
     for (int thread_idx = 0; thread_idx < dispatcher_threads; ++thread_idx)
     {
-        e->add_handler<float, std::string, int>(event_name, [&sync, &call_count](float f, const std::string& s, int i) {
+        e->add_handler<float, std::string, int>(event_name, [&sync, &call_count](float, const std::string&, int) {
             ++call_count;
             sync.arrive_and_wait();
         });
@@ -412,7 +412,7 @@ TEST_F(test_event_dispatcher, push_event_with_different_overloads)
     std::atomic<int> call_count = 0;
     std::promise<void> promise;
     std::future<void> future = promise.get_future();
-    e->add_handler<float, std::string, int>(event_name, [&promise, &call_count](float f, const std::string& s, int i) {
+    e->add_handler<float, std::string, int>(event_name, [&promise, &call_count](float, const std::string&, int) {
         ++call_count;
         promise.set_value();
     });
@@ -435,7 +435,7 @@ TEST_F(test_event_dispatcher, push_after_remove_handler)
 
     std::atomic<int> call_count = 0;
     std::counting_semaphore<2> sync(0);
-    const auto handler_id = e->add_handler<float, std::string, int>(event_name, [&sync, &call_count](float f, const std::string& s, int i) {
+    const auto handler_id = e->add_handler<float, std::string, int>(event_name, [&sync, &call_count](float, const std::string&, int) {
         ++call_count;
         sync.release();
     });
@@ -465,7 +465,7 @@ TEST_F(test_event_dispatcher, push_after_remove_event)
 
     std::atomic<int> call_count = 0;
     std::counting_semaphore<2> sync(0);
-    e->add_handler<float, std::string, int>(event_name, [&sync, &call_count](float f, const std::string& s, int i) {
+    e->add_handler<float, std::string, int>(event_name, [&sync, &call_count](float, const std::string&, int) {
         ++call_count;
         sync.release();
     });
@@ -501,7 +501,7 @@ TEST_F(test_event_dispatcher, push_after_remove_specific_handler)
         sync.arrive_and_wait();
     });
 
-    const auto event_id_2 = e->add_handler<float, std::string, int>(event_name, [&sync, &call_count](float f, const std::string& s, int i) {
+    const auto event_id_2 = e->add_handler<float, std::string, int>(event_name, [&sync, &call_count](float, const std::string&, int) {
         ++call_count;
         sync.arrive_and_wait();
     });
@@ -521,6 +521,7 @@ TEST_F(test_event_dispatcher, push_after_remove_specific_handler)
     {
         EXPECT_FALSE((e->emit(event_name)));
         auto t = sync.arrive();
+        (void)t;
     }
 
     EXPECT_TRUE((e->emit(event_name, 1.f, std::string("payload"), 1)));
@@ -532,11 +533,13 @@ TEST_F(test_event_dispatcher, push_after_remove_specific_handler)
     {
         EXPECT_FALSE((e->emit(event_name)));
         auto t = sync.arrive();
+        (void)t;
     }
 
     {
         EXPECT_FALSE((e->emit(event_name, 1.f, std::string("payload"), 1)));
         auto t = sync.arrive();
+        (void)t;
     }
 
     sync.arrive_and_wait();
@@ -557,10 +560,12 @@ TEST_F(test_event_dispatcher, push_after_remove_event_with_multiple_handlers)
         sync.arrive_and_wait();
     });
 
-    const auto event_id_2 = e->add_handler<float, std::string, int>(event_name, [&sync, &call_count](float f, const std::string& s, int i) {
+    const auto event_id_2 = e->add_handler<float, std::string, int>(event_name, [&sync, &call_count](float, const std::string&, int) {
         ++call_count;
         sync.arrive_and_wait();
     });
+
+    EXPECT_NE(event_id_1, event_id_2);
 
     EXPECT_TRUE((e->emit(event_name)));
     EXPECT_TRUE((e->emit(event_name, 1.f, std::string("payload"), 1)));
@@ -577,11 +582,13 @@ TEST_F(test_event_dispatcher, push_after_remove_event_with_multiple_handlers)
     {
         EXPECT_FALSE((e->emit(event_name)));
         auto t = sync.arrive();
+        (void)t;
     }
 
     {
         EXPECT_FALSE((e->emit(event_name, 1.f, std::string("payload"), 1)));
         auto t = sync.arrive();
+        (void)t;
     }
 
     sync.arrive_and_wait();

@@ -32,7 +32,10 @@ public:
      *
      * Creates a tc::sdk::stopwatch instance.
      */
-    explicit stopwatch() = default;
+    explicit stopwatch()
+        : _start_time{tc::sdk::clock::now()}
+    {
+    }
 
     /*!
      * \brief Destructor.
@@ -83,7 +86,7 @@ public:
     }
 
 private:
-    tc::sdk::time_point _start_time = tc::sdk::clock::now();
+    tc::sdk::time_point _start_time;
 };
 
 }

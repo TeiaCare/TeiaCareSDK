@@ -21,6 +21,7 @@ namespace tc::sdk
 high_precision_timer::high_precision_timer()
     : _is_running{true}
     , _interval{clock::duration::max()}
+    , _task{nullptr}
 {
 }
 
@@ -46,11 +47,11 @@ bool high_precision_timer::start(clock::duration&& interval)
     std::future<void> thread_started_watcher = thread_started_notifier.get_future();
 
     _worker_thread = std::thread([this, &thread_started_notifier] {
-        thread_started_notifier.set_value();
         {
             std::unique_lock<std::mutex> lock(_worker_mutex);
             _is_running = true;
         }
+        thread_started_notifier.set_value();
         worker();
     });
 

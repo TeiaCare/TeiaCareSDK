@@ -22,22 +22,22 @@ TEST_F(test_uuid, deafult)
     {
         const auto uuid = tc::sdk::uuid();
         EXPECT_EQ(uuid, null_uuid);
-        EXPECT_EQ(uuid.str(), null_uuid_str);
+        EXPECT_EQ(uuid.to_string(), null_uuid_str);
     }
     {
         tc::sdk::uuid uuid;
         EXPECT_EQ(uuid, null_uuid);
-        EXPECT_EQ(uuid.str(), null_uuid_str);
+        EXPECT_EQ(uuid.to_string(), null_uuid_str);
     }
     {
         tc::sdk::uuid uuid{};
         EXPECT_EQ(uuid, null_uuid);
-        EXPECT_EQ(uuid.str(), null_uuid_str);
+        EXPECT_EQ(uuid.to_string(), null_uuid_str);
     }
     {
         const tc::sdk::uuid uuid{};
         EXPECT_EQ(uuid, null_uuid);
-        EXPECT_EQ(uuid.str(), null_uuid_str);
+        EXPECT_EQ(uuid.to_string(), null_uuid_str);
     }
 }
 
@@ -82,31 +82,20 @@ TEST_F(test_uuid, str)
     const auto uuid_1 = create();
     const auto uuid_2 = create();
 
-    EXPECT_NE(uuid_1.str(), uuid_2.str());
-    EXPECT_NE(uuid_1.str(), null_uuid.str());
-    EXPECT_NE(uuid_2.str(), null_uuid.str());
+    EXPECT_NE(uuid_1.to_string(), uuid_2.to_string());
+    EXPECT_NE(uuid_1.to_string(), null_uuid.to_string());
+    EXPECT_NE(uuid_2.to_string(), null_uuid.to_string());
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_uuid, bytes)
+TEST_F(test_uuid, ostream)
 {
-    const auto uuid_1 = create();
-    const auto uuid_2 = create();
+    const auto uuid = create();
+    const auto s = uuid.to_string();
 
-    EXPECT_NE(uuid_1.bytes(), uuid_2.bytes());
-    EXPECT_NE(uuid_1.bytes(), null_uuid.bytes());
-    EXPECT_NE(uuid_2.bytes(), null_uuid.bytes());
-}
-
-// NOLINTNEXTLINE
-TEST_F(test_uuid, hash)
-{
-    const auto uuid_1 = create();
-    const auto uuid_2 = create();
-
-    EXPECT_NE(uuid_1.hash(), uuid_2.hash());
-    EXPECT_NE(uuid_1.hash(), null_uuid.hash());
-    EXPECT_NE(uuid_2.hash(), null_uuid.hash());
+    std::stringstream stream;
+    stream << uuid.to_string();
+    EXPECT_STREQ(stream.str().c_str(), uuid.to_string().c_str());
 }
 
 }

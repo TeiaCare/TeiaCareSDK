@@ -74,6 +74,7 @@ TEST_F(test_signal_handler_shutdown, null_callback)
 
     auto arrival_token = sync.arrive();
     tc::sdk::wait_for_quit();
+    (void)arrival_token;
 }
 
 // NOLINTNEXTLINE
@@ -93,19 +94,20 @@ TEST_F(test_signal_handler_shutdown, quit_arguments)
 
     auto arrival_token = sync.arrive();
     tc::sdk::wait_for_quit();
+    (void)arrival_token;
 }
 
 // NOLINTNEXTLINE
 TEST_F(test_signal_handler_shutdown, multiple_quit)
 {
-    constexpr size_t total_count = 1'000;
+    constexpr int total_count = 1'000;
     std::barrier sync(2, []() noexcept {});
 
     int callback_count = 0;
     const auto callback = [&callback_count](const char*, int) { ++callback_count; };
     tc::sdk::install_signal_handlers(callback);
 
-    signal_thread = std::jthread([&sync, total_count] {
+    signal_thread = std::jthread([&sync] {
         for (auto i = 0; i < total_count; ++i)
         {
             sync.arrive_and_wait();
@@ -117,6 +119,7 @@ TEST_F(test_signal_handler_shutdown, multiple_quit)
     {
         auto arrival_token = sync.arrive();
         tc::sdk::wait_for_quit();
+        (void)arrival_token;
     }
 
     signal_thread.join();

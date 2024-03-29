@@ -24,6 +24,7 @@ class test_stopwatch : public testing::Test
 {
 protected:
     explicit test_stopwatch()
+        : s{tc::sdk::stopwatch()}
     {
     }
 

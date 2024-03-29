@@ -87,7 +87,7 @@ TEST_F(test_thread_pool, run)
 {
     EXPECT_TRUE(tp->start(num_threads));
 
-    constexpr unsigned int task_count = 10;
+    constexpr int task_count = 10;
     std::counting_semaphore<task_count> sync(0);
 
     std::atomic_int counter = 0;

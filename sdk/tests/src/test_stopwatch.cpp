@@ -14,6 +14,8 @@
 
 #include "test_stopwatch.hpp"
 
+#include <thread>
+
 using namespace std::chrono_literals;
 
 namespace tc::sdk::tests
@@ -32,23 +34,27 @@ TEST_F(test_stopwatch, start_time_updated_on_reset)
     constexpr int total_count = 100;
     for (auto i = 0; i < total_count; ++i)
     {
+        std::this_thread::sleep_for(1ns);
         auto initial_timepoint = tc::sdk::clock::now();
         ASSERT_LT(s.start_time(), initial_timepoint);
-        std::this_thread::sleep_for(1ms);
+
+        std::this_thread::sleep_for(1ns);
         s.reset();
         ASSERT_GT(s.start_time(), initial_timepoint);
     }
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_stopwatch, staret_time_increases_on_reset)
+TEST_F(test_stopwatch, start_time_increases_on_reset)
 {
     constexpr int total_count = 100;
     for (auto i = 0; i < total_count; ++i)
     {
-        auto start = s.start_time();
+        auto start_before_reset = s.start_time();
         s.reset();
-        ASSERT_GE(s.start_time(), start);
+        std::this_thread::sleep_for(1ns);
+        auto start_after_reset = s.start_time();
+        ASSERT_GT(start_after_reset, start_before_reset);
     }
 }
 
@@ -59,11 +65,12 @@ TEST_F(test_stopwatch, elapsed_monotonically_increases)
     auto elapsed = s.elapsed();
     for (auto i = 0; i < total_count; ++i)
     {
+        std::this_thread::sleep_for(1ms);
         EXPECT_GT(s.elapsed(), elapsed);
         elapsed = s.elapsed();
-        std::this_thread::sleep_for(1ms);
     }
 
+    std::this_thread::sleep_for(1ms);
     EXPECT_GT(s.elapsed(), elapsed);
 }
 
@@ -73,15 +80,15 @@ TYPED_TEST_SUITE(test_stopwatch_duration_t, duration_types);
 TYPED_TEST(test_stopwatch_duration_t, elapsed_duration_types)
 {
     using duration_t = TypeParam;
-    constexpr auto max_error = 10ms;
+    constexpr auto max_error = duration_t{1'000};
     constexpr auto abs_error = std::chrono::duration_cast<duration_t>(max_error).count();
 
     ASSERT_TRUE(this->s.elapsed() > tc::sdk::time_duration::min());
     ASSERT_TRUE(this->s.elapsed() > std::chrono::duration_cast<duration_t>(tc::sdk::time_duration::min()));
     EXPECT_NEAR(
-        std::chrono::duration_cast<duration_t>(this->s.elapsed()).count(),
-        (this->s.template elapsed<duration_t>()).count(),
-        abs_error);
+        static_cast<double>(std::chrono::duration_cast<duration_t>(this->s.elapsed()).count()),
+        static_cast<double>((this->s.template elapsed<duration_t>()).count()),
+        static_cast<double>(abs_error));
 
     // see why the template syntax this->s.template elapsed<duration_t>() must be used here:
     // https://stackoverflow.com/questions/610245/where-and-why-do-i-have-to-put-the-template-and-typename-keywords
@@ -89,15 +96,16 @@ TYPED_TEST(test_stopwatch_duration_t, elapsed_duration_types)
 
 TYPED_TEST(test_stopwatch_duration_t, elapsed_reset_duration_types)
 {
-    constexpr int total_count = 100;
+    constexpr int total_count = 1'000;
 
     for (auto i = 0; i < total_count; ++i)
     {
         this->s.reset();
-        std::this_thread::sleep_for(1ms);
+        // std::this_thread::sleep_for(1ms);
 
         const auto start = this->s.start_time();
         const auto elapsed = this->s.elapsed();
+        std::this_thread::sleep_for(1ns);
         EXPECT_GT(tc::sdk::clock::now(), start + elapsed);
     }
 }

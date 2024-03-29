@@ -47,10 +47,12 @@ protected:
     {
         _sync.wait();
     }
+
     bool is_executed() const
     {
         return _is_executed;
     }
+
     bool is_pending() const
     {
         return ts->tasks_size() > 0;
@@ -77,15 +79,15 @@ protected:
     {
         bool ok = false;
     };
-    std::function<void(const char*, DummyClass, const std::string&)> task_with_arguments =
-        [this](const char* cc, DummyClass dd, const std::string& ss) {
-            std::this_thread::sleep_for(sleep_time);
-            _is_executed = true;
-            EXPECT_TRUE(dd.ok);
 
-            if (!_sync.try_wait())
-                _sync.count_down();
-        };
+    std::function<void(const char*, DummyClass, const std::string&)> task_with_arguments = [this](const char*, DummyClass dd, const std::string&) {
+        std::this_thread::sleep_for(sleep_time);
+        _is_executed = true;
+        EXPECT_TRUE(dd.ok);
+
+        if (!_sync.try_wait())
+            _sync.count_down();
+    };
 
     std::function<int(int)> task_with_result = [this](int arg) {
         std::this_thread::sleep_for(sleep_time);

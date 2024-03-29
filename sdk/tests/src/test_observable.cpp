@@ -74,6 +74,27 @@ TEST(test_observable, callback_disabled)
 }
 
 // NOLINTNEXTLINE
+TEST(test_observable, set_same_value)
+{
+    const auto value = 12345;
+    int callback_triggered_count = 0;
+    const auto callback = [&](int) { ++callback_triggered_count; };
+    auto o = tc::sdk::observable<int>(value, callback);
+    EXPECT_EQ(o, 12345);
+
+    // const T&
+    const auto new_value = value;
+    o = new_value;
+    EXPECT_EQ(callback_triggered_count, 0);
+    EXPECT_EQ(o, 12345);
+
+    // T&&
+    o = 12345; // NOLINT
+    EXPECT_EQ(callback_triggered_count, 0);
+    EXPECT_EQ(o, 12345);
+}
+
+// NOLINTNEXTLINE
 TEST(test_observable, set_new_value)
 {
     const auto value = 12345;
@@ -95,24 +116,26 @@ TEST(test_observable, set_new_value)
 }
 
 // NOLINTNEXTLINE
-TEST(test_observable, set_same_value)
+TEST(test_observable, set_new_value_callback_disabled)
 {
     const auto value = 12345;
     int callback_triggered_count = 0;
     const auto callback = [&](int) { ++callback_triggered_count; };
     auto o = tc::sdk::observable<int>(value, callback);
-    EXPECT_EQ(o, 12345);
+    EXPECT_EQ(o, value);
+
+    o.callback_enabled(false);
 
     // const T&
-    const auto new_value = value;
+    const auto new_value = 12346;
     o = new_value;
     EXPECT_EQ(callback_triggered_count, 0);
-    EXPECT_EQ(o, 12345);
+    EXPECT_EQ(o, 12346);
 
     // T&&
-    o = 12345; // NOLINT
+    o = 12347; // NOLINT
     EXPECT_EQ(callback_triggered_count, 0);
-    EXPECT_EQ(o, 12345);
+    EXPECT_EQ(o, 12347);
 }
 
 // NOLINTNEXTLINE
