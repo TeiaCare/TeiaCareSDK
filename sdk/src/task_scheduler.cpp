@@ -196,7 +196,6 @@ void task_scheduler::update_tasks()
         if (it->second.is_enabled())
         {
             _tp.run([t = it->second.clone()] { t->invoke(); });
-            // _tp.run([t = it->second.clone()] { t->invoke(); }, it->second.hash());
         }
 
         // Keep track of recursive tasks if task has a valid interval value.
