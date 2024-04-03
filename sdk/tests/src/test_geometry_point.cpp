@@ -67,8 +67,6 @@ TYPED_TEST(test_geometry_point_t, getter_setter)
 {
     using PointT = TypeParam;
     tc::sdk::point<PointT> p0(1, 2);
-    tc::sdk::point<PointT> p1(3, 4);
-    tc::sdk::point<PointT> p2(3, 4);
 
     EXPECT_EQ(p0.x(), 1);
     EXPECT_EQ(p0.y(), 2);

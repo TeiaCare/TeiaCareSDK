@@ -335,9 +335,9 @@ public:
     }
 
     /*!
-     * \brief Check if the given point is strictly contained within the current rectangle.
-     * \param point The point that is checked.
-     * \return true if the point is strictly contained in the current rectangle.
+     * \brief Translate the rectangle by a given delta_x and delta_y offsets.
+     * \param delta_x the offset to be applied on the x direction
+     * \param delta_y the offset to be applied on the y direction
      */
     void translate(T delta_x, T delta_y) noexcept
     {
@@ -345,16 +345,16 @@ public:
     }
 
     /*!
-     * \brief TODO
-     * \param TODO
-     * \return TODO
+     * \brief Create a copy of the rectangle translated by a given delta_x and delta_y offsets.
+     * \param delta_x the offset to be applied on the x direction
+     * \param delta_y the offset to be applied on the y direction
+     * \return a translated copy of the current rectangle
      */
-    tc::sdk::rectangle<T> normalize(tc::sdk::size<T> norm_size) const
+    tc::sdk::rectangle<T> translated(T delta_x, T delta_y) const noexcept
     {
-        auto norm_position_x = _position.x() / norm_size.width();
-        auto norm_position_y = _position.y() / norm_size.height();
-
-        return tc::sdk::rectangle<T>(tc::sdk::point<T>(norm_position_x, norm_position_y), _width / norm_size.width, _height / norm_size.height);
+        const auto translated_position = tc::sdk::point<T>(_position);
+        translated_position.add_delta(delta_x, delta_y);        
+        return tc::sdk::rectangle<T>(translated_position, _width, _height);
     }
 
     /*!

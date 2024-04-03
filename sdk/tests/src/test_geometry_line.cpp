@@ -108,7 +108,6 @@ TYPED_TEST(test_geometry_line_t, getter_setter)
 TYPED_TEST(test_geometry_line_t, intersection)
 {
     using LineT = TypeParam;
-    
     auto check_intersection = [](tc::sdk::line<LineT> line1, tc::sdk::line<LineT> line2, tc::sdk::point<double> intersection_point)
     {
         EXPECT_TRUE(line1.intersects(line2));
