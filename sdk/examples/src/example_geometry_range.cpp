@@ -31,11 +31,11 @@ int main()
     auto r3 = tc::sdk::range(2, 5);
     auto r4 = tc::sdk::range(5, 8);
 
-    spdlog::info("{} contains {} : {}", r1.str(), r2.str(), r1.contains(r2));
-    spdlog::info("{} contains {} : {}", r1.str(), r3.str(), r1.contains(r3));
-    spdlog::info("{} intersects {} : {}", r1.str(), r2.str(), r1.intersects(r2));
-    spdlog::info("{} intersects {} : {}", r1.str(), r4.str(), r1.intersects(r4));
-    spdlog::info("{} clamped into {} : {}", 9, r1.str(), r1.clamp(9));
+    spdlog::info("{} contains {} : {}", r1.to_string(), r2.to_string(), r1.contains(r2));
+    spdlog::info("{} contains {} : {}", r1.to_string(), r3.to_string(), r1.contains(r3));
+    spdlog::info("{} intersects {} : {}", r1.to_string(), r2.to_string(), r1.intersects(r2));
+    spdlog::info("{} intersects {} : {}", r1.to_string(), r4.to_string(), r1.intersects(r4));
+    spdlog::info("{} clamped into {} : {}", 9, r1.to_string(), r1.clamp(9));
 
     return 0;
 }

@@ -29,10 +29,10 @@ int main()
     tc::sdk::size<unsigned> s0;
     auto s1 = tc::sdk::size<unsigned>(640, 480);
 
-    spdlog::info("{} is_null : {}", s0.str(), s0.is_null());
-    spdlog::info("{} is_null : {}", s1.str(), s1.is_null());
-    spdlog::info("{} width : {}", s1.str(), s1.width());
-    spdlog::info("{} height : {}", s1.str(), s1.height());
+    spdlog::info("{} is_null : {}", s0.to_string(), s0.is_null());
+    spdlog::info("{} is_null : {}", s1.to_string(), s1.is_null());
+    spdlog::info("{} width : {}", s1.to_string(), s1.width());
+    spdlog::info("{} height : {}", s1.to_string(), s1.height());
 
     return 0;
 }

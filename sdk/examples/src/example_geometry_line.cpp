@@ -30,10 +30,10 @@ int main()
     auto l1 = tc::sdk::line(tc::sdk::point<int>(1, 1), tc::sdk::point<int>(4, 4));
     auto l2 = tc::sdk::line(tc::sdk::point<int>(1, 1), tc::sdk::point<int>(4, 1));
 
-    spdlog::info("{} is_null : {}", l0.str(), l0.is_null());
-    spdlog::info("{} is_null : {}", l1.str(), l1.is_null());
-    spdlog::info("{} is_vertical : {}", l2.str(), l2.is_vertical());
-    spdlog::info("{} is_horizontal : {}", l2.str(), l2.is_horizontal());
+    spdlog::info("{} is_null : {}", l0.to_string(), l0.is_null());
+    spdlog::info("{} is_null : {}", l1.to_string(), l1.is_null());
+    spdlog::info("{} is_vertical : {}", l2.to_string(), l2.is_vertical());
+    spdlog::info("{} is_horizontal : {}", l2.to_string(), l2.is_horizontal());
 
     return 0;
 }

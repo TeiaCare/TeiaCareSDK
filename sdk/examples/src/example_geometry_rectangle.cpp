@@ -30,19 +30,19 @@ int main()
     int height = 4;
     auto position = tc::sdk::point<int>(1, 1);
     auto r1 = tc::sdk::rectangle<int>(position, width, height);
-    spdlog::info("{}", r1.str());
-    spdlog::info("top_left: {}", r1.top_left().str());
-    spdlog::info("top_right: {}", r1.top_right().str());
-    spdlog::info("bottom_left: {}", r1.bottom_left().str());
-    spdlog::info("bottom_right: {}", r1.bottom_right().str());
-    spdlog::info("size: {}", r1.size().str());
+    spdlog::info("{}", r1.to_string());
+    spdlog::info("top_left: {}", r1.top_left().to_string());
+    spdlog::info("top_right: {}", r1.top_right().to_string());
+    spdlog::info("bottom_left: {}", r1.bottom_left().to_string());
+    spdlog::info("bottom_right: {}", r1.bottom_right().to_string());
+    spdlog::info("size: {}", r1.size().to_string());
 
     auto new_position = tc::sdk::point<int>(2, 2);
     r1.set_position(new_position);
-    spdlog::info("new_position: {} = {}", new_position.str(), r1.str());
+    spdlog::info("new_position: {} = {}", new_position.to_string(), r1.to_string());
 
     r1.translate(1, 2);
-    spdlog::info("translate: {},{} = {}", 1, 2, r1.str());
+    spdlog::info("translate: {},{} = {}", 1, 2, r1.to_string());
 
     return 0;
 }

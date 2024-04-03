@@ -28,21 +28,21 @@ int main()
 
     tc::sdk::point<int> p0;
     auto p1 = tc::sdk::point<int>(2, 3);
-    spdlog::info("{} is_origin : {}", p0.str(), p0.is_origin());
-    spdlog::info("{} is_origin : {}", p1.str(), p1.is_origin());
+    spdlog::info("{} is_origin : {}", p0.to_string(), p0.is_origin());
+    spdlog::info("{} is_origin : {}", p1.to_string(), p1.is_origin());
 
     auto prev_p0 = p0;
     p0.add_delta(2, 4);
-    spdlog::info("{} increment(2, 4) = {}", prev_p0.str(), p0.str());
+    spdlog::info("{} increment(2, 4) = {}", prev_p0.to_string(), p0.to_string());
     
     tc::sdk::point<float> p2;
     auto p3 = tc::sdk::point<float>(.2f, .3f);
-    spdlog::info("{} is_origin : {}", p2.str(), p2.is_origin());
-    spdlog::info("{} is_origin : {}", p3.str(), p3.is_origin());
+    spdlog::info("{} is_origin : {}", p2.to_string(), p2.is_origin());
+    spdlog::info("{} is_origin : {}", p3.to_string(), p3.is_origin());
     
     auto prev_p3 = p3;
     p3.add_delta(.2f, .4f);
-    spdlog::info("{} increment(.2f, .4f) = {}", prev_p3.str(), p3.str());
+    spdlog::info("{} increment(.2f, .4f) = {}", prev_p3.to_string(), p3.to_string());
 
     return 0;
 }
