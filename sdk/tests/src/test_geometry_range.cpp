@@ -16,7 +16,7 @@
 
 namespace tc::sdk::tests
 {
-using types = testing::Types<int, unsigned int, float, double, long>;
+using types = testing::Types<int, unsigned int, float, double, long, long long>;
 TYPED_TEST_SUITE(test_geometry_range_t, types);
 
 
@@ -119,7 +119,7 @@ TYPED_TEST(test_geometry_range_t, contains_value)
     EXPECT_TRUE(p0.contains(3));
 
     EXPECT_FALSE(p0.contains(0));
-    EXPECT_TRUE(p0.contains(4)); // Upper bound is not included
+    EXPECT_FALSE(p0.contains(4)); // Upper bound is not included
     EXPECT_FALSE(p0.contains(5));
 }
 

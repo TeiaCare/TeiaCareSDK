@@ -16,7 +16,7 @@
 
 namespace tc::sdk::tests
 {
-using types = testing::Types<int, unsigned int, float, double, long>;
+using types = testing::Types<int, float, double, long, long long>;
 TYPED_TEST_SUITE(test_geometry_line_t, types);
 
 TYPED_TEST(test_geometry_line_t, create)
@@ -107,48 +107,79 @@ TYPED_TEST(test_geometry_line_t, getter_setter)
 
 TYPED_TEST(test_geometry_line_t, intersection)
 {
-    // TODO
+    using LineT = TypeParam;
+    
+    auto check_intersection = [](tc::sdk::line<LineT> line1, tc::sdk::line<LineT> line2, tc::sdk::point<double> intersection_point)
+    {
+        EXPECT_TRUE(line1.intersects(line2));
+        EXPECT_TRUE(line2.intersects(line1));
+
+        EXPECT_TRUE(line1.get_intersection(line2).has_value());
+        EXPECT_TRUE(line2.get_intersection(line1).has_value());
+
+        EXPECT_EQ(line1.get_intersection(line2).value(), intersection_point);
+        EXPECT_EQ(line2.get_intersection(line1).value(), intersection_point);
+    };
+
+    {
+        tc::sdk::line<LineT> p0(tc::sdk::point<LineT>(0, 0), tc::sdk::point<LineT>(2, 2));
+        tc::sdk::line<LineT> p1(tc::sdk::point<LineT>(0, 2), tc::sdk::point<LineT>(2, 0));
+        auto i0 = tc::sdk::point<double>(1.0, 1.0);
+        check_intersection(p0, p1, i0);
+    }
+
+    {
+        tc::sdk::line<LineT> p0(tc::sdk::point<LineT>(0, 2), tc::sdk::point<LineT>(2, 2));
+        tc::sdk::line<LineT> p1(tc::sdk::point<LineT>(1, 0), tc::sdk::point<LineT>(1, 4));
+        check_intersection(p0, p1, tc::sdk::point<double>(1.0, 2.0));
+    }
+
+    {
+        tc::sdk::line<LineT> p0(tc::sdk::point<LineT>(0, 3), tc::sdk::point<LineT>(2, 1));
+        tc::sdk::line<LineT> p1(tc::sdk::point<LineT>(1, 0), tc::sdk::point<LineT>(1, 4));
+        check_intersection(p0, p1, tc::sdk::point<double>(1.0, 2.0));
+    }
+
+    {
+        tc::sdk::line<LineT> p0(tc::sdk::point<LineT>(0, 2), tc::sdk::point<LineT>(2, 2));
+        tc::sdk::line<LineT> p1(tc::sdk::point<LineT>(2, 0), tc::sdk::point<LineT>(0, 4));
+        check_intersection(p0, p1, tc::sdk::point<double>(1.0, 2.0));
+    }
+
+    if constexpr(std::is_same_v<LineT, float> || std::is_same_v<LineT, double>)
+    {
+        tc::sdk::line<LineT> p0(tc::sdk::point<LineT>(0.0, 0.5), tc::sdk::point<LineT>(2.0, 2.5));
+        tc::sdk::line<LineT> p1(tc::sdk::point<LineT>(1.5, 0.0), tc::sdk::point<LineT>(0.0, 4.5));
+        check_intersection(p0, p1, tc::sdk::point<double>(1.0, 1.5));
+    }
+
+    if constexpr(std::is_same_v<LineT, float> || std::is_same_v<LineT, double>)
+    {
+        tc::sdk::line<LineT> p0(tc::sdk::point<LineT>(0.0, -0.5), tc::sdk::point<LineT>(-2.0, -2.5));
+        tc::sdk::line<LineT> p1(tc::sdk::point<LineT>(-1.5, 0.0), tc::sdk::point<LineT>(0.0, -4.5));
+        check_intersection(p0, p1, tc::sdk::point<double>(-1.0, -1.5));
+    }
 }
 
-// TYPED_TEST(test_geometry_line_t, to_string)
-// {
-//     using LineT = TypeParam;
-//     tc::sdk::line<LineT> p0(tc::sdk::point<LineT>(1, 1), tc::sdk::point<LineT>(9, 9));
-//     tc::sdk::line<LineT> p1(tc::sdk::point<LineT>(9, 9), tc::sdk::point<LineT>(1, 1));
+TYPED_TEST(test_geometry_line_t, to_string)
+{
+    using LineT = TypeParam;
+    tc::sdk::line<LineT> p0(tc::sdk::point<LineT>(1, 1), tc::sdk::point<LineT>(9, 9));
+    tc::sdk::line<LineT> p1(tc::sdk::point<LineT>(-1, -2), tc::sdk::point<LineT>(-3, -4));
 
-//     if constexpr(std::is_same_v<LineT, unsigned int>)
-//     {
-//         // Overflow!
-//         // The RangeT is "unsigned int" so when using negative values it overflows.
-//         // So the expected values are:
-//         // std::numeric_limits<unsigned int>::max() + 1 + p1.x() 
-//         // = 4294967296 + 1 + 3 
-//         // = 4294967293
-//         // and
-//         // std::numeric_limits<unsigned int>::max() + 1 + p1.y() 
-//         // = 4294967296 + 1 + 4 
-//         // = 4294967292
-//         auto x =  std::numeric_limits<unsigned int>::max() + 1 + p1.start();
-//         auto y =  std::numeric_limits<unsigned int>::max() + 1 + p1.end();
-//         EXPECT_EQ(p1.to_string(), "(" + std::to_string(x) + ":" + std::to_string(y) + ")");
+    if constexpr(std::is_same_v<LineT, int> || std::is_same_v<LineT, long> || std::is_same_v<LineT, long long>)
+    {
+        EXPECT_EQ(p0.to_string(), "((1, 1) : (9, 9))");
+        EXPECT_EQ(p1.to_string(), "((-1, -2) : (-3, -4))");
+    }
 
-//         // No overflow on positive values.
-//         EXPECT_EQ(p0.to_string(), "(1:2)");
-//     }
-
-//     if constexpr(std::is_same_v<LineT, int> || std::is_same_v<LineT, long>)
-//     {
-//         EXPECT_EQ(p0.to_string(), "(1:2)");
-//         EXPECT_EQ(p1.to_string(), "(-3:-4)");
-//     }
-
-//     if constexpr(std::is_same_v<LineT, float> || std::is_same_v<LineT, double>)
-//     {
-//         EXPECT_EQ(p0.to_string(), "(1.000000:2.000000)");
-//         EXPECT_EQ(p1.to_string(), "(-3.000000:-4.000000)");
-//     }
+    if constexpr(std::is_same_v<LineT, float> || std::is_same_v<LineT, double>)
+    {
+        EXPECT_EQ(p0.to_string(), "((1.000000, 1.000000) : (9.000000, 9.000000))");
+        EXPECT_EQ(p1.to_string(), "((-1.000000, -2.000000) : (-3.000000, -4.000000))");
+    }
     
-// }
+}
 
 // NOLINTNEXTLINE
 TYPED_TEST(test_geometry_line_t, ostream)

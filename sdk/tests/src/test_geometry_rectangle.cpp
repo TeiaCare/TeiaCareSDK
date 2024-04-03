@@ -16,7 +16,7 @@
 
 namespace tc::sdk::tests
 {
-using types = testing::Types<int, unsigned int, float, double, long>;
+using types = testing::Types<int, unsigned int, float, double, long, long long>;
 TYPED_TEST_SUITE(test_geometry_rectangle_t, types);
 
 TYPED_TEST(test_geometry_rectangle_t, create)

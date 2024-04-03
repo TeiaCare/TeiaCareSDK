@@ -150,7 +150,9 @@ public:
     }
 
     /*!
-     * \brief TODO
+     * \brief Check if the given line segments intersects the current instance.
+     * \param other the line to check the intersection against.
+     * \return true if the two lines intersects.
      */
     bool intersects(tc::sdk::line<T> other) const noexcept
     {
@@ -158,9 +160,11 @@ public:
     }
 
     /*!
-     * \brief TODO
+     * \brief Computes the intersection between the given line and the current one.
+     * \param other the compute to check the intersection against.
+     * \return std::nullopt if the two lines do not intersect, otherwise a std::optional<tc::sdk::point<double>> with the intersection point.
      */
-    std::optional<tc::sdk::point<T>> get_intersection(tc::sdk::line<T> other) const noexcept
+    std::optional<tc::sdk::point<double>> get_intersection(tc::sdk::line<T> other) const noexcept
     {
         // https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection#Given_two_points_on_each_line_segment
 
@@ -168,32 +172,32 @@ public:
             return T(0) <= value && value <= T(1);
         };
 
-        T x_A = _start.x();
-        T y_A = _start.y();
+        const double x_A = static_cast<double>(_start.x());
+        const double y_A = static_cast<double>(_start.y());
 
-        T x_B = _end.x();
-        T y_B = _end.y();
+        const double x_B = static_cast<double>(_end.x());
+        const double y_B = static_cast<double>(_end.y());
 
-        T x_C = other._start.x();
-        T y_C = other._start.y();
+        const double x_C = static_cast<double>(other._start.x());
+        const double y_C = static_cast<double>(other._start.y());
 
-        T x_D = other._end.x();
-        T y_D = other._end.y();
+        const double x_D = static_cast<double>(other._end.x());
+        const double y_D = static_cast<double>(other._end.y());
 
-        T denom = ((x_A - x_B) * (y_C - y_D) - (y_A - y_B) * (x_C - x_D));
+        const double denom = ((x_A - x_B) * (y_C - y_D) - (y_A - y_B) * (x_C - x_D));
 
-        T t = ((x_A - x_C) * (y_C - y_D) - (y_A - y_C) * (x_C - x_D)) / denom;
+        const double t = ((x_A - x_C) * (y_C - y_D) - (y_A - y_C) * (x_C - x_D)) / denom;
         if (!is_unit_range(t))
             return std::nullopt;
 
-        T u = ((x_A - x_B) * (y_A - y_C) - (y_A - y_B) * (x_A - x_C)) / denom;
+        const double u = ((x_A - x_B) * (y_A - y_C) - (y_A - y_B) * (x_A - x_C)) / denom;
         if (!is_unit_range(-u))
             return std::nullopt;
 
-        T intersection_x = x_A + t * (x_B - x_A);
-        T intersection_y = y_A + t * (y_B - y_A);
+        const double intersection_x = x_A + t * (x_B - x_A);
+        const double intersection_y = y_A + t * (y_B - y_A);
 
-        return tc::sdk::point<T>(intersection_x, intersection_y);
+        return tc::sdk::point<double>(intersection_x, intersection_y);
     }
 
     /*!

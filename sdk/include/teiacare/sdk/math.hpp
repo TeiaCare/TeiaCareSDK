@@ -14,47 +14,80 @@
 
 #pragma once
 
-#include <string>
-#include <cmath>
-
 namespace tc::sdk
 {
-/** Returns the larger of two values. */
+/*!
+* \brief Return the biggest of two values.
+* \param a first value.
+* \param b second value.
+* \return the greatest value.
+*/
 template <typename T>
 constexpr inline T max(T a, T b)
 {
     return a < b ? b : a;
 }
 
-/** Returns the larger of three values. */
+/*!
+* \brief Return the biggest of three values.
+* \param a first value.
+* \param b second value.
+* \param c third value.
+* \return the greatest value.
+*/
 template <typename T>
 constexpr inline T max(T a, T b, T c)
 {
     return a < b ? (b < c ? c : b) : (a < c ? c : a);
 }
 
-/** Returns the larger of four values. */
+/*!
+* \brief Return the biggest of four values.
+* \param a first value.
+* \param b second value.
+* \param c third value.
+* \param d fourth value.
+* \return the greatest value.
+*/
 template <typename T>
 constexpr inline T max(T a, T b, T c, T d)
 {
     return tc::sdk::max(a, tc::sdk::max(b, c, d));
 }
 
-/** Returns the smaller of two values. */
+/*!
+* \brief Return the smallest of two values.
+* \param a first value.
+* \param b second value.
+* \return the lowest value.
+*/
 template <typename T>
 constexpr inline T min(T a, T b)
 {
     return b < a ? b : a;
 }
 
-/** Returns the smaller of three values. */
+/*!
+* \brief Return the smallest of three values.
+* \param a first value.
+* \param b second value.
+* \param c third value.
+* \return the lowest value.
+*/
 template <typename T>
 constexpr inline T min(T a, T b, T c)
 {
     return b < a ? (c < b ? c : b) : (c < a ? c : a);
 }
 
-/** Returns the smaller of four values. */
+/*!
+* \brief Return the smallest of four values.
+* \param a first value.
+* \param b second value.
+* \param c third value.
+* \param d fourth value.
+* \return the lowest value.
+*/
 template <typename T>
 constexpr inline T min(T a, T b, T c, T d)
 {
