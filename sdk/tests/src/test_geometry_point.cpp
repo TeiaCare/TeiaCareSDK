@@ -111,11 +111,11 @@ TYPED_TEST(test_geometry_point_t, distance_origin)
 
     const auto d0 = p0.distance_from_origin();
     const auto expected_distance0 = PointT(2.236068); // sqrt(1^2 + 2^2) = 2.236068
-    EXPECT_NEAR(d0, expected_distance0, abs_error);
+    EXPECT_NEAR(static_cast<double>(d0), static_cast<double>(expected_distance0), static_cast<double>(abs_error));
 
     const auto d1 = p1.distance_from_origin();
     const auto expected_distance1 = PointT(5); // sqrt(3^2 + 4^2) = 5
-    EXPECT_NEAR(d1, expected_distance1, abs_error);
+    EXPECT_NEAR(static_cast<double>(d1), static_cast<double>(expected_distance1), static_cast<double>(abs_error));
 }
 
 TYPED_TEST(test_geometry_point_t, distance_point)
@@ -128,10 +128,10 @@ TYPED_TEST(test_geometry_point_t, distance_point)
     const auto expected_distance = PointT(2.828427); // sqrt((1+3)^2 + (2+4)^2) = 2.828427
     
     const auto d0 = p0.distance(p1);
-    EXPECT_NEAR(d0, expected_distance, abs_error);
+    EXPECT_NEAR(static_cast<double>(d0), static_cast<double>(expected_distance), static_cast<double>(abs_error));
     
     const auto d1 = p1.distance(p0);
-    EXPECT_NEAR(d1, expected_distance, abs_error);
+    EXPECT_NEAR(static_cast<double>(d1), static_cast<double>(expected_distance), static_cast<double>(abs_error));
 }
 
 TYPED_TEST(test_geometry_point_t, operator_add)
@@ -187,16 +187,16 @@ TYPED_TEST(test_geometry_point_t, operator_div)
     using PointT = TypeParam;
     tc::sdk::point<PointT> p0(1, 9);
     const auto scalar = PointT(3);
-    const auto abs_error = PointT(0.000001);
+    const double abs_error = 0.000001;
 
     auto op = p0 / scalar;
     auto temp = p0;
     temp /= scalar;
 
-    EXPECT_NEAR(op.x(), PointT(0.333333), abs_error);
-    EXPECT_NEAR(op.y(), PointT(3), abs_error);
-    EXPECT_NEAR(temp.x(), PointT(0.333333), abs_error);
-    EXPECT_NEAR(temp.y(), PointT(3), abs_error);
+    EXPECT_NEAR(static_cast<double>(op.x()), static_cast<double>(p0.x()/scalar), abs_error);
+    EXPECT_NEAR(static_cast<double>(op.y()), static_cast<double>(p0.y()/scalar), abs_error);
+    EXPECT_NEAR(static_cast<double>(temp.x()), static_cast<double>(p0.x()/scalar), abs_error);
+    EXPECT_NEAR(static_cast<double>(temp.y()), static_cast<double>(p0.y()/scalar), abs_error);
 }
 
 TYPED_TEST(test_geometry_point_t, to_string)

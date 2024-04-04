@@ -168,8 +168,8 @@ public:
     {
         // https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection#Given_two_points_on_each_line_segment
 
-        auto is_unit_range = [](T value) {
-            return T(0) <= value && value <= T(1);
+        auto is_unit_range = [](double value) {
+            return 0.0 <= value && value <= 1.0;
         };
 
         const double x_A = static_cast<double>(_start.x());

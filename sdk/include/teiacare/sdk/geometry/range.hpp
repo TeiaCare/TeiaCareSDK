@@ -189,7 +189,7 @@ public:
      * \param value the value to map.
      * \return the value remapped to the current range.
      */
-    constexpr inline T map(double value) const
+    constexpr inline double map(double value) const
     {
         // static_assert(value >= T(0) && value <= T(1));
         return _min + value * (_max - _min);
