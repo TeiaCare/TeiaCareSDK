@@ -94,6 +94,7 @@ int main()
             spdlog::info("Every 100ms");
             std::this_thread::sleep_for(50ms);
         });
+        spdlog::info("Scheduled task recursively: {}", is_scheduled);
         std::this_thread::sleep_for(1s);
 
         s.update_interval("task_id", 400ms);

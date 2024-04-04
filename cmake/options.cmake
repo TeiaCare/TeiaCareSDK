@@ -23,7 +23,7 @@ cmake_print_variables(TC_ENABLE_DOCS)
 option(TC_ENABLE_WARNINGS_ERROR "Enable treat Warnings as Errors" True)
 cmake_print_variables(TC_ENABLE_WARNINGS_ERROR)
 
-option(TC_ENABLE_SANITIZER_ADDRESS "Enable Address and Leak Sanitizers" False)
+option(TC_ENABLE_SANITIZER_ADDRESS "Enable Address and Leak Sanitizers" True)
 cmake_print_variables(TC_ENABLE_SANITIZER_ADDRESS)
 
 option(TC_ENABLE_SANITIZER_THREAD "Enable Thread Sanitizer" False)
