@@ -227,9 +227,9 @@ public:
      * \brief Center getter.
      * \return The center coordinate of the rectangle.
      */
-    constexpr inline tc::sdk::point<T> center() const noexcept
+    constexpr inline tc::sdk::point<double> center() const noexcept
     {
-        return {_position.x() + _width / 2, _position.y() + _height / 2};
+        return tc::sdk::point<double>(_position.x() + _width * 0.5, _position.y() + _height * 0.5);
     }
 
     /*!

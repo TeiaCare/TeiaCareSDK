@@ -87,7 +87,6 @@ TYPED_TEST(test_geometry_line_t, vertical)
     EXPECT_FALSE(p2.is_vertical()); // False, horizontal
 }
 
-
 TYPED_TEST(test_geometry_line_t, getter_setter)
 {
     using LineT = TypeParam;
