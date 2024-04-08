@@ -66,8 +66,8 @@ int main()
     s.start();
 
     // Bind class member
-    Foo foo(0); 
-    // foo object is taken by reference into the task_scheduler: 
+    Foo foo(0);
+    // foo object is taken by reference into the task_scheduler:
     // keep it alive also out of the scheduled scope and don't delete it during task execution.
     {
         s.every("task_id", 1s, std::bind(&Foo::update, &foo));

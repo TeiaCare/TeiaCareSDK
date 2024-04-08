@@ -308,6 +308,15 @@ TEST_F(test_event_dispatcher, push_same_event_name_different_handler_types)
     const auto event_name = "EVENT_NAME";
     e->start();
 
+    // string
+    std::string str_payload = "";
+    std::promise<std::string> str_promise;
+    std::future<std::string> str_future = str_promise.get_future();
+    EXPECT_TRUE(e->add_handler<std::string>(event_name, [&str_promise, &str_payload](const std::string& s) {
+        str_payload = s;
+        str_promise.set_value(s);
+    }));
+
     // int
     auto int_payload = 0;
     std::promise<int> int_promise;
@@ -318,31 +327,22 @@ TEST_F(test_event_dispatcher, push_same_event_name_different_handler_types)
     }));
 
     // string
-    std::string str_payload = "";
-    std::promise<std::string> str_promise;
-    std::future<std::string> str_future = str_promise.get_future();
-    EXPECT_TRUE(e->add_handler<std::string>(event_name, [&str_promise, &str_payload](std::string s) {
-        str_payload = s;
-        str_promise.set_value(s);
-    }));
+    const std::string expected_value_str = "some_random_string";
+    EXPECT_TRUE(e->emit(event_name, expected_value_str));
 
     // int
     const int expected_value_int = 123456789;
     EXPECT_TRUE(e->emit(event_name, expected_value_int));
 
     // string
-    const std::string expected_value_str = "some_random_string";
-    EXPECT_TRUE(e->emit(event_name, expected_value_str));
+    auto str_future_value = str_future.get();
+    EXPECT_EQ(expected_value_str, str_future_value);
+    EXPECT_EQ(expected_value_str, str_payload);
 
     // int
     auto int_future_value = int_future.get();
     EXPECT_EQ(expected_value_int, int_future_value);
     EXPECT_EQ(expected_value_int, int_payload);
-
-    // string
-    auto str_future_value = str_future.get();
-    EXPECT_EQ(expected_value_str, str_future_value);
-    EXPECT_EQ(expected_value_str, str_payload);
 }
 
 // NOLINTNEXTLINE

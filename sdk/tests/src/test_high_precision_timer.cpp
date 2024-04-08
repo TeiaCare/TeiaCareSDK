@@ -245,6 +245,8 @@ TEST_F(test_high_precision_timer, callback_invoked_missed_count)
 // NOLINTNEXTLINE
 TEST_F(test_high_precision_timer, reset_callback)
 {
+    // TSAN Warning
+    
     std::binary_semaphore sync(0);
     const int total_count = 10;
 

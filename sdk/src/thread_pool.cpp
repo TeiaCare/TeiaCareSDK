@@ -35,27 +35,36 @@ bool thread_pool::start(const unsigned int num_threads)
         std::scoped_lock lock(_is_running_mutex);
         if (_is_running)
             return false;
+
+        _is_running = true;
     }
 
     const auto thread_count = std::clamp(num_threads, 1u, std::thread::hardware_concurrency());
     _threads.reserve(thread_count);
+    is_ready = std::make_shared<std::latch>(thread_count);
 
-    auto threads_barrier_callback = []() noexcept {};
-    using barrier_t = std::barrier<decltype(threads_barrier_callback)>;
+    // auto threads_barrier_callback = []() noexcept {};
+    // using barrier_t = std::barrier<decltype(threads_barrier_callback)>;
 
-    auto dispatcher_threads_barrier = std::make_shared<barrier_t>(thread_count, threads_barrier_callback);
-    const auto worker_thread = [this, dispatcher_threads_barrier]() {
-        dispatcher_threads_barrier->arrive_and_wait();
-        worker();
-    };
-
-    {
-        std::scoped_lock lock(_is_running_mutex);
-        _is_running = true;
-    }
+    // auto dispatcher_threads_barrier = std::barrier(thread_count+5);
+    // auto dispatcher_threads_barrier = barrier_t(thread_count, threads_barrier_callback);
+    // auto dispatcher_threads_barrier = std::make_shared<barrier_t>(thread_count, threads_barrier_callback);
+    // const auto worker_thread = [this]() {
+    // const auto worker_thread = [this, &dispatcher_threads_barrier]() {
+    //     std::cout << "Wait" << std::endl;
+    //     dispatcher_threads_barrier.arrive_and_wait();
+    //     worker();
+    // };
+    // {
+    //     std::scoped_lock lock(_is_running_mutex);
+    //     _is_running = true;
+    // }
 
     for (unsigned int i = 0; i < thread_count; ++i)
-        _threads.emplace_back(worker_thread);
+    {
+        _threads.emplace_back([this]{worker();});
+        // _threads.emplace_back(worker_thread);
+    }
 
     return true;
 }
@@ -101,6 +110,8 @@ bool thread_pool::is_running() const
 
 void thread_pool::worker()
 {
+    is_ready->arrive_and_wait();
+
     while (_is_running)
     {
         std::unique_lock lock(_task_mutex);

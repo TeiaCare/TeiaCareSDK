@@ -25,6 +25,7 @@
 #include <queue>
 #include <thread>
 #include <vector>
+#include <latch>
 
 namespace tc::sdk
 {
@@ -116,6 +117,7 @@ private:
     std::queue<tc::sdk::task> _task_queue;
     std::condition_variable _task_cv;
     std::mutex _task_mutex;
+    std::shared_ptr<std::latch> is_ready;
 };
 
 }
