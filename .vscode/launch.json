@@ -10,7 +10,7 @@
             "request": "launch",
             "cwd": "${workspaceFolder}/build/Debug/sdk",
             "program": "${workspaceFolder}/build/Debug/sdk/tests/teiacare_sdk_unit_tests",
-            "args": ["--gtest_filter=test_task_scheduler.*"]
+            "args": ["--gtest_filter=*"]
         },
         {
             "name": "unit_tests (gdb)",
@@ -21,6 +21,7 @@
             "setupCommands": [{ "text": "-enable-pretty-printing" }],
             "cwd": "${workspaceFolder}/build/Debug/sdk",
             "program": "${workspaceFolder}/build/Debug/sdk/tests/teiacare_sdk_unit_tests",
+            "args": ["--gtest_filter=*"]
         },
         {
             "name": "unit_tests (msvc)",
@@ -29,6 +30,7 @@
             "console": "integratedTerminal",
             "cwd": "${workspaceFolder}/build/Debug/sdk",
             "program": "${workspaceFolder}/build/Debug/sdk/tests/teiacare_sdk_unit_tests",
+            "args": ["--gtest_filter=*"]
         }
     ]
 }

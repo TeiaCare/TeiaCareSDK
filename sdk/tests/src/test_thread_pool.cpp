@@ -35,6 +35,56 @@ TEST_F(test_thread_pool, threads_count_range_max)
 }
 
 // NOLINTNEXTLINE
+TEST_F(test_thread_pool, threads_count_before_after_start)
+{
+    EXPECT_EQ(tp->threads_count(), 0);
+
+    EXPECT_TRUE(tp->start(1));
+    EXPECT_EQ(tp->threads_count(), 1);
+
+    EXPECT_FALSE(tp->start(2));
+    EXPECT_EQ(tp->threads_count(), 1);
+}
+
+// NOLINTNEXTLINE
+TEST_F(test_thread_pool, threads_count_start_stop)
+{
+    for (unsigned int i = 1; i < max_threads_count; ++i)
+    {
+        EXPECT_TRUE(tp->start(i));
+        EXPECT_EQ(tp->threads_count(), i);
+        EXPECT_TRUE(tp->stop());
+    }
+}
+
+// NOLINTNEXTLINE
+TEST_F(test_thread_pool, start_stop_lock)
+{
+    for (unsigned int i = 1; i < 100; ++i)
+    {
+        EXPECT_TRUE(tp->start(max_threads_count));
+        EXPECT_TRUE(tp->is_running());
+
+        EXPECT_TRUE(tp->stop());
+        EXPECT_FALSE(tp->is_running());
+    }
+}
+
+// NOLINTNEXTLINE
+TEST_F(test_thread_pool, start_stop_run_lock)
+{
+    for (unsigned int i = 1; i < 100; ++i)
+    {
+        EXPECT_TRUE(tp->start(max_threads_count));
+
+        auto result = tp->run([i] { return i; });
+        EXPECT_EQ(result.get(), i);
+
+        EXPECT_TRUE(tp->stop());
+    }
+}
+
+// NOLINTNEXTLINE
 TEST_F(test_thread_pool, start_twice)
 {
     EXPECT_TRUE(tp->start(num_threads));

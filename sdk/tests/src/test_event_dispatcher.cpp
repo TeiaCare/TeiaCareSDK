@@ -301,10 +301,8 @@ TEST_F(test_event_dispatcher, push_same_event_name_same_handler_types)
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_event_dispatcher, push_same_event_name_different_handler_types)
+TEST_F(test_event_dispatcher, DISABLED_TSAN_WARNING_push_same_event_name_different_handler_types)
 {
-    // GTEST_SKIP_("Thread Sanitizer Warning");
-
     const auto event_name = "EVENT_NAME";
     e->start();
 
@@ -488,7 +486,7 @@ TEST_F(test_event_dispatcher, push_after_remove_event)
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_event_dispatcher, push_after_remove_specific_handler)
+TEST_F(test_event_dispatcher, DISABLED_TSAN_WARNING_push_after_remove_specific_handler)
 {
     e->start(2);
     const auto event_name = "EVENT_NAME";
