@@ -29,7 +29,7 @@ thread_pool::~thread_pool()
 
 bool thread_pool::start(const unsigned int num_threads)
 {
-    std::scoped_lock lock(_is_running_mutex);
+    std::scoped_lock running_lock(_is_running_mutex);
     if (_is_running)
         return false;
 
@@ -50,7 +50,7 @@ bool thread_pool::start(const unsigned int num_threads)
 
 bool thread_pool::stop()
 {
-    std::scoped_lock lock(_is_running_mutex);
+    std::scoped_lock running_lock(_is_running_mutex);
     if (!_is_running)
         return false;
 
