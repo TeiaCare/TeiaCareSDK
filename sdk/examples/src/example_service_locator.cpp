@@ -76,9 +76,8 @@ auto main(int argc, char** argv) -> int
 
     auto& s = tc::sdk::service_locator::instance();
     std::shared_ptr<IService> service = nullptr;
-    bool is_registered = false;
 
-    is_registered = s.register_service<IService, ServiceA>();
+    bool is_registered = s.register_service<IService, ServiceA>();
     spdlog::info("IService, ServiceA is_registered: {}", is_registered); // true
     service = s.get<IService>();                                         // ServiceA implementation
     service->call();
