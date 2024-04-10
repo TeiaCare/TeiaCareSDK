@@ -3,7 +3,7 @@ file(STRINGS "VERSION" VERSION_STR)
 project(teiacare_sdk
     VERSION ${VERSION_STR}
     LANGUAGES CXX
-    HOMEPAGE_URL "https://dev.azure.com/teiacare/Ancelia/_git/TeiaCareSDK"
+    HOMEPAGE_URL "https://github.com/TeiaCare/TeiaCareSDK"
     DESCRIPTION "TeiaCareSDK is a collection of reusable C++ components"
 )
 

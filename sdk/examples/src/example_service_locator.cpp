@@ -19,8 +19,7 @@
 
 #include <teiacare/sdk/service_locator.hpp>
 
-#include <iostream>
-#include <string>
+#include <spdlog/spdlog.h>
 
 /**
  * @cond SKIP_DOXYGEN
@@ -36,7 +35,7 @@ struct ServiceA : IService
 {
     void call() const override
     {
-        std::cout << "A" << std::endl;
+        spdlog::info("A");
     }
 };
 
@@ -44,7 +43,7 @@ struct ServiceB : IService
 {
     void call() const override
     {
-        std::cout << "B" << std::endl;
+        spdlog::info("B");
     }
 };
 
@@ -58,11 +57,11 @@ public:
     }
     void call() const override
     {
-        std::cout << _x << std::endl;
+        spdlog::info(_x);
     }
     void non_virtual_call() const
     {
-        std::cout << _y << std::endl;
+        spdlog::info(_y);
     }
 
 private:
@@ -73,25 +72,31 @@ private:
 
 auto main(int argc, char** argv) -> int
 {
+    spdlog::set_pattern("[%H:%M:%S.%e] %v");
+
     auto& s = tc::sdk::service_locator::instance();
     std::shared_ptr<IService> service = nullptr;
-    bool is_registered = false;
 
-    is_registered = s.register_service<IService, ServiceA>(); // true
-    service = s.get<IService>();                              // ServiceA implementation
+    bool is_registered = s.register_service<IService, ServiceA>();
+    spdlog::info("IService, ServiceA is_registered: {}", is_registered); // true
+    service = s.get<IService>();                                         // ServiceA implementation
     service->call();
 
-    is_registered = s.register_service<IService, ServiceB>(); // false, there is an already registered implementation for IService interface
-    service = s.get<IService>();                              // ServiceA implementation, again, since it was already registered first
+    is_registered = s.register_service<IService, ServiceB>();
+    spdlog::info("IService, ServiceB is_registered: {}", is_registered); // false, there is an already registered implementation for IService interface
+    service = s.get<IService>();                                         // ServiceA implementation, again, since it was already registered first
     service->call();
 
-    bool is_unregistered = s.unregister_service<IService>(); // true
+    bool is_unregistered = s.unregister_service<IService>();
+    spdlog::info("IService is_unregistered: {}", is_unregistered); // true
 
-    is_registered = s.register_service<IService, ServiceB>(); // true
-    service = s.get<IService>();                              // now get return ServiceB_1 since there was not any registered implementation for IService interface
+    is_registered = s.register_service<IService, ServiceB>();
+    spdlog::info("IService, ServiceB is_registered: {}", is_registered); // true
+    service = s.get<IService>();                                         // now get return ServiceB_1 since there was not any registered implementation for IService interface
     service->call();
 
-    is_registered = s.register_service<IService, ServiceX>("__message__", 1.2345); // true
+    is_registered = s.register_service<IService, ServiceX>("__message__", 1.2345);
+    spdlog::info("IService, ServiceX is_registered: {}", is_registered); // true
     service = s.get<IService>();
     service->call();
 

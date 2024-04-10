@@ -14,8 +14,6 @@
 
 #include <teiacare/sdk/thread_pool.hpp>
 
-#include <barrier>
-
 namespace tc::sdk
 {
 thread_pool::thread_pool()
@@ -31,51 +29,36 @@ thread_pool::~thread_pool()
 
 bool thread_pool::start(const unsigned int num_threads)
 {
-    {
-        std::scoped_lock lock(_is_running_mutex);
-        if (_is_running)
-            return false;
-    }
+    std::scoped_lock running_lock(_is_running_mutex);
+    if (_is_running)
+        return false;
+
+    _is_running = true;
 
     const auto thread_count = std::clamp(num_threads, 1u, std::thread::hardware_concurrency());
     _threads.reserve(thread_count);
-
-    auto threads_barrier_callback = []() noexcept {};
-    using barrier_t = std::barrier<decltype(threads_barrier_callback)>;
-
-    auto dispatcher_threads_barrier = std::make_shared<barrier_t>(thread_count, threads_barrier_callback);
-    const auto worker_thread = [this, dispatcher_threads_barrier]() {
-        dispatcher_threads_barrier->arrive_and_wait();
-        worker();
-    };
-
-    {
-        std::scoped_lock lock(_is_running_mutex);
-        _is_running = true;
-    }
+    is_ready = std::make_shared<std::latch>(thread_count + 1);
 
     for (unsigned int i = 0; i < thread_count; ++i)
-        _threads.emplace_back(worker_thread);
+    {
+        _threads.emplace_back([this] { worker(); });
+    }
 
+    is_ready->arrive_and_wait();
     return true;
 }
 
 bool thread_pool::stop()
 {
-    {
-        std::scoped_lock lock(_is_running_mutex);
-        if (!_is_running)
-            return false;
-    }
+    std::scoped_lock running_lock(_is_running_mutex);
+    if (!_is_running)
+        return false;
+
+    _is_running = false;
 
     {
         std::scoped_lock lock(_task_mutex);
         _task_queue = {};
-    }
-
-    {
-        std::scoped_lock lock(_is_running_mutex);
-        _is_running = false;
     }
 
     _task_cv.notify_all();
@@ -85,6 +68,8 @@ bool thread_pool::stop()
         if (t.joinable())
             t.join();
     }
+
+    _threads.clear();
 
     return true;
 }
@@ -101,6 +86,8 @@ bool thread_pool::is_running() const
 
 void thread_pool::worker()
 {
+    is_ready->arrive_and_wait();
+
     while (_is_running)
     {
         std::unique_lock lock(_task_mutex);

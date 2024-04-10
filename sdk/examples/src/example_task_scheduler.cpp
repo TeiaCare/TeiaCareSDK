@@ -66,8 +66,8 @@ int main()
     s.start();
 
     // Bind class member
-    Foo foo(0); 
-    // foo object is taken by reference into the task_scheduler: 
+    Foo foo(0);
+    // foo object is taken by reference into the task_scheduler:
     // keep it alive also out of the scheduled scope and don't delete it during task execution.
     {
         s.every("task_id", 1s, std::bind(&Foo::update, &foo));
@@ -94,6 +94,7 @@ int main()
             spdlog::info("Every 100ms");
             std::this_thread::sleep_for(50ms);
         });
+        spdlog::info("Scheduled task recursively: {}", is_scheduled);
         std::this_thread::sleep_for(1s);
 
         s.update_interval("task_id", 400ms);

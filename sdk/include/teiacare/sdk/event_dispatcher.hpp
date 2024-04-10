@@ -40,7 +40,7 @@ class event_dispatcher final : private non_copyable, private non_moveable
 private:
     struct base_handler_t
     {
-        base_handler_t(unsigned long id) noexcept
+        explicit base_handler_t(unsigned long id) noexcept
             : id{id}
         {
         }
