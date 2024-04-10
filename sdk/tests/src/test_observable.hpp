@@ -23,7 +23,7 @@ namespace tc::sdk::tests
 class foo_t
 {
 public:
-    foo_t(const std::string& s)
+    explicit foo_t(const std::string& s)
         : _s{s}
     {
     }

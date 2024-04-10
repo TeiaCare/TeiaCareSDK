@@ -21,11 +21,11 @@
 #include <atomic>
 #include <condition_variable>
 #include <future>
+#include <latch>
 #include <mutex>
 #include <queue>
 #include <thread>
 #include <vector>
-#include <latch>
 
 namespace tc::sdk
 {

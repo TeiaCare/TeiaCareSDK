@@ -12,7 +12,3 @@ add_example(${TARGET_NAME} example_time)
 add_example(${TARGET_NAME} example_timedelta)
 add_example(${TARGET_NAME} example_uuid)
 add_example(${TARGET_NAME} example_version)
-
-include(sanitizer_thread)
-add_executable(sanitizer_check src/sanitizer_check.cpp)
-add_sanitizer_thread(sanitizer_check)

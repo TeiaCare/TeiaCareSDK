@@ -80,7 +80,7 @@ protected:
         drain_queue(params);
     }
 
-    void run_push_move(std::vector<T> params)
+    void run_push_move(const std::vector<T>& params)
     {
         EXPECT_EQ(q.size(), 0);
 
@@ -91,7 +91,7 @@ protected:
         drain_queue(params);
     }
 
-    void run_try_push_const_ref(std::vector<T> params)
+    void run_try_push_const_ref(const std::vector<T>& params)
     {
         for (size_t i = 0; i < params.size(); ++i)
         {
@@ -111,7 +111,7 @@ protected:
         try_drain_queue(params);
     }
 
-    void run_try_push_move(std::vector<T> params)
+    void run_try_push_move(const std::vector<T>& params)
     {
         for (size_t i = 0; i < params.size(); ++i)
         {

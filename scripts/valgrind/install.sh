@@ -1,3 +1,5 @@
+#!/bin/bash
+
 cd ~/Downloads
 
 sudo apt remove --purge valgrind -y
