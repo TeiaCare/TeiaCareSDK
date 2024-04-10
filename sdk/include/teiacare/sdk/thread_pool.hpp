@@ -21,6 +21,7 @@
 #include <atomic>
 #include <condition_variable>
 #include <future>
+#include <latch>
 #include <mutex>
 #include <queue>
 #include <thread>
@@ -116,6 +117,7 @@ private:
     std::queue<tc::sdk::task> _task_queue;
     std::condition_variable _task_cv;
     std::mutex _task_mutex;
+    std::shared_ptr<std::latch> is_ready;
 };
 
 }

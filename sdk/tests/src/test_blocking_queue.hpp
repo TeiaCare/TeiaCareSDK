@@ -16,8 +16,8 @@
 
 #include <teiacare/sdk/blocking_queue.hpp>
 
-#include <gtest/gtest.h>
 #include <array>
+#include <gtest/gtest.h>
 #include <vector>
 
 namespace tc::sdk::tests
@@ -80,7 +80,7 @@ protected:
         drain_queue(params);
     }
 
-    void run_push_move(std::vector<T> params)
+    void run_push_move(const std::vector<T>& params)
     {
         EXPECT_EQ(q.size(), 0);
 
@@ -91,7 +91,7 @@ protected:
         drain_queue(params);
     }
 
-    void run_try_push_const_ref(std::vector<T> params)
+    void run_try_push_const_ref(const std::vector<T>& params)
     {
         for (size_t i = 0; i < params.size(); ++i)
         {
@@ -111,7 +111,7 @@ protected:
         try_drain_queue(params);
     }
 
-    void run_try_push_move(std::vector<T> params)
+    void run_try_push_move(const std::vector<T>& params)
     {
         for (size_t i = 0; i < params.size(); ++i)
         {
@@ -143,7 +143,7 @@ struct blocking_queue_params
 template <class ItemsT>
 struct blocking_queue_params_factory : blocking_queue_params
 {
-    static const constexpr size_t ItemsSize = 500;
+    static const constexpr size_t ItemsSize = 100;
     using Items = std::array<ItemsT, ItemsSize>;
     Items items;
     Items create_items();

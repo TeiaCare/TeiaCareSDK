@@ -24,9 +24,9 @@ def get_project_version():
 class TeiaCareSDK(ConanFile):
     name = "teiacare_sdk"
     version = get_project_version()
-    license = "" # TODO: add this
+    license = "Apache License"
     author = "TeiaCare"
-    url = "https://dev.azure.com/teiacare/Ancelia/_git/TeiaCareSDK"
+    url = "https://github.com/TeiaCare/TeiaCareSDK"
     description = "TeiaCareSDK is a collection of reusable C++ components"
     topics = ("sdk")
     exports = "VERSION"

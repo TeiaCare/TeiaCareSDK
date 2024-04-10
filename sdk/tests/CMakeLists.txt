@@ -18,8 +18,6 @@ set(UNIT_TESTS_SRC
     src/test_rate_limiter.hpp        
     src/test_service_locator.cpp
     src/test_service_locator.hpp
-    src/test_signal_handler.cpp
-    src/test_signal_handler.hpp
     src/test_stopwatch.cpp
     src/test_stopwatch.hpp
     src/test_task_scheduler.hpp
@@ -33,6 +31,14 @@ set(UNIT_TESTS_SRC
     src/test_uuid.cpp
     src/test_uuid.hpp
 )
+
+# If Address or Thread Sanitizer is enabled signal handlers tests halt the program: do not include their unit tests in such cases.
+if(NOT TC_ENABLE_SANITIZER_ADDRESS AND NOT TC_ENABLE_SANITIZER_THREAD)
+    set(UNIT_TESTS_SRC ${UNIT_TESTS_SRC}
+        src/test_signal_handler.cpp
+        src/test_signal_handler.hpp
+    )
+endif()
 setup_unit_tests(${TARGET_NAME} ${UNIT_TESTS_SRC})
 
 if(TC_ENABLE_WARNINGS_ERROR)

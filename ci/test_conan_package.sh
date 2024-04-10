@@ -19,12 +19,12 @@ artifactory_password="$6"
 conan remote add artifactory "$artifactory_host"/artifactory/api/conan/conan False
 conan user "$artifactory_username" -r artifactory -p "$artifactory_password"
 cd sdk_package_test 
-python3 build.py $build_type $compiler $compiler_version
+python3 build.py "$build_type" "$compiler" "$compiler_version"
 output=$(install/teiacare_sdk_integration_test)
 
 echo "SDK Package Test Output: $output"
 
-expcted_version=`cat ../VERSION`
+expcted_version=$(cat ../VERSION)
 expcted_version="v$expcted_version"
 echo "Expected version: $expcted_version"
 
