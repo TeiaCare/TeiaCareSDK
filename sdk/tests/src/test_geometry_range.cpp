@@ -282,7 +282,7 @@ TYPED_TEST(test_geometry_range_t, ostream)
     tc::sdk::range<RangeT> p(1, 2);
 
     std::stringstream stream;
-    stream << p.to_string();
+    stream << p;
     EXPECT_STREQ(stream.str().c_str(), p.to_string().c_str());
 }
 

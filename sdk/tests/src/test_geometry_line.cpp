@@ -56,11 +56,23 @@ TYPED_TEST(test_geometry_line_t, compare)
     tc::sdk::line<LineT> p0(tc::sdk::point<LineT>(1, 1), tc::sdk::point<LineT>(9, 9));
     tc::sdk::line<LineT> p1(tc::sdk::point<LineT>(9, 9), tc::sdk::point<LineT>(1, 1));
     tc::sdk::line<LineT> p2(tc::sdk::point<LineT>(1, 1), tc::sdk::point<LineT>(2, 3));
+    tc::sdk::line<LineT> p3(tc::sdk::point<LineT>(2, 3), tc::sdk::point<LineT>(9, 9));
+    tc::sdk::line<LineT> p4(tc::sdk::point<LineT>(2, 3), tc::sdk::point<LineT>(4, 5));
 
-    EXPECT_TRUE(p0 != p2);
-    EXPECT_TRUE(p1 != p2);
     EXPECT_TRUE(p0 == p1); // Line direction does not matter, so p0 equals p1
     EXPECT_TRUE(p1 == p0);
+
+    EXPECT_TRUE(p0 != p2);
+    EXPECT_TRUE(p2 != p0);
+
+    EXPECT_TRUE(p1 != p2);
+    EXPECT_TRUE(p2 != p1);
+
+    EXPECT_TRUE(p0 != p3);
+    EXPECT_TRUE(p3 != p0);
+
+    EXPECT_TRUE(p0 != p4);
+    EXPECT_TRUE(p4 != p0);
 }
 
 TYPED_TEST(test_geometry_line_t, horizontal)
@@ -144,6 +156,20 @@ TYPED_TEST(test_geometry_line_t, intersection)
         check_intersection(p0, p1, tc::sdk::point<double>(1.0, 2.0));
     }
 
+    // Intersection on start point
+    {
+        tc::sdk::line<LineT> p0(tc::sdk::point<LineT>(0, 2), tc::sdk::point<LineT>(2, 2));
+        tc::sdk::line<LineT> p1(tc::sdk::point<LineT>(0, 2), tc::sdk::point<LineT>(9, 9));
+        check_intersection(p0, p1, tc::sdk::point<double>(1.0, 2.0));
+    }
+
+    // Intersection on end point
+    {
+        tc::sdk::line<LineT> p0(tc::sdk::point<LineT>(0, 2), tc::sdk::point<LineT>(2, 2));
+        tc::sdk::line<LineT> p1(tc::sdk::point<LineT>(9, 9), tc::sdk::point<LineT>(2, 2));
+        check_intersection(p0, p1, tc::sdk::point<double>(1.0, 2.0));
+    }
+
     if constexpr(std::is_same_v<LineT, float> || std::is_same_v<LineT, double>)
     {
         tc::sdk::line<LineT> p0(tc::sdk::point<LineT>(0.0, 0.5), tc::sdk::point<LineT>(2.0, 2.5));
@@ -156,6 +182,28 @@ TYPED_TEST(test_geometry_line_t, intersection)
         tc::sdk::line<LineT> p0(tc::sdk::point<LineT>(0.0, -0.5), tc::sdk::point<LineT>(-2.0, -2.5));
         tc::sdk::line<LineT> p1(tc::sdk::point<LineT>(-1.5, 0.0), tc::sdk::point<LineT>(0.0, -4.5));
         check_intersection(p0, p1, tc::sdk::point<double>(-1.0, -1.5));
+    }
+}
+
+TYPED_TEST(test_geometry_line_t, no_intersection)
+{
+    using LineT = TypeParam;
+    auto check_intersection = [](tc::sdk::line<LineT> line1, tc::sdk::line<LineT> line2)
+    {
+        EXPECT_FALSE(line1.intersects(line2));
+        EXPECT_FALSE(line2.intersects(line1));
+
+        EXPECT_FALSE(line1.get_intersection(line2).has_value());
+        EXPECT_FALSE(line2.get_intersection(line1).has_value());
+
+        EXPECT_EQ(line1.get_intersection(line2), std::nullopt);
+        EXPECT_EQ(line2.get_intersection(line1), std::nullopt);
+    };
+
+    {
+        tc::sdk::line<LineT> p0(tc::sdk::point<LineT>(0, 0), tc::sdk::point<LineT>(2, 2));
+        tc::sdk::line<LineT> p1(tc::sdk::point<LineT>(0, 2), tc::sdk::point<LineT>(2, 0));
+        check_intersection(p0, p1);
     }
 }
 
@@ -186,7 +234,7 @@ TYPED_TEST(test_geometry_line_t, ostream)
     tc::sdk::line<LineT> p(tc::sdk::point<LineT>(1, 1), tc::sdk::point<LineT>(9, 9));
 
     std::stringstream stream;
-    stream << p.to_string();
+    stream << p;
     EXPECT_STREQ(stream.str().c_str(), p.to_string().c_str());
 }
 

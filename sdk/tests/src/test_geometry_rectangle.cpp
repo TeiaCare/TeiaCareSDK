@@ -109,4 +109,15 @@ TYPED_TEST(test_geometry_rectangle_t, center)
 //     EXPECT_EQ(p0.end(), new_end);
 // }
 
+// NOLINTNEXTLINE
+TYPED_TEST(test_geometry_rectangle_t, ostream)
+{
+    using RectT = TypeParam;
+    tc::sdk::rectangle<RectT> p(tc::sdk::point<RectT>(2, 2), 0, 0);
+
+    std::stringstream stream;
+    stream << p;
+    EXPECT_STREQ(stream.str().c_str(), p.to_string().c_str());
+}
+
 }
