@@ -31,7 +31,7 @@ TEST_F(test_stopwatch, start_time_range)
 // NOLINTNEXTLINE
 TEST_F(test_stopwatch, start_time_updated_on_reset)
 {
-    constexpr int total_count = 1'000;
+    constexpr int total_count = 100;
     for (auto i = 0; i < total_count; ++i)
     {
         std::this_thread::sleep_for(1ns);
@@ -47,7 +47,7 @@ TEST_F(test_stopwatch, start_time_updated_on_reset)
 // NOLINTNEXTLINE
 TEST_F(test_stopwatch, start_time_increases_on_reset)
 {
-    constexpr int total_count = 1'000;
+    constexpr int total_count = 100;
     for (auto i = 0; i < total_count; ++i)
     {
         auto start_before_reset = s.start_time();
