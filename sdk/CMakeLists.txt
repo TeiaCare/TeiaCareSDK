@@ -43,8 +43,6 @@ set(TARGET_HEADERS
 )
 
 set(TARGET_SOURCES
-    include/teiacare/sdk/datetime/date/tz.cpp # TODO: fix me
-    
     src/event_dispatcher.cpp
     src/high_precision_timer.cpp
     src/rate_limiter.cpp
