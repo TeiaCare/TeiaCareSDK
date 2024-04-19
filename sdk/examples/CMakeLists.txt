@@ -1,6 +1,7 @@
 include(examples)
 add_example(${TARGET_NAME} example_blocking_queue)
 add_example(${TARGET_NAME} example_date)
+add_example(${TARGET_NAME} example_datetime)
 add_example(${TARGET_NAME} example_event_dispatcher)
 add_example(${TARGET_NAME} example_geometry_line)
 add_example(${TARGET_NAME} example_geometry_point)

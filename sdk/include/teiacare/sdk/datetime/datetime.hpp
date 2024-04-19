@@ -19,8 +19,8 @@
 #include <teiacare/sdk/datetime/timedelta.hpp>
 
 #include "date/date.h"
-#include "date/tz.h"
-#include <iostream>
+#include <chrono>
+#include <ostream>
 
 namespace tc::sdk
 {
@@ -29,17 +29,26 @@ class TimeDelta;
 
 class DateTime
 {
-    using DurationT = std::chrono::system_clock::duration;
-    date::zoned_time<DurationT> zt_;
-
-    std::chrono::system_clock::time_point _tp;
+    const std::chrono::system_clock::time_point _tp;
 
 public:
     explicit DateTime();
-    DateTime(const date::zoned_time<DurationT>& zt)
-        : zt_(zt)
+
+    explicit DateTime(const std::chrono::system_clock::time_point& tp)
+        : _tp(tp)
     {
     }
+
+    friend std::ostream& operator<<(std::ostream& os, const DateTime& dt)
+    {
+        return os << date::format("%FT%T", dt._tp);
+    }
+
+    template <class... Durations>
+    explicit DateTime(const std::chrono::year_month_day& ymd, Durations&&... durations);
+
+    template <class... Durations>
+    explicit DateTime(const std::chrono::year& y, const std::chrono::month& m, const std::chrono::day& d, Durations&&... durations);
 
     // static DateTime<typename std::common_type<Duration, std::chrono::seconds>::type>
     // today();
@@ -61,32 +70,22 @@ public:
     // static DateTime<typename std::common_type<Duration, std::chrono::seconds>::type>
     // strptime(const std::string& date_string, const std::string& format);
 
-    // const date::zoned_time<DurationT>& zoned_time() const { return zt_; }  // extra method : no equivalent in Python
-
     // Date        date()  const;
     // const date::year  year()  const;
     // const date::month month() const;
     // const date::day   day()   const;
-
-    // const date::time_zone* time_zone() const; // extra method : no equivalent in Python
-    // const std::string& tzinfo() const; // differs from Python
-
-    // TimeDelta utcoffset() const;
 
     // std::string timestamp() const;
 
     // std::string ctime() const;
     // std::string isoformat(const std::string& sep="T") const;
     // std::string strftime(const std::string& format) const;
-
-private:
-    date::fields<typename std::common_type<DurationT, std::chrono::seconds>::type> fields_ymd_time() const;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // DateTime
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+/*
 template <class Duration>
 DateTime<Duration> operator+(const DateTime<Duration>& x, const TimeDelta& y);
 
@@ -106,15 +105,29 @@ bool operator<(const DateTime<Duration>& x, const DateTime<Duration>& y);
 template <class CharT, class Traits, class Duration>
 std::basic_ostream<CharT, Traits>&
 operator<<(std::basic_ostream<CharT, Traits>& os, const DateTime<Duration>& date);
-
+*/
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // DateTime impl
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 DateTime::DateTime()
+    : _tp{std::chrono::system_clock::time_point::min()}
 {
 }
 
+template <class... Durations>
+DateTime::DateTime(const std::chrono::year_month_day& ymd, Durations&&... durations)
+    : _tp{std::chrono::system_clock::time_point::min()}
+{
+}
+
+template <class... Durations>
+DateTime::DateTime(const std::chrono::year& y, const std::chrono::month& m, const std::chrono::day& d, Durations&&... durations)
+    : _tp{std::chrono::system_clock::time_point::min()}
+{
+}
+
+/*
 template <class Duration>
 inline DateTime<typename std::common_type<Duration, std::chrono::seconds>::type>
 DateTime<Duration>::today()
@@ -302,5 +315,5 @@ operator<<(std::basic_ostream<CharT, Traits>& os, const DateTime<Duration>& date
 {
     return os << date.zoned_time();
 }
-
+*/
 }

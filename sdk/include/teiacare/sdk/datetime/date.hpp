@@ -17,6 +17,7 @@
 #include <teiacare/sdk/datetime/timedelta.hpp>
 
 #include "date/date.h"
+#include <chrono>
 #include <ostream>
 
 namespace tc::sdk
