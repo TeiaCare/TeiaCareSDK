@@ -52,6 +52,11 @@ public:
     static Date from_string(const char* str);
     static Date from_string(const std::string& str);
 
+    constexpr std::chrono::sys_days to_duration() const
+    {
+        return std::chrono::sys_days(_ymd);
+    }
+
 protected:
     const std::chrono::year_month_day& year_month_day() const;
 

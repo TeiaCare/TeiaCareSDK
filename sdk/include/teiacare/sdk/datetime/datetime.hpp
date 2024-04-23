@@ -22,6 +22,8 @@
 #include <chrono>
 #include <ostream>
 
+using namespace std::chrono_literals;
+
 namespace tc::sdk
 {
 class Date;
@@ -29,59 +31,81 @@ class TimeDelta;
 
 class DateTime
 {
-    const std::chrono::system_clock::time_point _tp;
+    using TimePointT = std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>;
+    const TimePointT _tp;
 
 public:
-    explicit DateTime();
+    explicit constexpr DateTime() noexcept;
+    explicit constexpr DateTime(const std::chrono::system_clock::time_point& tp) noexcept;
+    explicit constexpr DateTime(std::chrono::system_clock::time_point&& tp) noexcept;
+    explicit constexpr DateTime(const tc::sdk::Date& date) noexcept;
+    explicit constexpr DateTime(const tc::sdk::Time& time) noexcept;
+    explicit constexpr DateTime(const tc::sdk::Date& date, const tc::sdk::Time& time) noexcept;
+    explicit constexpr DateTime(
+        const std::chrono::year& y,
+        const std::chrono::month& m,
+        const std::chrono::day& d,
+        const std::chrono::hours& hh,
+        const std::chrono::minutes& mm,
+        const std::chrono::seconds& ss,
+        const std::chrono::milliseconds& ms = 0ms,
+        const std::chrono::microseconds& us = 0us,
+        const std::chrono::nanoseconds& ns = 0ns) noexcept;
 
-    explicit DateTime(const std::chrono::system_clock::time_point& tp)
-        : _tp(tp)
-    {
-    }
+    // template <class... Durations>
+    // explicit DateTime(Durations&&... durations) noexcept;
 
-    friend std::ostream& operator<<(std::ostream& os, const DateTime& dt)
-    {
-        return os << date::format("%FT%T", dt._tp);
-    }
+    // template <class... Durations>
+    // explicit DateTime(const std::chrono::year_month_day& ymd, Durations&&... durations) noexcept;
 
-    template <class... Durations>
-    explicit DateTime(const std::chrono::year_month_day& ymd, Durations&&... durations);
+    // template <class... Durations>
+    // explicit DateTime(const std::chrono::year& y, const std::chrono::month& m, const std::chrono::day& d, Durations&&... durations) noexcept;
 
-    template <class... Durations>
-    explicit DateTime(const std::chrono::year& y, const std::chrono::month& m, const std::chrono::day& d, Durations&&... durations);
-
+    constexpr bool is_valid() const;
     tc::sdk::Date date() const;
-
     tc::sdk::Time time() const;
 
-    template <class DurationT=std::chrono::milliseconds>
+    template <class DurationT = std::chrono::milliseconds>
     static tc::sdk::DateTime from_string(const std::string& str, const std::string& format = "%FT%T");
 
-    // to_string(const std::string& format = "%FT%T");
-
-    // Maybe a Ctor?
-    // template <class DurationT=std::chrono::milliseconds>
-    // static tc::sdk::DateTime from_time_point(const std::chrono::system_clock::time_point& tp);
-
+    template <class DurationT = std::chrono::milliseconds>
     static tc::sdk::DateTime utc_now(const std::string& str, const std::string& format = "%FT%T");
 
+    /*!
+     * \brief Get the DateTime string representation
+     * \return String representation of the current DateTime.
+     */
+    template <class DurationT = std::chrono::milliseconds>
+    std::string to_string(const std::string& format = "%FT%T") const
+    {
+        return date::format(format, std::chrono::time_point_cast<DurationT>(_tp));
+    }
+
+    /*!
+     * \brief Output stream operator.
+     * \param stream the output stream to write into.
+     * \param dt the DateTime object to stream.
+     * \return reference to the output stream operator, with the DateTime string representation written into it.
+     */
+    friend std::ostream& operator<<(std::ostream& stream, const DateTime& dt)
+    {
+        return stream << dt.to_string();
+    }
+
 private:
-    template<typename DurationT>
+    template <class DurationT>
     static tc::sdk::DateTime try_parse_as(const std::string& str, const std::string& format = "%FT%T")
     {
-        std::chrono::sys_time<DurationT> t;
+        std::chrono::sys_time<DurationT> parsed_time;
         std::stringstream ss{str};
-        ss >> date::parse("%FT%T", t);
+        ss >> date::parse("%FT%T", parsed_time);
         if (ss.fail())
             throw std::runtime_error("Failed to parse " + str);
 
-        return tc::sdk::DateTime(t);
+        return tc::sdk::DateTime(parsed_time);
     }
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// DateTime
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
 template <class Duration>
 DateTime<Duration> operator+(const DateTime<Duration>& x, const TimeDelta& y);
@@ -103,25 +127,71 @@ template <class CharT, class Traits, class Duration>
 std::basic_ostream<CharT, Traits>&
 operator<<(std::basic_ostream<CharT, Traits>& os, const DateTime<Duration>& date);
 */
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// DateTime impl
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-DateTime::DateTime()
+constexpr DateTime::DateTime() noexcept
     : _tp{std::chrono::system_clock::time_point::min()}
 {
 }
 
-template <class... Durations>
-DateTime::DateTime(const std::chrono::year_month_day& ymd, Durations&&... durations)
-    : _tp{std::chrono::system_clock::time_point::min()}
+constexpr DateTime::DateTime(const std::chrono::system_clock::time_point& tp) noexcept
+    : _tp{tp}
 {
 }
 
-template <class... Durations>
-DateTime::DateTime(const std::chrono::year& y, const std::chrono::month& m, const std::chrono::day& d, Durations&&... durations)
-    : _tp{std::chrono::system_clock::time_point::min()}
+constexpr DateTime::DateTime(std::chrono::system_clock::time_point&& tp) noexcept
+    : _tp{std::forward<decltype(tp)&&>(tp)}
 {
+}
+
+constexpr DateTime::DateTime(const tc::sdk::Date& date) noexcept
+    : _tp{date.to_duration()}
+{
+}
+
+constexpr DateTime::DateTime(const tc::sdk::Time& time) noexcept
+    : _tp{time.to_duration()}
+{
+}
+constexpr DateTime::DateTime(const tc::sdk::Date& date, const tc::sdk::Time& time) noexcept
+    : _tp{date.to_duration() + time.to_duration()}
+{
+}
+
+constexpr DateTime::DateTime(
+    const std::chrono::year& y,
+    const std::chrono::month& m,
+    const std::chrono::day& d,
+    const std::chrono::hours& hh,
+    const std::chrono::minutes& mm,
+    const std::chrono::seconds& ss,
+    const std::chrono::milliseconds& ms,
+    const std::chrono::microseconds& us,
+    const std::chrono::nanoseconds& ns) noexcept
+    : _tp {std::chrono::sys_days(std::chrono::year_month_day(y, m, d)) + hh + mm + ss + ms + us + ns}
+{
+}
+
+// template <class... Durations>
+// DateTime::DateTime(Durations&&... durations) noexcept
+//     : _tp{(std::forward<Durations&&>(durations) + ...)}
+// {
+// }
+
+// template <class... Durations>
+// DateTime::DateTime(const std::chrono::year_month_day& ymd, Durations&&... durations) noexcept
+//     : _tp{ymd + (std::forward<Durations&&>(durations) + ...)}
+// {
+// }
+
+// template <class... Durations>
+// DateTime::DateTime(const std::chrono::year& y, const std::chrono::month& m, const std::chrono::day& d, Durations&&... durations) noexcept
+//     : _tp{std::chrono::year_month_day(y, m, d) + (std::forward<Durations&&>(durations) + ...)}
+// {
+// }
+
+constexpr bool DateTime::is_valid() const
+{
+    return _tp > TimePointT::min() && _tp < TimePointT::max();
 }
 
 tc::sdk::Date DateTime::date() const
@@ -136,6 +206,12 @@ tc::sdk::Time DateTime::time() const
     std::chrono::sys_days total_days = std::chrono::floor<std::chrono::days>(_tp);
     std::chrono::system_clock::duration time_duration = _tp - total_days;
     return tc::sdk::Time(time_duration);
+}
+
+template <>
+tc::sdk::DateTime DateTime::from_string<std::chrono::seconds>(const std::string& str, const std::string& format)
+{
+    return tc::sdk::DateTime::try_parse_as<std::chrono::seconds>(str, format);
 }
 
 template <>

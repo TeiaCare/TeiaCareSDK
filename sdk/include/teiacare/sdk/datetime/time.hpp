@@ -55,6 +55,11 @@ public:
     // TODO!
     static Time from_string(const char* str);
     static Time from_string(const std::string& str);
+   
+    constexpr std::chrono::system_clock::duration to_duration() const
+    {
+        return _hh_mm_ss.to_duration();
+    }
 
 protected:
     const std::chrono::hh_mm_ss<DurationT>& hh_mm_ss() const;

@@ -82,46 +82,80 @@ int main()
     {
         // "default" use millis precision (no template specialization defined, so std::chrono::milliseconds is used as a default template specialization)
         std::string str = "2024-04-19T18:09:12.123";
-        auto dt = tc::sdk::DateTime::from_string(str);
+        tc::sdk::DateTime dt = tc::sdk::DateTime::from_string(str);
         std::cout << dt << std::endl;
+        std::cout << dt.to_string() << std::endl;
     }
 
     {
         // again "default" use millis precision (no template specialization defined, so std::chrono::milliseconds is used as a default template specialization)
         // Note that here there will be trailing zeros in the milliseconds representation (i.e.: 2024-04-19T18:09:12.123000000) since milliseconds precision is used.
         std::string str = "2024-04-19T18:09:12.123456789";
-        auto dt = tc::sdk::DateTime::from_string(str);
+        tc::sdk::DateTime dt = tc::sdk::DateTime::from_string(str);
         std::cout << dt << std::endl;
+        std::cout << dt.to_string<std::chrono::nanoseconds>() << std::endl;
+    }
+
+    {
+        std::string str = "2024-04-19T18:09:12.123456789";
+        tc::sdk::DateTime dt = tc::sdk::DateTime::from_string<std::chrono::microseconds>(str);
+        std::cout << dt << std::endl;
+        std::cout << dt.to_string<std::chrono::nanoseconds>() << std::endl;
     }
 
     {
         // use nanoseconds precision (now template specialization is defined, so std::chrono::nanoseconds is used as the template specialization)
         // Note that here there will not be trailing zeros in the nanoseconds representation (i.e.: 2024-04-19T18:09:12.123456789) since nanoseconds precision is high enough to cover the given input value.
         std::string str = "2024-04-19T18:09:12.123456789";
-        auto dt = tc::sdk::DateTime::from_string<std::chrono::nanoseconds>(str);
+        tc::sdk::DateTime dt = tc::sdk::DateTime::from_string<std::chrono::nanoseconds>(str);
         std::cout << dt << std::endl;
-    }
-
-    {
-        std::string str = "2024-04-19T18:09:12.123456789";
-        auto dt = tc::sdk::DateTime::from_string<std::chrono::microseconds>(str);
-        std::cout << dt << std::endl;
+        std::cout << dt.to_string<std::chrono::nanoseconds>() << std::endl;
+        std::cout << dt.to_string<std::chrono::nanoseconds>("%FT%H:%M:%S") << std::endl;
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     {
         std::string str = "2024-04-19T18:09:12.123";
-        auto dt = tc::sdk::DateTime::from_string(str);
-        std::cout << dt.date() << std::endl;
+        tc::sdk::DateTime dt = tc::sdk::DateTime::from_string(str);
+        tc::sdk::Date date = dt.date();
+        std::cout << date << std::endl;
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     {
         std::string str = "2024-04-19T18:09:12.123";
-        auto dt = tc::sdk::DateTime::from_string(str);
-        std::cout << dt.time() << std::endl;
+        tc::sdk::DateTime dt = tc::sdk::DateTime::from_string(str);
+        tc::sdk::Time time = dt.time();
+        std::cout << time << std::endl;
+    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    {
+        tc::sdk::DateTime dt = tc::sdk::DateTime(2024y, std::chrono::April, 24d, 22h, 28min, 0s); 
+        std::cout << dt << std::endl;
+    }
+    
+    {
+        tc::sdk::Date date = tc::sdk::Date(2024y, std::chrono::April, 24d);
+        tc::sdk::DateTime dt = tc::sdk::DateTime(date);
+        std::cout << dt << std::endl;
+    }
+    
+    {
+        tc::sdk::Time time = tc::sdk::Time(22h, 28min, 0s); 
+        tc::sdk::DateTime dt = tc::sdk::DateTime(time);
+        std::cout << dt << std::endl;
+    }
+
+    {
+        tc::sdk::Date date = tc::sdk::Date(2024y, std::chrono::April, 24d);
+        tc::sdk::Time time = tc::sdk::Time(22h, 28min, 0s);
+
+        tc::sdk::DateTime dt = tc::sdk::DateTime(date, time);
+        std::cout << dt << std::endl;
     }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -139,8 +173,6 @@ int main()
         << " - year: " << date.year()
         << std::endl;
 
-    // std::chrono::hh_mm_ss<std::chrono::milliseconds>
-
     std::chrono::system_clock::duration dur = now - day;
     std::cout << "now - day: " << dur.count() << std::endl;
 
@@ -151,7 +183,6 @@ int main()
         << " - seconds: " << time.seconds()
         << " - subseconds: " << time.subseconds()
         << std::endl;
-
 
     return 0;
 }
