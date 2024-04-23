@@ -77,6 +77,55 @@ int main()
         std::cout << dt << std::endl;
     }
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    {
+        // "default" use millis precision (no template specialization defined, so std::chrono::milliseconds is used as a default template specialization)
+        std::string str = "2024-04-19T18:09:12.123";
+        auto dt = tc::sdk::DateTime::from_string(str);
+        std::cout << dt << std::endl;
+    }
+
+    {
+        // again "default" use millis precision (no template specialization defined, so std::chrono::milliseconds is used as a default template specialization)
+        // Note that here there will be trailing zeros in the milliseconds representation (i.e.: 2024-04-19T18:09:12.123000000) since milliseconds precision is used.
+        std::string str = "2024-04-19T18:09:12.123456789";
+        auto dt = tc::sdk::DateTime::from_string(str);
+        std::cout << dt << std::endl;
+    }
+
+    {
+        // use nanoseconds precision (now template specialization is defined, so std::chrono::nanoseconds is used as the template specialization)
+        // Note that here there will not be trailing zeros in the nanoseconds representation (i.e.: 2024-04-19T18:09:12.123456789) since nanoseconds precision is high enough to cover the given input value.
+        std::string str = "2024-04-19T18:09:12.123456789";
+        auto dt = tc::sdk::DateTime::from_string<std::chrono::nanoseconds>(str);
+        std::cout << dt << std::endl;
+    }
+
+    {
+        std::string str = "2024-04-19T18:09:12.123456789";
+        auto dt = tc::sdk::DateTime::from_string<std::chrono::microseconds>(str);
+        std::cout << dt << std::endl;
+    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    {
+        std::string str = "2024-04-19T18:09:12.123";
+        auto dt = tc::sdk::DateTime::from_string(str);
+        std::cout << dt.date() << std::endl;
+    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    {
+        std::string str = "2024-04-19T18:09:12.123";
+        auto dt = tc::sdk::DateTime::from_string(str);
+        std::cout << dt.time() << std::endl;
+    }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
     std::cout << "now.time_since_epoch(): " << now.time_since_epoch() << std::endl;
 
