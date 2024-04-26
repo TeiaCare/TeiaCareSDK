@@ -14,7 +14,6 @@
 
 #pragma once
 
-#include "date/date.h"
 #include <chrono>
 #include <ostream>
 
@@ -22,11 +21,10 @@ namespace tc::sdk
 {
 class TimeDelta
 {
-    using DurationT = std::chrono::system_clock::duration;
-    const DurationT _duration;
-
 public:
-    explicit TimeDelta();
+    constexpr explicit TimeDelta() noexcept;
+    constexpr explicit TimeDelta(const std::chrono::steady_clock::duration& duration) noexcept;
+    constexpr explicit TimeDelta(std::chrono::steady_clock::duration&& duration) noexcept;
 
     template <class... Durations>
     explicit TimeDelta(const Durations&... durations);
@@ -34,103 +32,202 @@ public:
     template <class... Durations>
     explicit TimeDelta(Durations&&... durations);
 
-    constexpr bool is_valid() const;
+    constexpr inline bool is_null() const noexcept;
 
-    std::chrono::hours hours() const
+    constexpr inline std::chrono::hours hours() const
     {
-        return std::chrono::hh_mm_ss<DurationT>(_duration).hours();
-    }
-
-    std::chrono::minutes minutes() const
-    {
-        return std::chrono::hh_mm_ss<DurationT>(_duration).minutes();
+        return std::chrono::floor<std::chrono::hours>(_duration);
     }
 
-    std::chrono::seconds seconds() const
+    constexpr inline std::chrono::minutes minutes() const
     {
-        return std::chrono::hh_mm_ss<DurationT>(_duration).seconds();
+        return std::chrono::floor<std::chrono::minutes>(_duration) -
+               std::chrono::floor<std::chrono::hours>(_duration);
     }
 
-    std::chrono::milliseconds milliseconds() const
+    constexpr inline std::chrono::seconds seconds() const
     {
-        return std::chrono::duration_cast<std::chrono::milliseconds>(
-            std::chrono::hh_mm_ss<DurationT>(_duration - std::chrono::floor<std::chrono::seconds>(_duration)).subseconds());
+        return std::chrono::floor<std::chrono::seconds>(_duration) -
+               std::chrono::floor<std::chrono::minutes>(_duration);
     }
 
-    std::chrono::microseconds microseconds() const
+    constexpr inline std::chrono::milliseconds milliseconds() const
     {
-        return std::chrono::duration_cast<std::chrono::microseconds>(
-            std::chrono::hh_mm_ss<DurationT>(_duration - std::chrono::floor<std::chrono::milliseconds>(_duration)).subseconds());
+        return std::chrono::floor<std::chrono::milliseconds>(_duration) -
+               std::chrono::floor<std::chrono::seconds>(_duration);
     }
 
-    std::chrono::nanoseconds nanoseconds() const
+    constexpr inline std::chrono::microseconds microseconds() const
     {
-        return std::chrono::duration_cast<std::chrono::nanoseconds>(
-            std::chrono::hh_mm_ss<DurationT>(_duration - std::chrono::floor<std::chrono::microseconds>(_duration)).subseconds());
+        return std::chrono::floor<std::chrono::microseconds>(_duration) -
+               std::chrono::floor<std::chrono::milliseconds>(_duration);
     }
 
-    template <class Duration = typename TimeDelta::DurationT>
-    Duration total_duration() const
+    constexpr inline std::chrono::nanoseconds nanoseconds() const
     {
-        return std::chrono::duration_cast<Duration>(_duration);
+        return std::chrono::floor<std::chrono::nanoseconds>(_duration) -
+               std::chrono::floor<std::chrono::microseconds>(_duration);
     }
 
-    std::chrono::years total_years() const
+    constexpr inline std::chrono::years total_years() const
     {
-        return total_duration<std::chrono::years>();
-    }
-    std::chrono::months total_months() const
-    {
-        return total_duration<std::chrono::months>();
-    }
-    std::chrono::days total_days() const
-    {
-        return total_duration<std::chrono::days>();
-    }
-    std::chrono::hours total_hours() const
-    {
-        return total_duration<std::chrono::hours>();
-    }
-    std::chrono::minutes total_minutes() const
-    {
-        return total_duration<std::chrono::minutes>();
-    }
-    std::chrono::seconds total_seconds() const
-    {
-        return total_duration<std::chrono::seconds>();
-    }
-    std::chrono::milliseconds total_milliseconds() const
-    {
-        return total_duration<std::chrono::milliseconds>();
-    }
-    std::chrono::microseconds total_microseconds() const
-    {
-        return total_duration<std::chrono::microseconds>();
-    }
-    std::chrono::nanoseconds total_nanoseconds() const
-    {
-        return total_duration<std::chrono::nanoseconds>();
+        return std::chrono::duration_cast<std::chrono::years>(_duration);
     }
 
-    // TODO: move to protected
-    const DurationT duration() const;
+    constexpr inline std::chrono::months total_months() const
+    {
+        return std::chrono::duration_cast<std::chrono::months>(_duration);
+    }
 
-protected:
-public:
-    friend bool operator==(const TimeDelta& td1, const TimeDelta& td2);
-    friend std::ostream& operator<<(std::ostream& os, const TimeDelta& td);
-    friend TimeDelta operator+(const TimeDelta& t1, const TimeDelta& t2);
-    friend TimeDelta operator-(const TimeDelta& t1, const TimeDelta& t2);
-    friend TimeDelta operator*(const TimeDelta& t, int64_t multiplier);
-    friend TimeDelta operator*(int64_t multiplier, const TimeDelta& t);
+    constexpr inline std::chrono::days total_days() const
+    {
+        return std::chrono::duration_cast<std::chrono::days>(_duration);
+    }
+
+    constexpr inline std::chrono::hours total_hours() const
+    {
+        return std::chrono::duration_cast<std::chrono::hours>(_duration);
+    }
+
+    constexpr inline std::chrono::minutes total_minutes() const
+    {
+        return std::chrono::duration_cast<std::chrono::minutes>(_duration);
+    }
+
+    constexpr inline std::chrono::seconds total_seconds() const
+    {
+        return std::chrono::duration_cast<std::chrono::seconds>(_duration);
+    }
+
+    constexpr inline std::chrono::milliseconds total_milliseconds() const
+    {
+        return std::chrono::duration_cast<std::chrono::milliseconds>(_duration);
+    }
+
+    constexpr inline std::chrono::microseconds total_microseconds() const
+    {
+        return std::chrono::duration_cast<std::chrono::microseconds>(_duration);
+    }
+
+    constexpr inline std::chrono::nanoseconds total_nanoseconds() const
+    {
+        return std::chrono::duration_cast<std::chrono::nanoseconds>(_duration);
+    }
+
+    /*!
+     * \brief Equality operator.
+     * \param other the TimeDelta to compare against.
+     * \return true if the two TimeDelta objects are the same.
+     */
+    constexpr inline bool operator==(const TimeDelta& other) const noexcept
+    {
+        return _duration == other._duration;
+    }
+
+    /*!
+     * \brief Inequality operator.
+     * \param other the TimeDelta to compare against.
+     * \return true if the two TimeDelta objects are the different.
+     */
+    constexpr inline bool operator!=(const TimeDelta& other) const noexcept
+    {
+        return !operator==(other);
+    }
+
+    constexpr inline TimeDelta operator+(const TimeDelta& other) const noexcept
+    {
+        return TimeDelta{_duration + other._duration};
+    }
+
+    constexpr inline TimeDelta operator-(const TimeDelta& other) const noexcept
+    {
+        return TimeDelta{_duration - other._duration};
+    }
+
+    constexpr inline TimeDelta operator*(int64_t multiplier) const noexcept
+    {
+        return TimeDelta{_duration * multiplier};
+    }
+
+    constexpr inline TimeDelta operator/(int64_t divider) const noexcept(false)
+    {
+        return TimeDelta{_duration / divider};
+    }
+
+    /*!
+     * \brief Get the TimeDelta string representation.
+     * \tparam DurationType specify the DateTime precision, by default is std::chrono::milliseconds.
+     * \return String representation of the current TimeDelta.
+     */
+    template <class DurationType = std::chrono::milliseconds>
+    std::string to_string() const
+    {
+        constexpr const char zero = '0';
+        const auto hms = std::chrono::hh_mm_ss(std::chrono::duration_cast<DurationType>(_duration));
+        std::stringstream os{};
+
+        if (hms.is_negative())
+            os << '-';
+
+        os.width(2);
+        os.fill(zero);
+        os << hms.hours().count() << ':';
+       
+        os.width(2);
+        os.fill(zero);
+        os << hms.minutes().count() << ':';
+       
+        os.width(2);
+        os.fill(zero);
+        os << hms.seconds().count();
+
+        if constexpr (std::is_same_v<DurationType, std::chrono::seconds>)
+            return os.str();
+
+        os << '.';
+
+        if constexpr (std::is_same_v<DurationType, std::chrono::milliseconds>)
+            os.width(3);
+
+        if constexpr (std::is_same_v<DurationType, std::chrono::microseconds>)
+            os.width(6);
+
+        if constexpr (std::is_same_v<DurationType, std::chrono::nanoseconds>)
+            os.width(9);
+
+        DurationType sub = hms.subseconds();
+        os.fill(zero);
+        os << sub.count();
+        return os.str();
+    }
+
+    /*!
+     * \brief Output stream operator.
+     * \param stream the output stream to write into.
+     * \param dt the TimeDelta object to stream.
+     * \return reference to the output stream operator, with the TimeDelta string representation written into it.
+     */
+    friend std::ostream& operator<<(std::ostream& stream, const TimeDelta& td)
+    {
+        return stream << td.to_string();
+    }
+
+private:
+    const std::chrono::nanoseconds _duration;
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// TimeDelta impl
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+constexpr TimeDelta::TimeDelta() noexcept
+    : _duration{decltype(_duration)::zero()}
+{
+}
 
-TimeDelta::TimeDelta()
-    : _duration{DurationT::min()}
+constexpr TimeDelta::TimeDelta(const std::chrono::steady_clock::duration& duration) noexcept
+    : _duration{duration}
+{
+}
+
+constexpr TimeDelta::TimeDelta(std::chrono::steady_clock::duration&& duration) noexcept
+    : _duration{std::forward<std::chrono::steady_clock::duration&&>(duration)}
 {
 }
 
@@ -146,67 +243,9 @@ TimeDelta::TimeDelta(Durations&&... durations)
 {
 }
 
-constexpr bool TimeDelta::is_valid() const
+constexpr inline bool TimeDelta::is_null() const noexcept
 {
-    return _duration != DurationT::min();
-}
-
-const TimeDelta::DurationT TimeDelta::duration() const
-{
-    return _duration;
-}
-
-std::ostream& operator<<(std::ostream& os, const std::chrono::hh_mm_ss<std::chrono::system_clock::duration>& tod)
-{
-    if (tod.is_negative())
-        os << '-';
-
-    if (tod.hours() < std::chrono::hours{10})
-        os << '0';
-
-    os << tod.hours().count() << ':';
-
-    if (tod.minutes() < std::chrono::minutes{10})
-        os << '0';
-
-    os << tod.minutes().count() << ':' << tod.seconds() << '.' << tod.subseconds();
-    return os;
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// friend operators
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-bool operator==(const TimeDelta& td1, const TimeDelta& td2)
-{
-    return td1.duration() == td2.duration();
-}
-
-std::ostream& operator<<(std::ostream& os, const TimeDelta& t)
-{
-    // if (!t.is_valid())
-    //     os << "invalid TimeDelta";
-    return os << std::chrono::hh_mm_ss<TimeDelta::DurationT>(t.duration());
-}
-
-TimeDelta operator+(const TimeDelta& t1, const TimeDelta& t2)
-{
-    return TimeDelta{t1.duration() + t2.duration()};
-}
-
-TimeDelta operator-(const TimeDelta& t1, const TimeDelta& t2)
-{
-    return TimeDelta{t1.duration() - t2.duration()};
-}
-
-TimeDelta operator*(const TimeDelta& t, int64_t multiplier)
-{
-    return TimeDelta{t.duration() * multiplier};
-}
-
-TimeDelta operator*(int64_t multiplier, const TimeDelta& t)
-{
-    return t * multiplier;
+    return _duration == decltype(_duration)::zero();
 }
 
 }

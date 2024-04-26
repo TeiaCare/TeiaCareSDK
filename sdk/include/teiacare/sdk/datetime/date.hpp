@@ -191,8 +191,9 @@ std::ostream& operator<<(std::ostream& os, const Date& date)
 
 Date operator+(const Date& date, const TimeDelta& time_delta)
 {
-    const auto time_point = std::chrono::sys_days(date.year_month_day()) + time_delta.duration();
-    return Date{std::chrono::time_point_cast<std::chrono::days>(time_point)};
+    // const auto time_point = std::chrono::sys_days(date.year_month_day()) + time_delta.duration();
+    // return Date{std::chrono::time_point_cast<std::chrono::days>(time_point)};
+    return Date{};
 }
 
 Date operator+(const TimeDelta& time_delta, const Date& date)
@@ -202,8 +203,9 @@ Date operator+(const TimeDelta& time_delta, const Date& date)
 
 Date operator-(const Date& date, const TimeDelta& time_delta)
 {
-    const auto time_point = std::chrono::sys_days(date.year_month_day()) - time_delta.duration();
-    return Date{std::chrono::time_point_cast<std::chrono::days>(time_point)};
+    // const auto time_point = std::chrono::sys_days(date.year_month_day()) - time_delta.duration();
+    // return Date{std::chrono::time_point_cast<std::chrono::days>(time_point)};
+    return Date{};
 }
 
 TimeDelta operator-(const Date& d1, const Date& d2)

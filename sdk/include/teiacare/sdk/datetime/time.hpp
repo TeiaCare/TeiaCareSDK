@@ -169,7 +169,8 @@ std::ostream& operator<<(std::ostream& os, const Time& time)
 
 Time operator+(const Time& time, const TimeDelta& time_delta)
 {
-    return Time{time.hh_mm_ss().to_duration() + time_delta.duration()};
+    return Time{};
+    // return Time{time.hh_mm_ss().to_duration() + time_delta.duration()};
 }
 
 Time operator+(const TimeDelta& time_delta, const Time& time)
@@ -179,7 +180,8 @@ Time operator+(const TimeDelta& time_delta, const Time& time)
 
 Time operator-(const Time& time, const TimeDelta& time_delta)
 {
-    return Time{time.hh_mm_ss().to_duration() - time_delta.duration()};
+    return Time{};
+    // return Time{time.hh_mm_ss().to_duration() - time_delta.duration()};
 }
 
 TimeDelta operator-(const Time& t1, const Time& t2)

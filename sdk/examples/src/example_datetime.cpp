@@ -26,58 +26,33 @@ using namespace std::chrono_literals;
 int main()
 {
     {
-        std::chrono::sys_days t;
-        std::string str = "2024-04-19";
-        std::stringstream ss{str};
-        ss >> date::parse("%F", t);
-        std::cout << date::format("%F", t) << std::endl;
+        std::cout << tc::sdk::DateTime::utc_now()
+            .to_string<std::chrono::seconds>() << std::endl;
 
-        auto tt = tc::sdk::Date(t);
-        std::cout << tt << std::endl;
+        std::cout << tc::sdk::DateTime::utc_now()
+            .to_string<std::chrono::milliseconds>() << std::endl;
+
+        std::cout << tc::sdk::DateTime::utc_now()
+            .to_string<std::chrono::microseconds>() << std::endl;
+    
+        std::cout << tc::sdk::DateTime::utc_now()
+            .to_string<std::chrono::nanoseconds>() << std::endl;
+
+//////////////////////////////////////////
+
+        std::cout << tc::sdk::DateTime::utc_now<std::chrono::nanoseconds>()
+            .to_string<std::chrono::seconds>() << std::endl;
+
+        std::cout << tc::sdk::DateTime::utc_now<std::chrono::nanoseconds>()
+            .to_string<std::chrono::milliseconds>() << std::endl;
+
+        std::cout << tc::sdk::DateTime::utc_now<std::chrono::nanoseconds>()
+            .to_string<std::chrono::microseconds>() << std::endl;
+    
+        std::cout << tc::sdk::DateTime::utc_now<std::chrono::nanoseconds>()
+            .to_string<std::chrono::nanoseconds>() << std::endl;
     }
 
-    {
-        using T = std::chrono::milliseconds;
-        T t;
-        std::string str = "18:09:12.123456789";
-        std::stringstream ss{str};
-        ss >> date::parse("%T", t);
-        std::cout << date::format("%T", t) << std::endl;
-
-        auto tt = tc::sdk::Time(t);
-        std::cout << tt << std::endl;
-    }
-
-    {
-        std::chrono::sys_time<std::chrono::milliseconds> t;
-        std::string str = "2024-04-19T18:09:12.123456789";
-        std::stringstream ss{str};
-        ss >> date::parse("%FT%T", t);
-        std::cout << date::format("%FT%T", t) << std::endl;
-    }
-
-    {
-        std::chrono::sys_time<std::chrono::microseconds> t;
-        std::string str = "2024-04-19T18:09:12.123456789";
-        std::stringstream ss{str};
-        ss >> date::parse("%FT%T", t);
-        std::cout << date::format("%FT%T", t) << std::endl;
-    }
-
-    {
-        std::chrono::sys_time<std::chrono::nanoseconds> t;
-        std::string str = "2024-04-19T18:09:12.123456789";
-        std::stringstream ss{str};
-        ss >> date::parse("%FT%T", t);
-        if (ss.fail())
-            throw std::runtime_error("Failed to parse " + str);
-
-        std::cout << date::format("%FT%T", t) << std::endl;
-        auto dt = tc::sdk::DateTime(t);
-        std::cout << dt << std::endl;
-    }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     {
         // "default" use millis precision (no template specialization defined, so std::chrono::milliseconds is used as a default template specialization)

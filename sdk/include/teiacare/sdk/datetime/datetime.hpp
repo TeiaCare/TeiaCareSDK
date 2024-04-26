@@ -26,14 +26,8 @@ using namespace std::chrono_literals;
 
 namespace tc::sdk
 {
-class Date;
-class TimeDelta;
-
 class DateTime
 {
-    using TimePointT = std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>;
-    const TimePointT _tp;
-
 public:
     explicit constexpr DateTime() noexcept;
     explicit constexpr DateTime(const std::chrono::system_clock::time_point& tp) noexcept;
@@ -52,24 +46,62 @@ public:
         const std::chrono::microseconds& us = 0us,
         const std::chrono::nanoseconds& ns = 0ns) noexcept;
 
-    // template <class... Durations>
-    // explicit DateTime(Durations&&... durations) noexcept;
-
-    // template <class... Durations>
-    // explicit DateTime(const std::chrono::year_month_day& ymd, Durations&&... durations) noexcept;
-
-    // template <class... Durations>
-    // explicit DateTime(const std::chrono::year& y, const std::chrono::month& m, const std::chrono::day& d, Durations&&... durations) noexcept;
-
-    constexpr bool is_valid() const;
+    constexpr inline bool is_valid() const;
     tc::sdk::Date date() const;
     tc::sdk::Time time() const;
+
+    constexpr inline std::chrono::system_clock::time_point to_time_point() const noexcept;
 
     template <class DurationT = std::chrono::milliseconds>
     static tc::sdk::DateTime from_string(const std::string& str, const std::string& format = "%FT%T");
 
     template <class DurationT = std::chrono::milliseconds>
-    static tc::sdk::DateTime utc_now(const std::string& str, const std::string& format = "%FT%T");
+    static tc::sdk::DateTime utc_now() noexcept;
+
+    /*!
+     * \brief Equality operator.
+     * \param other the DateTime to compare against.
+     * \return true if the two DateTime objects are the same.
+     */
+    constexpr inline bool operator==(const DateTime& other) const noexcept
+    {
+        return _tp == other._tp;
+    }
+
+    /*!
+     * \brief Inequality operator.
+     * \param other the DateTime to compare against.
+     * \return true if the two DateTime objects are the different.
+     */
+    constexpr inline bool operator!=(const DateTime& other) const noexcept
+    {
+        return !operator==(other);
+    }
+
+    tc::sdk::DateTime operator+(const TimeDelta& delta)
+    {
+        return tc::sdk::DateTime{_tp + delta.total_nanoseconds()};
+    }
+
+    tc::sdk::DateTime operator-(const TimeDelta& delta)
+    {
+        return tc::sdk::DateTime{_tp - delta.total_nanoseconds()};
+    }
+
+    constexpr inline bool operator<(const DateTime& other) const noexcept
+    {
+        return _tp < other._tp;
+    }
+
+    constexpr inline bool operator>(const DateTime& other) const noexcept
+    {
+        return _tp > other._tp;
+    }
+
+    constexpr inline TimeDelta operator-(const DateTime& other) const noexcept
+    {
+        return tc::sdk::TimeDelta{_tp - other._tp};
+    }
 
     /*!
      * \brief Get the DateTime string representation
@@ -104,32 +136,12 @@ private:
 
         return tc::sdk::DateTime(parsed_time);
     }
+
+    const std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds> _tp;
 };
 
-/*
-template <class Duration>
-DateTime<Duration> operator+(const DateTime<Duration>& x, const TimeDelta& y);
-
-template <class Duration>
-DateTime<Duration> operator+(const DateTime<Duration>& x, const TimeDelta& y);
-
-template <class Duration>
-DateTime<Duration> operator-(const TimeDelta& y, const DateTime<Duration>& x);
-
-// TODO: allow two different Duration template params ?
-template <class Duration>
-TimeDelta operator-(const DateTime<Duration>& x, const DateTime<Duration>& y);
-
-template <class Duration>
-bool operator<(const DateTime<Duration>& x, const DateTime<Duration>& y);
-
-template <class CharT, class Traits, class Duration>
-std::basic_ostream<CharT, Traits>&
-operator<<(std::basic_ostream<CharT, Traits>& os, const DateTime<Duration>& date);
-*/
-
 constexpr DateTime::DateTime() noexcept
-    : _tp{std::chrono::system_clock::time_point::min()}
+    : _tp{decltype(_tp)::min()}
 {
 }
 
@@ -167,31 +179,13 @@ constexpr DateTime::DateTime(
     const std::chrono::milliseconds& ms,
     const std::chrono::microseconds& us,
     const std::chrono::nanoseconds& ns) noexcept
-    : _tp {std::chrono::sys_days(std::chrono::year_month_day(y, m, d)) + hh + mm + ss + ms + us + ns}
+    : _tp{std::chrono::sys_days(std::chrono::year_month_day(y, m, d)) + hh + mm + ss + ms + us + ns}
 {
 }
 
-// template <class... Durations>
-// DateTime::DateTime(Durations&&... durations) noexcept
-//     : _tp{(std::forward<Durations&&>(durations) + ...)}
-// {
-// }
-
-// template <class... Durations>
-// DateTime::DateTime(const std::chrono::year_month_day& ymd, Durations&&... durations) noexcept
-//     : _tp{ymd + (std::forward<Durations&&>(durations) + ...)}
-// {
-// }
-
-// template <class... Durations>
-// DateTime::DateTime(const std::chrono::year& y, const std::chrono::month& m, const std::chrono::day& d, Durations&&... durations) noexcept
-//     : _tp{std::chrono::year_month_day(y, m, d) + (std::forward<Durations&&>(durations) + ...)}
-// {
-// }
-
-constexpr bool DateTime::is_valid() const
+constexpr inline bool DateTime::is_valid() const
 {
-    return _tp > TimePointT::min() && _tp < TimePointT::max();
+    return _tp > decltype(_tp)::min() && _tp < decltype(_tp)::max();
 }
 
 tc::sdk::Date DateTime::date() const
@@ -206,6 +200,18 @@ tc::sdk::Time DateTime::time() const
     std::chrono::sys_days total_days = std::chrono::floor<std::chrono::days>(_tp);
     std::chrono::system_clock::duration time_duration = _tp - total_days;
     return tc::sdk::Time(time_duration);
+}
+
+constexpr inline std::chrono::system_clock::time_point DateTime::to_time_point() const noexcept
+{
+    return _tp;
+}
+
+template <class DurationT>
+tc::sdk::DateTime DateTime::utc_now() noexcept
+{
+    const auto now = std::chrono::system_clock::now();
+    return tc::sdk::DateTime{std::chrono::time_point_cast<DurationT>(now)};
 }
 
 template <>
