@@ -19,7 +19,6 @@ namespace tc::sdk::tests
 using types = testing::Types<int, unsigned int, float, double, long, long long>;
 TYPED_TEST_SUITE(test_geometry_range_t, types);
 
-
 TYPED_TEST(test_geometry_range_t, create)
 {
     using RangeT = TypeParam;
@@ -30,12 +29,11 @@ TYPED_TEST(test_geometry_range_t, create)
     const auto p4 = tc::sdk::range<RangeT>();
     const auto p5(p4);
     tc::sdk::range<RangeT> p6(tc::sdk::range<RangeT>{});
-    
+
     auto temp = tc::sdk::range<RangeT>{};
     tc::sdk::range<RangeT> p7(std::move(temp));
 
-    auto validate = [](auto p)
-    {
+    auto validate = [](auto p) {
         EXPECT_EQ(p.min(), 0);
         EXPECT_EQ(p.max(), 0);
         EXPECT_TRUE(p.is_null());
@@ -71,29 +69,29 @@ TYPED_TEST(test_geometry_range_t, getter_setter)
 
     EXPECT_EQ(p0.min(), 1);
     EXPECT_EQ(p0.max(), 2);
-    
+
     const RangeT new_min(8);
-    p0.set_min(new_min);    
+    p0.set_min(new_min);
     EXPECT_EQ(p0.min(), new_min);
 
     const RangeT new_max(9);
-    p0.set_max(new_max);    
+    p0.set_max(new_max);
     EXPECT_EQ(p0.max(), new_max);
 }
 
 TYPED_TEST(test_geometry_range_t, getter_setter_out_of_bounds)
 {
     using RangeT = TypeParam;
-    
+
     tc::sdk::range<RangeT> p0(5, 6);
     const RangeT new_min(8);
-    p0.set_min(new_min);    
+    p0.set_min(new_min);
     EXPECT_EQ(p0.min(), new_min);
     EXPECT_EQ(p0.max(), new_min);
 
     tc::sdk::range<RangeT> p1(5, 6);
     const RangeT new_max(3);
-    p1.set_max(new_max);    
+    p1.set_max(new_max);
     EXPECT_EQ(p1.min(), new_max);
     EXPECT_EQ(p1.max(), new_max);
 }
@@ -101,11 +99,11 @@ TYPED_TEST(test_geometry_range_t, getter_setter_out_of_bounds)
 TYPED_TEST(test_geometry_range_t, lenght)
 {
     using RangeT = TypeParam;
-    
-    tc::sdk::range<RangeT> p0(5, 8);  
+
+    tc::sdk::range<RangeT> p0(5, 8);
     EXPECT_EQ(p0.lenght(), 3);
 
-    tc::sdk::range<RangeT> p1(0, 1'000'000);  
+    tc::sdk::range<RangeT> p1(0, 1'000'000);
     EXPECT_EQ(p1.lenght(), 1'000'000);
 }
 
@@ -148,7 +146,7 @@ TYPED_TEST(test_geometry_range_t, intersects)
     EXPECT_TRUE(p0.intersects(p1));
     EXPECT_TRUE(p1.intersects(p0));
     EXPECT_TRUE(p0.intersects(p2));
-   
+
     EXPECT_FALSE(p1.intersects(p3));
     EXPECT_FALSE(p0.intersects(p3));
     EXPECT_FALSE(p2.intersects(p3)); // Not strictly contained
@@ -187,8 +185,8 @@ TYPED_TEST(test_geometry_range_t, map)
     EXPECT_EQ(p1.map(1), p1.max());
     EXPECT_EQ(p1.map(0.1), RangeT(110));
     EXPECT_EQ(p1.map(0.5), RangeT(150));
-    
-    if constexpr(!std::is_same_v<RangeT, unsigned int>)
+
+    if constexpr (!std::is_same_v<RangeT, unsigned int>)
     {
         tc::sdk::range<RangeT> p2(-10, 10);
         EXPECT_EQ(p2.map(0), p2.min());
@@ -241,38 +239,37 @@ TYPED_TEST(test_geometry_range_t, to_string)
     tc::sdk::range<RangeT> p0(1, 2);
     tc::sdk::range<RangeT> p1(RangeT(-3), RangeT(-4));
 
-    if constexpr(std::is_same_v<RangeT, unsigned int>)
+    if constexpr (std::is_same_v<RangeT, unsigned int>)
     {
         // Overflow!
         // The RangeT is "unsigned int" so when using negative values it overflows.
         // So the expected values are:
-        // std::numeric_limits<unsigned int>::max() + 1 + p1.x() 
-        // = 4294967296 + 1 + 3 
+        // std::numeric_limits<unsigned int>::max() + 1 + p1.x()
+        // = 4294967296 + 1 + 3
         // = 4294967293
         // and
-        // std::numeric_limits<unsigned int>::max() + 1 + p1.y() 
-        // = 4294967296 + 1 + 4 
+        // std::numeric_limits<unsigned int>::max() + 1 + p1.y()
+        // = 4294967296 + 1 + 4
         // = 4294967292
-        auto x =  std::numeric_limits<unsigned int>::max() + 1 + p1.min();
-        auto y =  std::numeric_limits<unsigned int>::max() + 1 + p1.max();
+        auto x = std::numeric_limits<unsigned int>::max() + 1 + p1.min();
+        auto y = std::numeric_limits<unsigned int>::max() + 1 + p1.max();
         EXPECT_EQ(p1.to_string(), "(" + std::to_string(x) + ":" + std::to_string(y) + ")");
 
         // No overflow on positive values.
         EXPECT_EQ(p0.to_string(), "(1:2)");
     }
 
-    if constexpr(std::is_same_v<RangeT, int> || std::is_same_v<RangeT, long>)
+    if constexpr (std::is_same_v<RangeT, int> || std::is_same_v<RangeT, long>)
     {
         EXPECT_EQ(p0.to_string(), "(1:2)");
         EXPECT_EQ(p1.to_string(), "(-3:-4)");
     }
 
-    if constexpr(std::is_same_v<RangeT, float> || std::is_same_v<RangeT, double>)
+    if constexpr (std::is_same_v<RangeT, float> || std::is_same_v<RangeT, double>)
     {
         EXPECT_EQ(p0.to_string(), "(1.000000:2.000000)");
         EXPECT_EQ(p1.to_string(), "(-3.000000:-4.000000)");
     }
-    
 }
 
 // NOLINTNEXTLINE
@@ -287,4 +284,3 @@ TYPED_TEST(test_geometry_range_t, ostream)
 }
 
 }
-

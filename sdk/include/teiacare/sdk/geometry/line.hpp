@@ -16,8 +16,8 @@
 
 #include <teiacare/sdk/geometry/point.hpp>
 
-#include <string>
 #include <optional>
+#include <string>
 
 namespace tc::sdk
 {
@@ -75,7 +75,7 @@ public:
     constexpr inline bool operator==(const line& other) const noexcept
     {
         return (_start == other._start && _end == other._end) ||
-            (_start == other._end && _end == other._start);
+               (_start == other._end && _end == other._start);
     }
 
     /*!

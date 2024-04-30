@@ -131,7 +131,7 @@ public:
     {
         return _hh_mm_ss.to_duration() > other._hh_mm_ss.to_duration();
     }
-    
+
     constexpr inline timedelta operator-(const time& other) const noexcept
     {
         return tc::sdk::timedelta{_hh_mm_ss.to_duration() - other._hh_mm_ss.to_duration()};
@@ -158,7 +158,7 @@ private:
 template <class DurationT>
 std::string time::to_string(const char* format) const
 {
-    return date::format(format, std::chrono::floor<DurationT>(_hh_mm_ss.to_duration()));
+    return ::date::format(format, std::chrono::floor<DurationT>(_hh_mm_ss.to_duration()));
 }
 
 template <class DurationT>
@@ -166,7 +166,7 @@ tc::sdk::time tc::sdk::time::from_string(const std::string& str, const std::stri
 {
     std::chrono::sys_time<DurationT> parsed_time;
     std::stringstream ss{str};
-    ss >> date::parse(format, parsed_time);
+    ss >> ::date::parse(format, parsed_time);
     if (ss.fail())
         throw std::runtime_error("Failed to parse " + str);
 

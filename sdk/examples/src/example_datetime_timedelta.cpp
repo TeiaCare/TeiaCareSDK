@@ -13,7 +13,7 @@
 // limitations under the License.
 
 /**
- * @example example_timedelta.cpp
+ * @example example_datetime_timedelta.cpp
  * @brief Simple example of tc::sdk::timedelta
  */
 
@@ -27,87 +27,81 @@ int main()
 {
     {
         auto t1 = tc::sdk::timedelta();
-        std::cout << std::boolalpha << "\nTimeDelta(): " << t1 << " - is_null: " << t1.is_null() << std::endl;
+        std::cout << std::boolalpha << "\ntimedelta(): " << t1 << " - is_null: " << t1.is_null() << std::endl;
     }
 
     {
-        std::cout << "timedelta(1d, 1h, 2min, 3s, 123456ms):     " 
-            << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 123456ms).to_string<std::chrono::nanoseconds>() << std::endl;
+        std::cout << "timedelta(1d, 1h, 2min, 3s, 123456ms):     "
+                  << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 123456ms).to_string<std::chrono::nanoseconds>() << std::endl;
 
-        std::cout << "timedelta(1d, 1h, 2min, 3s, 123456us):     " 
-            << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 123456us).to_string<std::chrono::nanoseconds>() << std::endl;
-        
-        std::cout << "timedelta(1d, 1h, 2min, 3s, 123456ns):     " 
-            << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 123456ns).to_string<std::chrono::nanoseconds>() << std::endl;
+        std::cout << "timedelta(1d, 1h, 2min, 3s, 123456us):     "
+                  << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 123456us).to_string<std::chrono::nanoseconds>() << std::endl;
 
-        std::cout << "timedelta(1d, 1h, 2min, 3s, 123456ms):     " 
-            << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 123456ms).to_string<std::chrono::microseconds>() << std::endl;
+        std::cout << "timedelta(1d, 1h, 2min, 3s, 123456ns):     "
+                  << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 123456ns).to_string<std::chrono::nanoseconds>() << std::endl;
 
-        std::cout << "timedelta(1d, 1h, 2min, 3s, 123456us):     " 
-            << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 123456us).to_string<std::chrono::microseconds>() << std::endl;
-        
-        std::cout << "timedelta(1d, 1h, 2min, 3s, 123456ns):     " 
-            << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 123456ns).to_string<std::chrono::microseconds>() << std::endl;
+        std::cout << "timedelta(1d, 1h, 2min, 3s, 123456ms):     "
+                  << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 123456ms).to_string<std::chrono::microseconds>() << std::endl;
 
-        std::cout << "timedelta(1d, 1h, 2min, 3s, 123456ms):     " 
-            << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 123456ms).to_string<std::chrono::milliseconds>() << std::endl;
+        std::cout << "timedelta(1d, 1h, 2min, 3s, 123456us):     "
+                  << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 123456us).to_string<std::chrono::microseconds>() << std::endl;
 
-        std::cout << "timedelta(1d, 1h, 2min, 3s, 123456us):     " 
-            << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 123456us).to_string<std::chrono::milliseconds>() << std::endl;
-        
-        std::cout << "timedelta(1d, 1h, 2min, 3s, 123456ns):     " 
-            << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 123456ns).to_string<std::chrono::milliseconds>() << std::endl;
+        std::cout << "timedelta(1d, 1h, 2min, 3s, 123456ns):     "
+                  << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 123456ns).to_string<std::chrono::microseconds>() << std::endl;
 
-        std::cout << "timedelta(1d, 1h, 2min, 3s, 1ns):     " 
-            << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 1ns).to_string<std::chrono::nanoseconds>() << std::endl;
+        std::cout << "timedelta(1d, 1h, 2min, 3s, 123456ms):     "
+                  << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 123456ms).to_string<std::chrono::milliseconds>() << std::endl;
 
-        std::cout << "timedelta(1d, 1h, 2min, 3s, 1us):     " 
-            << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 1us).to_string<std::chrono::microseconds>() << std::endl;
-        
-        std::cout << "timedelta(1d, 1h, 2min, 3s, 1ms):     " 
-            << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 1ms).to_string<std::chrono::milliseconds>() << std::endl;
+        std::cout << "timedelta(1d, 1h, 2min, 3s, 123456us):     "
+                  << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 123456us).to_string<std::chrono::milliseconds>() << std::endl;
 
-        std::cout << "timedelta(1d, 1h, 2min, 3s, 1ms):     " 
-            << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 1ms).to_string<std::chrono::seconds>() << std::endl;
+        std::cout << "timedelta(1d, 1h, 2min, 3s, 123456ns):     "
+                  << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 123456ns).to_string<std::chrono::milliseconds>() << std::endl;
+
+        std::cout << "timedelta(1d, 1h, 2min, 3s, 1ns):     "
+                  << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 1ns).to_string<std::chrono::nanoseconds>() << std::endl;
+
+        std::cout << "timedelta(1d, 1h, 2min, 3s, 1us):     "
+                  << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 1us).to_string<std::chrono::microseconds>() << std::endl;
+
+        std::cout << "timedelta(1d, 1h, 2min, 3s, 1ms):     "
+                  << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 1ms).to_string<std::chrono::milliseconds>() << std::endl;
+
+        std::cout << "timedelta(1d, 1h, 2min, 3s, 1ms):     "
+                  << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 1ms).to_string<std::chrono::seconds>() << std::endl;
     }
 
     {
-        std::cout << "timedelta(1d, 1h, 2min, 3s, 4ms):     " 
-            << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 4ms) << std::endl;
+        std::cout << "timedelta(1d, 1h, 2min, 3s, 4ms):     "
+                  << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 4ms) << std::endl;
 
-        std::cout << "timedelta(1d, 1h, 2min, 3s, 44ms):    " 
-            << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 44ms) << std::endl;
+        std::cout << "timedelta(1d, 1h, 2min, 3s, 44ms):    "
+                  << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 44ms) << std::endl;
 
-        std::cout << "timedelta(1d, 1h, 2min, 3s, 444ms):   " 
-            << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 444ms) << std::endl;
+        std::cout << "timedelta(1d, 1h, 2min, 3s, 444ms):   "
+                  << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 444ms) << std::endl;
 
-        std::cout << "timedelta(1d, 1h, 2min, 3s, 4'444ms): " 
-            << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 4444ms) << std::endl;
+        std::cout << "timedelta(1d, 1h, 2min, 3s, 4'444ms): "
+                  << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 4444ms) << std::endl;
 
-        std::cout << "timedelta(1d, 1h, 2min, 3s, 4us):     " 
-            << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 4us) << std::endl;
+        std::cout << "timedelta(1d, 1h, 2min, 3s, 4us):     "
+                  << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 4us) << std::endl;
 
-        std::cout << "timedelta(1d, 1h, 2min, 3s, 44us):    " 
-            << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 44us) << std::endl;
+        std::cout << "timedelta(1d, 1h, 2min, 3s, 44us):    "
+                  << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 44us) << std::endl;
 
-        std::cout << "timedelta(1d, 1h, 2min, 3s, 444us):   " 
-            << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 444us) << std::endl;
+        std::cout << "timedelta(1d, 1h, 2min, 3s, 444us):   "
+                  << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 444us) << std::endl;
 
-        std::cout << "timedelta(1d, 1h, 2min, 3s, 4444us):  " 
-            << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 4444us) << std::endl;
+        std::cout << "timedelta(1d, 1h, 2min, 3s, 4444us):  "
+                  << tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3s, 4444us) << std::endl;
     }
 
     {
-        auto t = tc::sdk::timedelta(std::chrono::days(1), 25h, 61min, 61s, 1001ms, 1001us
-#if defined(_MSC_VER)
-        ); // Visual Studio seems to not support nanoseconds (!?)
-#else
-                                    ,
-                                    1001ns);
-#endif
+        auto t = tc::sdk::timedelta(std::chrono::days(1), 25h, 61min, 61s, 1001ms, 1001us, 1001ns);
 
         std::cout
-            << "\nTimeDelta(std::chrono::days(1), 25h, 61min, 61s, 1001ms, 1001us, 1001ns): " << t.to_string<std::chrono::nanoseconds>() << std::endl
+            << "\ntimedelta(std::chrono::days(1), 25h, 61min, 61s, 1001ms, 1001us, 1001ns): " << t.to_string<std::chrono::nanoseconds>() << std::endl
 
             << "\nhours(): " << t.hours() << std::endl
             << "minutes(): " << t.minutes() << std::endl
@@ -130,9 +124,9 @@ int main()
 
         std::cout
             << std::boolalpha
-            << "\nTimeDelta(std::chrono::days(1), 25h, 61min, 61s, 1001ms, 1002us)"
+            << "\ntimedelta(std::chrono::days(1), 25h, 61min, 61s, 1001ms, 1002us)"
             << "\n is equal to: "
-            << "\nTimeDelta(std::chrono::days(2),  2h,  2min,  2s,    2ms,    2us)\n"
+            << "\ntimedelta(std::chrono::days(2),  2h,  2min,  2s,    2ms,    2us)\n"
             << (t1 == t2)
             << std::endl;
     }
@@ -143,7 +137,7 @@ int main()
 
         std::cout
             << std::boolalpha
-            << "\nTimeDelta(5min, 5s) * 2: " << t2 << std::endl
+            << "\ntimedelta(5min, 5s) * 2: " << t2 << std::endl
             << "timedelta(5min, 5s) * 3: " << t1 * 3 << std::endl
             << "timedelta(5min, 5s) + timedelta(10min, 5s): " << tc::sdk::timedelta(5min, 5s) + tc::sdk::timedelta(10min, 5s) << std::endl
             << "timedelta(5min, 5s) - timedelta(10min, 5s): " << tc::sdk::timedelta(5min, 5s) - tc::sdk::timedelta(10min, 5s) << std::endl;

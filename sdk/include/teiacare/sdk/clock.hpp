@@ -30,6 +30,10 @@ using time_point = std::chrono::steady_clock::time_point;
  */
 using time_duration = std::chrono::steady_clock::duration;
 
+/*! \typedef sys_time_point alias for std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>.
+ */
+using sys_time_point = std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>;
+
 // Clock traits
 template <typename T>
 struct is_duration : std::false_type

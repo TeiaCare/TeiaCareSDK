@@ -14,9 +14,9 @@
 
 #pragma once
 
+#include <teiacare/sdk/geometry/line.hpp>
 #include <teiacare/sdk/geometry/point.hpp>
 #include <teiacare/sdk/geometry/size.hpp>
-#include <teiacare/sdk/geometry/line.hpp>
 #include <teiacare/sdk/math.hpp>
 
 #include <string>
@@ -353,7 +353,7 @@ public:
     tc::sdk::rectangle<T> translated(T delta_x, T delta_y) const noexcept
     {
         const auto translated_position = tc::sdk::point<T>(_position);
-        translated_position.add_delta(delta_x, delta_y);        
+        translated_position.add_delta(delta_x, delta_y);
         return tc::sdk::rectangle<T>(translated_position, _width, _height);
     }
 

@@ -13,8 +13,8 @@
 // limitations under the License.
 
 /**
- * @example example_date.cpp
- * @brief Simple example of tc::sdk::date and tc::sdk::datetime
+ * @example example_datetime_date.cpp
+ * @brief Simple example of tc::sdk::date
  */
 
 #include <teiacare/sdk/datetime/date.hpp>
@@ -25,36 +25,36 @@ using namespace std::chrono_literals;
 
 int main()
 {
-    auto now = std::chrono::system_clock::now();
-
     {
-        std::cout << std::boolalpha << "\nDate()               is_valid(): "
-            << tc::sdk::date().is_valid() << std::endl;
+        std::cout << std::boolalpha << "\ndate()               is_valid(): "
+                  << tc::sdk::date().is_valid() << std::endl;
 
-        std::cout << std::boolalpha << "date(2023y/8/3d)     is_valid(): " 
-            << tc::sdk::date(2023y / 8 / 3d).is_valid() << std::endl; // 3 August 2023
+        std::cout << std::boolalpha << "date(2023y/8/3d)     is_valid(): "
+                  << tc::sdk::date(2023y / 8 / 3d).is_valid() << std::endl; // 3 August 2023
 
         std::cout << std::boolalpha << "date(2023y/August/3) is_valid(): "
-            << tc::sdk::date(2023y / std::chrono::August / 3).is_valid() << std::endl; // 3 August 2023
+                  << tc::sdk::date(2023y / std::chrono::August / 3).is_valid() << std::endl; // 3 August 2023
     }
 
     {
-        std::cout << "\nDate(27876240min):            "
-            << tc::sdk::date(27876240min) << std::endl;
+        std::cout << "\ndate(27876240min):     "
+                  << tc::sdk::date(27876240min) << std::endl;
 
-        std::cout << "date(1672574401s):            "
-            << tc::sdk::date(1672574401s) << std::endl;
+        std::cout << "date(1672574401s):     "
+                  << tc::sdk::date(1672574401s) << std::endl;
 
-        std::cout << "date(1672574401000ms):        "
-            << tc::sdk::date(1672574401000ms) << std::endl;
+        std::cout << "date(1672574401000ms): "
+                  << tc::sdk::date(1672574401000ms) << std::endl;
+    }
+
+    {
+        const auto now = std::chrono::system_clock::now();
+
+        std::cout << "\ndate(now):                    "
+                  << tc::sdk::date(now) << std::endl;
 
         std::cout << "date(now.time_since_epoch()): "
-            << tc::sdk::date(now.time_since_epoch()) << std::endl;
-    }
-
-    {
-        auto d = tc::sdk::date(now);
-        std::cout << "\nDate(now): " << d << std::endl;
+                  << tc::sdk::date(now.time_since_epoch()) << std::endl;
     }
 
     {
@@ -72,13 +72,13 @@ int main()
         auto d1 = tc::sdk::date(2023y / 8 / 3d); // 3 August 2023
         auto d2 = tc::sdk::date(2023y / 8 / 1d); // 1 August 2023
 
-        std::cout << "\nDate(2023y/8/3d): " << d1 << std::endl;
+        std::cout << "\ndate(2023y/8/3d): " << d1 << std::endl;
         std::cout << "date(2023y/8/1d): " << d2 << std::endl;
 
-        std::cout << std::boolalpha << "\nDate(2023y/8/3d) == date(2022y/8/1d): " << (d1 == d2) << std::endl;
+        std::cout << std::boolalpha << "\ndate(2023y/8/3d) == date(2022y/8/1d): " << (d1 == d2) << std::endl;
         std::cout << std::boolalpha << "date(2023y/8/3d) == date(2023y/std::chrono::August/3): " << (d1 == tc::sdk::date(2023y / std::chrono::August / 3)) << std::endl;
 
-        std::cout << "\nDate(2023y/8/3d) - date(2023y/8/1d): " << d1 - d2 << std::endl;
+        std::cout << "\ndate(2023y/8/3d) - date(2023y/8/1d): " << d1 - d2 << std::endl;
 
         auto delta = tc::sdk::timedelta(std::chrono::days(2));
         std::cout << "date(2023y/8/3d) + timedelta(std::chrono::days(2)): " << d1 + delta << std::endl;

@@ -29,12 +29,11 @@ TYPED_TEST(test_geometry_size_t, create)
     const auto p4 = tc::sdk::size<SizeT>();
     const auto p5(p4);
     tc::sdk::size<SizeT> p6(tc::sdk::size<SizeT>{});
-    
+
     auto temp = tc::sdk::size<SizeT>{};
     tc::sdk::size<SizeT> p7(std::move(temp));
 
-    auto validate = [](auto p)
-    {
+    auto validate = [](auto p) {
         EXPECT_EQ(p.width(), 0);
         EXPECT_EQ(p.height(), 0);
         EXPECT_TRUE(p.is_null());
@@ -70,13 +69,13 @@ TYPED_TEST(test_geometry_size_t, getter_setter)
 
     EXPECT_EQ(p0.width(), 1);
     EXPECT_EQ(p0.height(), 2);
-    
+
     const SizeT new_w(8);
-    p0.set_width(new_w);    
+    p0.set_width(new_w);
     EXPECT_EQ(p0.width(), new_w);
 
     const SizeT new_h(9);
-    p0.set_height(new_h);    
+    p0.set_height(new_h);
     EXPECT_EQ(p0.height(), new_h);
 }
 
@@ -86,38 +85,37 @@ TYPED_TEST(test_geometry_size_t, to_string)
     tc::sdk::size<SizeT> p0(1, 2);
     tc::sdk::size<SizeT> p1(SizeT(-3), SizeT(-4));
 
-    if constexpr(std::is_same_v<SizeT, unsigned int>)
+    if constexpr (std::is_same_v<SizeT, unsigned int>)
     {
         // Overflow!
         // The SizeT is "unsigned int" so when using negative values it overflows.
         // So the expected values are:
-        // std::numeric_limits<unsigned int>::max() + 1 + p1.x() 
-        // = 4294967296 + 1 + 3 
+        // std::numeric_limits<unsigned int>::max() + 1 + p1.x()
+        // = 4294967296 + 1 + 3
         // = 4294967293
         // and
-        // std::numeric_limits<unsigned int>::max() + 1 + p1.y() 
-        // = 4294967296 + 1 + 4 
+        // std::numeric_limits<unsigned int>::max() + 1 + p1.y()
+        // = 4294967296 + 1 + 4
         // = 4294967292
-        auto x =  std::numeric_limits<unsigned int>::max() + 1 + p1.width();
-        auto y =  std::numeric_limits<unsigned int>::max() + 1 + p1.height();
+        auto x = std::numeric_limits<unsigned int>::max() + 1 + p1.width();
+        auto y = std::numeric_limits<unsigned int>::max() + 1 + p1.height();
         EXPECT_EQ(p1.to_string(), "(" + std::to_string(x) + "x" + std::to_string(y) + ")");
 
         // No overflow on positive values.
         EXPECT_EQ(p0.to_string(), "(1x2)");
     }
 
-    if constexpr(std::is_same_v<SizeT, int> || std::is_same_v<SizeT, long>)
+    if constexpr (std::is_same_v<SizeT, int> || std::is_same_v<SizeT, long>)
     {
         EXPECT_EQ(p0.to_string(), "(1x2)");
         EXPECT_EQ(p1.to_string(), "(-3x-4)");
     }
 
-    if constexpr(std::is_same_v<SizeT, float> || std::is_same_v<SizeT, double>)
+    if constexpr (std::is_same_v<SizeT, float> || std::is_same_v<SizeT, double>)
     {
         EXPECT_EQ(p0.to_string(), "(1.000000x2.000000)");
         EXPECT_EQ(p1.to_string(), "(-3.000000x-4.000000)");
     }
-    
 }
 
 // NOLINTNEXTLINE

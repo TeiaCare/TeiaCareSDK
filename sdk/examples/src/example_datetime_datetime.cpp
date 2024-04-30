@@ -13,8 +13,8 @@
 // limitations under the License.
 
 /**
- * @example example_date.cpp
- * @brief Simple example of tc::sdk::date and tc::sdk::datetime
+ * @example example_datetime_datetime.cpp
+ * @brief Simple example of tc::sdk::datetime
  */
 
 #include <teiacare/sdk/datetime/datetime.hpp>
@@ -27,32 +27,37 @@ int main()
 {
     {
         std::cout << tc::sdk::datetime::utc_now()
-            .to_string<std::chrono::seconds>() << std::endl;
+                         .to_string<std::chrono::seconds>()
+                  << std::endl;
 
         std::cout << tc::sdk::datetime::utc_now()
-            .to_string<std::chrono::milliseconds>() << std::endl;
+                         .to_string<std::chrono::milliseconds>()
+                  << std::endl;
 
         std::cout << tc::sdk::datetime::utc_now()
-            .to_string<std::chrono::microseconds>() << std::endl;
-    
+                         .to_string<std::chrono::microseconds>()
+                  << std::endl;
+
         std::cout << tc::sdk::datetime::utc_now()
-            .to_string<std::chrono::nanoseconds>() << std::endl;
-
-//////////////////////////////////////////
-
-        std::cout << tc::sdk::datetime::utc_now<std::chrono::nanoseconds>()
-            .to_string<std::chrono::seconds>() << std::endl;
+                         .to_string<std::chrono::nanoseconds>()
+                  << std::endl;
 
         std::cout << tc::sdk::datetime::utc_now<std::chrono::nanoseconds>()
-            .to_string<std::chrono::milliseconds>() << std::endl;
+                         .to_string<std::chrono::seconds>()
+                  << std::endl;
 
         std::cout << tc::sdk::datetime::utc_now<std::chrono::nanoseconds>()
-            .to_string<std::chrono::microseconds>() << std::endl;
-    
+                         .to_string<std::chrono::milliseconds>()
+                  << std::endl;
+
         std::cout << tc::sdk::datetime::utc_now<std::chrono::nanoseconds>()
-            .to_string<std::chrono::nanoseconds>() << std::endl;
+                         .to_string<std::chrono::microseconds>()
+                  << std::endl;
+
+        std::cout << tc::sdk::datetime::utc_now<std::chrono::nanoseconds>()
+                         .to_string<std::chrono::nanoseconds>()
+                  << std::endl;
     }
-
 
     {
         // "default" use millis precision (no template specialization defined, so std::chrono::milliseconds is used as a default template specialization)
@@ -77,7 +82,6 @@ int main()
         std::cout << dt << std::endl;
         std::cout << dt.to_string<std::chrono::nanoseconds>() << std::endl;
     }
-
     {
         // use nanoseconds precision (now template specialization is defined, so std::chrono::nanoseconds is used as the template specialization)
         // Note that here there will not be trailing zeros in the nanoseconds representation (i.e.: 2024-04-19T18:09:12.123456789) since nanoseconds precision is high enough to cover the given input value.
@@ -88,8 +92,6 @@ int main()
         std::cout << dt.to_string<std::chrono::nanoseconds>("%FT%H:%M:%S") << std::endl;
     }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     {
         std::string str = "2024-04-19T18:09:12.123";
         tc::sdk::datetime dt = tc::sdk::datetime::from_string(str);
@@ -97,30 +99,26 @@ int main()
         std::cout << date << std::endl;
     }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     {
         std::string str = "2024-04-19T18:09:12.123";
-        tc::sdk::datetime dt = tc::sdk::datetime::from_string(str);
+        tc::sdk::datetime dt = tc::sdk::datetime::from_string<std::chrono::nanoseconds>(str);
         tc::sdk::time time = dt.time();
         std::cout << time << std::endl;
     }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     {
-        tc::sdk::datetime dt = tc::sdk::datetime(2024y, std::chrono::April, 24d, 22h, 28min, 0s); 
+        tc::sdk::datetime dt = tc::sdk::datetime(2024y, std::chrono::April, 24d, 22h, 28min, 0s);
         std::cout << dt << std::endl;
     }
-    
+
     {
         tc::sdk::date date = tc::sdk::date(2024y, std::chrono::April, 24d);
         tc::sdk::datetime dt = tc::sdk::datetime(date);
         std::cout << dt << std::endl;
     }
-    
+
     {
-        tc::sdk::time time = tc::sdk::time(22h, 28min, 0s); 
+        tc::sdk::time time = tc::sdk::time(22h, 28min, 0s);
         tc::sdk::datetime dt = tc::sdk::datetime(time);
         std::cout << dt << std::endl;
     }
@@ -132,8 +130,6 @@ int main()
         tc::sdk::datetime dt = tc::sdk::datetime(date, time);
         std::cout << dt << std::endl;
     }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
     std::cout << "now.time_since_epoch(): " << now.time_since_epoch() << std::endl;

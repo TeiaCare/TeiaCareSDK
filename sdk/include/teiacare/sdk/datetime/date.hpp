@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <teiacare/sdk/clock.hpp>
 #include <teiacare/sdk/datetime/timedelta.hpp>
 
 #include "date/date.h"
@@ -49,16 +50,23 @@ public:
     {
     }
 
-
-    explicit constexpr date(const std::chrono::system_clock::time_point& timepoint) noexcept
+    explicit constexpr date(const tc::sdk::sys_time_point& timepoint) noexcept
         : _ymd{std::chrono::floor<std::chrono::days>(timepoint)}
     {
     }
+    // explicit constexpr date(const std::chrono::system_clock::time_point& timepoint) noexcept
+    //     : _ymd{std::chrono::floor<std::chrono::days>(timepoint)}
+    // {
+    // }
 
-    explicit constexpr date(const std::chrono::system_clock::duration& duration) noexcept
-        : date(std::chrono::time_point<std::chrono::system_clock>(duration))
+    explicit constexpr date(const std::chrono::nanoseconds& duration) noexcept
+        : date(tc::sdk::sys_time_point(duration))
     {
     }
+    // explicit constexpr date(const std::chrono::system_clock::duration& duration) noexcept
+    //     : date(std::chrono::time_point<std::chrono::system_clock>(duration))
+    // {
+    // }
 
     constexpr bool is_valid() const noexcept
     {
@@ -170,11 +178,12 @@ std::string date::to_string(const char* format) const
     return ::date::format(format, std::chrono::sys_days(_ymd));
 }
 
-tc::sdk::date date::from_string(const std::string& str, const std::string& format)
+tc::sdk::date tc::sdk::date::from_string(const std::string& str, const std::string& format)
 {
     std::chrono::sys_days parsed_date;
     std::stringstream ss{str};
-    ss >> ::date::parse(format, parsed_date);
+    // ss >> ::date::parse(format, parsed_date);
+    ss >> std::chrono::parse(format, parsed_date);
     if (ss.fail())
         throw std::runtime_error("Failed to parse " + str);
 
@@ -182,11 +191,11 @@ tc::sdk::date date::from_string(const std::string& str, const std::string& forma
     return tc::sdk::date(tp);
 }
 
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-/*
-std::ostream&
-operator<<(std::ostream& os, const std::chrono::year_month_day& ymd)
+std::ostream& operator<<(std::ostream& os, const std::chrono::year_month_day& ymd)
 {
     os.fill('0');
     os.flags(std::ios::dec | std::ios::right);
@@ -201,9 +210,6 @@ operator<<(std::ostream& os, const std::chrono::year_month_day& ymd)
         os << " is not a valid year_month_day";
 
     return os;
-}
-*/
-
 }
 
 std::ostream& operator<<(std::ostream& os, const std::chrono::year& y)
@@ -229,7 +235,6 @@ std::ostream& operator<<(std::ostream& os, const std::chrono::month& m)
     return os;
 }
 
-
 std::ostream& operator<<(std::ostream& os, const std::chrono::day& d)
 {
     os.fill('0');
@@ -243,4 +248,3 @@ std::ostream& operator<<(std::ostream& os, const std::chrono::day& d)
 
     return os;
 }
-

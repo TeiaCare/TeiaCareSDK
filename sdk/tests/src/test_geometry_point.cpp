@@ -29,12 +29,11 @@ TYPED_TEST(test_geometry_point_t, create)
     const auto p4 = tc::sdk::point<PointT>();
     const auto p5(p4);
     tc::sdk::point<PointT> p6(tc::sdk::point<PointT>{});
-    
+
     auto temp = tc::sdk::point<PointT>{};
     tc::sdk::point<PointT> p7(std::move(temp));
 
-    auto validate = [](auto p)
-    {
+    auto validate = [](auto p) {
         EXPECT_EQ(p.x(), 0);
         EXPECT_EQ(p.y(), 0);
         EXPECT_TRUE(p.is_origin());
@@ -70,13 +69,13 @@ TYPED_TEST(test_geometry_point_t, getter_setter)
 
     EXPECT_EQ(p0.x(), 1);
     EXPECT_EQ(p0.y(), 2);
-    
+
     const PointT new_x(8);
-    p0.set_x(new_x);    
+    p0.set_x(new_x);
     EXPECT_EQ(p0.x(), new_x);
 
     const PointT new_y(9);
-    p0.set_y(new_y);    
+    p0.set_y(new_y);
     EXPECT_EQ(p0.y(), new_y);
 }
 
@@ -126,10 +125,10 @@ TYPED_TEST(test_geometry_point_t, distance_point)
     const auto abs_error = PointT(0.00001);
 
     const auto expected_distance = PointT(2.828427); // sqrt((1+3)^2 + (2+4)^2) = 2.828427
-    
+
     const auto d0 = p0.distance(p1);
     EXPECT_NEAR(static_cast<double>(d0), static_cast<double>(expected_distance), static_cast<double>(abs_error));
-    
+
     const auto d1 = p1.distance(p0);
     EXPECT_NEAR(static_cast<double>(d1), static_cast<double>(expected_distance), static_cast<double>(abs_error));
 }
@@ -139,7 +138,7 @@ TYPED_TEST(test_geometry_point_t, operator_add)
     using PointT = TypeParam;
     tc::sdk::point<PointT> p0(1, 2);
     tc::sdk::point<PointT> p1(3, 4);
-    
+
     auto op = p0 + p1;
     auto temp = p0;
     temp += p1;
@@ -193,10 +192,10 @@ TYPED_TEST(test_geometry_point_t, operator_div)
     auto temp = p0;
     temp /= scalar;
 
-    EXPECT_NEAR(static_cast<double>(op.x()), static_cast<double>(p0.x()/scalar), abs_error);
-    EXPECT_NEAR(static_cast<double>(op.y()), static_cast<double>(p0.y()/scalar), abs_error);
-    EXPECT_NEAR(static_cast<double>(temp.x()), static_cast<double>(p0.x()/scalar), abs_error);
-    EXPECT_NEAR(static_cast<double>(temp.y()), static_cast<double>(p0.y()/scalar), abs_error);
+    EXPECT_NEAR(static_cast<double>(op.x()), static_cast<double>(p0.x() / scalar), abs_error);
+    EXPECT_NEAR(static_cast<double>(op.y()), static_cast<double>(p0.y() / scalar), abs_error);
+    EXPECT_NEAR(static_cast<double>(temp.x()), static_cast<double>(p0.x() / scalar), abs_error);
+    EXPECT_NEAR(static_cast<double>(temp.y()), static_cast<double>(p0.y() / scalar), abs_error);
 }
 
 TYPED_TEST(test_geometry_point_t, to_string)
@@ -205,38 +204,37 @@ TYPED_TEST(test_geometry_point_t, to_string)
     tc::sdk::point<PointT> p0(1, 2);
     tc::sdk::point<PointT> p1(PointT(-3), PointT(-4));
 
-    if constexpr(std::is_same_v<PointT, unsigned int>)
+    if constexpr (std::is_same_v<PointT, unsigned int>)
     {
         // Overflow!
         // The PointT is "unsigned int" so when using negative values it overflows.
         // So the expected values are:
-        // std::numeric_limits<unsigned int>::max() + 1 + p1.x() 
-        // = 4294967296 + 1 + 3 
+        // std::numeric_limits<unsigned int>::max() + 1 + p1.x()
+        // = 4294967296 + 1 + 3
         // = 4294967293
         // and
-        // std::numeric_limits<unsigned int>::max() + 1 + p1.y() 
-        // = 4294967296 + 1 + 4 
+        // std::numeric_limits<unsigned int>::max() + 1 + p1.y()
+        // = 4294967296 + 1 + 4
         // = 4294967292
-        auto x =  std::numeric_limits<unsigned int>::max() + 1 + p1.x();
-        auto y =  std::numeric_limits<unsigned int>::max() + 1 + p1.y();
+        auto x = std::numeric_limits<unsigned int>::max() + 1 + p1.x();
+        auto y = std::numeric_limits<unsigned int>::max() + 1 + p1.y();
         EXPECT_EQ(p1.to_string(), "(" + std::to_string(x) + ", " + std::to_string(y) + ")");
 
         // No overflow on positive values.
         EXPECT_EQ(p0.to_string(), "(1, 2)");
     }
 
-    if constexpr(std::is_same_v<PointT, int> || std::is_same_v<PointT, long>)
+    if constexpr (std::is_same_v<PointT, int> || std::is_same_v<PointT, long>)
     {
         EXPECT_EQ(p0.to_string(), "(1, 2)");
         EXPECT_EQ(p1.to_string(), "(-3, -4)");
     }
 
-    if constexpr(std::is_same_v<PointT, float> || std::is_same_v<PointT, double>)
+    if constexpr (std::is_same_v<PointT, float> || std::is_same_v<PointT, double>)
     {
         EXPECT_EQ(p0.to_string(), "(1.000000, 2.000000)");
         EXPECT_EQ(p1.to_string(), "(-3.000000, -4.000000)");
     }
-    
 }
 
 // NOLINTNEXTLINE

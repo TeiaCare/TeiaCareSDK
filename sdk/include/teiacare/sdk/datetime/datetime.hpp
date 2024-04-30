@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <teiacare/sdk/clock.hpp>
 #include <teiacare/sdk/datetime/date.hpp>
 #include <teiacare/sdk/datetime/time.hpp>
 #include <teiacare/sdk/datetime/timedelta.hpp>
@@ -34,11 +35,11 @@ public:
     {
     }
 
-    explicit constexpr datetime(const std::chrono::system_clock::time_point& tp) noexcept
+    explicit constexpr datetime(const tc::sdk::sys_time_point& tp) noexcept
         : _tp{tp}
     {
     }
-    explicit constexpr datetime(std::chrono::system_clock::time_point&& tp) noexcept
+    explicit constexpr datetime(tc::sdk::sys_time_point&& tp) noexcept
         : _tp{std::forward<decltype(tp)&&>(tp)}
     {
     }
@@ -87,11 +88,11 @@ public:
     constexpr inline tc::sdk::time time() const
     {
         std::chrono::sys_days total_days = std::chrono::floor<std::chrono::days>(_tp);
-        std::chrono::system_clock::duration time_duration = _tp - total_days;
+        std::chrono::nanoseconds time_duration = _tp - total_days;
         return tc::sdk::time(time_duration);
     }
 
-    constexpr inline std::chrono::system_clock::time_point to_time_point() const noexcept
+    constexpr inline tc::sdk::sys_time_point to_time_point() const noexcept
     {
         return _tp;
     }
@@ -170,21 +171,22 @@ public:
     }
 
 private:
-    const std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds> _tp;
+    const tc::sdk::sys_time_point _tp;
 };
 
 template <class DurationT>
 std::string datetime::to_string(const std::string& format) const
 {
-    return date::format(format, std::chrono::time_point_cast<DurationT>(_tp));
+    return ::date::format(format, std::chrono::time_point_cast<DurationT>(_tp));
 }
 
 template <class DurationT>
-tc::sdk::datetime tc::sdk::datetime::from_string(const std::string& str, const std::string& format)
+tc::sdk::datetime tc::sdk::datetime::from_string(const std::string& str, const std::string& format) noexcept(false)
 {
     std::chrono::sys_time<DurationT> parsed_time;
     std::stringstream ss{str};
-    ss >> date::parse(format, parsed_time);
+    // ss >> ::date::parse(format, parsed_time);
+    ss >> std::chrono::parse(format, parsed_time);
     if (ss.fail())
         throw std::runtime_error("Failed to parse " + str);
 
