@@ -185,8 +185,7 @@ tc::sdk::datetime tc::sdk::datetime::from_string(const std::string& str, const s
 {
     std::chrono::sys_time<DurationT> parsed_time;
     std::stringstream ss{str};
-    // ss >> ::date::parse(format, parsed_time);
-    ss >> std::chrono::parse(format, parsed_time);
+    ss >> ::date::parse(format, parsed_time);
     if (ss.fail())
         throw std::runtime_error("Failed to parse " + str);
 

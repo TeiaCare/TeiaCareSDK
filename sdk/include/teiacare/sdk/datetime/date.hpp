@@ -182,8 +182,7 @@ tc::sdk::date tc::sdk::date::from_string(const std::string& str, const std::stri
 {
     std::chrono::sys_days parsed_date;
     std::stringstream ss{str};
-    // ss >> ::date::parse(format, parsed_date);
-    ss >> std::chrono::parse(format, parsed_date);
+    ss >> ::date::parse(format, parsed_date);
     if (ss.fail())
         throw std::runtime_error("Failed to parse " + str);
 
