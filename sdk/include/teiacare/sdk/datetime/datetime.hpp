@@ -26,16 +26,39 @@ using namespace std::chrono_literals;
 
 namespace tc::sdk
 {
-class DateTime
+class datetime
 {
 public:
-    explicit constexpr DateTime() noexcept;
-    explicit constexpr DateTime(const std::chrono::system_clock::time_point& tp) noexcept;
-    explicit constexpr DateTime(std::chrono::system_clock::time_point&& tp) noexcept;
-    explicit constexpr DateTime(const tc::sdk::Date& date) noexcept;
-    explicit constexpr DateTime(const tc::sdk::Time& time) noexcept;
-    explicit constexpr DateTime(const tc::sdk::Date& date, const tc::sdk::Time& time) noexcept;
-    explicit constexpr DateTime(
+    explicit constexpr datetime() noexcept
+        : _tp{decltype(_tp)::min()}
+    {
+    }
+
+    explicit constexpr datetime(const std::chrono::system_clock::time_point& tp) noexcept
+        : _tp{tp}
+    {
+    }
+    explicit constexpr datetime(std::chrono::system_clock::time_point&& tp) noexcept
+        : _tp{std::forward<decltype(tp)&&>(tp)}
+    {
+    }
+
+    explicit constexpr datetime(const tc::sdk::date& date) noexcept
+        : _tp{date.to_duration()}
+    {
+    }
+
+    explicit constexpr datetime(const tc::sdk::time& time) noexcept
+        : _tp{time.to_duration()}
+    {
+    }
+
+    explicit constexpr datetime(const tc::sdk::date& date, const tc::sdk::time& time) noexcept
+        : _tp{date.to_duration() + time.to_duration()}
+    {
+    }
+
+    explicit constexpr datetime(
         const std::chrono::year& y,
         const std::chrono::month& m,
         const std::chrono::day& d,
@@ -44,198 +67,128 @@ public:
         const std::chrono::seconds& ss,
         const std::chrono::milliseconds& ms = 0ms,
         const std::chrono::microseconds& us = 0us,
-        const std::chrono::nanoseconds& ns = 0ns) noexcept;
+        const std::chrono::nanoseconds& ns = 0ns) noexcept
+        : _tp{std::chrono::sys_days(std::chrono::year_month_day(y, m, d)) + hh + mm + ss + ms + us + ns}
+    {
+    }
 
-    constexpr inline bool is_valid() const;
-    tc::sdk::Date date() const;
-    tc::sdk::Time time() const;
+    constexpr inline bool is_valid() const
+    {
+        return _tp > decltype(_tp)::min() && _tp < decltype(_tp)::max();
+    }
 
-    constexpr inline std::chrono::system_clock::time_point to_time_point() const noexcept;
+    constexpr inline tc::sdk::date date() const
+    {
+        std::chrono::sys_days total_days = std::chrono::floor<std::chrono::days>(_tp);
+        std::chrono::year_month_day ymd{total_days};
+        return tc::sdk::date(ymd);
+    }
+
+    constexpr inline tc::sdk::time time() const
+    {
+        std::chrono::sys_days total_days = std::chrono::floor<std::chrono::days>(_tp);
+        std::chrono::system_clock::duration time_duration = _tp - total_days;
+        return tc::sdk::time(time_duration);
+    }
+
+    constexpr inline std::chrono::system_clock::time_point to_time_point() const noexcept
+    {
+        return _tp;
+    }
 
     template <class DurationT = std::chrono::milliseconds>
-    static tc::sdk::DateTime from_string(const std::string& str, const std::string& format = "%FT%T");
+    static tc::sdk::datetime utc_now() noexcept
+    {
+        const auto now = std::chrono::system_clock::now();
+        return tc::sdk::datetime{std::chrono::time_point_cast<DurationT>(now)};
+    }
 
     template <class DurationT = std::chrono::milliseconds>
-    static tc::sdk::DateTime utc_now() noexcept;
+    static tc::sdk::datetime from_string(const std::string& str, const std::string& format = "%FT%T") noexcept(false);
 
     /*!
      * \brief Equality operator.
-     * \param other the DateTime to compare against.
-     * \return true if the two DateTime objects are the same.
+     * \param other the datetime to compare against.
+     * \return true if the two datetime objects are the same.
      */
-    constexpr inline bool operator==(const DateTime& other) const noexcept
+    constexpr inline bool operator==(const datetime& other) const noexcept
     {
         return _tp == other._tp;
     }
 
     /*!
      * \brief Inequality operator.
-     * \param other the DateTime to compare against.
-     * \return true if the two DateTime objects are the different.
+     * \param other the datetime to compare against.
+     * \return true if the two datetime objects are the different.
      */
-    constexpr inline bool operator!=(const DateTime& other) const noexcept
+    constexpr inline bool operator!=(const datetime& other) const noexcept
     {
         return !operator==(other);
     }
 
-    tc::sdk::DateTime operator+(const TimeDelta& delta)
+    constexpr tc::sdk::datetime operator+(const timedelta& delta)
     {
-        return tc::sdk::DateTime{_tp + delta.total_nanoseconds()};
+        return tc::sdk::datetime{_tp + delta.total_nanoseconds()};
     }
 
-    tc::sdk::DateTime operator-(const TimeDelta& delta)
+    constexpr tc::sdk::datetime operator-(const timedelta& delta)
     {
-        return tc::sdk::DateTime{_tp - delta.total_nanoseconds()};
+        return tc::sdk::datetime{_tp - delta.total_nanoseconds()};
     }
 
-    constexpr inline bool operator<(const DateTime& other) const noexcept
+    constexpr inline bool operator<(const datetime& other) const noexcept
     {
         return _tp < other._tp;
     }
 
-    constexpr inline bool operator>(const DateTime& other) const noexcept
+    constexpr inline bool operator>(const datetime& other) const noexcept
     {
         return _tp > other._tp;
     }
 
-    constexpr inline TimeDelta operator-(const DateTime& other) const noexcept
+    constexpr inline timedelta operator-(const datetime& other) const noexcept
     {
-        return tc::sdk::TimeDelta{_tp - other._tp};
+        return tc::sdk::timedelta{_tp - other._tp};
     }
 
     /*!
-     * \brief Get the DateTime string representation
-     * \return String representation of the current DateTime.
+     * \brief Get the datetime string representation
+     * \return String representation of the current datetime.
      */
     template <class DurationT = std::chrono::milliseconds>
-    std::string to_string(const std::string& format = "%FT%T") const
-    {
-        return date::format(format, std::chrono::time_point_cast<DurationT>(_tp));
-    }
+    std::string to_string(const std::string& format = "%FT%T") const;
 
     /*!
      * \brief Output stream operator.
      * \param stream the output stream to write into.
-     * \param dt the DateTime object to stream.
-     * \return reference to the output stream operator, with the DateTime string representation written into it.
+     * \param dt the datetime object to stream.
+     * \return reference to the output stream operator, with the datetime string representation written into it.
      */
-    friend std::ostream& operator<<(std::ostream& stream, const DateTime& dt)
+    friend std::ostream& operator<<(std::ostream& stream, const datetime& dt)
     {
         return stream << dt.to_string();
     }
 
 private:
-    template <class DurationT>
-    static tc::sdk::DateTime try_parse_as(const std::string& str, const std::string& format = "%FT%T")
-    {
-        std::chrono::sys_time<DurationT> parsed_time;
-        std::stringstream ss{str};
-        ss >> date::parse("%FT%T", parsed_time);
-        if (ss.fail())
-            throw std::runtime_error("Failed to parse " + str);
-
-        return tc::sdk::DateTime(parsed_time);
-    }
-
     const std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds> _tp;
 };
 
-constexpr DateTime::DateTime() noexcept
-    : _tp{decltype(_tp)::min()}
+template <class DurationT>
+std::string datetime::to_string(const std::string& format) const
 {
-}
-
-constexpr DateTime::DateTime(const std::chrono::system_clock::time_point& tp) noexcept
-    : _tp{tp}
-{
-}
-
-constexpr DateTime::DateTime(std::chrono::system_clock::time_point&& tp) noexcept
-    : _tp{std::forward<decltype(tp)&&>(tp)}
-{
-}
-
-constexpr DateTime::DateTime(const tc::sdk::Date& date) noexcept
-    : _tp{date.to_duration()}
-{
-}
-
-constexpr DateTime::DateTime(const tc::sdk::Time& time) noexcept
-    : _tp{time.to_duration()}
-{
-}
-constexpr DateTime::DateTime(const tc::sdk::Date& date, const tc::sdk::Time& time) noexcept
-    : _tp{date.to_duration() + time.to_duration()}
-{
-}
-
-constexpr DateTime::DateTime(
-    const std::chrono::year& y,
-    const std::chrono::month& m,
-    const std::chrono::day& d,
-    const std::chrono::hours& hh,
-    const std::chrono::minutes& mm,
-    const std::chrono::seconds& ss,
-    const std::chrono::milliseconds& ms,
-    const std::chrono::microseconds& us,
-    const std::chrono::nanoseconds& ns) noexcept
-    : _tp{std::chrono::sys_days(std::chrono::year_month_day(y, m, d)) + hh + mm + ss + ms + us + ns}
-{
-}
-
-constexpr inline bool DateTime::is_valid() const
-{
-    return _tp > decltype(_tp)::min() && _tp < decltype(_tp)::max();
-}
-
-tc::sdk::Date DateTime::date() const
-{
-    std::chrono::sys_days total_days = std::chrono::floor<std::chrono::days>(_tp);
-    std::chrono::year_month_day ymd{total_days};
-    return Date(ymd);
-}
-
-tc::sdk::Time DateTime::time() const
-{
-    std::chrono::sys_days total_days = std::chrono::floor<std::chrono::days>(_tp);
-    std::chrono::system_clock::duration time_duration = _tp - total_days;
-    return tc::sdk::Time(time_duration);
-}
-
-constexpr inline std::chrono::system_clock::time_point DateTime::to_time_point() const noexcept
-{
-    return _tp;
+    return date::format(format, std::chrono::time_point_cast<DurationT>(_tp));
 }
 
 template <class DurationT>
-tc::sdk::DateTime DateTime::utc_now() noexcept
+tc::sdk::datetime tc::sdk::datetime::from_string(const std::string& str, const std::string& format)
 {
-    const auto now = std::chrono::system_clock::now();
-    return tc::sdk::DateTime{std::chrono::time_point_cast<DurationT>(now)};
-}
+    std::chrono::sys_time<DurationT> parsed_time;
+    std::stringstream ss{str};
+    ss >> date::parse(format, parsed_time);
+    if (ss.fail())
+        throw std::runtime_error("Failed to parse " + str);
 
-template <>
-tc::sdk::DateTime DateTime::from_string<std::chrono::seconds>(const std::string& str, const std::string& format)
-{
-    return tc::sdk::DateTime::try_parse_as<std::chrono::seconds>(str, format);
-}
-
-template <>
-tc::sdk::DateTime DateTime::from_string<std::chrono::milliseconds>(const std::string& str, const std::string& format)
-{
-    return tc::sdk::DateTime::try_parse_as<std::chrono::milliseconds>(str, format);
-}
-
-template <>
-tc::sdk::DateTime DateTime::from_string<std::chrono::microseconds>(const std::string& str, const std::string& format)
-{
-    return tc::sdk::DateTime::try_parse_as<std::chrono::microseconds>(str, format);
-}
-
-template <>
-tc::sdk::DateTime DateTime::from_string<std::chrono::nanoseconds>(const std::string& str, const std::string& format)
-{
-    return tc::sdk::DateTime::try_parse_as<std::chrono::nanoseconds>(str, format);
+    return tc::sdk::datetime(parsed_time);
 }
 
 }

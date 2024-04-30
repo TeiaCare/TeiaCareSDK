@@ -22,123 +22,171 @@
 
 namespace tc::sdk
 {
-class Date
+class date
 {
-    const std::chrono::year_month_day _ymd;
-
 public:
-    explicit Date();
-    explicit Date(const std::chrono::year_month_day& ymd);
-    explicit Date(std::chrono::year_month_day&& ymd);
-    explicit Date(const std::chrono::year& y, const std::chrono::month& m, const std::chrono::day& d);
-    explicit Date(std::chrono::year&& y, std::chrono::month&& m, std::chrono::day&& d);
+    explicit constexpr date() noexcept
+        : _ymd{}
+    {
+    }
 
-    constexpr bool is_valid() const;
+    explicit constexpr date(const std::chrono::year_month_day& ymd) noexcept
+        : _ymd{ymd}
+    {
+    }
 
-    std::chrono::year year() const;
-    std::chrono::month month() const;
-    std::chrono::day day() const;
-    std::chrono::weekday weekday() const;
-    unsigned iso_weekday() const;
+    explicit constexpr date(std::chrono::year_month_day&& ymd) noexcept
+        : _ymd{std::move(ymd)}
+    {
+    }
+    explicit constexpr date(const std::chrono::year& y, const std::chrono::month& m, const std::chrono::day& d) noexcept
+        : _ymd{y, m, d}
+    {
+    }
 
-    std::string to_string(const char* fmt = "%F") const; // equivalent to "%Y-%m-%d"
-    std::string iso_string() const;
+    explicit constexpr date(std::chrono::year&& y, std::chrono::month&& m, std::chrono::day&& d) noexcept
+        : _ymd{std::move(y), std::move(m), std::move(d)}
+    {
+    }
 
-    static Date today();
-    static Date from_duration(const std::chrono::system_clock::duration& duration);
-    static Date from_timepoint(const std::chrono::system_clock::time_point& timepoint);
 
-    // TODO!
-    static Date from_string(const char* str);
-    static Date from_string(const std::string& str);
+    explicit constexpr date(const std::chrono::system_clock::time_point& timepoint) noexcept
+        : _ymd{std::chrono::floor<std::chrono::days>(timepoint)}
+    {
+    }
 
-    constexpr std::chrono::sys_days to_duration() const
+    explicit constexpr date(const std::chrono::system_clock::duration& duration) noexcept
+        : date(std::chrono::time_point<std::chrono::system_clock>(duration))
+    {
+    }
+
+    constexpr bool is_valid() const noexcept
+    {
+        return _ymd.ok();
+    }
+
+    constexpr inline std::chrono::year year() const noexcept
+    {
+        return _ymd.year();
+    }
+
+    constexpr inline std::chrono::month month() const noexcept
+    {
+        return _ymd.month();
+    }
+
+    constexpr inline std::chrono::day day() const noexcept
+    {
+        return _ymd.day();
+    }
+
+    constexpr inline std::chrono::weekday weekday() const noexcept
+    {
+        return std::chrono::weekday(_ymd);
+    }
+
+    unsigned iso_weekday() const
+    {
+        return weekday().iso_encoding();
+    }
+
+    static date today() noexcept
+    {
+        const std::chrono::system_clock::time_point now = std::chrono::floor<std::chrono::days>(std::chrono::system_clock::now());
+        return tc::sdk::date{now};
+    }
+
+    static tc::sdk::date from_string(const std::string& str, const std::string& format = "%T") noexcept(false);
+
+    constexpr inline std::chrono::sys_days to_duration() const noexcept
     {
         return std::chrono::sys_days(_ymd);
     }
 
-protected:
-    const std::chrono::year_month_day& year_month_day() const;
+    /*!
+     * \brief Equality operator.
+     * \param other the date to compare against.
+     * \return true if the two date objects are the same.
+     */
+    constexpr inline bool operator==(const date& other) const noexcept
+    {
+        return _ymd == other._ymd;
+    }
 
-public:
-    friend bool operator==(const Date& d1, const Date& d2);
-    friend std::ostream& operator<<(std::ostream& os, const Date& date);
-    friend Date operator+(const Date& date, const TimeDelta& time_delta);
-    friend Date operator+(const TimeDelta& time_delta, const Date& date);
-    friend Date operator-(const Date& date, const TimeDelta& time_delta);
-    friend TimeDelta operator-(const Date& date1, const Date& date2);
+    /*!
+     * \brief Inequality operator.
+     * \param other the date to compare against.
+     * \return true if the two date objects are the different.
+     */
+    constexpr inline bool operator!=(const date& other) const noexcept
+    {
+        return !operator==(other);
+    }
+
+    constexpr tc::sdk::date operator+(const timedelta& delta) const noexcept
+    {
+        return tc::sdk::date{std::chrono::sys_days(_ymd) + delta.total_nanoseconds()};
+    }
+
+    constexpr tc::sdk::date operator-(const timedelta& delta) const noexcept
+    {
+        return tc::sdk::date{std::chrono::sys_days(_ymd) - delta.total_nanoseconds()};
+    }
+
+    constexpr inline bool operator<(const date& other) const noexcept
+    {
+        return _ymd < other._ymd;
+    }
+
+    constexpr inline bool operator>(const date& other) const noexcept
+    {
+        return _ymd > other._ymd;
+    }
+
+    inline timedelta operator-(const date& other) const noexcept
+    {
+        return tc::sdk::timedelta{std::chrono::sys_days(_ymd) - std::chrono::sys_days(other._ymd)};
+    }
+
+    std::string to_string(const char* format = "%F") const; // equivalent to "%Y-%m-%d"
+
+    /*!
+     * \brief Output stream operator.
+     * \param stream the output stream to write into.
+     * \param t the date object to stream.
+     * \return reference to the output stream operator, with the date string representation written into it.
+     */
+    friend std::ostream& operator<<(std::ostream& stream, const date& d)
+    {
+        return stream << d.to_string();
+    }
+
+private:
+    const std::chrono::year_month_day _ymd;
 };
 
+std::string date::to_string(const char* format) const
+{
+    return ::date::format(format, std::chrono::sys_days(_ymd));
+}
+
+tc::sdk::date date::from_string(const std::string& str, const std::string& format)
+{
+    std::chrono::sys_days parsed_date;
+    std::stringstream ss{str};
+    ss >> ::date::parse(format, parsed_date);
+    if (ss.fail())
+        throw std::runtime_error("Failed to parse " + str);
+
+    std::chrono::system_clock::time_point tp = parsed_date;
+    return tc::sdk::date(tp);
+}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Date impl
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-Date::Date()
-    : _ymd{}
-{
-}
-
-Date::Date(const std::chrono::year_month_day& ymd)
-    : _ymd{ymd}
-{
-}
-
-Date::Date(std::chrono::year_month_day&& ymd)
-    : _ymd{std::move(ymd)}
-{
-}
-
-Date::Date(const std::chrono::year& y, const std::chrono::month& m, const std::chrono::day& d)
-    : _ymd{y, m, d}
-{
-}
-
-Date::Date(std::chrono::year&& y, std::chrono::month&& m, std::chrono::day&& d)
-    : _ymd{std::move(y), std::move(m), std::move(d)}
-{
-}
-
-constexpr bool Date::is_valid() const
-{
-    return _ymd.ok();
-}
-
-Date Date::today()
-{
-    return Date{std::chrono::floor<std::chrono::days>(std::chrono::system_clock::now())};
-}
-
-const std::chrono::year_month_day& Date::year_month_day() const
-{
-    return _ymd;
-}
-
-std::chrono::year Date::year() const
-{
-    return _ymd.year();
-}
-
-std::chrono::month Date::month() const
-{
-    return _ymd.month();
-}
-
-std::chrono::day Date::day() const
-{
-    return _ymd.day();
-}
-
-std::chrono::weekday Date::weekday() const
-{
-    return std::chrono::weekday(_ymd);
-}
-
-unsigned Date::iso_weekday() const
-{
-    return weekday().iso_encoding();
-}
-
-std::ostream& operator<<(std::ostream& os, const std::chrono::year_month_day& ymd)
+/*
+std::ostream&
+operator<<(std::ostream& os, const std::chrono::year_month_day& ymd)
 {
     os.fill('0');
     os.flags(std::ios::dec | std::ios::right);
@@ -154,64 +202,7 @@ std::ostream& operator<<(std::ostream& os, const std::chrono::year_month_day& ym
 
     return os;
 }
-
-std::string Date::to_string(const char* fmt) const
-{
-    return date::format(fmt, std::chrono::sys_days(_ymd));
-}
-
-std::string Date::iso_string() const
-{
-    return to_string("%F");
-}
-
-Date Date::from_duration(const std::chrono::system_clock::duration& d)
-{
-    return from_timepoint(std::chrono::time_point<std::chrono::system_clock>(d));
-}
-
-Date Date::from_timepoint(const std::chrono::system_clock::time_point& tp)
-{
-    return Date{std::chrono::floor<std::chrono::days>(tp)};
-}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// friend operators
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-bool operator==(const Date& d1, const Date& d2)
-{
-    return d1.year_month_day() == d2.year_month_day();
-}
-
-std::ostream& operator<<(std::ostream& os, const Date& date)
-{
-    return os << date.iso_string();
-}
-
-Date operator+(const Date& date, const TimeDelta& time_delta)
-{
-    // const auto time_point = std::chrono::sys_days(date.year_month_day()) + time_delta.duration();
-    // return Date{std::chrono::time_point_cast<std::chrono::days>(time_point)};
-    return Date{};
-}
-
-Date operator+(const TimeDelta& time_delta, const Date& date)
-{
-    return date + time_delta;
-}
-
-Date operator-(const Date& date, const TimeDelta& time_delta)
-{
-    // const auto time_point = std::chrono::sys_days(date.year_month_day()) - time_delta.duration();
-    // return Date{std::chrono::time_point_cast<std::chrono::days>(time_point)};
-    return Date{};
-}
-
-TimeDelta operator-(const Date& d1, const Date& d2)
-{
-    return TimeDelta{std::chrono::sys_days(d1.year_month_day()) - std::chrono::sys_days(d2.year_month_day())};
-}
+*/
 
 }
 
@@ -238,6 +229,7 @@ std::ostream& operator<<(std::ostream& os, const std::chrono::month& m)
     return os;
 }
 
+
 std::ostream& operator<<(std::ostream& os, const std::chrono::day& d)
 {
     os.fill('0');
@@ -251,3 +243,4 @@ std::ostream& operator<<(std::ostream& os, const std::chrono::day& d)
 
     return os;
 }
+
