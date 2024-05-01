@@ -43,6 +43,12 @@ set(TARGET_HEADERS
 )
 
 set(TARGET_SOURCES
+    src/datetime/date.h
+    src/datetime/date.cpp
+    src/datetime/datetime.cpp
+    src/datetime/time.cpp
+    src/datetime/timedelta.cpp
+    
     src/event_dispatcher.cpp
     src/high_precision_timer.cpp
     src/rate_limiter.cpp

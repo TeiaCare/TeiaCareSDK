@@ -17,7 +17,6 @@
 #include <teiacare/sdk/clock.hpp>
 #include <teiacare/sdk/datetime/timedelta.hpp>
 
-#include "date/date.h"
 #include <chrono>
 #include <ostream>
 
@@ -93,18 +92,10 @@ public:
         return std::chrono::weekday(_ymd);
     }
 
-    unsigned iso_weekday() const
+    constexpr unsigned iso_weekday() const
     {
         return weekday().iso_encoding();
     }
-
-    static date today() noexcept
-    {
-        const std::chrono::system_clock::time_point now = std::chrono::floor<std::chrono::days>(std::chrono::system_clock::now());
-        return tc::sdk::date{now};
-    }
-
-    static tc::sdk::date from_string(const std::string& str, const std::string& format = "%T") noexcept(false);
 
     constexpr inline std::chrono::sys_days to_duration() const noexcept
     {
@@ -156,44 +147,50 @@ public:
         return tc::sdk::timedelta{std::chrono::sys_days(_ymd) - std::chrono::sys_days(other._ymd)};
     }
 
-    std::string to_string(const char* format = "%F") const; // equivalent to "%Y-%m-%d"
-
     /*!
      * \brief Output stream operator.
      * \param stream the output stream to write into.
      * \param t the date object to stream.
      * \return reference to the output stream operator, with the date string representation written into it.
      */
-    friend std::ostream& operator<<(std::ostream& stream, const date& d)
-    {
-        return stream << d.to_string();
-    }
+    friend std::ostream& operator<<(std::ostream& stream, const date& d);
+
+    /*!
+     * \brief Get the date string representation
+     * \return String representation of the current date.
+     */
+    std::string to_string(const std::string& format = "%F") const noexcept(false); // equivalent to "%Y-%m-%d"
+
+    static tc::sdk::date from_string(const std::string& str, const std::string& format = "%T") noexcept(false);
+
+    static tc::sdk::date today() noexcept;
 
 private:
     const std::chrono::year_month_day _ymd;
 };
 
-std::string date::to_string(const char* format) const
-{
-    return ::date::format(format, std::chrono::sys_days(_ymd));
-}
+// std::string date::to_string(const char* format) const
+// {
+//     return ::date::format(format, std::chrono::sys_days(_ymd));
+// }
 
-tc::sdk::date tc::sdk::date::from_string(const std::string& str, const std::string& format)
-{
-    std::chrono::sys_days parsed_date;
-    std::stringstream ss{str};
-    ss >> ::date::parse(format, parsed_date);
-    if (ss.fail())
-        throw std::runtime_error("Failed to parse " + str);
+// tc::sdk::date tc::sdk::date::from_string(const std::string& str, const std::string& format)
+// {
+//     std::chrono::sys_days parsed_date;
+//     std::stringstream ss{str};
+//     ss >> ::date::parse(format, parsed_date);
+//     if (ss.fail())
+//         throw std::runtime_error("Failed to parse " + str);
 
-    std::chrono::system_clock::time_point tp = parsed_date;
-    return tc::sdk::date(tp);
-}
+//     std::chrono::system_clock::time_point tp = parsed_date;
+//     return tc::sdk::date(tp);
+// }
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+/*
 std::ostream& operator<<(std::ostream& os, const std::chrono::year_month_day& ymd)
 {
     os.fill('0');
@@ -225,14 +222,14 @@ std::ostream& operator<<(std::ostream& os, const std::chrono::year& y)
     return os;
 }
 
-std::ostream& operator<<(std::ostream& os, const std::chrono::month& m)
-{
-    if (!m.ok())
-        os << static_cast<unsigned>(m) << " is not a valid month";
-    else
-        os << date::format("%b", date::month(static_cast<unsigned>(m)));
-    return os;
-}
+// std::ostream& operator<<(std::ostream& os, const std::chrono::month& m)
+// {
+//     if (!m.ok())
+//         os << static_cast<unsigned>(m) << " is not a valid month";
+//     else
+//         os << date::format("%b", date::month(static_cast<unsigned>(m)));
+//     return os;
+// }
 
 std::ostream& operator<<(std::ostream& os, const std::chrono::day& d)
 {
@@ -247,3 +244,4 @@ std::ostream& operator<<(std::ostream& os, const std::chrono::day& d)
 
     return os;
 }
+*/

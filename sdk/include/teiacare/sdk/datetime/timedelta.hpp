@@ -71,23 +71,20 @@ public:
     constexpr inline timedelta operator/(int64_t divider) const noexcept(false);
 
     /*!
-     * \brief Get the timedelta string representation.
-     * \tparam DurationT specify the datetime precision, by default is std::chrono::milliseconds.
-     * \return String representation of the current timedelta.
-     */
-    template <class DurationT = std::chrono::milliseconds>
-    std::string to_string() const;
-
-    /*!
      * \brief Output stream operator.
      * \param stream the output stream to write into.
      * \param dt the timedelta object to stream.
      * \return reference to the output stream operator, with the timedelta string representation written into it.
      */
-    friend std::ostream& operator<<(std::ostream& stream, const timedelta& td)
-    {
-        return stream << td.to_string();
-    }
+    friend std::ostream& operator<<(std::ostream& stream, const timedelta& td);
+
+    /*!
+     * \brief Get the timedelta string representation.
+     * \tparam DurationT specify the datetime precision, by default is std::chrono::milliseconds.
+     * \return String representation of the current timedelta.
+     */
+    template <class DurationT = std::chrono::milliseconds>
+    std::string to_string() const noexcept(false);
 
 private:
     const std::chrono::nanoseconds _duration;
@@ -233,48 +230,6 @@ constexpr inline timedelta timedelta::operator*(int64_t multiplier) const noexce
 constexpr inline timedelta timedelta::operator/(int64_t divider) const noexcept(false)
 {
     return timedelta{_duration / divider};
-}
-
-template <class DurationT>
-std::string timedelta::to_string() const
-{
-    constexpr const char zero = '0';
-    const auto hms = std::chrono::hh_mm_ss(std::chrono::duration_cast<DurationT>(_duration));
-    std::stringstream os{};
-
-    if (hms.is_negative())
-        os << '-';
-
-    os.width(2);
-    os.fill(zero);
-    os << hms.hours().count() << ':';
-
-    os.width(2);
-    os.fill(zero);
-    os << hms.minutes().count() << ':';
-
-    os.width(2);
-    os.fill(zero);
-    os << hms.seconds().count();
-
-    if constexpr (std::is_same_v<DurationT, std::chrono::seconds>)
-        return os.str();
-
-    os << '.';
-
-    if constexpr (std::is_same_v<DurationT, std::chrono::milliseconds>)
-        os.width(3);
-
-    if constexpr (std::is_same_v<DurationT, std::chrono::microseconds>)
-        os.width(6);
-
-    if constexpr (std::is_same_v<DurationT, std::chrono::nanoseconds>)
-        os.width(9);
-
-    DurationT sub = hms.subseconds();
-    os.fill(zero);
-    os << sub.count();
-    return os.str();
 }
 
 }

@@ -26,37 +26,15 @@ using namespace std::chrono_literals;
 int main()
 {
     {
-        std::cout << tc::sdk::datetime::utc_now()
-                         .to_string<std::chrono::seconds>()
-                  << std::endl;
+        std::cout << tc::sdk::datetime::utc_now().to_string<std::chrono::seconds>() << std::endl;
+        std::cout << tc::sdk::datetime::utc_now().to_string<std::chrono::milliseconds>() << std::endl;
+        std::cout << tc::sdk::datetime::utc_now().to_string<std::chrono::microseconds>() << std::endl;
+        std::cout << tc::sdk::datetime::utc_now().to_string<std::chrono::nanoseconds>() << std::endl;
 
-        std::cout << tc::sdk::datetime::utc_now()
-                         .to_string<std::chrono::milliseconds>()
-                  << std::endl;
-
-        std::cout << tc::sdk::datetime::utc_now()
-                         .to_string<std::chrono::microseconds>()
-                  << std::endl;
-
-        std::cout << tc::sdk::datetime::utc_now()
-                         .to_string<std::chrono::nanoseconds>()
-                  << std::endl;
-
-        std::cout << tc::sdk::datetime::utc_now<std::chrono::nanoseconds>()
-                         .to_string<std::chrono::seconds>()
-                  << std::endl;
-
-        std::cout << tc::sdk::datetime::utc_now<std::chrono::nanoseconds>()
-                         .to_string<std::chrono::milliseconds>()
-                  << std::endl;
-
-        std::cout << tc::sdk::datetime::utc_now<std::chrono::nanoseconds>()
-                         .to_string<std::chrono::microseconds>()
-                  << std::endl;
-
-        std::cout << tc::sdk::datetime::utc_now<std::chrono::nanoseconds>()
-                         .to_string<std::chrono::nanoseconds>()
-                  << std::endl;
+        std::cout << tc::sdk::datetime::utc_now<std::chrono::nanoseconds>().to_string<std::chrono::seconds>() << std::endl;
+        std::cout << tc::sdk::datetime::utc_now<std::chrono::nanoseconds>().to_string<std::chrono::milliseconds>() << std::endl;
+        std::cout << tc::sdk::datetime::utc_now<std::chrono::nanoseconds>().to_string<std::chrono::microseconds>() << std::endl;
+        std::cout << tc::sdk::datetime::utc_now<std::chrono::nanoseconds>().to_string<std::chrono::nanoseconds>() << std::endl;
     }
 
     {

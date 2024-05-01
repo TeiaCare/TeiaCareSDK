@@ -38,13 +38,13 @@ int main()
 
     {
         std::cout << "\ndate(27876240min):     "
-                  << tc::sdk::date(27876240min) << std::endl;
+                  << tc::sdk::date(27876240min).to_string() << std::endl;
 
         std::cout << "date(1672574401s):     "
-                  << tc::sdk::date(1672574401s) << std::endl;
+                  << tc::sdk::date(1672574401s).to_string() << std::endl;
 
         std::cout << "date(1672574401000ms): "
-                  << tc::sdk::date(1672574401000ms) << std::endl;
+                  << tc::sdk::date(1672574401000ms).to_string() << std::endl;
     }
 
     {

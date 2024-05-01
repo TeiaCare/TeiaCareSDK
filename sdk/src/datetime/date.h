@@ -1105,7 +1105,7 @@ struct choose_trunc_type
 #ifdef __SIZEOF_INT128__
                      __int128
 #else
-                       std::int64_t
+                     std::int64_t
 #endif
                      >::type>::type;
 };

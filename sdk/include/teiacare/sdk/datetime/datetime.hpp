@@ -19,7 +19,6 @@
 #include <teiacare/sdk/datetime/time.hpp>
 #include <teiacare/sdk/datetime/timedelta.hpp>
 
-#include "date/date.h"
 #include <chrono>
 #include <ostream>
 
@@ -97,16 +96,6 @@ public:
         return _tp;
     }
 
-    template <class DurationT = std::chrono::milliseconds>
-    static tc::sdk::datetime utc_now() noexcept
-    {
-        const auto now = std::chrono::system_clock::now();
-        return tc::sdk::datetime{std::chrono::time_point_cast<DurationT>(now)};
-    }
-
-    template <class DurationT = std::chrono::milliseconds>
-    static tc::sdk::datetime from_string(const std::string& str, const std::string& format = "%FT%T") noexcept(false);
-
     /*!
      * \brief Equality operator.
      * \param other the datetime to compare against.
@@ -153,43 +142,28 @@ public:
     }
 
     /*!
-     * \brief Get the datetime string representation
-     * \return String representation of the current datetime.
-     */
-    template <class DurationT = std::chrono::milliseconds>
-    std::string to_string(const std::string& format = "%FT%T") const;
-
-    /*!
      * \brief Output stream operator.
      * \param stream the output stream to write into.
      * \param dt the datetime object to stream.
      * \return reference to the output stream operator, with the datetime string representation written into it.
      */
-    friend std::ostream& operator<<(std::ostream& stream, const datetime& dt)
-    {
-        return stream << dt.to_string();
-    }
+    friend std::ostream& operator<<(std::ostream& stream, const datetime& dt);
+
+    /*!
+     * \brief Get the datetime string representation
+     * \return String representation of the current datetime.
+     */
+    template <class DurationT = std::chrono::milliseconds>
+    std::string to_string(const std::string& format = "%FT%T") const noexcept(false);
+
+    template <class DurationT = std::chrono::milliseconds>
+    static tc::sdk::datetime from_string(const std::string& str, const std::string& format = "%FT%T") noexcept(false);
+
+    template <class DurationT = std::chrono::milliseconds>
+    static tc::sdk::datetime utc_now() noexcept;
 
 private:
     const tc::sdk::sys_time_point _tp;
 };
-
-template <class DurationT>
-std::string datetime::to_string(const std::string& format) const
-{
-    return ::date::format(format, std::chrono::time_point_cast<DurationT>(_tp));
-}
-
-template <class DurationT>
-tc::sdk::datetime tc::sdk::datetime::from_string(const std::string& str, const std::string& format) noexcept(false)
-{
-    std::chrono::sys_time<DurationT> parsed_time;
-    std::stringstream ss{str};
-    ss >> ::date::parse(format, parsed_time);
-    if (ss.fail())
-        throw std::runtime_error("Failed to parse " + str);
-
-    return tc::sdk::datetime(parsed_time);
-}
 
 }
