@@ -53,19 +53,11 @@ public:
         : _ymd{std::chrono::floor<std::chrono::days>(timepoint)}
     {
     }
-    // explicit constexpr date(const std::chrono::system_clock::time_point& timepoint) noexcept
-    //     : _ymd{std::chrono::floor<std::chrono::days>(timepoint)}
-    // {
-    // }
 
     explicit constexpr date(const std::chrono::nanoseconds& duration) noexcept
         : date(tc::sdk::sys_time_point(duration))
     {
     }
-    // explicit constexpr date(const std::chrono::system_clock::duration& duration) noexcept
-    //     : date(std::chrono::time_point<std::chrono::system_clock>(duration))
-    // {
-    // }
 
     constexpr bool is_valid() const noexcept
     {
@@ -169,79 +161,4 @@ private:
     const std::chrono::year_month_day _ymd;
 };
 
-// std::string date::to_string(const char* format) const
-// {
-//     return ::date::format(format, std::chrono::sys_days(_ymd));
-// }
-
-// tc::sdk::date tc::sdk::date::from_string(const std::string& str, const std::string& format)
-// {
-//     std::chrono::sys_days parsed_date;
-//     std::stringstream ss{str};
-//     ss >> ::date::parse(format, parsed_date);
-//     if (ss.fail())
-//         throw std::runtime_error("Failed to parse " + str);
-
-//     std::chrono::system_clock::time_point tp = parsed_date;
-//     return tc::sdk::date(tp);
-// }
-
 }
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-/*
-std::ostream& operator<<(std::ostream& os, const std::chrono::year_month_day& ymd)
-{
-    os.fill('0');
-    os.flags(std::ios::dec | std::ios::right);
-    os.imbue(std::locale::classic());
-    os << static_cast<int>(ymd.year()) << '-';
-    os.width(2);
-    os << static_cast<unsigned>(ymd.month()) << '-';
-    os.width(2);
-    os << static_cast<unsigned>(ymd.day());
-
-    if (!ymd.ok())
-        os << " is not a valid year_month_day";
-
-    return os;
-}
-
-std::ostream& operator<<(std::ostream& os, const std::chrono::year& y)
-{
-    os.fill('0');
-    os.flags(std::ios::dec | std::ios::internal);
-    os.width(4 + (y < std::chrono::year{0}));
-    os.imbue(std::locale::classic());
-    os << static_cast<int>(y);
-
-    if (!y.ok())
-        os << " is not a valid year";
-
-    return os;
-}
-
-// std::ostream& operator<<(std::ostream& os, const std::chrono::month& m)
-// {
-//     if (!m.ok())
-//         os << static_cast<unsigned>(m) << " is not a valid month";
-//     else
-//         os << date::format("%b", date::month(static_cast<unsigned>(m)));
-//     return os;
-// }
-
-std::ostream& operator<<(std::ostream& os, const std::chrono::day& d)
-{
-    os.fill('0');
-    os.flags(std::ios::dec | std::ios::internal);
-    os.width(2 + (d < std::chrono::day{0}));
-    os.imbue(std::locale::classic());
-    os << static_cast<unsigned>(d);
-
-    if (!d.ok())
-        os << " is not a valid day";
-
-    return os;
-}
-*/

@@ -117,10 +117,9 @@ int main()
 
     std::chrono::year_month_day date = day;
     std::cout
-        << "date: " << date.day()
-        << " - month: " << date.month()
-        << " - year: " << date.year()
-        << std::endl;
+        << "day: " << date.day() << std::endl
+        << "month: " << date.month() << std::endl
+        << "year: " << date.year() << std::endl;
 
     std::chrono::system_clock::duration dur = now - day;
     std::cout << "now - day: " << dur.count() << std::endl;
