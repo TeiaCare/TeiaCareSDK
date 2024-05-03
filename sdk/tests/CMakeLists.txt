@@ -20,6 +20,7 @@ set(UNIT_TESTS_SRC
 
     src/test_event_dispatcher.cpp
     src/test_event_dispatcher.hpp
+    
     src/test_geometry_line.cpp
     src/test_geometry_line.hpp
     src/test_geometry_point.cpp
@@ -30,6 +31,7 @@ set(UNIT_TESTS_SRC
     src/test_geometry_rectangle.hpp
     src/test_geometry_size.cpp
     src/test_geometry_size.hpp
+
     src/test_high_precision_timer.cpp
     src/test_high_precision_timer.hpp
     src/test_observable.cpp
