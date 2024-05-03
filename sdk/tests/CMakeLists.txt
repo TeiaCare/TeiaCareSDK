@@ -8,8 +8,18 @@ set(UNIT_TESTS_SRC
     src/main.cpp
     src/test_blocking_queue.cpp
     src/test_blocking_queue.hpp
+
+    src/test_datetime_date.cpp
+    src/test_datetime_date.hpp
+    src/test_datetime_datetime.cpp
+    src/test_datetime_datetime.hpp
+    src/test_datetime_time.hpp
+    src/test_datetime_time.cpp
+    src/test_datetime_timedelta.cpp
+    src/test_datetime_timedelta.hpp
+
     src/test_event_dispatcher.cpp
-    src/test_event_dispatcher.hpp    
+    src/test_event_dispatcher.hpp
     src/test_geometry_line.cpp
     src/test_geometry_line.hpp
     src/test_geometry_point.cpp
@@ -25,7 +35,7 @@ set(UNIT_TESTS_SRC
     src/test_observable.cpp
     src/test_observable.hpp
     src/test_rate_limiter.cpp
-    src/test_rate_limiter.hpp        
+    src/test_rate_limiter.hpp
     src/test_service_locator.cpp
     src/test_service_locator.hpp
     src/test_stopwatch.cpp

@@ -153,7 +153,7 @@ public:
      */
     std::string to_string(const std::string& format = "%F") const noexcept(false); // equivalent to "%Y-%m-%d"
 
-    static tc::sdk::date from_string(const std::string& str, const std::string& format = "%T") noexcept(false);
+    static tc::sdk::date from_string(const std::string& str, const std::string& format = "%F") noexcept(false);
 
     static tc::sdk::date today() noexcept;
 

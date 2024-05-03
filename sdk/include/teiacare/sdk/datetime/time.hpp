@@ -126,6 +126,11 @@ public:
         return tc::sdk::timedelta{_hh_mm_ss.to_duration() - other._hh_mm_ss.to_duration()};
     }
 
+    constexpr inline timedelta operator+(const time& other) const noexcept
+    {
+        return tc::sdk::timedelta{_hh_mm_ss.to_duration() + other._hh_mm_ss.to_duration()};
+    }
+
     /*!
      * \brief Output stream operator.
      * \param stream the output stream to write into.

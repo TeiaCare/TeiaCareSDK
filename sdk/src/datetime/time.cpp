@@ -39,13 +39,13 @@ template std::string time::to_string<std::chrono::nanoseconds>(const std::string
 template <class DurationT>
 tc::sdk::time time::from_string(const std::string& str, const std::string& format) noexcept(false)
 {
-    std::chrono::sys_time<DurationT> parsed_time;
+    DurationT parsed_time;
     std::stringstream ss{str};
     ss >> ::date::parse(format, parsed_time);
     if (ss.fail())
         throw std::runtime_error("Failed to parse " + str);
 
-    return tc::sdk::time(); // parsed_time);
+    return tc::sdk::time(parsed_time);
 }
 
 template tc::sdk::time time::from_string<std::chrono::hours>(const std::string& str, const std::string& format) noexcept(false);
