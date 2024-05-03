@@ -89,7 +89,7 @@ public:
         return weekday().iso_encoding();
     }
 
-    constexpr inline std::chrono::sys_days to_duration() const noexcept
+    constexpr inline std::chrono::sys_days to_timepoint() const noexcept
     {
         return std::chrono::sys_days(_ymd);
     }

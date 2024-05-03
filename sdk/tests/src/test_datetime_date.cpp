@@ -155,7 +155,7 @@ TEST_F(test_datetime_date, to_duration)
 
     std::chrono::sys_days d{std::chrono::floor<std::chrono::days>(may_1st_2024_ns)};
 
-    EXPECT_EQ(d1.to_duration(), d);
+    EXPECT_EQ(d1.to_timepoint(), d);
 }
 
 TEST_F(test_datetime_date, operator_equal)
@@ -292,8 +292,8 @@ TEST_F(test_datetime_date, today)
 
     // These two asserts only fail if "now" is between midnight and midnight + 1nanoseconds (oh, come on!)
     // So, it is quite safe to avoid a more relaxed comparison with greate/lower_OR_equal and keep only a strict lower/higher comparison.
-    EXPECT_GT(now, today.to_duration());
-    EXPECT_LT(now_minus_24_hours, today.to_duration());
+    EXPECT_GT(now, today.to_timepoint());
+    EXPECT_LT(now_minus_24_hours, today.to_timepoint());
 }
 
 }

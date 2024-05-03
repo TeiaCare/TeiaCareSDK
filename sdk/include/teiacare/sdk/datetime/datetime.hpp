@@ -44,7 +44,7 @@ public:
     }
 
     explicit constexpr datetime(const tc::sdk::date& date) noexcept
-        : _tp{date.to_duration()}
+        : _tp{date.to_timepoint()}
     {
     }
 
@@ -54,7 +54,7 @@ public:
     }
 
     explicit constexpr datetime(const tc::sdk::date& date, const tc::sdk::time& time) noexcept
-        : _tp{date.to_duration() + time.to_duration()}
+        : _tp{date.to_timepoint() + time.to_duration()}
     {
     }
 
@@ -116,12 +116,12 @@ public:
         return !operator==(other);
     }
 
-    constexpr tc::sdk::datetime operator+(const timedelta& delta)
+    constexpr tc::sdk::datetime operator+(const timedelta& delta) const noexcept
     {
         return tc::sdk::datetime{_tp + delta.total_nanoseconds()};
     }
 
-    constexpr tc::sdk::datetime operator-(const timedelta& delta)
+    constexpr tc::sdk::datetime operator-(const timedelta& delta) const noexcept
     {
         return tc::sdk::datetime{_tp - delta.total_nanoseconds()};
     }

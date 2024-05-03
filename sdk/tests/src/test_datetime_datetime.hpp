@@ -18,6 +18,8 @@
 
 #include <gtest/gtest.h>
 
+using namespace std::chrono_literals;
+
 namespace tc::sdk::tests
 {
 class test_datetime_datetime : public ::testing::Test
