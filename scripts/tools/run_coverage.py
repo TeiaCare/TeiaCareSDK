@@ -30,7 +30,7 @@ def coverage(args):
         '--xml', '--xml-pretty', '--output', args.xml_coverage_path,
         '--html-title', 'TeiaCareSDK', '--html-details', args.html_coverage_path,
         '--filter', 'sdk/.*',
-        '--exclude', 'sdk/include/teiacare/sdk/datetime/date/.*',
+        '--exclude', 'sdk/src/datetime/date.h',
         '--exclude', 'sdk/tests/.*',
         '--gcov-executable', coverage_tool,
         '--exclude-unreachable-branches',
