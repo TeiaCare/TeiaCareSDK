@@ -145,7 +145,6 @@ TEST_F(test_datetime_time, operator_equal)
     EXPECT_TRUE(t1 == t3);
     EXPECT_TRUE(t1 == t4);
     EXPECT_TRUE(t1 == t5);
-    EXPECT_TRUE(t1 == t6);
 
     EXPECT_TRUE(t1 != t6);
     EXPECT_TRUE(t2 != t6);
