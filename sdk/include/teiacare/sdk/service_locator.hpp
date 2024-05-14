@@ -83,16 +83,13 @@ public:
      *
      * TODO
      */
-    template <typename ServiceInterfaceT>
-    constexpr auto unregister_service() -> bool
+    template <typename ServiceT>
+    constexpr auto unregister() -> bool
     {
-        static_assert(std::is_abstract_v<ServiceInterfaceT>,
-                      "\nServiceInterfaceT is not an abstract class");
-
-        if (!_services.contains(get_id<ServiceInterfaceT>()))
+        if (!_services.contains(get_id<ServiceT>()))
             return false;
 
-        _services.erase(get_id<ServiceInterfaceT>());
+        _services.erase(get_id<ServiceT>());
         return true;
     }
 
