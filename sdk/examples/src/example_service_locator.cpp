@@ -87,7 +87,7 @@ auto main(int argc, char** argv) -> int
     service = s.get<IService>();                                         // ServiceA implementation, again, since it was already registered first
     service->call();
 
-    bool is_unregistered = s.unregister_service<IService>();
+    bool is_unregistered = s.unregister<IService>();
     spdlog::info("IService is_unregistered: {}", is_unregistered); // true
 
     is_registered = s.register_service<IService, ServiceB>();
