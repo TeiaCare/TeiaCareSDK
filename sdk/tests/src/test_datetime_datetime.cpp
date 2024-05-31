@@ -218,42 +218,60 @@ TEST_F(test_datetime_datetime, ostream)
     }
 }
 
-/*
 TEST_F(test_datetime_datetime, to_string)
 {
-    EXPECT_EQ(tc::sdk::datetime(std::chrono::days(1)).to_string(), "00:00:00.000");
-    EXPECT_EQ(tc::sdk::datetime(std::chrono::hours(24)).to_string(), "00:00:00.000");
-    EXPECT_EQ(tc::sdk::datetime(std::chrono::minutes(86'400)).to_string(), "00:00:00.000");
+    EXPECT_EQ(tc::sdk::datetime(2024y, std::chrono::May, 31d, 18h, 33min, 44s, 555ms, 666us, 777ns).to_string(), "2024-05-31T18:33:44.555"); // 01 May 2024 18:33:44.555666 UTC
+    EXPECT_EQ(tc::sdk::datetime(2024y, std::chrono::May, 31d, 18h, 33min, 44s, 555ms, 666us).to_string(), "2024-05-31T18:33:44.555");        // 01 May 2024 18:33:44.555666 UTC
+    EXPECT_EQ(tc::sdk::datetime(2024y, std::chrono::May, 31d, 18h, 33min, 44s, 555ms).to_string(), "2024-05-31T18:33:44.555");               // 01 May 2024 18:33:44.555000 UTC
+    EXPECT_EQ(tc::sdk::datetime(2024y, std::chrono::May, 31d, 18h, 33min, 44s).to_string(), "2024-05-31T18:33:44.000");                      // 01 May 2024 18:33:44.000000 UTC
 
-    EXPECT_EQ(tc::sdk::datetime(3'662s).to_string(), "01:01:02.000");
-    EXPECT_EQ(tc::sdk::datetime(-1h, -1min, -1s).to_string(), "-01:01:01.000");
-    EXPECT_EQ(tc::sdk::datetime(1h, 2min, 3000ms, 4000us, 5006ns).to_string(), "01:02:03.004");
-    EXPECT_EQ(tc::sdk::datetime(6ns, 5us, 4ms, 3s, 2min, 1h).to_string(), "01:02:03.004");
-    EXPECT_EQ(tc::sdk::datetime(1h, 2min, 3s, 4ms, 5us, 6ns).to_string(), "01:02:03.004");
+    EXPECT_EQ(tc::sdk::datetime(tc::sdk::date(2024y, std::chrono::May, 31d), tc::sdk::time(18h, 33min, 44s)).to_string(), "2024-05-31T18:33:44.000"); // 01 May 2024 18:33:44.000000 UTC
+
+    EXPECT_EQ(tc::sdk::datetime(tc::sdk::date(2024y, std::chrono::December, 31d)).to_string(), "2024-12-31T00:00:00.000");
+    EXPECT_EQ(tc::sdk::datetime(tc::sdk::time(1h, 2min, 3s)).to_string(), "1970-01-01T01:02:03.000");
 }
 
 TEST_F(test_datetime_datetime, to_string_resolution)
 {
-    const auto t = tc::sdk::datetime(1h, 2min, 3000ms, 4000us, 5006ns);
-
-    EXPECT_EQ(t.to_string<std::chrono::seconds>(), "01:02:03");
-    EXPECT_EQ(t.to_string<std::chrono::milliseconds>(), "01:02:03.004");
-    EXPECT_EQ(t.to_string<std::chrono::microseconds>(), "01:02:03.004005");
-    EXPECT_EQ(t.to_string<std::chrono::nanoseconds>(), "01:02:03.004005006");
+    {
+        const auto dt = tc::sdk::datetime(2024y, std::chrono::May, 31d, 18h, 33min, 1s, 3000ms, 4000us, 5006ns);
+        EXPECT_EQ(dt.to_string<std::chrono::seconds>(), "2024-05-31T18:33:04");
+        EXPECT_EQ(dt.to_string<std::chrono::milliseconds>(), "2024-05-31T18:33:04.004");
+        EXPECT_EQ(dt.to_string<std::chrono::microseconds>(), "2024-05-31T18:33:04.004005");
+        EXPECT_EQ(dt.to_string<std::chrono::nanoseconds>(), "2024-05-31T18:33:04.004005006");
+    }
+    {
+        const auto dt = tc::sdk::datetime(2024y, std::chrono::May, 31d, 18h, 33min, 44s, 555ms, 666us, 777ns);
+        EXPECT_EQ(dt.to_string<std::chrono::seconds>(), "2024-05-31T18:33:44");
+        EXPECT_EQ(dt.to_string<std::chrono::milliseconds>(), "2024-05-31T18:33:44.555");
+        EXPECT_EQ(dt.to_string<std::chrono::microseconds>(), "2024-05-31T18:33:44.555666");
+        EXPECT_EQ(dt.to_string<std::chrono::nanoseconds>(), "2024-05-31T18:33:44.555666777");
+    }
 }
 
 TEST_F(test_datetime_datetime, to_string_format)
 {
-    const auto t = tc::sdk::datetime(1h, 2min, 3000ms, 4000us, 5006ns);
+    const auto dt = tc::sdk::datetime(2024y, std::chrono::May, 31d, 1h, 2min, 3s, 4ms, 5us, 6ns);
+    
+    // time
+    EXPECT_EQ(dt.to_string("%T"), "01:02:03.004");
+    EXPECT_EQ(dt.to_string("%R"), "01:02");
+    EXPECT_EQ(dt.to_string("%H"), "01");
+    EXPECT_EQ(dt.to_string("%M"), "02");
+    EXPECT_EQ(dt.to_string("%S"), "03.004");
 
-    EXPECT_EQ(t.to_string(), "01:02:03.004");
-    EXPECT_EQ(t.to_string("%T"), "01:02:03.004");
-    EXPECT_EQ(t.to_string("%R"), "01:02");
-    EXPECT_EQ(t.to_string("%H"), "01");
-    EXPECT_EQ(t.to_string("%M"), "02");
-    EXPECT_EQ(t.to_string("%S"), "03.004");
+    // date
+    EXPECT_EQ(dt.to_string("%F"), "2024-05-31");
+    EXPECT_EQ(dt.to_string("%D"), "05/31/24");
+    EXPECT_EQ(dt.to_string("%m/%d/%y"), "05/31/24");
+    EXPECT_EQ(dt.to_string("%d/%m/%Y"), "31/05/2024");
+    EXPECT_EQ(dt.to_string("%Y/%b/%d"), "2024/May/31");
+    EXPECT_EQ(dt.to_string("%Y-%B-%d"), "2024-May-31");
+    EXPECT_EQ(dt.to_string("%Y-%B-%d %a"), "2024-May-31 Fri");
+    EXPECT_EQ(dt.to_string("%Y-%B-%d %A"), "2024-May-31 Friday");
 }
 
+/*
 TEST_F(test_datetime_datetime, from_string)
 {
     EXPECT_EQ(tc::sdk::datetime::from_string<std::chrono::seconds>("01:02:03"), tc::sdk::datetime(1h, 2min, 3s));
@@ -296,15 +314,49 @@ TEST_F(test_datetime_datetime, from_string)
     EXPECT_THROW(tc::sdk::datetime::from_string("BOOM!"), std::runtime_error);
     EXPECT_THROW(tc::sdk::datetime::from_string("01-02-03-04-05"), std::runtime_error);
 }
+*/
 
 TEST_F(test_datetime_datetime, utc_now)
 {
-    const auto utc_now = tc::sdk::datetime::utc_now();
-    const auto current_time = std::chrono::system_clock::now() - std::chrono::floor<std::chrono::days>(std::chrono::system_clock::now());
-    const auto current_time_minus_1_minute = current_time - 1min;
+    // nanoseconds
+    {
+        const auto now = std::chrono::floor<std::chrono::microseconds>(std::chrono::system_clock::now());
+        const auto now_minus_1 = now - std::chrono::nanoseconds(1);
+        const auto utc_now = tc::sdk::datetime::utc_now<std::chrono::nanoseconds>();
 
-    EXPECT_GT(current_time, utc_now.to_duration());
-    EXPECT_LT(current_time_minus_1_minute, utc_now.to_duration());
+        EXPECT_LT(now, utc_now.to_time_point());
+        EXPECT_LT(now_minus_1, utc_now.to_time_point());
+    }
+
+    // microseconds
+    {
+        const auto now = std::chrono::floor<std::chrono::milliseconds>(std::chrono::system_clock::now());
+        const auto now_minus_1 = now - std::chrono::microseconds(1);
+        const auto utc_now = tc::sdk::datetime::utc_now<std::chrono::microseconds>();
+
+        EXPECT_LT(now, utc_now.to_time_point());
+        EXPECT_LT(now_minus_1, utc_now.to_time_point());
+    }
+
+    // milliseconds
+    {
+        const auto now = std::chrono::floor<std::chrono::seconds>(std::chrono::system_clock::now());
+        const auto now_minus_1 = now - std::chrono::milliseconds(1);
+        const auto utc_now = tc::sdk::datetime::utc_now<std::chrono::milliseconds>();
+
+        EXPECT_LT(now, utc_now.to_time_point());
+        EXPECT_LT(now_minus_1, utc_now.to_time_point());
+    }
+
+    // seconds
+    {
+        const auto now = std::chrono::floor<std::chrono::minutes>(std::chrono::system_clock::now());
+        const auto now_minus_1 = now - std::chrono::seconds(1);
+        const auto utc_now = tc::sdk::datetime::utc_now<std::chrono::seconds>();
+
+        EXPECT_LT(now, utc_now.to_time_point());
+        EXPECT_LT(now_minus_1, utc_now.to_time_point());
+    }
 }
-*/
+
 }

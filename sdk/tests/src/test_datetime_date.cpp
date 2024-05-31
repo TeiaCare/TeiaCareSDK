@@ -291,7 +291,7 @@ TEST_F(test_datetime_date, today)
     const auto now_minus_24_hours = now - 24h;
 
     // These two asserts only fail if "now" is between midnight and midnight + 1nanoseconds (oh, come on!)
-    // So, it is quite safe to avoid a more relaxed comparison with greate/lower_OR_equal and keep only a strict lower/higher comparison.
+    // So, it is quite safe to avoid a more relaxed comparison with greater/lower_OR_equal and keep only a strict lower/higher comparison.
     EXPECT_GT(now, today.to_timepoint());
     EXPECT_LT(now_minus_24_hours, today.to_timepoint());
 }
