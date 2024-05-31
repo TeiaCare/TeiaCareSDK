@@ -36,10 +36,10 @@ TEST_F(test_service_locator, get_not_existing_interface)
     EXPECT_TRUE((s.register_service<IService, ServiceA>()));
 
     EXPECT_NE(s.get<IService>(), nullptr);
-    EXPECT_TRUE(s.is_service_registered<IService>());
+    EXPECT_TRUE(s.is_registered<IService>());
 
     EXPECT_EQ(s.get<IAnotherService>(), nullptr);
-    EXPECT_FALSE(s.is_service_registered<IAnotherService>());
+    EXPECT_FALSE(s.is_registered<IAnotherService>());
 }
 
 // NOLINTNEXTLINE
@@ -81,7 +81,7 @@ TEST_F(test_service_locator, register_same_interface_different_implementations)
         EXPECT_EQ(s.get<IService>()->call(), "A");
     }
 
-    EXPECT_TRUE((s.unregister_service<IService>()));
+    EXPECT_TRUE((s.unregister<IService>()));
 
     {
         EXPECT_TRUE((s.register_service<IService, ServiceB>()));
@@ -92,35 +92,35 @@ TEST_F(test_service_locator, register_same_interface_different_implementations)
 // NOLINTNEXTLINE
 TEST_F(test_service_locator, unregister_multiple_interfaces)
 {
-    EXPECT_FALSE((s.unregister_service<IService>()));
-    EXPECT_FALSE((s.unregister_service<IAnotherService>()));
+    EXPECT_FALSE((s.unregister<IService>()));
+    EXPECT_FALSE((s.unregister<IAnotherService>()));
 
-    EXPECT_FALSE(s.is_service_registered<IService>());
-    EXPECT_FALSE(s.is_service_registered<IAnotherService>());
+    EXPECT_FALSE(s.is_registered<IService>());
+    EXPECT_FALSE(s.is_registered<IAnotherService>());
 
     EXPECT_TRUE((s.register_service<IService, ServiceA>()));
     EXPECT_TRUE((s.register_service<IAnotherService, AnotherService>()));
 
-    EXPECT_TRUE(s.is_service_registered<IService>());
-    EXPECT_TRUE(s.is_service_registered<IAnotherService>());
+    EXPECT_TRUE(s.is_registered<IService>());
+    EXPECT_TRUE(s.is_registered<IAnotherService>());
 
-    EXPECT_TRUE((s.unregister_service<IService>()));
-    EXPECT_TRUE((s.unregister_service<IAnotherService>()));
+    EXPECT_TRUE((s.unregister<IService>()));
+    EXPECT_TRUE((s.unregister<IAnotherService>()));
 
-    EXPECT_FALSE(s.is_service_registered<IService>());
-    EXPECT_FALSE(s.is_service_registered<IAnotherService>());
+    EXPECT_FALSE(s.is_registered<IService>());
+    EXPECT_FALSE(s.is_registered<IAnotherService>());
 }
 
 // NOLINTNEXTLINE
 TEST_F(test_service_locator, unregister_multiple_times)
 {
-    EXPECT_FALSE((s.unregister_service<IService>()));
+    EXPECT_FALSE((s.unregister<IService>()));
 
     EXPECT_TRUE((s.register_service<IService, ServiceA>()));
     EXPECT_NE(s.get<IService>(), nullptr);
 
-    EXPECT_TRUE((s.unregister_service<IService>()));
-    EXPECT_FALSE((s.unregister_service<IService>()));
+    EXPECT_TRUE((s.unregister<IService>()));
+    EXPECT_FALSE((s.unregister<IService>()));
 }
 
 // NOLINTNEXTLINE

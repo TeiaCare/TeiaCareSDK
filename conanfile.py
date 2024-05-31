@@ -59,6 +59,7 @@ class TeiaCareSDK(ConanFile):
         tc.variables["TC_ENABLE_CLANG_TIDY"] = False
         tc.variables["TC_ENABLE_CPPCHECK"] = False
         tc.variables["TC_ENABLE_CPPLINT"] = False
+        tc.variables["TC_ENABLE_DOCS"] = False
         tc.generate()
 
     def build(self):

@@ -127,10 +127,10 @@ TEST_F(test_datetime_datetime, not_valid)
     const auto dt1 = tc::sdk::datetime();
     EXPECT_FALSE(dt1.is_valid());
 
-    const auto dt2 = tc::sdk::datetime(std::chrono::system_clock::time_point::min());
+    const auto dt2 = tc::sdk::datetime(tc::sdk::sys_time_point::min());
     EXPECT_FALSE(dt2.is_valid());
 
-    const auto dt3 = tc::sdk::datetime(std::chrono::system_clock::time_point::max());
+    const auto dt3 = tc::sdk::datetime(tc::sdk::sys_time_point::max());
     EXPECT_FALSE(dt3.is_valid());
 }
 

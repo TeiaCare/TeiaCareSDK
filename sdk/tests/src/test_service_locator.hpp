@@ -92,8 +92,8 @@ protected:
 
     void TearDown() override
     {
-        s.unregister_service<IService>();
-        s.unregister_service<IAnotherService>();
+        s.unregister<IService>();
+        s.unregister<IAnotherService>();
     }
 
     tc::sdk::service_locator& s;

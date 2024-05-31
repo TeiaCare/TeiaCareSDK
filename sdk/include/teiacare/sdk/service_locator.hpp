@@ -46,12 +46,12 @@ public:
     ~service_locator() noexcept = default;
 
     /*!
-     * \brief Add a new service
+     * \brief Create and add a new service in place
      *
      * TODO
      */
     template <typename ServiceInterfaceT, typename ServiceT, typename... Args>
-    constexpr auto register_service(Args... args) -> bool
+    bool register_service(Args... args)
     {
         static_assert(std::is_abstract_v<ServiceInterfaceT>,
                       "\nServiceInterfaceT is not an abstract class");
@@ -67,44 +67,44 @@ public:
     }
 
     /*!
-     * \brief Add a new instance
+     * \brief Add an already created instance
      *
      * TODO
      */
     template <typename ServiceT>
-    constexpr auto register_instance(std::shared_ptr<ServiceT> instance) -> bool
+    bool register_instance(std::shared_ptr<ServiceT> instance)
     {
         auto [_, is_inserted] = _services.emplace(get_id<ServiceT>(), std::move(instance));
         return is_inserted;
     }
 
     /*!
-     * \brief Remove a service
+     * \brief Remove a service or an instance
      *
      * TODO
      */
-    template <typename ServiceT>
-    constexpr auto unregister() -> bool
+    template <typename T>
+    bool unregister()
     {
-        if (!_services.contains(get_id<ServiceT>()))
-            return false;
+        const auto service_id = get_id<T>();
+        if (_services.contains(service_id))
+        {
+            _services.erase(service_id);
+            return true;
+        }
 
-        _services.erase(get_id<ServiceT>());
-        return true;
+        return false;
     }
 
     /*!
-     * \brief Check if a service is currently registered
+     * \brief Check if a service or an instance is currently registered
      *
      * TODO
      */
-    template <typename ServiceInterfaceT>
-    constexpr auto is_service_registered() -> bool
+    template <typename T>
+    bool is_registered()
     {
-        static_assert(std::is_abstract_v<ServiceInterfaceT>,
-                      "\nServiceInterfaceT is not an abstract class");
-
-        return _services.contains(get_id<ServiceInterfaceT>());
+        return _services.contains(get_id<T>());
     }
 
     /*!
@@ -113,7 +113,7 @@ public:
      * TODO
      */
     template <typename ServiceT>
-    constexpr auto get() const -> std::shared_ptr<ServiceT>
+    std::shared_ptr<ServiceT> get() const
     {
         if (auto service = _services.find(get_id<ServiceT>()); service != _services.end())
             return std::static_pointer_cast<ServiceT>(service->second);
@@ -125,7 +125,7 @@ private:
     explicit service_locator() = default;
 
     template <typename T>
-    auto get_id() const noexcept -> size_t
+    size_t get_id() const noexcept
     {
         return std::move(typeid(T).hash_code());
     }
