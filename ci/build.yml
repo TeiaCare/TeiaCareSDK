@@ -88,14 +88,14 @@ jobs:
 
         - task: Cache@2
           inputs:
-            key: "venv $(Agent.JobName)" | "scripts/requirements.txt"
+            key: 'venv $(Agent.JobName) | scripts/requirements.txt'
             path: '$(Build.SourcesDirectory)/.venv'
             cacheHitVar: 'VENV_CACHE_RESTORED'
           displayName: 'Cache Virtual Environment'
 
         - task: Cache@2
           inputs:
-            key: 'conan $(Agent.JobName)' | "sdk/examples/conanfile.txt" | "sdk/tests/conanfile.txt"
+            key: 'conan $(Agent.JobName) | sdk/examples/conanfile.txt | sdk/tests/conanfile.txt'
             path: '$(Build.SourcesDirectory)/.conan'
             cacheHitVar: 'CONAN_CACHE_RESTORED'
           displayName: 'Cache Conan'
