@@ -22,15 +22,16 @@ TEST_F(test_datetime_timedelta, ctor_empty)
     const auto td2 = tc::sdk::timedelta();
 
     EXPECT_EQ(td1, td2);
-    EXPECT_FALSE(td1.is_null());
-    EXPECT_FALSE(td2.is_null());
+    EXPECT_TRUE(td1.is_null());
+    EXPECT_TRUE(td2.is_null());
+    EXPECT_FALSE(tc::sdk::timedelta(3s).is_null());
 }
 
 TEST_F(test_datetime_timedelta, ctor_duration_ref)
 {
     constexpr auto one_hour = std::chrono::hours(1);
-    constexpr auto sixty_seconds = std::chrono::seconds(60);
-    EXPECT_EQ(tc::sdk::timedelta(one_hour), tc::sdk::timedelta(sixty_seconds));
+    constexpr auto one_hour_in_seconds = std::chrono::seconds(3'600);
+    EXPECT_EQ(tc::sdk::timedelta(one_hour), tc::sdk::timedelta(one_hour_in_seconds));
 }
 
 TEST_F(test_datetime_timedelta, ctor_duration_move)
