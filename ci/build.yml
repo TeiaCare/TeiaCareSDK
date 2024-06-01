@@ -100,14 +100,14 @@ jobs:
             cacheHitVar: 'CONAN_CACHE_RESTORED'
           displayName: 'Cache Conan'
 
-        - ${{ if eq(variables.VENV_CACHE_RESTORED, 'false') }}:
+        - ${{ if eq(variables['VENV_CACHE_RESTORED'], 'false') }}:
           - script: |
               python3 -m venv .venv
               $(ACTIVATE_VIRTUAL_ENV)
               pip3 install -r scripts/requirements.txt
             displayName: 'Setup Virtual Environment'
         
-        - ${{ if eq(variables.CONAN_CACHE_RESTORED, 'false') }}:
+        - ${{ if eq(variables['CONAN_CACHE_RESTORED'], 'false') }}:
           - script: |
               $(ACTIVATE_VIRTUAL_ENV)
               python3 scripts/conan/setup.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION)
