@@ -38,7 +38,7 @@ protected:
     const size_t queue_capacity = 4;
     tc::sdk::blocking_queue<T> q;
 
-    void drain_queue(std::vector<T> params)
+    void drain_queue(const std::vector<T>& params)
     {
         for (auto p : params)
         {
@@ -49,7 +49,7 @@ protected:
         EXPECT_EQ(q.size(), 0);
     }
 
-    void try_drain_queue(std::vector<T> params)
+    void try_drain_queue(const std::vector<T>& params)
     {
         for (size_t i = 0; i < params.size(); ++i)
         {
@@ -69,7 +69,7 @@ protected:
         EXPECT_EQ(q.size(), 0);
     }
 
-    void run_push_const_ref(std::vector<T> params)
+    void run_push_const_ref(const std::vector<T>& params)
     {
         EXPECT_EQ(q.size(), 0);
 
