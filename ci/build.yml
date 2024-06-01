@@ -88,30 +88,30 @@ jobs:
 
         - task: Cache@2
           inputs:
-            key: "venv $(Agent.JobName)"
+            key: "venv $(Agent.JobName)" | "scripts/requirements.txt"
             path: '$(Build.SourcesDirectory)/.venv'
             cacheHitVar: 'VENV_CACHE_RESTORED'
           displayName: 'Cache Virtual Environment'
 
         - task: Cache@2
           inputs:
-            key: 'conan $(Agent.JobName)'
+            key: 'conan $(Agent.JobName)' | "sdk/examples/conanfile.txt" | "sdk/tests/conanfile.txt"
             path: '$(Build.SourcesDirectory)/.conan'
             cacheHitVar: 'CONAN_CACHE_RESTORED'
           displayName: 'Cache Conan'
 
-        - ${{ if eq(variables['VENV_CACHE_RESTORED'], 'false') }}:
-          - script: |
-              python3 -m venv .venv
-              $(ACTIVATE_VIRTUAL_ENV)
-              pip3 install -r scripts/requirements.txt
-            displayName: 'Setup Virtual Environment'
-        
-        - ${{ if eq(variables['CONAN_CACHE_RESTORED'], 'false') }}:
-          - script: |
-              $(ACTIVATE_VIRTUAL_ENV)
-              python3 scripts/conan/setup.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION)
-            displayName: 'Setup Conan'
+        - script: |
+            python3 -m venv .venv
+            $(ACTIVATE_VIRTUAL_ENV)
+            pip3 install -r scripts/requirements.txt
+          displayName: 'Setup Virtual Environment'
+          condition: eq(variables['VENV_CACHE_RESTORED'], 'false')
+      
+        - script: |
+            $(ACTIVATE_VIRTUAL_ENV)
+            python3 scripts/conan/setup.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION)
+          displayName: 'Setup Conan'
+          condition: eq(variables['CONAN_CACHE_RESTORED'], 'false')
 
         - script: |
             $(ACTIVATE_VIRTUAL_ENV)
