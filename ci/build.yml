@@ -90,15 +90,15 @@ jobs:
           inputs:
             key: "venv $(Agent.JobName)"
             path: '$(Build.SourcesDirectory)/.venv'
+            cacheHitVar: 'VENV_CACHE_RESTORED'
           displayName: 'Cache Virtual Environment'
-          cacheHitVar: 'VENV_CACHE_RESTORED'
 
         - task: Cache@2
           inputs:
-            key: "conan $(Agent.JobName)"
+            key: 'conan $(Agent.JobName)'
             path: '$(Build.SourcesDirectory)/.conan'
+            cacheHitVar: 'CONAN_CACHE_RESTORED'
           displayName: 'Cache Conan'
-          cacheHitVar: 'CONAN_CACHE_RESTORED'
 
         - ${{ if eq(variables.VENV_CACHE_RESTORED, 'false') }}:
           - script: |
