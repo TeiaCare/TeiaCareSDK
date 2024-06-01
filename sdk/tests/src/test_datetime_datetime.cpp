@@ -252,13 +252,6 @@ TEST_F(test_datetime_datetime, to_string_resolution)
 TEST_F(test_datetime_datetime, to_string_format)
 {
     const auto dt = tc::sdk::datetime(2024y, std::chrono::May, 31d, 1h, 2min, 3s, 4ms, 5us, 6ns);
-    
-    // time
-    EXPECT_EQ(dt.to_string("%T"), "01:02:03.004");
-    EXPECT_EQ(dt.to_string("%R"), "01:02");
-    EXPECT_EQ(dt.to_string("%H"), "01");
-    EXPECT_EQ(dt.to_string("%M"), "02");
-    EXPECT_EQ(dt.to_string("%S"), "03.004");
 
     // date
     EXPECT_EQ(dt.to_string("%F"), "2024-05-31");
@@ -269,11 +262,18 @@ TEST_F(test_datetime_datetime, to_string_format)
     EXPECT_EQ(dt.to_string("%Y-%B-%d"), "2024-May-31");
     EXPECT_EQ(dt.to_string("%Y-%B-%d %a"), "2024-May-31 Fri");
     EXPECT_EQ(dt.to_string("%Y-%B-%d %A"), "2024-May-31 Friday");
+    
+    // time
+    EXPECT_EQ(dt.to_string("%T"), "01:02:03.004");
+    EXPECT_EQ(dt.to_string("%R"), "01:02");
+    EXPECT_EQ(dt.to_string("%H"), "01");
+    EXPECT_EQ(dt.to_string("%M"), "02");
+    EXPECT_EQ(dt.to_string("%S"), "03.004");
 }
 
-/*
 TEST_F(test_datetime_datetime, from_string)
 {
+    /*
     EXPECT_EQ(tc::sdk::datetime::from_string<std::chrono::seconds>("01:02:03"), tc::sdk::datetime(1h, 2min, 3s));
     EXPECT_EQ(tc::sdk::datetime::from_string<std::chrono::milliseconds>("01:02:03.004"), tc::sdk::datetime(1h, 2min, 3s, 4ms));
     EXPECT_EQ(tc::sdk::datetime::from_string<std::chrono::microseconds>("01:02:03.004005"), tc::sdk::datetime(1h, 2min, 3s, 4ms, 5us));
@@ -313,8 +313,38 @@ TEST_F(test_datetime_datetime, from_string)
 
     EXPECT_THROW(tc::sdk::datetime::from_string("BOOM!"), std::runtime_error);
     EXPECT_THROW(tc::sdk::datetime::from_string("01-02-03-04-05"), std::runtime_error);
-}
 */
+
+    // date
+    const auto dt_date_only = tc::sdk::datetime(tc::sdk::date(2024y, std::chrono::June, 1d));
+    EXPECT_EQ(dt_date_only, tc::sdk::datetime::from_string("2024-06-01T00:00:00.000000000"));
+    EXPECT_EQ(dt_date_only, tc::sdk::datetime::from_string("2024-06-01T00:00:00.000000"));
+    EXPECT_EQ(dt_date_only, tc::sdk::datetime::from_string("2024-06-01T00:00:00.000"));
+    EXPECT_EQ(dt_date_only, tc::sdk::datetime::from_string("2024-06-01T00:00:00"));
+    EXPECT_EQ(dt_date_only, tc::sdk::datetime::from_string("2024-06-01", "%F"));
+    EXPECT_EQ(dt_date_only, tc::sdk::datetime::from_string("06/01/24", "%D"));
+    EXPECT_EQ(dt_date_only, tc::sdk::datetime::from_string("2024/06/01", "%Y/%m/%d"));
+    EXPECT_EQ(dt_date_only, tc::sdk::datetime::from_string("06/01/24", "%m/%d/%y"));
+    EXPECT_EQ(dt_date_only, tc::sdk::datetime::from_string("01/06/2024", "%d/%m/%Y"));
+    EXPECT_EQ(dt_date_only, tc::sdk::datetime::from_string("2024/June/01", "%Y/%b/%d"));
+    EXPECT_EQ(dt_date_only, tc::sdk::datetime::from_string("2024-June-01", "%Y-%B-%d"));
+    EXPECT_EQ(dt_date_only, tc::sdk::datetime::from_string("2024-June-01 Sat", "%Y-%B-%d %a"));
+    EXPECT_EQ(dt_date_only, tc::sdk::datetime::from_string("2024-June-01 Saturday", "%Y-%B-%d %A"));
+
+    // time
+    EXPECT_EQ(tc::sdk::datetime(tc::sdk::time(1h, 2min, 3s)), tc::sdk::datetime::from_string<std::chrono::seconds>("1970-01-01T01:02:03"));
+    EXPECT_EQ(tc::sdk::datetime(tc::sdk::time(1h, 2min, 3s, 4ms)), tc::sdk::datetime::from_string<std::chrono::milliseconds>("1970-01-01T01:02:03.004"));
+    EXPECT_EQ(tc::sdk::datetime(tc::sdk::time(1h, 2min, 3s, 4ms, 5us)), tc::sdk::datetime::from_string<std::chrono::microseconds>("1970-01-01T01:02:03.004005"));
+    EXPECT_EQ(tc::sdk::datetime(tc::sdk::time(1h, 2min, 3s, 4ms, 5us, 6ns)), tc::sdk::datetime::from_string<std::chrono::nanoseconds>("1970-01-01T01:02:03.004005006"));
+
+    // Exceptions
+    EXPECT_THROW(tc::sdk::date::from_string("BOOM!"), std::runtime_error);
+    EXPECT_THROW(tc::sdk::date::from_string("2024/12/31T00:00:00.000"), std::runtime_error); // The default format is with the "-" separator instead of "/"
+    EXPECT_THROW(tc::sdk::date::from_string("2024-12-32", "%F"), std::runtime_error);        // invalida date (32 December)
+    EXPECT_THROW(tc::sdk::date::from_string("25:00:00", "%T"), std::runtime_error);          // invalida time (25:00:00)
+    EXPECT_THROW(tc::sdk::datetime::from_string("2024-12-32T00:00:00"), std::runtime_error); // invalida date (32 December)
+    EXPECT_THROW(tc::sdk::datetime::from_string("2024-12-31T25:00:00"), std::runtime_error); // invalid time (25:00:00)
+}
 
 TEST_F(test_datetime_datetime, utc_now)
 {

@@ -14,7 +14,7 @@ trigger:
 parameters:
 - name: BUILD_TYPES
   type: object
-  default: ['Debug', 'Release', 'RelWithDebInfo']
+  default: ['Debug', 'Release'] #, 'RelWithDebInfo']
 
 jobs:
   - ${{ each BUILD_TYPE in parameters.BUILD_TYPES }}:
@@ -91,19 +91,27 @@ jobs:
             key: "venv $(Agent.JobName)"
             path: '$(Build.SourcesDirectory)/.venv'
           displayName: 'Cache Virtual Environment'
+          cacheHitVar: 'VENV_CACHE_RESTORED'
 
         - task: Cache@2
           inputs:
             key: "conan $(Agent.JobName)"
             path: '$(Build.SourcesDirectory)/.conan'
           displayName: 'Cache Conan'
+          cacheHitVar: 'CONAN_CACHE_RESTORED'
 
-        - script: |
-            python3 -m venv .venv
-            $(ACTIVATE_VIRTUAL_ENV)
-            pip3 install -r scripts/requirements.txt
-            python3 scripts/conan/setup.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION)
-          displayName: 'Virtual Environment'
+        - ${{ if eq(variables.VENV_CACHE_RESTORED, 'false') }}:
+          - script: |
+              python3 -m venv .venv
+              $(ACTIVATE_VIRTUAL_ENV)
+              pip3 install -r scripts/requirements.txt
+            displayName: 'Setup Virtual Environment'
+        
+        - ${{ if eq(variables.CONAN_CACHE_RESTORED, 'false') }}:
+          - script: |
+              $(ACTIVATE_VIRTUAL_ENV)
+              python3 scripts/conan/setup.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION)
+            displayName: 'Setup Conan'
 
         - script: |
             $(ACTIVATE_VIRTUAL_ENV)
