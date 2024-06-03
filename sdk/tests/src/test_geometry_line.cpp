@@ -29,12 +29,11 @@ TYPED_TEST(test_geometry_line_t, create)
     const auto p4 = tc::sdk::line<LineT>();
     const auto p5(p4);
     tc::sdk::line<LineT> p6(tc::sdk::line<LineT>{});
-    
+
     auto temp = tc::sdk::line<LineT>{};
     tc::sdk::line<LineT> p7(std::move(temp));
 
-    auto validate = [](auto p)
-    {
+    auto validate = [](auto p) {
         EXPECT_EQ(p.start(), tc::sdk::point<LineT>());
         EXPECT_EQ(p.end(), tc::sdk::point<LineT>());
         EXPECT_TRUE(p.is_null());
@@ -84,7 +83,7 @@ TYPED_TEST(test_geometry_line_t, horizontal)
 
     EXPECT_FALSE(p0.is_horizontal()); // False, Diagonal
     EXPECT_FALSE(p1.is_horizontal()); // False, Vertical
-    EXPECT_TRUE(p2.is_horizontal()); // True, horizontal
+    EXPECT_TRUE(p2.is_horizontal());  // True, horizontal
 }
 
 TYPED_TEST(test_geometry_line_t, vertical)
@@ -95,7 +94,7 @@ TYPED_TEST(test_geometry_line_t, vertical)
     tc::sdk::line<LineT> p2(tc::sdk::point<LineT>(1, 1), tc::sdk::point<LineT>(9, 1));
 
     EXPECT_FALSE(p0.is_vertical()); // False, Diagonal
-    EXPECT_TRUE(p1.is_vertical()); // True, Vertical
+    EXPECT_TRUE(p1.is_vertical());  // True, Vertical
     EXPECT_FALSE(p2.is_vertical()); // False, horizontal
 }
 
@@ -106,21 +105,20 @@ TYPED_TEST(test_geometry_line_t, getter_setter)
 
     EXPECT_EQ(p0.start(), tc::sdk::point<LineT>(1, 1));
     EXPECT_EQ(p0.end(), tc::sdk::point<LineT>(9, 9));
-    
+
     const tc::sdk::point<LineT> new_start(2, 2);
-    p0.set_start(new_start);    
+    p0.set_start(new_start);
     EXPECT_EQ(p0.start(), new_start);
 
     const tc::sdk::point<LineT> new_end(8, 8);
-    p0.set_end(new_end);    
+    p0.set_end(new_end);
     EXPECT_EQ(p0.end(), new_end);
 }
 
 TYPED_TEST(test_geometry_line_t, intersection)
 {
     using LineT = TypeParam;
-    auto check_intersection = [](tc::sdk::line<LineT> line1, tc::sdk::line<LineT> line2, tc::sdk::point<double> intersection_point)
-    {
+    auto check_intersection = [](tc::sdk::line<LineT> line1, tc::sdk::line<LineT> line2, tc::sdk::point<double> intersection_point) {
         EXPECT_TRUE(line1.intersects(line2));
         EXPECT_TRUE(line2.intersects(line1));
 
@@ -170,14 +168,14 @@ TYPED_TEST(test_geometry_line_t, intersection)
         check_intersection(p0, p1, tc::sdk::point<double>(2.0, 2.0));
     }
 
-    if constexpr(std::is_same_v<LineT, float> || std::is_same_v<LineT, double>)
+    if constexpr (std::is_same_v<LineT, float> || std::is_same_v<LineT, double>)
     {
         tc::sdk::line<LineT> p0(tc::sdk::point<LineT>(0.0, 0.5), tc::sdk::point<LineT>(2.0, 2.5));
         tc::sdk::line<LineT> p1(tc::sdk::point<LineT>(1.5, 0.0), tc::sdk::point<LineT>(0.0, 4.5));
         check_intersection(p0, p1, tc::sdk::point<double>(1.0, 1.5));
     }
 
-    if constexpr(std::is_same_v<LineT, float> || std::is_same_v<LineT, double>)
+    if constexpr (std::is_same_v<LineT, float> || std::is_same_v<LineT, double>)
     {
         tc::sdk::line<LineT> p0(tc::sdk::point<LineT>(0.0, -0.5), tc::sdk::point<LineT>(-2.0, -2.5));
         tc::sdk::line<LineT> p1(tc::sdk::point<LineT>(-1.5, 0.0), tc::sdk::point<LineT>(0.0, -4.5));
@@ -188,8 +186,7 @@ TYPED_TEST(test_geometry_line_t, intersection)
 TYPED_TEST(test_geometry_line_t, no_intersection)
 {
     using LineT = TypeParam;
-    auto check_intersection = [](tc::sdk::line<LineT> line1, tc::sdk::line<LineT> line2)
-    {
+    auto check_intersection = [](tc::sdk::line<LineT> line1, tc::sdk::line<LineT> line2) {
         EXPECT_FALSE(line1.intersects(line2));
         EXPECT_FALSE(line2.intersects(line1));
 
@@ -206,7 +203,6 @@ TYPED_TEST(test_geometry_line_t, no_intersection)
         check_intersection(p0, p1);
     }
 
-    
     {
         tc::sdk::line<LineT> p0(tc::sdk::point<LineT>(2, 4), tc::sdk::point<LineT>(2, 8));
         tc::sdk::line<LineT> p1(tc::sdk::point<LineT>(3, 4), tc::sdk::point<LineT>(3, 8));
@@ -226,18 +222,17 @@ TYPED_TEST(test_geometry_line_t, to_string)
     tc::sdk::line<LineT> p0(tc::sdk::point<LineT>(1, 1), tc::sdk::point<LineT>(9, 9));
     tc::sdk::line<LineT> p1(tc::sdk::point<LineT>(-1, -2), tc::sdk::point<LineT>(-3, -4));
 
-    if constexpr(std::is_same_v<LineT, int> || std::is_same_v<LineT, long> || std::is_same_v<LineT, long long>)
+    if constexpr (std::is_same_v<LineT, int> || std::is_same_v<LineT, long> || std::is_same_v<LineT, long long>)
     {
         EXPECT_EQ(p0.to_string(), "((1, 1) : (9, 9))");
         EXPECT_EQ(p1.to_string(), "((-1, -2) : (-3, -4))");
     }
 
-    if constexpr(std::is_same_v<LineT, float> || std::is_same_v<LineT, double>)
+    if constexpr (std::is_same_v<LineT, float> || std::is_same_v<LineT, double>)
     {
         EXPECT_EQ(p0.to_string(), "((1.000000, 1.000000) : (9.000000, 9.000000))");
         EXPECT_EQ(p1.to_string(), "((-1.000000, -2.000000) : (-3.000000, -4.000000))");
     }
-    
 }
 
 // NOLINTNEXTLINE

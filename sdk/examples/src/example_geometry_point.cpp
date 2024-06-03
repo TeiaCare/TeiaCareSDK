@@ -34,12 +34,12 @@ int main()
     auto prev_p0 = p0;
     p0.add_delta(2, 4);
     spdlog::info("{} increment(2, 4) = {}", prev_p0.to_string(), p0.to_string());
-    
+
     tc::sdk::point<float> p2;
     auto p3 = tc::sdk::point<float>(.2f, .3f);
     spdlog::info("{} is_origin : {}", p2.to_string(), p2.is_origin());
     spdlog::info("{} is_origin : {}", p3.to_string(), p3.is_origin());
-    
+
     auto prev_p3 = p3;
     p3.add_delta(.2f, .4f);
     spdlog::info("{} increment(.2f, .4f) = {}", prev_p3.to_string(), p3.to_string());

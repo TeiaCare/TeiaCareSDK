@@ -17,11 +17,11 @@
 namespace tc::sdk
 {
 /*!
-* \brief Return the biggest of two values.
-* \param a first value.
-* \param b second value.
-* \return the greatest value.
-*/
+ * \brief Return the biggest of two values.
+ * \param a first value.
+ * \param b second value.
+ * \return the greatest value.
+ */
 template <typename T>
 constexpr inline T max(T a, T b)
 {
@@ -29,12 +29,12 @@ constexpr inline T max(T a, T b)
 }
 
 /*!
-* \brief Return the biggest of three values.
-* \param a first value.
-* \param b second value.
-* \param c third value.
-* \return the greatest value.
-*/
+ * \brief Return the biggest of three values.
+ * \param a first value.
+ * \param b second value.
+ * \param c third value.
+ * \return the greatest value.
+ */
 template <typename T>
 constexpr inline T max(T a, T b, T c)
 {
@@ -42,13 +42,13 @@ constexpr inline T max(T a, T b, T c)
 }
 
 /*!
-* \brief Return the biggest of four values.
-* \param a first value.
-* \param b second value.
-* \param c third value.
-* \param d fourth value.
-* \return the greatest value.
-*/
+ * \brief Return the biggest of four values.
+ * \param a first value.
+ * \param b second value.
+ * \param c third value.
+ * \param d fourth value.
+ * \return the greatest value.
+ */
 template <typename T>
 constexpr inline T max(T a, T b, T c, T d)
 {
@@ -56,11 +56,11 @@ constexpr inline T max(T a, T b, T c, T d)
 }
 
 /*!
-* \brief Return the smallest of two values.
-* \param a first value.
-* \param b second value.
-* \return the lowest value.
-*/
+ * \brief Return the smallest of two values.
+ * \param a first value.
+ * \param b second value.
+ * \return the lowest value.
+ */
 template <typename T>
 constexpr inline T min(T a, T b)
 {
@@ -68,12 +68,12 @@ constexpr inline T min(T a, T b)
 }
 
 /*!
-* \brief Return the smallest of three values.
-* \param a first value.
-* \param b second value.
-* \param c third value.
-* \return the lowest value.
-*/
+ * \brief Return the smallest of three values.
+ * \param a first value.
+ * \param b second value.
+ * \param c third value.
+ * \return the lowest value.
+ */
 template <typename T>
 constexpr inline T min(T a, T b, T c)
 {
@@ -81,13 +81,13 @@ constexpr inline T min(T a, T b, T c)
 }
 
 /*!
-* \brief Return the smallest of four values.
-* \param a first value.
-* \param b second value.
-* \param c third value.
-* \param d fourth value.
-* \return the lowest value.
-*/
+ * \brief Return the smallest of four values.
+ * \param a first value.
+ * \param b second value.
+ * \param c third value.
+ * \param d fourth value.
+ * \return the lowest value.
+ */
 template <typename T>
 constexpr inline T min(T a, T b, T c, T d)
 {

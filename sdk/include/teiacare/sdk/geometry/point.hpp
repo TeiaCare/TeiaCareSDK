@@ -14,8 +14,8 @@
 
 #pragma once
 
-#include <string>
 #include <cmath>
+#include <string>
 
 namespace tc::sdk
 {

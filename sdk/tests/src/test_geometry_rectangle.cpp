@@ -29,15 +29,14 @@ TYPED_TEST(test_geometry_rectangle_t, create)
     const auto p4 = tc::sdk::rectangle<RectT>();
     const auto p5(p4);
     tc::sdk::rectangle<RectT> p6(tc::sdk::rectangle<RectT>{});
-    
+
     auto temp = tc::sdk::rectangle<RectT>{};
     tc::sdk::rectangle<RectT> p7(std::move(temp));
 
     tc::sdk::rectangle<RectT> p8(tc::sdk::point<RectT>(), 0, 0);
     tc::sdk::rectangle<RectT> p9(0, 0, 0, 0);
 
-    auto validate = [](auto p)
-    {
+    auto validate = [](auto p) {
         EXPECT_EQ(p.width(), 0);
         EXPECT_EQ(p.height(), 0);
         EXPECT_EQ(p.size(), tc::sdk::size<RectT>());
@@ -72,7 +71,7 @@ TYPED_TEST(test_geometry_rectangle_t, compare)
 
     EXPECT_TRUE(p0 != p1);
     EXPECT_TRUE(p1 != p0);
-    
+
     EXPECT_TRUE(p0 != p2);
     EXPECT_TRUE(p2 != p0);
 
@@ -99,13 +98,13 @@ TYPED_TEST(test_geometry_rectangle_t, center)
 
 //     EXPECT_EQ(p0.start(), tc::sdk::point<LineT>(1, 1));
 //     EXPECT_EQ(p0.end(), tc::sdk::point<LineT>(9, 9));
-    
+
 //     const tc::sdk::point<LineT> new_start(2, 2);
-//     p0.set_start(new_start);    
+//     p0.set_start(new_start);
 //     EXPECT_EQ(p0.start(), new_start);
 
 //     const tc::sdk::point<LineT> new_end(8, 8);
-//     p0.set_end(new_end);    
+//     p0.set_end(new_end);
 //     EXPECT_EQ(p0.end(), new_end);
 // }
 

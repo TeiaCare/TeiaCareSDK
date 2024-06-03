@@ -14,3 +14,8 @@ function(get_compiler_versions)
     set(COMPILER_VERSION_MINOR ${CMAKE_MATCH_2} PARENT_SCOPE)
     set(COMPILER_VERSION_PATCH ${CMAKE_MATCH_3} PARENT_SCOPE)
 endfunction()
+
+cmake_print_variables(CMAKE_BUILD_TYPE)
+cmake_print_variables(CMAKE_GENERATOR)
+cmake_print_variables(CMAKE_CXX_COMPILER_ID)
+cmake_print_variables(CMAKE_CXX_COMPILER_VERSION)

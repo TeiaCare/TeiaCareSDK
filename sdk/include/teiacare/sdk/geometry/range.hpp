@@ -204,7 +204,7 @@ public:
     {
         if (!intersects(other))
             return tc::sdk::range<T>();
-        
+
         return tc::sdk::range<T>(tc::sdk::max(_min, other._min), tc::sdk::min(_max, other._max));
     }
 

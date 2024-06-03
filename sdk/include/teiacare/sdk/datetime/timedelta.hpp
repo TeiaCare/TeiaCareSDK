@@ -14,198 +14,237 @@
 
 #pragma once
 
-#include "date/date.h"
+#include <chrono>
 #include <ostream>
 
 namespace tc::sdk
 {
-class TimeDelta
+class timedelta
 {
-    using DurationT = std::chrono::system_clock::duration;
-    const DurationT _duration;
-
 public:
-    explicit TimeDelta();
+    constexpr explicit timedelta() noexcept
+        : _duration{decltype(_duration)::zero()}
+    {
+    }
+
+    constexpr explicit timedelta(const std::chrono::steady_clock::duration& duration) noexcept
+        : _duration{duration}
+    {
+    }
+
+    constexpr explicit timedelta(std::chrono::steady_clock::duration&& duration) noexcept
+        : _duration{std::forward<std::chrono::steady_clock::duration&&>(duration)}
+    {
+    }
 
     template <class... Durations>
-    explicit TimeDelta(const Durations&... durations);
+    explicit timedelta(const Durations&... durations)
+        : _duration{(durations + ...)}
+    {
+    }
 
     template <class... Durations>
-    explicit TimeDelta(Durations&&... durations);
-
-    constexpr bool is_valid() const;
-
-    std::chrono::hours hours() const
+    explicit timedelta(Durations&&... durations)
+        : _duration{(std::forward<Durations&&>(durations) + ...)}
     {
-        return std::chrono::hh_mm_ss<DurationT>(_duration).hours();
     }
 
-    std::chrono::minutes minutes() const
+    constexpr inline bool is_null() const noexcept
     {
-        return std::chrono::hh_mm_ss<DurationT>(_duration).minutes();
+        return _duration == decltype(_duration)::zero();
     }
 
-    std::chrono::seconds seconds() const
+    constexpr inline std::chrono::hours hours() const noexcept
     {
-        return std::chrono::hh_mm_ss<DurationT>(_duration).seconds();
+        return std::chrono::floor<std::chrono::hours>(_duration);
     }
 
-    std::chrono::milliseconds milliseconds() const
+    constexpr inline std::chrono::minutes minutes() const noexcept
     {
-        return std::chrono::duration_cast<std::chrono::milliseconds>(
-            std::chrono::hh_mm_ss<DurationT>(_duration - std::chrono::floor<std::chrono::seconds>(_duration)).subseconds());
+        return std::chrono::floor<std::chrono::minutes>(_duration) -
+               std::chrono::floor<std::chrono::hours>(_duration);
     }
 
-    std::chrono::microseconds microseconds() const
+    constexpr inline std::chrono::seconds seconds() const noexcept
     {
-        return std::chrono::duration_cast<std::chrono::microseconds>(
-            std::chrono::hh_mm_ss<DurationT>(_duration - std::chrono::floor<std::chrono::milliseconds>(_duration)).subseconds());
+        return std::chrono::floor<std::chrono::seconds>(_duration) -
+               std::chrono::floor<std::chrono::minutes>(_duration);
     }
 
-    std::chrono::nanoseconds nanoseconds() const
+    constexpr inline std::chrono::milliseconds milliseconds() const noexcept
     {
-        return std::chrono::duration_cast<std::chrono::nanoseconds>(
-            std::chrono::hh_mm_ss<DurationT>(_duration - std::chrono::floor<std::chrono::microseconds>(_duration)).subseconds());
+        return std::chrono::floor<std::chrono::milliseconds>(_duration) -
+               std::chrono::floor<std::chrono::seconds>(_duration);
     }
 
-    template <class Duration = typename TimeDelta::DurationT>
-    Duration total_duration() const
+    constexpr inline std::chrono::microseconds microseconds() const noexcept
     {
-        return std::chrono::duration_cast<Duration>(_duration);
+        return std::chrono::floor<std::chrono::microseconds>(_duration) -
+               std::chrono::floor<std::chrono::milliseconds>(_duration);
     }
 
-    std::chrono::years total_years() const
+    constexpr inline std::chrono::nanoseconds nanoseconds() const noexcept
     {
-        return total_duration<std::chrono::years>();
-    }
-    std::chrono::months total_months() const
-    {
-        return total_duration<std::chrono::months>();
-    }
-    std::chrono::days total_days() const
-    {
-        return total_duration<std::chrono::days>();
-    }
-    std::chrono::hours total_hours() const
-    {
-        return total_duration<std::chrono::hours>();
-    }
-    std::chrono::minutes total_minutes() const
-    {
-        return total_duration<std::chrono::minutes>();
-    }
-    std::chrono::seconds total_seconds() const
-    {
-        return total_duration<std::chrono::seconds>();
-    }
-    std::chrono::milliseconds total_milliseconds() const
-    {
-        return total_duration<std::chrono::milliseconds>();
-    }
-    std::chrono::microseconds total_microseconds() const
-    {
-        return total_duration<std::chrono::microseconds>();
-    }
-    std::chrono::nanoseconds total_nanoseconds() const
-    {
-        return total_duration<std::chrono::nanoseconds>();
+        return std::chrono::floor<std::chrono::nanoseconds>(_duration) -
+               std::chrono::floor<std::chrono::microseconds>(_duration);
     }
 
-    // TODO: move to protected
-    const DurationT duration() const;
+    constexpr inline std::chrono::years total_years() const noexcept
+    {
+        return std::chrono::duration_cast<std::chrono::years>(_duration);
+    }
 
-protected:
-public:
-    friend bool operator==(const TimeDelta& td1, const TimeDelta& td2);
-    friend std::ostream& operator<<(std::ostream& os, const TimeDelta& td);
-    friend TimeDelta operator+(const TimeDelta& t1, const TimeDelta& t2);
-    friend TimeDelta operator-(const TimeDelta& t1, const TimeDelta& t2);
-    friend TimeDelta operator*(const TimeDelta& t, int64_t multiplier);
-    friend TimeDelta operator*(int64_t multiplier, const TimeDelta& t);
+    constexpr inline std::chrono::months total_months() const noexcept
+    {
+        return std::chrono::duration_cast<std::chrono::months>(_duration);
+    }
+
+    constexpr inline std::chrono::days total_days() const noexcept
+    {
+        return std::chrono::duration_cast<std::chrono::days>(_duration);
+    }
+
+    constexpr inline std::chrono::hours total_hours() const noexcept
+    {
+        return std::chrono::duration_cast<std::chrono::hours>(_duration);
+    }
+
+    constexpr inline std::chrono::minutes total_minutes() const noexcept
+    {
+        return std::chrono::duration_cast<std::chrono::minutes>(_duration);
+    }
+
+    constexpr inline std::chrono::seconds total_seconds() const noexcept
+    {
+        return std::chrono::duration_cast<std::chrono::seconds>(_duration);
+    }
+
+    constexpr inline std::chrono::milliseconds total_milliseconds() const noexcept
+    {
+        return std::chrono::duration_cast<std::chrono::milliseconds>(_duration);
+    }
+
+    constexpr inline std::chrono::microseconds total_microseconds() const noexcept
+    {
+        return std::chrono::duration_cast<std::chrono::microseconds>(_duration);
+    }
+
+    constexpr inline std::chrono::nanoseconds total_nanoseconds() const noexcept
+    {
+        return std::chrono::duration_cast<std::chrono::nanoseconds>(_duration);
+    }
+
+    /*!
+     * \brief Equality operator.
+     * \param other the timedelta to compare against.
+     * \return true if the two timedelta objects are the same.
+     */
+    constexpr inline bool operator==(const timedelta& other) const noexcept
+    {
+        return _duration == other._duration;
+    }
+
+    /*!
+     * \brief Inequality operator.
+     * \param other the timedelta to compare against.
+     * \return true if the two timedelta objects are the different.
+     */
+    constexpr inline bool operator!=(const timedelta& other) const noexcept
+    {
+        return !operator==(other);
+    }
+
+    constexpr inline tc::sdk::timedelta operator+(const timedelta& other) const noexcept
+    {
+        return tc::sdk::timedelta{_duration + other._duration};
+    }
+
+    constexpr inline tc::sdk::timedelta operator-(const timedelta& other) const noexcept
+    {
+        return tc::sdk::timedelta{_duration - other._duration};
+    }
+
+    constexpr inline tc::sdk::timedelta operator*(int64_t multiplier) const noexcept
+    {
+        return tc::sdk::timedelta{_duration * multiplier};
+    }
+
+    constexpr inline tc::sdk::timedelta operator/(int64_t divider) const noexcept(false)
+    {
+        return tc::sdk::timedelta{_duration / divider};
+    }
+    /*!
+     * \brief Output stream operator.
+     * \param stream the output stream to write into.
+     * \param dt the timedelta object to stream.
+     * \return reference to the output stream operator, with the timedelta string representation written into it.
+     */
+    friend std::ostream& operator<<(std::ostream& stream, const timedelta& td);
+
+    /*!
+     * \brief Get the timedelta string representation.
+     * \tparam DurationT specify the datetime precision, by default is std::chrono::milliseconds.
+     * \return String representation of the current timedelta.
+     */
+    template <class DurationT = std::chrono::milliseconds>
+    std::string to_string() const noexcept(false);
+
+private:
+    const std::chrono::nanoseconds _duration;
 };
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// TimeDelta impl
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-TimeDelta::TimeDelta()
-    : _duration{DurationT::min()}
-{
 }
 
-template <class... Durations>
-TimeDelta::TimeDelta(const Durations&... durations)
-    : _duration{(durations + ...)}
+inline std::ostream& operator<<(std::ostream& os, const std::chrono::year_month_day& ymd)
 {
-}
+    os.fill('0');
+    os.flags(std::ios::dec | std::ios::right);
+    os.imbue(std::locale::classic());
+    os << static_cast<int>(ymd.year()) << '-';
+    os.width(2);
+    os << static_cast<unsigned>(ymd.month()) << '-';
+    os.width(2);
+    os << static_cast<unsigned>(ymd.day());
 
-template <class... Durations>
-TimeDelta::TimeDelta(Durations&&... durations)
-    : _duration{(std::forward<Durations&&>(durations) + ...)}
-{
-}
+    if (!ymd.ok())
+        os << " is not a valid year_month_day";
 
-constexpr bool TimeDelta::is_valid() const
-{
-    return _duration != DurationT::min();
-}
-
-const TimeDelta::DurationT TimeDelta::duration() const
-{
-    return _duration;
-}
-
-std::ostream& operator<<(std::ostream& os, const std::chrono::hh_mm_ss<std::chrono::system_clock::duration>& tod)
-{
-    if (tod.is_negative())
-        os << '-';
-
-    if (tod.hours() < std::chrono::hours{10})
-        os << '0';
-
-    os << tod.hours().count() << ':';
-
-    if (tod.minutes() < std::chrono::minutes{10})
-        os << '0';
-
-    os << tod.minutes().count() << ':' << tod.seconds() << '.' << tod.subseconds();
     return os;
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// friend operators
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-bool operator==(const TimeDelta& td1, const TimeDelta& td2)
+inline std::ostream& operator<<(std::ostream& os, const std::chrono::year& y)
 {
-    return td1.duration() == td2.duration();
+    os.fill('0');
+    os.flags(std::ios::dec | std::ios::internal);
+    os.width(4 + (y < std::chrono::year{0}));
+    os.imbue(std::locale::classic());
+    os << static_cast<int>(y);
+
+    if (!y.ok())
+        os << " is not a valid year";
+
+    return os;
 }
 
-std::ostream& operator<<(std::ostream& os, const TimeDelta& t)
+inline std::ostream& operator<<(std::ostream& os, const std::chrono::month& m)
 {
-    // if (!t.is_valid())
-    //     os << "invalid TimeDelta";
-    return os << std::chrono::hh_mm_ss<TimeDelta::DurationT>(t.duration());
+    if (!m.ok())
+        os << static_cast<unsigned>(m) << " is not a valid month";
+    else
+        os << static_cast<unsigned>(m);
+    return os;
 }
 
-TimeDelta operator+(const TimeDelta& t1, const TimeDelta& t2)
+inline std::ostream& operator<<(std::ostream& os, const std::chrono::day& d)
 {
-    return TimeDelta{t1.duration() + t2.duration()};
-}
+    os.fill('0');
+    os.flags(std::ios::dec | std::ios::internal);
+    os.width(2 + (d < std::chrono::day{0}));
+    os.imbue(std::locale::classic());
+    os << static_cast<unsigned>(d);
 
-TimeDelta operator-(const TimeDelta& t1, const TimeDelta& t2)
-{
-    return TimeDelta{t1.duration() - t2.duration()};
-}
+    if (!d.ok())
+        os << " is not a valid day";
 
-TimeDelta operator*(const TimeDelta& t, int64_t multiplier)
-{
-    return TimeDelta{t.duration() * multiplier};
-}
-
-TimeDelta operator*(int64_t multiplier, const TimeDelta& t)
-{
-    return t * multiplier;
-}
-
+    return os;
 }

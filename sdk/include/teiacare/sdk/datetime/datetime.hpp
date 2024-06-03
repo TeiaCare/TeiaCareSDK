@@ -14,293 +14,156 @@
 
 #pragma once
 
+#include <teiacare/sdk/clock.hpp>
 #include <teiacare/sdk/datetime/date.hpp>
 #include <teiacare/sdk/datetime/time.hpp>
 #include <teiacare/sdk/datetime/timedelta.hpp>
 
-#include "date/date.h"
-#include "date/tz.h"
-#include <iostream>
+#include <chrono>
+#include <ostream>
+
+using namespace std::chrono_literals;
 
 namespace tc::sdk
 {
-class Date;
-class TimeDelta;
-
-class DateTime
+class datetime
 {
-    using DurationT = std::chrono::system_clock::duration;
-    date::zoned_time<DurationT> zt_;
-
-    std::chrono::system_clock::time_point _tp;
-
 public:
-    explicit DateTime();
-    DateTime(const date::zoned_time<DurationT>& zt)
-        : zt_(zt)
+    explicit constexpr datetime() noexcept
+        : _tp{decltype(_tp)::min()}
     {
     }
 
-    // static DateTime<typename std::common_type<Duration, std::chrono::seconds>::type>
-    // today();
+    explicit constexpr datetime(const tc::sdk::sys_time_point& tp) noexcept
+        : _tp{tp}
+    {
+    }
+    explicit constexpr datetime(tc::sdk::sys_time_point&& tp) noexcept
+        : _tp{std::forward<decltype(tp)&&>(tp)}
+    {
+    }
 
-    // static DateTime<typename std::common_type<Duration, std::chrono::seconds>::type>
-    // now(const std::string& timezone_name = "");
+    explicit constexpr datetime(const tc::sdk::date& date) noexcept
+        : _tp{date.to_timepoint()}
+    {
+    }
 
-    // static DateTime<typename std::common_type<Duration, std::chrono::seconds>::type>
-    // utcnow();
+    explicit constexpr datetime(const tc::sdk::time& time) noexcept
+        : _tp{time.to_duration()}
+    {
+    }
 
-    // template <class Rep>
-    // static DateTime<typename std::common_type<Duration, std::chrono::seconds>::type>
-    // fromtimestamp(Rep timestamp, const std::string& timezone_name = "");
+    explicit constexpr datetime(const tc::sdk::date& date, const tc::sdk::time& time) noexcept
+        : _tp{date.to_timepoint() + time.to_duration()}
+    {
+    }
 
-    // template <class Rep>
-    // static DateTime<typename std::common_type<Duration, std::chrono::seconds>::type>
-    // utcfromtimestamp(Rep timestamp);
+    explicit constexpr datetime(
+        const std::chrono::year& y,
+        const std::chrono::month& m,
+        const std::chrono::day& d,
+        const std::chrono::hours& hh,
+        const std::chrono::minutes& mm,
+        const std::chrono::seconds& ss,
+        const std::chrono::milliseconds& ms = 0ms,
+        const std::chrono::microseconds& us = 0us,
+        const std::chrono::nanoseconds& ns = 0ns) noexcept
+        : _tp{std::chrono::sys_days(std::chrono::year_month_day(y, m, d)) + hh + mm + ss + ms + us + ns}
+    {
+    }
 
-    // static DateTime<typename std::common_type<Duration, std::chrono::seconds>::type>
-    // strptime(const std::string& date_string, const std::string& format);
+    constexpr inline bool is_valid() const
+    {
+        return _tp > decltype(_tp)::min() && _tp < decltype(_tp)::max();
+    }
 
-    // const date::zoned_time<DurationT>& zoned_time() const { return zt_; }  // extra method : no equivalent in Python
+    constexpr inline tc::sdk::date date() const
+    {
+        std::chrono::sys_days total_days = std::chrono::floor<std::chrono::days>(_tp);
+        std::chrono::year_month_day ymd{total_days};
+        return tc::sdk::date(ymd);
+    }
 
-    // Date        date()  const;
-    // const date::year  year()  const;
-    // const date::month month() const;
-    // const date::day   day()   const;
+    constexpr inline tc::sdk::time time() const
+    {
+        std::chrono::sys_days total_days = std::chrono::floor<std::chrono::days>(_tp);
+        std::chrono::nanoseconds time_duration = _tp - total_days;
+        return tc::sdk::time(time_duration);
+    }
 
-    // const date::time_zone* time_zone() const; // extra method : no equivalent in Python
-    // const std::string& tzinfo() const; // differs from Python
+    constexpr inline tc::sdk::sys_time_point to_time_point() const noexcept
+    {
+        return _tp;
+    }
 
-    // TimeDelta utcoffset() const;
+    /*!
+     * \brief Equality operator.
+     * \param other the datetime to compare against.
+     * \return true if the two datetime objects are the same.
+     */
+    constexpr inline bool operator==(const datetime& other) const noexcept
+    {
+        return _tp == other._tp;
+    }
 
-    // std::string timestamp() const;
+    /*!
+     * \brief Inequality operator.
+     * \param other the datetime to compare against.
+     * \return true if the two datetime objects are the different.
+     */
+    constexpr inline bool operator!=(const datetime& other) const noexcept
+    {
+        return !operator==(other);
+    }
 
-    // std::string ctime() const;
-    // std::string isoformat(const std::string& sep="T") const;
-    // std::string strftime(const std::string& format) const;
+    constexpr tc::sdk::datetime operator+(const timedelta& delta) const noexcept
+    {
+        return tc::sdk::datetime{_tp + delta.total_nanoseconds()};
+    }
+
+    constexpr tc::sdk::datetime operator-(const timedelta& delta) const noexcept
+    {
+        return tc::sdk::datetime{_tp - delta.total_nanoseconds()};
+    }
+
+    constexpr inline bool operator<(const datetime& other) const noexcept
+    {
+        return _tp < other._tp;
+    }
+
+    constexpr inline bool operator>(const datetime& other) const noexcept
+    {
+        return _tp > other._tp;
+    }
+
+    constexpr inline timedelta operator-(const datetime& other) const noexcept
+    {
+        return tc::sdk::timedelta{_tp - other._tp};
+    }
+
+    /*!
+     * \brief Output stream operator.
+     * \param stream the output stream to write into.
+     * \param dt the datetime object to stream.
+     * \return reference to the output stream operator, with the datetime string representation written into it.
+     */
+    friend std::ostream& operator<<(std::ostream& stream, const datetime& dt);
+
+    /*!
+     * \brief Get the datetime string representation
+     * \return String representation of the current datetime.
+     */
+    template <class DurationT = std::chrono::milliseconds>
+    std::string to_string(const std::string& format = "%FT%T") const noexcept(false);
+
+    template <class DurationT = std::chrono::milliseconds>
+    static tc::sdk::datetime from_string(const std::string& str, const std::string& format = "%FT%T") noexcept(false);
+
+    template <class DurationT = std::chrono::milliseconds>
+    static tc::sdk::datetime utc_now() noexcept;
 
 private:
-    date::fields<typename std::common_type<DurationT, std::chrono::seconds>::type> fields_ymd_time() const;
+    const tc::sdk::sys_time_point _tp;
 };
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// DateTime
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-template <class Duration>
-DateTime<Duration> operator+(const DateTime<Duration>& x, const TimeDelta& y);
-
-template <class Duration>
-DateTime<Duration> operator+(const DateTime<Duration>& x, const TimeDelta& y);
-
-template <class Duration>
-DateTime<Duration> operator-(const TimeDelta& y, const DateTime<Duration>& x);
-
-// TODO: allow two different Duration template params ?
-template <class Duration>
-TimeDelta operator-(const DateTime<Duration>& x, const DateTime<Duration>& y);
-
-template <class Duration>
-bool operator<(const DateTime<Duration>& x, const DateTime<Duration>& y);
-
-template <class CharT, class Traits, class Duration>
-std::basic_ostream<CharT, Traits>&
-operator<<(std::basic_ostream<CharT, Traits>& os, const DateTime<Duration>& date);
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// DateTime impl
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-DateTime::DateTime()
-{
-}
-
-template <class Duration>
-inline DateTime<typename std::common_type<Duration, std::chrono::seconds>::type>
-DateTime<Duration>::today()
-{
-    return date::make_zoned(date::current_zone(), date::floor<Duration>(std::chrono::system_clock::now()));
-}
-
-template <class Duration>
-inline DateTime<typename std::common_type<Duration, std::chrono::seconds>::type>
-DateTime<Duration>::now(const std::string& timezone_name)
-{
-    if (timezone_name == "")
-    {
-        return today();
-    }
-    return date::make_zoned(timezone_name, date::floor<Duration>(std::chrono::system_clock::now()));
-}
-
-template <class Duration>
-inline DateTime<typename std::common_type<Duration, std::chrono::seconds>::type>
-DateTime<Duration>::utcnow()
-{
-    return {date::floor<Duration>(std::chrono::system_clock::now())};
-}
-
-template <class Duration>
-template <class Rep>
-inline DateTime<typename std::common_type<Duration, std::chrono::seconds>::type>
-DateTime<Duration>::fromtimestamp(Rep timestamp, const std::string& timezone_name)
-{
-    auto nanos = static_cast<unsigned>(1e9 * std::fmod(timestamp, 1)); // might loose precision here
-    auto tp = std::chrono::system_clock::from_time_t(timestamp) + std::chrono::nanoseconds(nanos);
-    if (timezone_name == "")
-    {
-        return {date::make_zoned(date::current_zone(), tp)};
-    }
-    else
-    {
-        return {date::make_zoned(timezone_name, tp)};
-    }
-}
-
-template <class Duration>
-template <class Rep>
-inline DateTime<typename std::common_type<Duration, std::chrono::seconds>::type>
-DateTime<Duration>::utcfromtimestamp(Rep timestamp)
-{
-    auto nanos = static_cast<unsigned>(1e9 * std::fmod(timestamp, 1)); // might loose precision here
-    auto tp = std::chrono::system_clock::from_time_t(timestamp) + std::chrono::nanoseconds(nanos);
-
-    return {tp};
-}
-
-template <class Duration>
-inline DateTime<typename std::common_type<Duration, std::chrono::seconds>::type>
-DateTime<Duration>::strptime(const std::string& date_string, const std::string& format)
-{
-    using namespace std::chrono;
-
-    date::local_seconds tp;
-    std::istringstream ss(date_string);
-    ss >> date::parse(format, tp);
-    auto zt = date::make_zoned(date::current_zone(), tp);
-    return {zt};
-}
-
-template <class Duration>
-inline date::fields<typename std::common_type<Duration, std::chrono::seconds>::type>
-DateTime<Duration>::fields_ymd_time() const
-{
-    using CT = typename std::common_type<Duration, std::chrono::seconds>::type;
-    auto tp = zoned_time().get_local_time();
-    auto ld = date::floor<date::days>(tp);
-    date::fields<CT> fds{date::year_month_day{ld}, date::time_of_day<CT>{tp - ld}};
-    return fds;
-}
-
-template <class Duration>
-inline Date DateTime<Duration>::date() const
-{
-    return fields_ymd_time().ymd;
-}
-
-template <class Duration>
-inline const date::year DateTime<Duration>::year() const
-{
-    return date().year();
-}
-
-template <class Duration>
-inline const date::month DateTime<Duration>::month() const
-{
-    return date().month();
-}
-
-template <class Duration>
-inline const date::day DateTime<Duration>::day() const
-{
-    return date().day();
-}
-
-template <class Duration>
-inline const date::time_zone* DateTime<Duration>::time_zone() const
-{
-    return zt_.get_time_zone();
-}
-
-template <class Duration>
-inline const std::string& DateTime<Duration>::tzinfo() const
-{
-    return zt_.get_time_zone()->name();
-}
-
-template <class Duration>
-inline TimeDelta DateTime<Duration>::utcoffset() const
-{
-    auto offset = zoned_time().get_info().offset;
-    return {std::chrono::seconds{offset}};
-}
-
-template <class Duration>
-inline std::string DateTime<Duration>::timestamp() const
-{
-    std::stringstream ss;
-    ss << std::fixed << zoned_time().get_sys_time().time_since_epoch().count() / 1000000000.0;
-    return ss.str();
-}
-
-template <class Duration>
-inline std::string DateTime<Duration>::ctime() const
-{
-    return strftime("%c");
-}
-
-template <class Duration>
-inline std::string DateTime<Duration>::isoformat(const std::string& sep) const
-{
-    return strftime("%Y%m%d" + sep + "%H:%M:%S");
-}
-
-template <class Duration>
-inline std::string DateTime<Duration>::strftime(const std::string& format) const
-{
-    return date::format(format.c_str(), zt_);
-}
-
-template <class Duration>
-inline DateTime<Duration> operator+(const DateTime<Duration>& x, const TimeDelta& y)
-{
-    // TODO make this work for non default Duration
-    using namespace std::chrono;
-    auto add = x.zoned_time().get_sys_time() + seconds(y.total_seconds()) + microseconds(y.microseconds());
-    return {date::make_zoned(x.zoned_time().get_time_zone(), add)};
-}
-
-template <class Duration>
-inline DateTime<Duration> operator+(const TimeDelta& y, const DateTime<Duration>& x)
-{
-    return x + y;
-}
-
-template <class Duration>
-inline DateTime<Duration> operator-(const DateTime<Duration>& x, const TimeDelta& y)
-{
-    using namespace std::chrono;
-    auto diff = x.zoned_time().get_sys_time() - seconds(y.total_seconds()) - microseconds(y.microseconds());
-    return {date::make_zoned(x.zoned_time().get_time_zone(), diff)};
-}
-
-template <class Duration>
-inline TimeDelta operator-(const DateTime<Duration>& x, const DateTime<Duration>& y)
-{
-    return {x.zoned_time().get_sys_time() - y.zoned_time().get_sys_time()};
-}
-
-template <class Duration>
-inline bool operator<(const DateTime<Duration>& x, const DateTime<Duration>& y)
-{
-    return x.zoned_time().get_sys_time() < y.zoned_time().get_sys_time();
-}
-
-template <class CharT, class Traits, class Duration>
-inline std::basic_ostream<CharT, Traits>&
-operator<<(std::basic_ostream<CharT, Traits>& os, const DateTime<Duration>& date)
-{
-    return os << date.zoned_time();
-}
 
 }

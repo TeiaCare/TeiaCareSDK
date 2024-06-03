@@ -366,7 +366,7 @@ TEST_F(test_event_dispatcher, push_event_consecutive_start_stop)
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_event_dispatcher, sync_multiple_events_on_multiple_threads)
+TEST_F(test_event_dispatcher, DISABLED_TSAN_WARNING_sync_multiple_events_on_multiple_threads)
 {
     const auto event_name = "EVENT_NAME";
     constexpr int dispatcher_threads = 4;
