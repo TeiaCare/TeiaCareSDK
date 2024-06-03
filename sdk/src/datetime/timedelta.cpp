@@ -14,6 +14,8 @@
 
 #include <teiacare/sdk/datetime/timedelta.hpp>
 
+#include <sstream>
+
 namespace tc::sdk
 {
 std::ostream& operator<<(std::ostream& stream, const timedelta& td)
