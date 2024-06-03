@@ -83,11 +83,11 @@ TeiaCareSDK is a collection of reusable C++ components designed to make your dev
 #include <iostream>
 #include "teiacare/sdk/observable.hpp"
 
-int main() 
+int main()
 {
     auto callback = [](int value){ std::cout << "Update: " << value << "\n"; };
     auto observable = tc::sdk::observable<int>(-1, callback);
-    
+
     constexpr int total_updates = 10;
     for (int i = 0; i < total_updates; ++i)
     {
@@ -117,13 +117,17 @@ echo set CONAN_USER_HOME=%CD%>>.venv\Scripts\activate.bat
 .venv\Scripts\activate.bat
 
 pip install -r scripts/requirements.txt
+
+# on developer machine only (not in CI)
+pip install pre-commit==3.7.1
+pre-commit install
 ```
 
 **Setup Build Environment (Windows Only)**
 
 When building from command line on Windows it is necessary to activate the Visual Studio Developer Command Prompt.
-Depending on the version of Visual Studio compiler and on its install location it is required to run *vcvars64.bat* script the set the development environment properly.  
-*Note*: using Visual Studio IDE or the CMake extension for VSCode this step is already managed in the background.  
+Depending on the version of Visual Studio compiler and on its install location it is required to run *vcvars64.bat* script the set the development environment properly.
+*Note*: using Visual Studio IDE or the CMake extension for VSCode this step is already managed in the background.
 
 Examples:
 
@@ -164,7 +168,7 @@ python scripts/cmake/install.py <Debug|Release>
 python scripts/tools/run_unit_tests.py <Debug|Release>
 ```
 Examples are installed in $PWD/install/unit_tests.
-Unit tests results are available in $PWD/results/unit_tests.  
+Unit tests results are available in $PWD/results/unit_tests.
 
 
 ## Code Coverage
@@ -177,14 +181,14 @@ python scripts/cmake/install.py <Debug|Release>
 python scripts/tools/run_unit_tests.py <Debug|Release>
 python scripts/tools/run_coverage.py <COMPILER_NAME> <COMPILER_VERSION>
 ```
-Unit tests results are available in $PWD/results/unit_tests.  
+Unit tests results are available in $PWD/results/unit_tests.
 Coverage results are available in $PWD/results/coverage.
 
 ## Benchmarks
 ```bash
 python scripts/cmake/configure.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --benchmarks --warnings
 python scripts/cmake/build.py <Debug|Release>
-python scripts/cmake/install.py <Debug|Release> 
+python scripts/cmake/install.py <Debug|Release>
 ```
 Benchmarks are installed in $PWD/install/benchmarks.
 
@@ -269,19 +273,19 @@ cd TeiaCareSDK
 cd sdk_package_test
 
 # Build and install the test package executable at $PWD/install/teiacare_sdk_client_package_test
-python build.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> 
+python build.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION>
 
 # Run it
 $PWD/install/teiacare_sdk_client_package_test
 ```
 
 ## Contributing
-In order to contribute to TeiaCareSDK, please follow our [contribution guidelines](./CONTRIBUTING).  
+In order to contribute to TeiaCareSDK, please follow our [contribution guidelines](./CONTRIBUTING).
 
-[![Contributions](https://img.shields.io/badge/Contributions-Welcome-green.svg)](./CONTRIBUTING) 
+[![Contributions](https://img.shields.io/badge/Contributions-Welcome-green.svg)](./CONTRIBUTING)
 
 ## License
-This project is licensed under the [Apache License, Version 2.0](./LICENSE).  
+This project is licensed under the [Apache License, Version 2.0](./LICENSE).
 Copyright © 2024 [TeiaCare](https://teiacare.com/)
 
-[![License](https://img.shields.io/badge/License-Apache_v2-blue)](./LICENSE) 
+[![License](https://img.shields.io/badge/License-Apache_v2-blue)](./LICENSE)

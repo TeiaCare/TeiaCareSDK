@@ -34,7 +34,7 @@ def conan_profile_create(profile_name, args):
     run([ 'conan', 'profile', 'update', f'env.CONAN_CMAKE_GENERATOR=Ninja', f'{profile_name}']) # for conan v1 recipes
     run([ 'conan', 'profile', 'update', f'conf.tools.cmake.cmaketoolchain:generator=Ninja', f'{profile_name}']) # for conan v2 recipes
     run([ 'conan', 'profile', 'update', f'conf.tools.system.package_manager:mode=install', f'{profile_name}'])
-    run([ 'conan', 'profile', 'update', f'conf.tools.system.package_manager:sudo=True', f'{profile_name}'])    
+    run([ 'conan', 'profile', 'update', f'conf.tools.system.package_manager:sudo=True', f'{profile_name}'])
 
     if args.compiler == 'clang':
         if platform.system() == 'Linux':
@@ -62,7 +62,7 @@ def conan_profile_create(profile_name, args):
     if args.compiler == 'gcc':
         cc_compiler = ''
         cxx_compiler = ''
-    
+
         if platform.system() == 'Linux':
             cc_compiler = f'gcc-{args.compiler_version}'
             cxx_compiler = f'g++-{args.compiler_version}'
@@ -70,7 +70,7 @@ def conan_profile_create(profile_name, args):
         if platform.system() == 'Darwin':
             cc_compiler = f'gcc'
             cxx_compiler = f'g++'
-        
+
         run([ 'conan', 'profile', 'update', f'settings.compiler.libcxx=libstdc++11', f'{profile_name}'])
         run([ 'conan', 'profile', 'update', f'env.CC={cc_compiler}', f'{profile_name}'])
         run([ 'conan', 'profile', 'update', f'env.CXX={cxx_compiler}', f'{profile_name}'])
@@ -78,19 +78,19 @@ def conan_profile_create(profile_name, args):
     if args.compiler == 'visual_studio':
         if platform.system() != 'Windows':
             raise RuntimeError(f"Visual Studio is only supported on Windows. Current OS: {platform.system()}")
-        
+
         compiler = 'cl'
         run([ 'conan', 'profile', 'update', f'settings.compiler=Visual Studio', f'{profile_name}' ])
         run([ 'conan', 'profile', 'update', f'env.CC={compiler}', f'{profile_name}'])
         run([ 'conan', 'profile', 'update', f'env.CXX={compiler}', f'{profile_name}'])
-    
+
 def conan_profile_show(profile_name):
     run([ 'conan', 'profile', 'show', f'{profile_name}' ])
 
 def conan_install(conanfile_directory, profile_name, build_type):
     command = [
         'conan', 'install', f'{conanfile_directory}',
-        '--install-folder', f'build/modules', 
+        '--install-folder', f'build/modules',
         '--settings', f'build_type={build_type}',
         '--profile:build', f'{profile_name}',
         '--profile:host', f'{profile_name}',

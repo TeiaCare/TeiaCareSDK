@@ -106,7 +106,7 @@ jobs:
             pip3 install -r scripts/requirements.txt
           displayName: 'Setup Virtual Environment'
           condition: eq(variables['VENV_CACHE_RESTORED'], 'false')
-      
+
         - script: |
             $(ACTIVATE_VIRTUAL_ENV)
             python3 scripts/conan/setup.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION)
@@ -227,11 +227,11 @@ jobs:
       name: TeiaCare Build Pool
       ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
     variables:
-      - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}: 
+      - ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
         - name: FORCE_UPLOAD
           value: "true"
           readonly: true
-      - ${{ if ne(variables['Build.SourceBranchName'], 'develop') }}: 
+      - ${{ if ne(variables['Build.SourceBranchName'], 'develop') }}:
         - name: FORCE_UPLOAD
           value: "false"
           readonly: true
@@ -239,7 +239,7 @@ jobs:
       - script: |
           docker build -f Dockerfile-conan --build-arg COMPILER=$(COMPILER) --build-arg COMPILER_VERSION=$(COMPILER_VERSION) --build-arg BUILD_TYPE=$(BUILD_TYPE) -t teiacore_sdk_conan .
         displayName: 'Build Docker Image'
-      
+
       - script: |
           docker run --rm -v $PWD/ci:/teiacare_sdk/ci teiacore_sdk_conan ci/publish_conan_package.sh $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) $(ARTIFACTORY_HOST) $(ARTIFACTORY_USERNAME) $(ARTIFACTORY_PASSWORD) $(FORCE_UPLOAD)
         displayName: 'Create and Upload Package'
@@ -247,4 +247,3 @@ jobs:
       - script: |
           docker run --rm -v $PWD/ci:/teiacare_sdk/ci -v $PWD/sdk_package_test:/teiacare_sdk/sdk_package_test teiacore_sdk_conan ci/test_conan_package.sh $(BUILD_TYPE) $(COMPILER) $(COMPILER_VERSION) $(ARTIFACTORY_HOST) $(ARTIFACTORY_USERNAME) $(ARTIFACTORY_PASSWORD)
         displayName: 'Test Package'
-

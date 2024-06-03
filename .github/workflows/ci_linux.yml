@@ -2,7 +2,7 @@ name: CI Linux
 
 on:
   workflow_dispatch:
-  pull_request: 
+  pull_request:
   push:
 
 jobs:
@@ -33,7 +33,7 @@ jobs:
         uses: actions/setup-python@v5.0.0
         with:
           python-version: '3.10'
-          
+
       - name: Install Dependencies
         shell: bash
         run: |
@@ -93,7 +93,7 @@ jobs:
     permissions:
       checks: write
       pull-requests: write
-      
+
     steps:
       - name: Download Unit Tests Results
         uses: actions/download-artifact@v4
@@ -104,4 +104,3 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v2
         with:
           files: "unit_test_reports/**/*.xml"
-          

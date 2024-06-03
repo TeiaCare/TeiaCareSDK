@@ -1,0 +1,20 @@
+repos:
+
+- repo: https://github.com/pre-commit/pre-commit-hooks
+  rev: v4.6.0
+  hooks:
+  - id: check-yaml
+  - id: end-of-file-fixer
+  - id: trailing-whitespace
+
+  # - repo: https://github.com/cpp-linter/cpp-linter-hooks
+  #   rev: v0.4.1
+  #   hooks:
+  #     - id: clang-format
+  #     - id: clang-tidy
+
+  # - repo: https://github.com/pocc/pre-commit-hooks
+  #   rev: v1.3.5
+  #   hooks:
+  #     - id: clang-format
+      # - id: clang-tidy

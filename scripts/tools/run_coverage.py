@@ -13,10 +13,10 @@ def parse():
     parser.add_argument("--html_coverage_path", help="Coverage html results path", required=False, default='./results/coverage/html/coverage.html')
     return parser.parse_args()
 
-def coverage(args):    
+def coverage(args):
     coverage_tool = None
     if args.compiler == 'gcc':
-        coverage_tool = f'gcov-{args.compiler_version}'    
+        coverage_tool = f'gcov-{args.compiler_version}'
     if args.compiler == 'clang' or args.compiler == 'apple-clang':
         coverage_tool = f'llvm-cov-{args.compiler_version} gcov'
     if args.compiler == 'msvc':

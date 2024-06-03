@@ -8,34 +8,34 @@
 #
 # ===-----------------------------------------------------------------------===#
 # FIXME: Integrate with clang-tidy-diff.py
- 
- 
+
+
 """
 Parallel clang-tidy runner
 ==========================
- 
+
 Runs clang-tidy over all files in a compilation database. Requires clang-tidy
 and clang-apply-replacements in $PATH.
- 
+
 Example invocations.
 - Run clang-tidy on all files in the current working directory with a default
   set of checks and show warnings in the cpp files and all project headers.
     run-clang-tidy.py $PWD
- 
+
 - Fix all header guards.
     run-clang-tidy.py -fix -checks=-*,llvm-header-guard
- 
+
 - Fix all header guards included from clang-tidy and header guards
   for clang-tidy headers.
     run-clang-tidy.py -fix -checks=-*,llvm-header-guard extra/clang-tidy \
                       -header-filter=extra/clang-tidy
- 
+
 Compilation database setup:
 http://clang.llvm.org/docs/HowToSetupToolingForLLVM.html
 """
- 
+
 from __future__ import print_function
- 
+
 import argparse
 import glob
 import json
@@ -49,28 +49,28 @@ import sys
 import tempfile
 import threading
 import traceback
- 
+
 try:
     import yaml
 except ImportError:
     yaml = None
- 
- 
+
+
 def strtobool(val):
     """Convert a string representation of truth to a bool following LLVM's CLI argument parsing."""
- 
+
     val = val.lower()
     if val in ["", "true", "1"]:
         return True
     elif val in ["false", "0"]:
         return False
- 
+
     # Return ArgumentTypeError so that argparse does not substitute its own error message
     raise argparse.ArgumentTypeError(
         "'{}' is invalid value for boolean argument! Try 0 or 1.".format(val)
     )
- 
- 
+
+
 def find_compilation_database(path):
     """Adjusts the directory until a compilation database is found."""
     result = os.path.realpath("./")
@@ -81,14 +81,14 @@ def find_compilation_database(path):
             sys.exit(1)
         result = parent
     return result
- 
- 
+
+
 def make_absolute(f, directory):
     if os.path.isabs(f):
         return f
     return os.path.normpath(os.path.join(directory, f))
- 
- 
+
+
 def get_tidy_invocation(
     f,
     clang_tidy_binary,
@@ -146,8 +146,8 @@ def get_tidy_invocation(
         start.append("--warnings-as-errors=" + warnings_as_errors)
     start.append(f)
     return start
- 
- 
+
+
 def merge_replacement_files(tmpdir, mergefile):
     """Merge all replacement files in a directory into a single file"""
     # The fixes suggested by clang-tidy >= 4.0.0 are given under
@@ -159,7 +159,7 @@ def merge_replacement_files(tmpdir, mergefile):
         if not content:
             continue  # Skip empty files.
         merged.extend(content.get(mergekey, []))
- 
+
     if merged:
         # MainSourceFile: The key is required by the definition inside
         # include/clang/Tooling/ReplacementsYaml.h, but the value
@@ -171,8 +171,8 @@ def merge_replacement_files(tmpdir, mergefile):
     else:
         # Empty the file:
         open(mergefile, "w").close()
- 
- 
+
+
 def find_binary(arg, name, build_path):
     """Get the path for a binary or exit"""
     if arg:
@@ -184,7 +184,7 @@ def find_binary(arg, name, build_path):
                     arg
                 )
             )
- 
+
     built_path = os.path.join(build_path, "bin", name)
     binary = shutil.which(name) or shutil.which(built_path)
     if binary:
@@ -193,8 +193,8 @@ def find_binary(arg, name, build_path):
         raise SystemExit(
             "error: failed to find {} in $PATH or at {}".format(name, built_path)
         )
- 
- 
+
+
 def apply_fixes(args, clang_apply_replacements_binary, tmpdir):
     """Calls clang-apply-fixes on a given directory."""
     invocation = [clang_apply_replacements_binary]
@@ -205,8 +205,8 @@ def apply_fixes(args, clang_apply_replacements_binary, tmpdir):
         invocation.append("-style=" + args.style)
     invocation.append(tmpdir)
     subprocess.call(invocation)
- 
- 
+
+
 def run_tidy(args, clang_tidy_binary, tmpdir, build_path, queue, lock, failed_files):
     """Takes filenames out of queue and runs clang-tidy on them."""
     while True:
@@ -229,7 +229,7 @@ def run_tidy(args, clang_tidy_binary, tmpdir, build_path, queue, lock, failed_fi
             args.plugins,
             args.warnings_as_errors,
         )
- 
+
         proc = subprocess.Popen(
             invocation, stdout=subprocess.PIPE, stderr=subprocess.PIPE
         )
@@ -245,8 +245,8 @@ def run_tidy(args, clang_tidy_binary, tmpdir, build_path, queue, lock, failed_fi
                 sys.stdout.flush()
                 sys.stderr.write(err.decode("utf-8"))
         queue.task_done()
- 
- 
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Runs clang-tidy over all files "
@@ -384,22 +384,22 @@ def main():
         help="Upgrades warnings to errors. Same format as '-checks'",
     )
     args = parser.parse_args()
- 
+
     db_path = "compile_commands.json"
- 
+
     if args.build_path is not None:
         build_path = args.build_path
     else:
         # Find our database
         build_path = find_compilation_database(db_path)
- 
+
     clang_tidy_binary = find_binary(args.clang_tidy_binary, "clang-tidy", build_path)
- 
+
     if args.fix:
         clang_apply_replacements_binary = find_binary(
             args.clang_apply_replacements_binary, "clang-apply-replacements", build_path
         )
- 
+
     combine_fixes = False
     export_fixes_dir = None
     delete_fixes_dir = False
@@ -409,22 +409,22 @@ def main():
             args.export_fixes
         ):
             os.makedirs(args.export_fixes)
- 
+
         if not os.path.isdir(args.export_fixes):
             if not yaml:
                 raise RuntimeError(
                     "Cannot combine fixes in one yaml file. Either install PyYAML or specify an output directory."
                 )
- 
+
             combine_fixes = True
- 
+
         if os.path.isdir(args.export_fixes):
             export_fixes_dir = args.export_fixes
- 
+
     if export_fixes_dir is None and (args.fix or combine_fixes):
         export_fixes_dir = tempfile.mkdtemp()
         delete_fixes_dir = True
- 
+
     try:
         invocation = get_tidy_invocation(
             "",
@@ -455,20 +455,20 @@ def main():
     except:
         print("Unable to run clang-tidy.", file=sys.stderr)
         sys.exit(1)
- 
+
     # Load the database and extract all files.
     database = json.load(open(os.path.join(build_path, db_path)))
     files = set(
         [make_absolute(entry["file"], entry["directory"]) for entry in database]
     )
- 
+
     max_task = args.j
     if max_task == 0:
         max_task = multiprocessing.cpu_count()
- 
+
     # Build up a big regexy filter from all command line arguments.
     file_name_re = re.compile("|".join(args.files))
- 
+
     return_code = 0
     try:
         # Spin up a bunch of tidy-launching threads.
@@ -491,17 +491,17 @@ def main():
             )
             t.daemon = True
             t.start()
- 
+
         # Fill the queue with files.
         for name in files:
             if file_name_re.search(name):
                 task_queue.put(name)
- 
+
         # Wait for all threads to be done.
         task_queue.join()
         if len(failed_files):
             return_code = 1
- 
+
     except KeyboardInterrupt:
         # This is a sad hack. Unfortunately subprocess goes
         # bonkers with ctrl-c and we start forking merrily.
@@ -509,7 +509,7 @@ def main():
         if delete_fixes_dir:
             shutil.rmtree(export_fixes_dir)
         os.kill(0, 9)
- 
+
     if combine_fixes:
         print("Writing fixes to " + args.export_fixes + " ...")
         try:
@@ -518,7 +518,7 @@ def main():
             print("Error exporting fixes.\n", file=sys.stderr)
             traceback.print_exc()
             return_code = 1
- 
+
     if args.fix:
         print("Applying fixes ...")
         try:
@@ -527,11 +527,11 @@ def main():
             print("Error applying fixes.\n", file=sys.stderr)
             traceback.print_exc()
             return_code = 1
- 
+
     if delete_fixes_dir:
         shutil.rmtree(export_fixes_dir)
     sys.exit(return_code)
- 
- 
+
+
 if __name__ == "__main__":
     main()

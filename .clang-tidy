@@ -1,8 +1,8 @@
 ---
-Checks: > 
+Checks: >
   clang-*,
   modernize-*',
-  
+
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 ...

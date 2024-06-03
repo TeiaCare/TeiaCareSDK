@@ -47,7 +47,7 @@ TEST_F(test_datetime_timedelta, ctor_duration_move)
 TEST_F(test_datetime_timedelta, ctor_durations_unordered)
 {
     const auto td1 = tc::sdk::timedelta(std::chrono::days(1), 6ns, 5us, 4ms, 3s, 2min, 1h); // 1 day + 01:02:03.004005006
-    const auto td2 = tc::sdk::timedelta(25h, 2min, 3s, 4ms, 5us, 6ns); // 25:02:03.004005006
+    const auto td2 = tc::sdk::timedelta(25h, 2min, 3s, 4ms, 5us, 6ns);                      // 25:02:03.004005006
 
     EXPECT_EQ(td1, td2);
 }
@@ -55,7 +55,7 @@ TEST_F(test_datetime_timedelta, ctor_durations_unordered)
 TEST_F(test_datetime_timedelta, ctor_durations_overflow)
 {
     const auto td1 = tc::sdk::timedelta(std::chrono::days(1), 1h, 2min, 3000ms, 4000us, 5006ns); // 01:02:03.004005006
-    const auto td2 = tc::sdk::timedelta(25h, 2min, 3s, 4ms, 5us, 6ns);      // 01:02:03.004005006
+    const auto td2 = tc::sdk::timedelta(25h, 2min, 3s, 4ms, 5us, 6ns);                           // 01:02:03.004005006
 
     EXPECT_EQ(td1, td2);
 }
@@ -123,7 +123,6 @@ TEST_F(test_datetime_timedelta, operator_plus)
     EXPECT_EQ(t1 + delta, t2);
     EXPECT_EQ(t2 + delta, tc::sdk::timedelta(2h, 2min, 4s));
 }
-
 
 TEST_F(test_datetime_timedelta, operator_minus)
 {

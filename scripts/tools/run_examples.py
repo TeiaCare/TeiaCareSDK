@@ -5,7 +5,7 @@ import pathlib
 import os
 
 def parse():
-    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)    
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("examples_directory", help="Examples Directory")
     return parser.parse_args()
 
@@ -24,7 +24,7 @@ def examples(args):
     if not examples_path.exists() or not examples_path.is_dir():
         print("Examples directory must be an existing directory")
         return
-    
+
     examples_found = False
     for example in examples_path.iterdir():
         if example.is_file() and is_executable(example):

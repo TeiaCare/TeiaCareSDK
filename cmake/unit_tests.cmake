@@ -1,4 +1,4 @@
-function(setup_unit_tests TARGET_NAME)	
+function(setup_unit_tests TARGET_NAME)
 	set(TARGET_NAME_UNIT_TEST ${TARGET_NAME}_unit_tests)
 	find_package(GTest REQUIRED)
 	include(GoogleTest)

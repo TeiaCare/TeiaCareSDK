@@ -3,7 +3,7 @@ add_library(${TARGET_NAME})
 add_library(teiacare::sdk ALIAS ${TARGET_NAME})
 
 configure_file(
-    src/version.cpp.in 
+    src/version.cpp.in
     ${CMAKE_CURRENT_SOURCE_DIR}/src/version.cpp
 )
 
@@ -48,7 +48,7 @@ set(TARGET_SOURCES
     src/datetime/datetime.cpp
     src/datetime/time.cpp
     src/datetime/timedelta.cpp
-    
+
     src/event_dispatcher.cpp
     src/high_precision_timer.cpp
     src/rate_limiter.cpp
@@ -67,7 +67,7 @@ list(TRANSFORM ALL_SOURCES_ABS_PATH PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
 
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
 target_sources(${TARGET_NAME} PUBLIC ${TARGET_HEADERS} PRIVATE ${TARGET_SOURCES})
-target_include_directories(${TARGET_NAME} 
+target_include_directories(${TARGET_NAME}
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>
         $<INSTALL_INTERFACE:CMAKE_INSTALL_INCLUDEDIR>
@@ -127,9 +127,9 @@ endif()
 if(TC_ENABLE_DOCS)
     include(doxygen)
     setup_docs(
-        ${TARGET_NAME} 
+        ${TARGET_NAME}
         "${TARGET_HEADERS}"
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/teiacare/sdk 
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/teiacare/sdk
         ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile
     )
 endif()

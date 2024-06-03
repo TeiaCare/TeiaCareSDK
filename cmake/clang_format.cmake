@@ -18,18 +18,18 @@ function(setup_target_clang_format TARGET_NAME TARGET_FOLDERS)
         message(WARNING "clang-format not found!")
         return()
     endif()
-    
+
     if(NOT ${PYTHON_FOUND})
         message(WARNING "python3 not found!")
         return()
     endif()
 
     add_custom_target(${TARGET_NAME}_clang_format ALL
-        COMMAND ${Python3_EXECUTABLE} 
+        COMMAND ${Python3_EXECUTABLE}
             ${CMAKE_SOURCE_DIR}/scripts/tools/run_clang_format.py
             --clang-format-executable ${CLANG_FORMAT}
             --in-place
-            --recursive 
+            --recursive
             ${TARGET_FOLDERS}
         COMMENT "Running ${CLANG_FORMAT} on ${TARGET_NAME}"
     )

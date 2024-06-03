@@ -5,7 +5,7 @@ on:
     branches:
       - 'develop'
       - 'feature/docs'
-  
+
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
@@ -23,15 +23,15 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      
+
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
 
@@ -45,13 +45,13 @@ jobs:
       - name: Create dummy Docs
         run: |
           sudo chmod a+rwx docs
-          
+
       - name: Upload Docs
         uses: actions/upload-pages-artifact@v3
         with:
           name: github-pages
           path: 'docs'
-      
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

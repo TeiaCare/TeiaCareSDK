@@ -45,11 +45,11 @@ function(validate_project_options)
     if(TC_ENABLE_SANITIZER_ADDRESS AND TC_ENABLE_SANITIZER_THREAD)
         message(FATAL_ERROR "It's not possible to set both Address and Thread sanitizers simultaneously.")
     endif()
-    
+
     if(TC_ENABLE_UNIT_TESTS_COVERAGE AND NOT TC_ENABLE_UNIT_TESTS)
         message(FATAL_ERROR "Unit Tests must be enabled in order to run Code Coverage")
     endif()
-    
+
     if(TC_ENABLE_UNIT_TESTS_COVERAGE AND TC_ENABLE_BENCHMARKS)
         message(FATAL_ERROR "Code Coverage cannot be enabled with Benchmarks")
     endif()

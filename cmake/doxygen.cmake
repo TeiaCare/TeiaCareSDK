@@ -17,12 +17,12 @@ function(setup_docs TARGET_NAME TARGET_HEADERS TARGET_HEADERS_DIRECTORY DOXYFILE
     set(DOXYGEN_OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/docs)
     set(DOXYGEN_INDEX_FILE ${DOXYGEN_OUTPUT_DIR}/html/index.html)
     set(DOXYFILE_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
-    
+
     set(DOXYFILE_LOGO ${CMAKE_CURRENT_SOURCE_DIR}/docs/logo/logo-small.png)
     set(DOXYFILE_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/docs/style/header.html)
     set(DOXYFILE_FOOTER ${CMAKE_CURRENT_SOURCE_DIR}/docs/style/footer.html)
 
-    set(DOXYFILE_EXTRA_FILES 
+    set(DOXYFILE_EXTRA_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/docs/style/doxygen-awesome-darkmode-toggle.js
         ${CMAKE_CURRENT_SOURCE_DIR}/docs/style/doxygen-awesome-fragment-copy-button.js
     )
@@ -44,7 +44,7 @@ function(setup_docs TARGET_NAME TARGET_HEADERS TARGET_HEADERS_DIRECTORY DOXYFILE
         COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE_OUT}
         MAIN_DEPENDENCY ${DOXYFILE_OUT} ${DOXYFILE_IN}
         COMMENT "Generating docs"
-    )    
+    )
     add_custom_target(${TARGET_NAME}_docs ALL DEPENDS ${DOXYGEN_INDEX_FILE})
     install(DIRECTORY ${DOXYGEN_OUTPUT_DIR} DESTINATION .)
 endfunction()

@@ -1,12 +1,12 @@
 #!/usr/bin/python
 # Copyright 2024 TeiaCare
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,7 +21,7 @@ def parse():
     parser.add_argument("build_type", help="Debug or Release", choices=['Debug', 'Release', 'RelWithDebInfo'])
     parser.add_argument("--run_gtest", required=False, default=False, action='store_true')
     parser.add_argument("--test_dir", help="Unit Tests root directory", required=False, default='./build')
-    parser.add_argument("--xml_results_path", help="Unit Tests xml results path", required=False, default='../../results/unit_tests/unit_tests.xml') 
+    parser.add_argument("--xml_results_path", help="Unit Tests xml results path", required=False, default='../../results/unit_tests/unit_tests.xml')
     return parser.parse_args()
 
 def run_ctest(args):

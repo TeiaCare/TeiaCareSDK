@@ -26,7 +26,7 @@ RUN python3 -m pip install -r scripts/requirements.txt --no-cache-dir --disable-
 ###############################################################################
 ## unit tests - coverage
 ## docker build --target tests . -t sdk:tests
-## docker build --target tests-export --output type=local,dest=export/tests . 
+## docker build --target tests-export --output type=local,dest=export/tests .
 ###############################################################################
 FROM base AS tests
 ARG BUILD_TYPE
@@ -48,7 +48,7 @@ COPY --from=tests /teiacare_sdk/results/ .
 ###############################################################################
 ## unit tests - address sanitizer
 ## docker build --target address-sanitizer . -t sdk:address-sanitizer
-## docker build --target address-sanitizer-export --output type=local,dest=export/address-sanitizer . 
+## docker build --target address-sanitizer-export --output type=local,dest=export/address-sanitizer .
 ###############################################################################
 FROM base AS address-sanitizer
 ARG BUILD_TYPE
@@ -69,7 +69,7 @@ COPY --from=tests /teiacare_sdk/results/ .
 ###############################################################################
 ## unit tests - thread sanitizer
 ## docker build --target thread-sanitizer . -t sdk:thread-sanitizer
-## docker build --target thread-sanitizer-export --output type=local,dest=export/thread-sanitizer . 
+## docker build --target thread-sanitizer-export --output type=local,dest=export/thread-sanitizer .
 ###############################################################################
 FROM base AS thread-sanitizer
 ARG BUILD_TYPE
@@ -106,7 +106,7 @@ RUN python3 scripts/tools/run_examples.py install/examples
 ###############################################################################
 ## benchmarks
 ## docker build --target benchmarks . -t sdk:benchmarks
-## docker build --target benchmarks-export --output type=local,dest=export/benchmarks . 
+## docker build --target benchmarks-export --output type=local,dest=export/benchmarks .
 ###############################################################################
 FROM base AS benchmarks
 ARG BUILD_TYPE
@@ -127,7 +127,7 @@ COPY --from=benchmarks /teiacare_sdk/results/ .
 ###############################################################################
 ## valgrind
 ## docker build --target valgrind . -t sdk:valgrind
-## docker build --target valgrind-export --output type=local,dest=export/valgrind . 
+## docker build --target valgrind-export --output type=local,dest=export/valgrind .
 ###############################################################################
 FROM base AS valgrind
 ARG BUILD_TYPE=Debug
@@ -144,7 +144,7 @@ RUN python3 scripts/cmake/configure.py ${BUILD_TYPE} --warnings --unit_tests
 RUN python3 scripts/cmake/build.py
 RUN python3 scripts/cmake/install.py
 RUN python3 scripts/tools/run_valgrind.py install/tests/teiacare_sdk_unit_tests --gtest_filter=-test_uuid*:test_rate_limiter* --memcheck
-RUN python3 scripts/tools/run_valgrind.py install/tests/teiacare_sdk_unit_tests --gtest_filter=-test_uuid*:test_rate_limiter* --callgrind 
+RUN python3 scripts/tools/run_valgrind.py install/tests/teiacare_sdk_unit_tests --gtest_filter=-test_uuid*:test_rate_limiter* --callgrind
 
 ## valgrind-export
 FROM scratch as valgrind-export
@@ -153,7 +153,7 @@ COPY --from=valgrind /teiacare_sdk/results/ .
 ###############################################################################
 ## docs
 ## docker build --target docs . -t sdk:docs
-## docker build --target docs-export --output type=local,dest=export/docs . 
+## docker build --target docs-export --output type=local,dest=export/docs .
 ###############################################################################
 FROM base AS docs
 RUN apt-get update -qq && export DEBIAN_FRONTEND=noninteractive && \

@@ -1,12 +1,12 @@
 #!/usr/bin/python
 # Copyright 2024 TeiaCare
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -44,7 +44,7 @@ def set_environment(profile_name):
                           f"\nPlease check the conan profile {profile_name}"
                           f"\nat {os.getenv('CONAN_USER_HOME')}/.conan/profiles"
                           "\n========================================================\n")
-    
+
     os.environ['CC'] = CC
     os.environ['CXX'] = CXX
 
@@ -62,7 +62,7 @@ def get_profile_path(profile_name):
 def conan_install(conanfile_directory, profile_name, build_type):
     command = [
         'conan', 'install', f'{conanfile_directory}',
-        '--install-folder', f'build/modules', 
+        '--install-folder', f'build/modules',
         '--settings', f'build_type={build_type}',
         '--profile:build', f'{profile_name}',
         '--profile:host', f'{profile_name}',
@@ -74,7 +74,7 @@ def cmake_configure(build_type):
     command = [
         'cmake',
         '-G', 'Ninja',
-        '-D', f'CMAKE_BUILD_TYPE={build_type}', 
+        '-D', f'CMAKE_BUILD_TYPE={build_type}',
         '-B', f'build/{build_type}',
         '-S', '.'
     ]
@@ -98,7 +98,7 @@ def cmake_install(build_type):
 
 def main():
     args = parse()
-    
+
     profile_name = f'{args.compiler+args.compiler_version}'
     profile_path = get_profile_path(profile_name)
 

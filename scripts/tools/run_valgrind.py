@@ -1,12 +1,12 @@
 #!/usr/bin/python
 # Copyright 2024 TeiaCare
-# 
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +20,7 @@ def check():
     run(['valgrind', '--version'])
 
 def parse():
-    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)    
+    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("program_path", help="Path to the program to analyze")
     parser.add_argument("program_args", help="Optional arguments to the analyzed program", nargs='*')
 
@@ -28,18 +28,18 @@ def parse():
     parser.add_argument("--memcheck_log_path", help="Valgrind memcheck log path", required=False, default='./results/memcheck/memcheck.log')
     parser.add_argument("--memcheck_output_path", help="Valgrind memcheck output path", required=False, default='./results/memcheck/memcheck.xml')
     parser.add_argument("--memcheck_suppression_path", help="Valgrind memcheck suppression path", required=False, default='./scripts/valgrind/suppressions')
-    
+
     parser.add_argument("--callgrind", required=False, default=False, action='store_true')
     parser.add_argument("--callgrind_log_path", help="Valgrind callgrind log path", required=False, default='./results/callgrind/callgrind.log')
     parser.add_argument("--callgrind_output_path", help="Valgrind callgrind output path", required=False, default='./results/callgrind/callgrind.out')
-    
+
     args, program_args = parser.parse_known_args()
     return args, program_args
 
 def valgrind(args, program_args):
     if args.memcheck:
         memcheck(args, program_args)
-    
+
     if args.callgrind:
         callgrind(args, program_args)
 
@@ -64,7 +64,7 @@ def memcheck(args, program_args):
         args.program_path
     ]
     # '--gen-suppressions=all',
-    
+
     cmd.extend(program_args)
     run(cmd, debug=True)
 

@@ -262,7 +262,7 @@ TEST_F(test_datetime_datetime, to_string_format)
     EXPECT_EQ(dt.to_string("%Y-%B-%d"), "2024-May-31");
     EXPECT_EQ(dt.to_string("%Y-%B-%d %a"), "2024-May-31 Fri");
     EXPECT_EQ(dt.to_string("%Y-%B-%d %A"), "2024-May-31 Friday");
-    
+
     // time
     EXPECT_EQ(dt.to_string("%T"), "01:02:03.004");
     EXPECT_EQ(dt.to_string("%R"), "01:02");

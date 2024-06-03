@@ -20,7 +20,7 @@ set(UNIT_TESTS_SRC
 
     src/test_event_dispatcher.cpp
     src/test_event_dispatcher.hpp
-    
+
     src/test_geometry_line.cpp
     src/test_geometry_line.hpp
     src/test_geometry_point.cpp
