@@ -131,6 +131,7 @@ jobs:
             python3 scripts/cmake/configure.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION) --examples
             python3 scripts/cmake/build.py ${{BUILD_TYPE}}
             python3 scripts/cmake/install.py ${{BUILD_TYPE}}
+            python3 scripts/tools/run_examples.py install/examples
           displayName: 'Examples'
           timeoutInMinutes: 5
           env:
