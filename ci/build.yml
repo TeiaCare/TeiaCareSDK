@@ -24,23 +24,23 @@ jobs:
 
           # Full path to MSVC 2022 build environment setup script:
           # https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md#visual-studio-enterprise-2022
-          # windows2022_msvc2022:
-          #   AGENT: 'windows-2022'
-          #   COMPILER: visual_studio
-          #   COMPILER_VERSION: 17
-          #   SETUP_BUILD_ENV: 'call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"'
-          #   ACTIVATE_VIRTUAL_ENV: 'call ".venv\Scripts\activate.bat"'
+          windows2022_msvc2022:
+            AGENT: 'windows-2022'
+            COMPILER: visual_studio
+            COMPILER_VERSION: 17
+            SETUP_BUILD_ENV: 'call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"'
+            ACTIVATE_VIRTUAL_ENV: 'call ".venv\Scripts\activate.bat"'
 
           # Full path to MSVC 2019 build environment setup script:
           # https://github.com/actions/runner-images/blob/main/images/windows/Windows2019-Readme.md#visual-studio-enterprise-2019
-          # windows2019_msvc2019:
-          #   AGENT: 'windows-2019'
-          #   COMPILER: visual_studio
-          #   COMPILER_VERSION: 16
-          #   SETUP_BUILD_ENV: 'call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"'
-          #   ACTIVATE_VIRTUAL_ENV: 'call ".venv\Scripts\activate.bat"'
+          windows2019_msvc2019:
+            AGENT: 'windows-2019'
+            COMPILER: visual_studio
+            COMPILER_VERSION: 16
+            SETUP_BUILD_ENV: 'call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"'
+            ACTIVATE_VIRTUAL_ENV: 'call ".venv\Scripts\activate.bat"'
 
-          ## Not available yet
+          # Not available yet
           # ubuntu2404_gcc14:
           #   AGENT: 'ubuntu-24.04'
           #   COMPILER: gcc
@@ -48,7 +48,7 @@ jobs:
           #   SETUP_BUILD_ENV: 'echo $(COMPILER) $(COMPILER_VERSION)'
           #   ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
 
-          ## Not available yet
+          # Not available yet
           # ubuntu2404_clang18:
           #   AGENT: 'ubuntu-24.04'
           #   COMPILER: clang
@@ -56,24 +56,17 @@ jobs:
           #   SETUP_BUILD_ENV: 'echo $(COMPILER) $(COMPILER_VERSION)'
           #   ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
 
-          # ubuntu2204_gcc12:
-          #   AGENT: 'ubuntu-22.04'
-          #   COMPILER: gcc
-          #   COMPILER_VERSION: 12
-          #   SETUP_BUILD_ENV: 'echo $(COMPILER) $(COMPILER_VERSION)'
-          #   ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
+          ubuntu2204_gcc12:
+            AGENT: 'ubuntu-22.04'
+            COMPILER: gcc
+            COMPILER_VERSION: 12
+            SETUP_BUILD_ENV: 'echo $(COMPILER) $(COMPILER_VERSION)'
+            ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
 
-          # ubuntu2204_clang15:
-          #   AGENT: 'ubuntu-22.04'
-          #   COMPILER: clang
-          #   COMPILER_VERSION: 15
-          #   SETUP_BUILD_ENV: 'echo $(COMPILER) $(COMPILER_VERSION)'
-          #   ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
-
-          macos14_clang14:
-            AGENT: 'macOS-14'
+          ubuntu2204_clang15:
+            AGENT: 'ubuntu-22.04'
             COMPILER: clang
-            COMPILER_VERSION: 14
+            COMPILER_VERSION: 15
             SETUP_BUILD_ENV: 'echo $(COMPILER) $(COMPILER_VERSION)'
             ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
 
@@ -135,6 +128,17 @@ jobs:
         - script: |
             $(ACTIVATE_VIRTUAL_ENV)
             $(SETUP_BUILD_ENV)
+            python3 scripts/cmake/configure.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION) --examples
+            python3 scripts/cmake/build.py ${{BUILD_TYPE}}
+            python3 scripts/cmake/install.py ${{BUILD_TYPE}}
+          displayName: 'Examples'
+          timeoutInMinutes: 5
+          env:
+            CONAN_USER_HOME: $(Build.SourcesDirectory)
+
+        - script: |
+            $(ACTIVATE_VIRTUAL_ENV)
+            $(SETUP_BUILD_ENV)
             python3 scripts/cmake/configure.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION) --warnings --coverage
             python3 scripts/cmake/build.py ${{BUILD_TYPE}}
             python3 scripts/cmake/install.py ${{BUILD_TYPE}}
@@ -159,23 +163,24 @@ jobs:
             buildPlatform: $(Agent.OS)
             buildConfiguration: ${{BUILD_TYPE}}
 
-        - ${{ if eq(variables['Agent.OS'], 'Linux') }}:
-          - script: |
-              $(ACTIVATE_VIRTUAL_ENV)
-              $(SETUP_BUILD_ENV)
-              python3 scripts/tools/run_coverage.py $(COMPILER) $(COMPILER_VERSION)
-            displayName: 'Code Coverage'
-            timeoutInMinutes: 5
-            env:
-              CONAN_USER_HOME: $(Build.SourcesDirectory)
+        - script: |
+            $(ACTIVATE_VIRTUAL_ENV)
+            $(SETUP_BUILD_ENV)
+            python3 scripts/tools/run_coverage.py $(COMPILER) $(COMPILER_VERSION)
+          displayName: 'Code Coverage'
+          condition: eq(variables['Agent.OS'], 'Linux')
+          timeoutInMinutes: 5
+          env:
+            CONAN_USER_HOME: $(Build.SourcesDirectory)
 
-          - task: PublishCodeCoverageResults@1
-            displayName: 'Publish Code Coverage Results'
-            inputs:
-              codeCoverageTool: 'Cobertura'
-              summaryFileLocation: '$(Build.SourcesDirectory)/export/test_results/coverage/cobertura.xml'
-              additionalCodeCoverageFiles: '$(Build.SourcesDirectory)/VERSION'
-              pathToSources: '$(Build.SourcesDirectory)'
+        - task: PublishCodeCoverageResults@1
+          displayName: 'Publish Code Coverage Results'
+          condition: eq(variables['Agent.OS'], 'Linux')
+          inputs:
+            codeCoverageTool: 'Cobertura'
+            summaryFileLocation: '$(Build.SourcesDirectory)/export/test_results/coverage/cobertura.xml'
+            additionalCodeCoverageFiles: '$(Build.SourcesDirectory)/VERSION'
+            pathToSources: '$(Build.SourcesDirectory)'
 
         # - script: |
         #     $(ACTIVATE_VIRTUAL_ENV)
@@ -191,21 +196,10 @@ jobs:
         # - script: |
         #     $(ACTIVATE_VIRTUAL_ENV)
         #     $(SETUP_BUILD_ENV)
-        #     python3 scripts/cmake/configure.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION) --examples
-        #     python3 scripts/cmake/build.py ${{BUILD_TYPE}}
-        #     python3 scripts/cmake/install.py ${{BUILD_TYPE}}
-        #   displayName: 'Examples'
-        #   timeoutInMinutes: 5
-        #   env:
-        #     CONAN_USER_HOME: $(Build.SourcesDirectory)
-
-        # - script: |
-        #     $(ACTIVATE_VIRTUAL_ENV)
-        #     $(SETUP_BUILD_ENV)
         #     python3 scripts/conan/create.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION) --install_dir $(Build.SourcesDirectory)
-        #   #conan remote add artifactory $(ARTIFACTORY_HOST)/artifactory/api/conan/conan False
-        #   #conan user $(ARTIFACTORY_USERNAME) -r artifactory -p $(ARTIFACTORY_PASSWORD)
-        #   #python3 scripts/conan/upload.py VERSION artifactory
+        #     conan remote add artifactory $(ARTIFACTORY_HOST)/artifactory/api/conan/conan False
+        #     conan user $(ARTIFACTORY_USERNAME) -r artifactory -p $(ARTIFACTORY_PASSWORD)
+        #     python3 scripts/conan/upload.py VERSION artifactory
         #   displayName: 'Conan Package'
         #   timeoutInMinutes: 5
         #   env:
