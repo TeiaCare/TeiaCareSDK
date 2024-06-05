@@ -50,21 +50,20 @@ TeiaCareSDK is a collection of reusable C++ components designed to make your dev
 | UUID Generator       | Singleton for generating and managing UUID Version 4 values, offering creation from strings and random generation.                   |
 | Version              | Namespace with details about project, build, and operating system.                                                                   |
 
-## Supported Platforms
-[![Build Status](https://dev.azure.com/teiacare/Ancelia/_apis/build/status%2FTeiaCore%2Fv3%2FTeiaCoreSDK?branchName=develop)](https://dev.azure.com/teiacare/Ancelia/_build/latest?definitionId=65&branchName=develop)
+## Supported Configurations
+Azure DevOps build matrix is available [here](https://dev.azure.com/teiacare/TeiaCare/_build?definitionId=91&_a=summary).
 
-
-| **OS**               | **Compiler**       | **Support** |
-|----------------------|--------------------|:-----------:|
-| Windows Server 2022  | Visual Studio 2022 | ✅          |
-| Windows Server 2022  | Clang 16           | 🚧          |
-| Windows Server 2019  | Visual Studio 2019 | ✅          |
-| Windows Server 2019  | Clang 16           | 🚧          |
-| Ubuntu 22.04         | GCC 12             | ✅          |
-| Ubuntu 22.04         | Clang 15           | ✅          |
-| Ubuntu 24.04         | GCC 14             | 🚧          |
-| Ubuntu 24.04         | Clang 18           | 🚧          |
-| MacOS 14 Sonoma      | Apple-Clang 15     | ✅          |
+| **OS**               | **Compiler**       | **Debug** | **Release** | **RelWithDebInfo** |
+|----------------------|--------------------|:---------:|:-----------:|:------------------:|
+| Windows Server 2022  | Visual Studio 2022 |  [![Build Status](https://dev.azure.com/teiacare/TeiaCare/_apis/build/status%2FTeiaCareSDK?branchName=develop&jobName=Debug&configuration=Debug%20windows2022_msvc2022)](https://dev.azure.com/teiacare/TeiaCare/_build/latest?definitionId=91&branchName=develop) |[![Build Status](https://dev.azure.com/teiacare/TeiaCare/_apis/build/status%2FTeiaCareSDK?branchName=develop&jobName=Release&configuration=Release%20windows2022_msvc2022)](https://dev.azure.com/teiacare/TeiaCare/_build/latest?definitionId=91&branchName=develop) | [![Build Status](https://dev.azure.com/teiacare/TeiaCare/_apis/build/status%2FTeiaCareSDK?branchName=develop&jobName=RelWithDebInfo&configuration=RelWithDebInfo%20windows2022_msvc2022)](https://dev.azure.com/teiacare/TeiaCare/_build/latest?definitionId=91&branchName=develop) |
+| Windows Server 2022  | Clang 16           | 🚧 | 🚧 | 🚧 |
+| Windows Server 2019  | Visual Studio 2019 | [![Build Status](https://dev.azure.com/teiacare/TeiaCare/_apis/build/status%2FTeiaCareSDK?branchName=develop&jobName=Debug&configuration=Debug%20windows2019_msvc2019)](https://dev.azure.com/teiacare/TeiaCare/_build/latest?definitionId=91&branchName=develop) | [![Build Status](https://dev.azure.com/teiacare/TeiaCare/_apis/build/status%2FTeiaCareSDK?branchName=develop&jobName=Release&configuration=Release%20windows2019_msvc2019)](https://dev.azure.com/teiacare/TeiaCare/_build/latest?definitionId=91&branchName=develop) | [![Build Status](https://dev.azure.com/teiacare/TeiaCare/_apis/build/status%2FTeiaCareSDK?branchName=develop&jobName=RelWithDebInfo&configuration=RelWithDebInfo%20windows2019_msvc2019)](https://dev.azure.com/teiacare/TeiaCare/_build/latest?definitionId=91&branchName=develop) |
+| Windows Server 2019  | Clang 16           | 🚧 | 🚧 | 🚧 |
+| Ubuntu 22.04         | GCC 12             | [![Build Status](https://dev.azure.com/teiacare/TeiaCare/_apis/build/status%2FTeiaCareSDK?branchName=develop&jobName=Debug&configuration=Debug%20ubuntu2204_gcc12)](https://dev.azure.com/teiacare/TeiaCare/_build/latest?definitionId=91&branchName=develop) | [![Build Status](https://dev.azure.com/teiacare/TeiaCare/_apis/build/status%2FTeiaCareSDK?branchName=develop&jobName=Release&configuration=Release%20ubuntu2204_gcc12)](https://dev.azure.com/teiacare/TeiaCare/_build/latest?definitionId=91&branchName=develop) | [![Build Status](https://dev.azure.com/teiacare/TeiaCare/_apis/build/status%2FTeiaCareSDK?branchName=develop&jobName=RelWithDebInfo&configuration=RelWithDebInfo%20ubuntu2204_gcc12)](https://dev.azure.com/teiacare/TeiaCare/_build/latest?definitionId=91&branchName=develop) |
+| Ubuntu 22.04         | Clang 15           | [![Build Status](https://dev.azure.com/teiacare/TeiaCare/_apis/build/status%2FTeiaCareSDK?branchName=develop&jobName=Debug&configuration=Debug%20ubuntu2204_clang15)](https://dev.azure.com/teiacare/TeiaCare/_build/latest?definitionId=91&branchName=develop) | [![Build Status](https://dev.azure.com/teiacare/TeiaCare/_apis/build/status%2FTeiaCareSDK?branchName=develop&jobName=Release&configuration=Release%20ubuntu2204_clang15)](https://dev.azure.com/teiacare/TeiaCare/_build/latest?definitionId=91&branchName=develop) | [![Build Status](https://dev.azure.com/teiacare/TeiaCare/_apis/build/status%2FTeiaCareSDK?branchName=develop&jobName=RelWithDebInfo&configuration=RelWithDebInfo%20ubuntu2204_clang15)](https://dev.azure.com/teiacare/TeiaCare/_build/latest?definitionId=91&branchName=develop) |
+| Ubuntu 24.04         | GCC 14             | 🚧 | 🚧 | 🚧 |
+| Ubuntu 24.04         | Clang 18           | 🚧 | 🚧 | 🚧 |
+| MacOS 14 Sonoma      | Apple-Clang 15     | [![Build Status](https://dev.azure.com/teiacare/TeiaCare/_apis/build/status%2FTeiaCareSDK?branchName=develop&jobName=Debug&configuration=Debug%20macos14_clang15)](https://dev.azure.com/teiacare/TeiaCare/_build/latest?definitionId=91&branchName=develop) | [![Build Status](https://dev.azure.com/teiacare/TeiaCare/_apis/build/status%2FTeiaCareSDK?branchName=develop&jobName=Release&configuration=Release%20macos14_clang15)](https://dev.azure.com/teiacare/TeiaCare/_build/latest?definitionId=91&branchName=develop) | [![Build Status](https://dev.azure.com/teiacare/TeiaCare/_apis/build/status%2FTeiaCareSDK?branchName=develop&jobName=RelWithDebInfo&configuration=RelWithDebInfo%20macos14_clang15)](https://dev.azure.com/teiacare/TeiaCare/_build/latest?definitionId=91&branchName=develop) |
 
 ## Try online on Wandbox
 [![Try Online](https://img.shields.io/badge/Wandbox-ok?style=plastic&label=Try%20Online&link=https%3A%2F%2Fimg.shields.io%2Fwandbox.org%2Fpermlink%2FsfU3VY4HFMBZp8QI)](https://wandbox.org/permlink/sfU3VY4HFMBZp8QI)
