@@ -248,3 +248,13 @@ inline std::ostream& operator<<(std::ostream& os, const std::chrono::day& d)
 
     return os;
 }
+
+#if defined(__apple_build_version__)
+// Workaround for Apple Clang on MacOS bug: invalid operands to binary expression ('basic_ostream<char, char_traits<char>>' and 'duration'
+template <typename Rep, typename Period>
+inline std::ostream& operator<<(std::ostream& os, const std::chrono::duration<Rep, Period>& d)
+{
+    os << d.count();
+    return os;
+}
+#endif
