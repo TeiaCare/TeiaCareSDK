@@ -37,6 +37,3 @@ class TeiaCareSDKTest(ConanFile):
         if not cross_building(self):
             cmd = os.path.join(self.cpp.build.bindirs[0], "teiacare_sdk_package_test")
             self.run(cmd, env="conanrun")
-
-# TODO: create wrapper script
-# conan test test_package --profile:build ./scripts/profiles/gcc12 --profile:host ./scripts/profiles/gcc12 teiacare_sdk/1.0.0

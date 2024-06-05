@@ -15,11 +15,16 @@
 
 from conans import ConanFile
 from conan.tools.cmake import CMake, CMakeToolchain
+import re
 
 def get_project_version():
-    with open('VERSION') as version_file:
-        # TODO: validate Regex format
-        return version_file.read().strip()
+    with open('VERSION', encoding='utf8') as version_file:
+        version_regex = r'^\d+\.\d+\.\d+$'
+        version = version_file.read().strip()
+        if re.match(version_regex, version):
+            return version
+        else:
+            raise ValueError(f"Invalid version detected into file VERSION: {version}")
 
 class TeiaCareSDK(ConanFile):
     name = "teiacare_sdk"

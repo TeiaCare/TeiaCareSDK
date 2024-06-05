@@ -18,7 +18,16 @@ import argparse
 import pathlib
 import sys
 import os
+import re
 
+def get_project_version():
+    with open('VERSION', encoding='utf8') as version_file:
+        version_regex = r'^\d+\.\d+\.\d+$'
+        version = version_file.read().strip()
+        if re.match(version_regex, version):
+            return version
+        else:
+            raise ValueError(f"Invalid version detected into file VERSION: {version}")
 
 def run(command):
     try:
@@ -59,14 +68,13 @@ def get_profile_path(profile_name):
     profile_path = pathlib.Path(os.getenv('CONAN_USER_HOME'), ".conan", "profiles", profile_name)
     return profile_path
 
-def conan_install(conanfile_directory, profile_name, build_type):
+def conan_install(profile_name, build_type):
     command = [
-        'conan', 'install', f'{conanfile_directory}',
-        '--install-folder', f'build/modules',
+        'conan', 'install', f'teiacare_sdk/{get_project_version()}@_/_',
+        '--install-folder', 'build/modules',
         '--settings', f'build_type={build_type}',
         '--profile:build', f'{profile_name}',
-        '--profile:host', f'{profile_name}',
-        '--build', 'missing'
+        '--profile:host', f'{profile_name}'
     ]
     run(command)
 
@@ -75,8 +83,21 @@ def cmake_configure(build_type):
         'cmake',
         '-G', 'Ninja',
         '-D', f'CMAKE_BUILD_TYPE={build_type}',
+        '-D', 'TC_ENABLE_UNIT_TESTS=False',
+        '-D', 'TC_ENABLE_UNIT_TESTS_COVERAGE=False',
+        '-D', 'TC_ENABLE_BENCHMARKS=False',
+        '-D', 'TC_ENABLE_EXAMPLES=False',
+        '-D', 'TC_ENABLE_WARNINGS_ERROR=False',
+        '-D', 'TC_ENABLE_SANITIZER_ADDRESS=False',
+        '-D', 'TC_ENABLE_SANITIZER_THREAD=False',
+        '-D', 'TC_ENABLE_CLANG_FORMAT=False',
+        '-D', 'TC_ENABLE_CLANG_TIDY=False',
+        '-D', 'TC_ENABLE_CPPCHECK=False',
+        '-D', 'TC_ENABLE_CPPLINT=False',
+        '-D', 'TC_ENABLE_DOCS=False',
         '-B', f'build/{build_type}',
-        '-S', '.'
+        '-S', '.',
+        '--fresh'
     ]
     run(command)
 
@@ -101,10 +122,8 @@ def main():
 
     profile_name = f'{args.compiler+args.compiler_version}'
     profile_path = get_profile_path(profile_name)
-
     set_environment(profile_name)
-    conanfile_directory = pathlib.Path(__file__).resolve().parent
-    conan_install(conanfile_directory, profile_path, args.build_type)
+    conan_install(profile_path, args.build_type)
 
     cmake_configure(args.build_type)
     cmake_build(args.build_type)

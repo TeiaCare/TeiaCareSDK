@@ -248,25 +248,16 @@ cd TeiaCareSDK
 
 # Create, test and install local package
 # Notes:
-# 1) The install_dir path must be the parent directory of a valid Conan cache (i.e. ".conan" folder)
-#    So, in order to install the package in the Conan cache of the current repository, it is required to set --install_dir $PWD
+# 1) The install directory path must be a valid Conan cache (i.e. ".conan" folder) located in the current directory
+#    So, in order to install the package in a desired repository folder, it is required to run this script from the repository folder directly.
 # 2) The Conan package tests are automatically run during package creation.
 #    The directory test_package contains a test project that is built to validate the proper package creation.
 
-python ./scripts/conan/create.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION> --install_dir <INSTALL_DIR_PATH>
-```
+python ./scripts/conan/create.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION>
 
-## Conan Package - Test
-```bash
-git clone https://teiacare@dev.azure.com/teiacare/Ancelia/_git/TeiaCareSDK
-cd TeiaCareSDK
-cd sdk_package_test
-
-# Build and install the test package executable at $PWD/install/teiacare_sdk_client_package_test
-python build.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION>
-
-# Run it
-$PWD/install/teiacare_sdk_client_package_test
+# Build, install and run the test package executable
+python test_package/build.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION>
+$PWD/install/test_package/teiacare_sdk_test_package
 ```
 
 ## Conan Package - Artifactory Setup
@@ -278,7 +269,7 @@ conan remote add artifactory http://<ADDRESS>:<PORT>/artifactory/api/conan/conan
 conan user -p <ARTIFACTORY_PERSONAL_ACCESS_TOKEN> -r artifactory <YOUR_USERNAME>
 
 python3 scripts/conan/create.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION>
-python scripts/conan/upload.py VERSION artifactory
+python scripts/conan/upload.py artifactory teiacare_sdk
 ```
 
 ## Contributing
