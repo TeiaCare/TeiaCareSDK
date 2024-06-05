@@ -21,7 +21,7 @@ def run(command, env_vars=None, debug=False, check_returncode=True):
     if debug:
         print(command)
     try:
-        ret = subprocess.run(command, env_vars)
+        ret = subprocess.run(command, env=env_vars)
         if check_returncode:
             ret.check_returncode()
     except subprocess.CalledProcessError as e:

@@ -33,9 +33,10 @@ def parse():
 def sanitizer(args, program_args):
     if args.address_sanitizer:
         address_sanitizer(args, program_args)
-
-    if args.thread_sanitizer:
+    elif args.thread_sanitizer:
         thread_sanitizer(args, program_args)
+    else:
+        raise ValueError("Select either --address_sanitizer or --thread_sanitizer")
 
 def address_sanitizer(args, program_args):
     cmd = [ args.program_path ]

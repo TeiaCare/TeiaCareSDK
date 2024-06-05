@@ -126,7 +126,7 @@ jobs:
         - script: |
             $(ACTIVATE_VIRTUAL_ENV)
             $(SETUP_BUILD_ENV)
-            python3 scripts/cmake/configure.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION) --examples
+            python3 scripts/cmake/configure.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION) --warnings --examples
             python3 scripts/cmake/build.py ${{BUILD_TYPE}}
             python3 scripts/cmake/install.py ${{BUILD_TYPE}}
             python3 scripts/tools/run_examples.py install/examples
@@ -181,10 +181,38 @@ jobs:
             additionalCodeCoverageFiles: '$(Build.SourcesDirectory)/VERSION'
             pathToSources: '$(Build.SourcesDirectory)'
 
+        - script: |
+            $(ACTIVATE_VIRTUAL_ENV)
+            $(SETUP_BUILD_ENV)
+            python3 scripts/cmake/configure.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION) --address_sanitizer --unit_tests
+            python3 scripts/cmake/build.py ${{BUILD_TYPE}}
+            python3 scripts/cmake/install.py ${{BUILD_TYPE}}
+            python3 scripts/tools/run_sanitizer.py --address_sanitizer install/unit_tests/teiacare_sdk_unit_tests
+          displayName: 'Address Sanitizer'
+          condition: eq(variables['Agent.OS'], 'Linux')
+          timeoutInMinutes: 5
+          continueOnError: True
+          env:
+            CONAN_USER_HOME: $(Build.SourcesDirectory)
+
+        - script: |
+            $(ACTIVATE_VIRTUAL_ENV)
+            $(SETUP_BUILD_ENV)
+            python3 scripts/cmake/configure.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION) --thread_sanitizer --unit_tests
+            python3 scripts/cmake/build.py ${{BUILD_TYPE}}
+            python3 scripts/cmake/install.py ${{BUILD_TYPE}}
+            python3 scripts/tools/run_sanitizer.py --thread_sanitizer install/unit_tests/teiacare_sdk_unit_tests
+          displayName: 'Thread Sanitizer [DISABLED]'
+          condition: false # eq(variables['Agent.OS'], 'Linux')
+          timeoutInMinutes: 5
+          continueOnError: True
+          env:
+            CONAN_USER_HOME: $(Build.SourcesDirectory)
+
         # - script: |
         #     $(ACTIVATE_VIRTUAL_ENV)
         #     $(SETUP_BUILD_ENV)
-        #     python3 scripts/cmake/configure.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION) --benchmarks
+        #     python3 scripts/cmake/configure.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION) --warnings --benchmarks
         #     python3 scripts/cmake/build.py ${{BUILD_TYPE}}
         #     python3 scripts/cmake/install.py ${{BUILD_TYPE}}
         #   displayName: 'Benchmarks'
