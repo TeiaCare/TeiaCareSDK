@@ -177,7 +177,7 @@ jobs:
           condition: eq(variables['Agent.OS'], 'Linux')
           inputs:
             codeCoverageTool: 'Cobertura'
-            summaryFileLocation: '$(Build.SourcesDirectory)/export/test_results/coverage/cobertura.xml'
+            summaryFileLocation: '$(Build.SourcesDirectory)/results/coverage/cobertura.xml'
             additionalCodeCoverageFiles: '$(Build.SourcesDirectory)/VERSION'
             pathToSources: '$(Build.SourcesDirectory)'
 
