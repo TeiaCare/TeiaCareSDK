@@ -60,21 +60,11 @@ TeiaCareSDK is a collection of reusable C++ components designed to make your dev
 | Windows Server 2022  | Clang 16           | 🚧          |
 | Windows Server 2019  | Visual Studio 2019 | ✅          |
 | Windows Server 2019  | Clang 16           | 🚧          |
-| Ubuntu 22.04         | GCC 13             | ✅          |
 | Ubuntu 22.04         | GCC 12             | ✅          |
-| Ubuntu 22.04         | GCC 11             | 🚧          |
 | Ubuntu 22.04         | Clang 15           | ✅          |
-| Ubuntu 22.04         | Clang 14           | ❌          |
-| Ubuntu 22.04         | Clang 13           | ❌          |
-| Ubuntu 20.04         | GCC 10             | ❌          |
-| Ubuntu 20.04         | GCC 9              | ❌          |
-| Ubuntu 20.04         | Clang 12           | ❌          |
-| Ubuntu 20.04         | Clang 11           | ❌          |
-| Ubuntu 20.04         | Clang 10           | ❌          |
-| macOS 13 Ventura     | Apple-Clang 15     | 🚧          |
-| macOS 13 Ventura     | GCC 13             | ❌          |
-| macOS 12 Monterey    | Apple-Clang 15     | 🚧          |
-| macOS 12 Monterey    | GCC 13             | ❌          |
+| Ubuntu 24.04         | GCC 14             | 🚧          |
+| Ubuntu 24.04         | Clang 18           | 🚧          |
+| MacOS 14 Sonoma      | Apple-Clang 15     | ✅          |
 
 ## Try online on Wandbox
 [![Try Online](https://img.shields.io/badge/Wandbox-ok?style=plastic&label=Try%20Online&link=https%3A%2F%2Fimg.shields.io%2Fwandbox.org%2Fpermlink%2FsfU3VY4HFMBZp8QI)](https://wandbox.org/permlink/sfU3VY4HFMBZp8QI)
@@ -277,6 +267,18 @@ python build.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION>
 
 # Run it
 $PWD/install/teiacare_sdk_client_package_test
+```
+
+## Conan Package - Artifactory Setup
+In order to push a Conan package to TeiaCare artifactory server it is required to setup you local Conan client with the following commands:
+
+```bash
+# export CONAN_REVISIONS_ENABLED=1
+conan remote add artifactory http://<ADDRESS>:<PORT>/artifactory/api/conan/conan
+conan user -p <ARTIFACTORY_PERSONAL_ACCESS_TOKEN> -r artifactory <YOUR_USERNAME>
+
+python3 scripts/conan/create.py <Debug|Release> <COMPILER_NAME> <COMPILER_VERSION>
+python scripts/conan/upload.py VERSION artifactory
 ```
 
 ## Contributing

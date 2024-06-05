@@ -21,6 +21,7 @@
 
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
+#include <sstream>
 
 using namespace std::chrono_literals;
 
