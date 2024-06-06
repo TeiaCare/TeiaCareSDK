@@ -17,7 +17,7 @@ import argparse
 import subprocess
 import os
 import sys
-from command import run, check_venv
+from .command import run, check_venv
 
 def parse():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -38,10 +38,10 @@ def parse():
     parser.add_argument("--cppcheck",           required=False, default=False, action='store_true')
     parser.add_argument("--cpplint",            required=False, default=False, action='store_true')
     parser.add_argument("--docs",               required=False, default=False, action='store_true')
-    return parser.parse_args()
+    args, _ = parser.parse_known_args()
+    return args
 
 def main():
-    check_venv()
     args = parse()
     profile_name = f'{args.compiler+args.compiler_version}'
 
@@ -86,4 +86,5 @@ def main():
     ])
 
 if __name__ == '__main__':
+    check_venv()
     sys.exit(main())

@@ -1,0 +1,37 @@
+FROM ubuntu:22.04
+
+ARG C_COMPILER=gcc
+ARG CXX_COMPILER=g++
+ARG COMPILER_VERSION=12
+ARG BUILD_TYPE=Release
+ARG NINJA_STATUS='[%s/%t %p :: %e] '
+
+RUN apt-get update -qq                            \
+    && export DEBIAN_FRONTEND=noninteractive      \
+    && apt-get install -y --no-install-recommends \
+    valgrind                                      \
+    python3.10 python3-pip python3.10-venv        \
+    ${C_COMPILER}-${COMPILER_VERSION}             \
+    ${CXX_COMPILER}-${COMPILER_VERSION}
+
+WORKDIR /teiacare_sdk
+ENV CC=${C_COMPILER}-${COMPILER_VERSION}
+ENV CXX=${CXX_COMPILER}-${COMPILER_VERSION}
+
+COPY scripts/ scripts/
+RUN python3 -m pip install --upgrade pip && python3 -m venv .venv
+RUN echo "export CONAN_USER_HOME=$PWD" >> .venv/bin/activate
+
+COPY /sdk/tests/conanfile.txt sdk/tests/conanfile.txt
+RUN . .venv/bin/activate                                                                \
+    && python3 -m pip install -r scripts/requirements.txt                               \
+    && python3 scripts/conan/setup.py ${BUILD_TYPE} ${C_COMPILER} ${COMPILER_VERSION}
+
+COPY . .
+RUN . .venv/bin/activate                                                                                          \
+    && python3 scripts/cmake/configure.py ${BUILD_TYPE} ${C_COMPILER} ${COMPILER_VERSION} --warnings --unit_tests \
+    && python3 scripts/cmake/build.py ${BUILD_TYPE}                                                               \
+    && python3 scripts/cmake/install.py ${BUILD_TYPE}
+
+ENTRYPOINT [ "valgrind", "/teiacare_sdk/install/unit_tests/teiacare_sdk_unit_tests" ]
+# ENTRYPOINT [ "python3", "scripts/tools/run_valgrind.py", "install/unit_tests/teiacare_sdk_unit_tests"]

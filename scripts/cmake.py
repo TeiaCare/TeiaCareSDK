@@ -13,25 +13,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import argparse
 import sys
-from .command import run, check_venv
-
-def parse():
-    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-    parser.add_argument("build_type", choices=['Debug', 'Release', 'RelWithDebInfo'])
-    parser.add_argument("--build_dir", help="Build Directory", required=False, default='./build')
-    parser.add_argument("--install_dir", help="Install Directory", required=False, default='./install')
-    args, _ = parser.parse_known_args()
-    return args
+import cmake.configure
+import cmake.build
+import cmake.install
+from cmake.command import check_venv
 
 def main():
-    args = parse()
-    run([
-        'cmake',
-        '--install', f'{args.build_dir}/{args.build_type}',
-        '--prefix', args.install_dir
-    ])
+    cmake.configure.main()
+    cmake.build.main()
+    cmake.install.main()
 
 if __name__ == '__main__':
     check_venv()

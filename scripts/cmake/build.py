@@ -15,18 +15,17 @@
 
 import argparse
 import sys
-from command import run, check_venv
+from .command import run, check_venv
 
 def parse():
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("build_type", choices=['Debug', 'Release', 'RelWithDebInfo'])
     parser.add_argument("--build_dir", help="Build Directory", required=False, default='./build')
-    return parser.parse_args()
+    args, _ = parser.parse_known_args()
+    return args
 
 def main():
-    check_venv()
     args = parse()
-
     run([
         'cmake',
         '--build', f'{args.build_dir}/{args.build_type}',
@@ -34,4 +33,5 @@ def main():
     ])
 
 if __name__ == '__main__':
+    check_venv()
     sys.exit(main())

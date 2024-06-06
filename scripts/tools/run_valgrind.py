@@ -39,9 +39,10 @@ def parse():
 def valgrind(args, program_args):
     if args.memcheck:
         memcheck(args, program_args)
-
-    if args.callgrind:
+    elif args.callgrind:
         callgrind(args, program_args)
+    else:
+        raise ValueError("Select either --memcheck or --callgrind")
 
 def memcheck(args, program_args):
     create_directory(args.memcheck_log_path)

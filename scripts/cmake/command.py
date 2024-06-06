@@ -17,9 +17,9 @@ import subprocess
 import sys
 import os
 
-def run(command):
+def run(cmd):
     try:
-        ret = subprocess.run(command)
+        ret = subprocess.run(cmd)
         ret.check_returncode()
     except subprocess.CalledProcessError as e:
         print(f'Process Exception: {e}')
