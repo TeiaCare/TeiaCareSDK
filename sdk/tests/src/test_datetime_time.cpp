@@ -26,6 +26,18 @@ TEST_F(test_datetime_time, ctor_empty)
     EXPECT_FALSE(t2.is_valid());
 }
 
+TEST_F(test_datetime_time, ctor_negative_values)
+{
+    const auto t1 = tc::sdk::time(-1s);
+    const auto t2 = tc::sdk::time(-24h, -1s);
+    const auto t3 = tc::sdk::time(-23h, -59min, -59s);
+
+    EXPECT_EQ(t1, t2);
+    EXPECT_TRUE(t1.is_valid());
+    EXPECT_TRUE(t2.is_valid());
+    EXPECT_TRUE(t3.is_valid());
+}
+
 TEST_F(test_datetime_time, ctor_durations_ref)
 {
     const auto h = std::chrono::hours(23);

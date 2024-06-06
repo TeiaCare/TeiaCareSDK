@@ -25,7 +25,7 @@ class time
 {
 public:
     explicit constexpr time() noexcept
-        : _hh_mm_ss{std::chrono::nanoseconds::min()}
+        : _hh_mm_ss{std::chrono::nanoseconds::max()}
     {
     }
 
@@ -43,7 +43,7 @@ public:
 
     constexpr bool is_valid() const noexcept
     {
-        return _hh_mm_ss.to_duration() != std::chrono::nanoseconds::min();
+        return _hh_mm_ss.to_duration() <= std::chrono::hours(24);
     }
 
     constexpr inline std::chrono::hours hours() const noexcept
