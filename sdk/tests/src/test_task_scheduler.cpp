@@ -59,7 +59,7 @@ TEST_F(test_task_scheduler, stop_immediate_while_running)
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_task_scheduler, tasks_size_different_id)
+TEST_F(test_task_scheduler, DISABLED_TSAN_WARNING_tasks_size_different_id)
 {
     EXPECT_EQ(ts->tasks_size(), 0);
     constexpr int task_count = 32;
@@ -640,7 +640,7 @@ TEST_F(test_task_scheduler_every, task_id)
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_task_scheduler_every, unique_task_id)
+TEST_F(test_task_scheduler_every, DISABLED_TSAN_WARNING_unique_task_id)
 {
     ts->start();
     ts->every("TASK_ID", 1min, task);

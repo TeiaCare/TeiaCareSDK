@@ -23,8 +23,7 @@ thread_pool::thread_pool()
 
 thread_pool::~thread_pool()
 {
-    if (_is_running)
-        stop();
+    stop();
 }
 
 bool thread_pool::start(const unsigned int num_threads)

@@ -135,14 +135,14 @@ TEST_F(test_thread_pool, stop_twice_after_run)
 // NOLINTNEXTLINE
 TEST_F(test_thread_pool, run)
 {
-    EXPECT_TRUE(tp->start(num_threads));
+    using namespace std::chrono_literals;
 
-    constexpr int task_count = 10;
+    EXPECT_TRUE(tp->start(max_threads_count));
+    constexpr int task_count = 64;
     std::counting_semaphore<task_count> sync(0);
 
     std::atomic_int counter = 0;
     auto task = [&sync, &counter] {
-        using namespace std::chrono_literals;
         std::this_thread::sleep_for(10ms);
         ++counter;
         sync.release();
@@ -151,6 +151,40 @@ TEST_F(test_thread_pool, run)
     for (auto i = 0; i < task_count; ++i)
     {
         tp->run(task);
+    }
+
+    for (auto i = 0; i < task_count; ++i)
+    {
+        sync.acquire();
+    }
+
+    EXPECT_EQ(counter, task_count);
+    EXPECT_EQ(counter, sync.max());
+}
+
+// NOLINTNEXTLINE
+// This is the exact same test as the previous one, but instead of running a lambda function
+// here we run a tc::sdk::task which moves its original function invalidating consecutive calls
+// as it is done in this loop. This must be fixed by cloning the task object.
+TEST_F(test_thread_pool, DISABLED_TSAN_WARNING_run_task)
+{
+    using namespace std::chrono_literals;
+
+    EXPECT_TRUE(tp->start(num_threads));
+    constexpr int task_count = 64;
+    std::counting_semaphore<task_count> sync(0);
+
+    std::atomic_int counter = 0;
+    auto task = std::make_shared<tc::sdk::task>([&sync, &counter] {
+        std::this_thread::sleep_for(10ms);
+        ++counter;
+        sync.release();
+    });
+
+    for (auto i = 0; i < task_count; ++i)
+    {
+        // TODO: try to fix the reported data race cloning the tc::sdk::task object
+        tp->run([task] { task->invoke(); });
     }
 
     for (auto i = 0; i < task_count; ++i)
