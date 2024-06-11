@@ -12,16 +12,27 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        build_type: ['Debug', 'Release']
         include:
           - agent: ubuntu-22.04
             compiler: gcc
             compiler_version: '12'
             activate_virtual_env: 'source .venv/bin/activate'
+            build_type: 'Debug'
+          - agent: ubuntu-22.04
+            compiler: gcc
+            compiler_version: '12'
+            activate_virtual_env: 'source .venv/bin/activate'
+            build_type: 'Release'
           - agent: ubuntu-22.04
             compiler: clang
             compiler_version: '15'
             activate_virtual_env: 'source .venv/bin/activate'
+            build_type: 'Debug'
+          - agent: ubuntu-22.04
+            compiler: clang
+            compiler_version: '15'
+            activate_virtual_env: 'source .venv/bin/activate'
+            build_type: 'Release'
 
     steps:
       - name: Checkout code
@@ -68,7 +79,7 @@ jobs:
         env:
           CONAN_USER_HOME: ${{ github.workspace }}
 
-      - name: Upload Code Coverage
+      - name: Upload Codecov
         uses: codecov/codecov-action@v4
         with:
           files: './results/coverage/cobertura.xml'
@@ -76,3 +87,11 @@ jobs:
           slug: TeiaCare/TeiaCareSDK
           token: ${{secrets.CODECOV_TOKEN}}
           flags: '${{ matrix.build_type }} ${{ matrix.compiler }} ${{ matrix.compiler_version }}'
+
+      - name: Upload Codacy
+        if: ${{ matrix.build_type == 'Release' && matrix.compiler == 'gcc' }}
+        run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r results/coverage/cobertura.xml
+        timeout-minutes: 5
+        env:
+          CONAN_USER_HOME: ${{ github.workspace }}
+
