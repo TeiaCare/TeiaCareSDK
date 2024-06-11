@@ -55,7 +55,6 @@ set(TARGET_SOURCES
     src/service_locator.cpp
     src/signal_handler.cpp
     src/task_scheduler.cpp
-    src/task.cpp
     src/thread_pool.cpp
     src/uuid_generator.cpp
     src/uuid.cpp

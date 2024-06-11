@@ -14,6 +14,8 @@
 
 #include <teiacare/sdk/thread_pool.hpp>
 
+#include <algorithm>
+
 namespace tc::sdk
 {
 thread_pool::thread_pool()

@@ -14,6 +14,8 @@
 
 #include "test_task.hpp"
 
+#include <thread>
+
 namespace tc::sdk::tests
 {
 bool Functor::functor_invoked = false;
@@ -190,6 +192,48 @@ TEST(test_task, free_function_template)
     t();
 
     EXPECT_TRUE(global_function_template_invoked);
+}
+
+// NOLINTNEXTLINE
+TEST(test_task, multiple_invoke)
+{
+    constexpr int total_invoke_count = 1'000;
+    int task_invoked_count = 0;
+
+    auto t = tc::sdk::task([&] { ++task_invoked_count; });
+
+    for (auto i = 0; i < total_invoke_count; ++i)
+    {
+        t();
+    }
+
+    EXPECT_EQ(task_invoked_count, total_invoke_count);
+}
+
+// NOLINTNEXTLINE
+TEST(test_task, parallel_invoke)
+{
+    constexpr int total_invoke_count = 1'000;
+    std::atomic_int task_invoked_count = 0;
+
+    auto t1 = tc::sdk::task([&] {
+        while (task_invoked_count < total_invoke_count)
+        {
+            ++task_invoked_count;
+        }
+    });
+
+    auto t2 = tc::sdk::task([&] {
+        while (task_invoked_count < total_invoke_count)
+        {
+            ++task_invoked_count;
+        }
+    });
+
+    std::jthread thread1([&t1] { t1(); });
+    std::jthread thread2([&t2] { t2(); });
+
+    EXPECT_EQ(task_invoked_count, total_invoke_count);
 }
 
 }

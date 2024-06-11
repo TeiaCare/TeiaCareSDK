@@ -56,6 +56,20 @@ protected:
      * Copy assignment operator marked as deleted.
      */
     non_copyable& operator=(const non_copyable&) = delete;
+
+    /*!
+     * \brief Move constructor
+     *
+     * Move constructor marked as defaulted.
+     */
+    non_copyable(non_copyable&&) noexcept = default;
+
+    /*!
+     * \brief Move assignment operator
+     *
+     * Move assignment operator marked as defaulted.
+     */
+    non_copyable& operator=(non_copyable&&) noexcept = default;
 };
 
 }
