@@ -69,10 +69,7 @@ public:
      */
     void invoke() const
     {
-        if (_callable)
-        {
-            _callable->invoke();
-        }
+        _callable->invoke();
     }
 
     /*!
