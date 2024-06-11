@@ -8,6 +8,7 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.agent }}
+    name: '${{ matrix.build_type }} ${{ matrix.compiler }} ${{ matrix.compiler_version }}'
     strategy:
       fail-fast: false
       matrix:
