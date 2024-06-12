@@ -1,8 +1,8 @@
 # TeiaCareSDK
+
 Welcome to TeiaCareSDK!
 
-
-[![Docs](https://img.shields.io/badge/Docs-TeiaCareSDK-green.svg)](https://teiacare.github.io/TeiaCareSDK/)
+[![Docs](https://img.shields.io/badge/Docs-TeiaCareSDK-white.svg)](https://teiacare.github.io/TeiaCareSDK/)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/ba48b0836d884c969b94b314901b95ff)](https://app.codacy.com/gh/TeiaCare/TeiaCareSDK/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/ba48b0836d884c969b94b314901b95ff)](https://app.codacy.com/gh/TeiaCare/TeiaCareSDK/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
 [![codecov](https://codecov.io/gh/TeiaCare/TeiaCareSDK/branch/develop/graph/badge.svg?token=EFEW3J454E)](https://codecov.io/gh/TeiaCare/TeiaCareSDK)
@@ -12,7 +12,9 @@ With its modular approach and extensive features, TeiaCareSDK empowers you to fo
 
 ![TeiaCareSDK](https://socialify.git.ci/TeiaCare/TeiaCareSDK/image?description=1&font=Raleway&name=1&pattern=Solid&theme=Dark)
 
+
 ## Key Features
+
 * **Date & Time:** Master dates, times, and durations with ease using dedicated classes for manipulation, validation, formatting, conversions, timezones, and arithmetic operations.
 * **Concurrency:** Take control of concurrent execution with thread-safe modules for managing tasks, queues, events, and thread pools, enabling efficient parallel processing.
 * **Synchronization & Control:** Maintain data integrity and program flow with modules for rate limiting, observing data changes, and accurately measuring elapsed time, ensuring thread safety and coordinated execution.
@@ -33,6 +35,7 @@ With its modular approach and extensive features, TeiaCareSDK empowers you to fo
 
 
 ## Supported Configurations
+
 Azure DevOps build matrix is available [here](https://dev.azure.com/teiacare/TeiaCare/_build?definitionId=91&_a=summary).
 
 | **OS**               | **Compiler**       | **Debug** | **Release** | **RelWithDebInfo** |
@@ -47,6 +50,7 @@ Azure DevOps build matrix is available [here](https://dev.azure.com/teiacare/Tei
 
 
 ## Try online on Wandbox
+
 [![Try Online](https://img.shields.io/badge/Wandbox-ok?style=plastic&label=Try%20Online&link=https%3A%2F%2Fimg.shields.io%2Fwandbox.org%2Fpermlink%2FsfU3VY4HFMBZp8QI)](https://wandbox.org/permlink/sfU3VY4HFMBZp8QI)
 
 ```cpp
@@ -126,6 +130,7 @@ python scripts/cmake.py <Debug|Release|DebWithRelInfo> <COMPILER_NAME> <COMPILER
 
 
 ## Examples
+
 ```bash
 python scripts/cmake.py <Debug|Release|DebWithRelInfo> <COMPILER_NAME> <COMPILER_VERSION> --examples --warnings
 ```
@@ -133,6 +138,7 @@ Examples are installed in $PWD/install/examples.
 
 
 ## Unit Tests and Code Coverage
+
 Note that code coverage is not available on Windows.
 
 ```bash
@@ -145,6 +151,7 @@ Coverage results are available in $PWD/results/coverage.
 
 
 ## Benchmarks
+
 ```bash
 python scripts/cmake.py <Debug|Release|DebWithRelInfo> <COMPILER_NAME> <COMPILER_VERSION> --benchmarks --warnings
 python scripts/tools/run_benchmarks.py <COMPILER_NAME> <COMPILER_VERSION>
@@ -153,6 +160,7 @@ Benchmarks are installed in $PWD/install/benchmarks.
 
 
 ## Code Formatting
+
 - [clang-format](https://clang.llvm.org/docs/ClangFormat.html)
 
 *clang-format* can be installed via *pip* using the provided *scripts/requirements.txt*
@@ -163,6 +171,7 @@ python scripts/tools/run_clang_format.py -r -i sdk
 
 
 ## Code Analysis
+
 - [clang-tidy](https://clang.llvm.org/extra/clang-tidy/)
 
 *clang-tidy* can be installed via *pip* using the provided *scripts/requirements.txt*
@@ -194,6 +203,7 @@ cpplint --counting=detailed  $(find teiacare_sdk* -type f -name "*.hpp" -or -nam
 
 
 ## Generate Documentation
+
 First install and setup *Doxygen* from your OS package manager.
 ```bash
 # Linux
@@ -213,6 +223,7 @@ Documentation is now installed in $PWD/install/docs.
 
 
 ## Conan Package - Local Install
+
 ```bash
 git clone https://teiacare@dev.azure.com/teiacare/Ancelia/_git/TeiaCareSDK
 cd TeiaCareSDK
@@ -233,6 +244,7 @@ $PWD/install/test_package/teiacare_sdk_test_package
 
 
 ## Conan Package - Artifactory Setup
+
 In order to push a Conan package to TeiaCare artifactory server it is required to setup you local Conan client with the following commands:
 
 ```bash
@@ -246,12 +258,14 @@ python scripts/conan/upload.py artifactory teiacare_sdk
 
 
 ## Contributing
+
 In order to contribute to TeiaCareSDK, please follow our [contribution guidelines](./CONTRIBUTING).
 
 [![Contributions](https://img.shields.io/badge/Contributions-Welcome-green.svg)](./CONTRIBUTING)
 
 
 ## License
+
 This project is licensed under the [Apache License, Version 2.0](./LICENSE).
 Copyright © 2024 [TeiaCare](https://teiacare.com/)
 
