@@ -91,4 +91,4 @@ jobs:
         if: ${{ matrix.build_type == 'Release' && matrix.compiler == 'gcc' }}
         run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r results/coverage/cobertura.xml
         env:
-          CODACY_TOKEN: ${{secrets.CODACY_TOKEN}}
+         CODACY_PROJECT_TOKEN: ${{secrets.CODACY_TOKEN}}
