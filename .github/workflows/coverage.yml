@@ -2,7 +2,6 @@ name: Coverage
 
 on:
   workflow_dispatch:
-  pull_request:
   push:
 
 jobs:
@@ -91,7 +90,5 @@ jobs:
       - name: Upload Codacy
         if: ${{ matrix.build_type == 'Release' && matrix.compiler == 'gcc' }}
         run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r results/coverage/cobertura.xml
-        timeout-minutes: 5
         env:
-          CONAN_USER_HOME: ${{ github.workspace }}
-
+          CODACY_TOKEN: ${{secrets.CODACY_TOKEN}}
