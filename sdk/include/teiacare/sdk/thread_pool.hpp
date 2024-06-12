@@ -105,7 +105,7 @@ public:
         std::packaged_task<result_type()> task(std::bind(f, args...));
         std::future<result_type> future = task.get_future();
 
-        enqueue_task(std::move(task));
+        enqueue_task(tc::sdk::task(std::move(task)));
         return future;
     }
 

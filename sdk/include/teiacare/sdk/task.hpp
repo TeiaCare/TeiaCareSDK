@@ -40,7 +40,7 @@ public:
      * The callable object can be e.g. a lambda function, a functor, a free function or a class method bound to an object.
      */
     template <typename CallableType>
-    task(CallableType&& callable)
+    explicit task(CallableType&& callable)
         : _callable(std::make_unique<task_impl<CallableType>>(std::move(callable)))
     {
     }
