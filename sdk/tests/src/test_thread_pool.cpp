@@ -142,8 +142,7 @@ TEST_F(test_thread_pool, run)
     std::counting_semaphore<task_count> sync(0);
 
     std::atomic_int counter = 0;
-    auto task = [&sync, &counter] {
-        std::this_thread::sleep_for(10ms);
+    std::function<void()> task = [&sync, &counter] {
         ++counter;
         sync.release();
     };
@@ -162,29 +161,57 @@ TEST_F(test_thread_pool, run)
     EXPECT_EQ(counter, sync.max());
 }
 
-// NOLINTNEXTLINE
-// This is the exact same test as the previous one, but instead of running a lambda function
-// here we run a tc::sdk::task which moves its original function invalidating consecutive calls
-// as it is done in this loop. This must be fixed by cloning the task object.
-TEST_F(test_thread_pool, DISABLED_TSAN_WARNING_run_task)
+TEST_F(test_thread_pool, run_with_return)
 {
     using namespace std::chrono_literals;
 
-    EXPECT_TRUE(tp->start(num_threads));
+    EXPECT_TRUE(tp->start(max_threads_count));
     constexpr int task_count = 64;
     std::counting_semaphore<task_count> sync(0);
 
     std::atomic_int counter = 0;
-    auto task = std::make_shared<tc::sdk::task>([&sync, &counter] {
-        std::this_thread::sleep_for(10ms);
+    std::function<int()> task = [&sync, &counter] {
         ++counter;
         sync.release();
-    });
+        return counter.load();
+    };
 
     for (auto i = 0; i < task_count; ++i)
     {
-        // TODO: try to fix the reported data race cloning the tc::sdk::task object
-        tp->run([task] { task->invoke(); });
+        auto result = tp->run(task);
+        EXPECT_EQ(result.get(), i + 1);
+    }
+
+    for (auto i = 0; i < task_count; ++i)
+    {
+        sync.acquire();
+    }
+
+    EXPECT_EQ(counter, task_count);
+    EXPECT_EQ(counter, sync.max());
+}
+
+TEST_F(test_thread_pool, run_with_return_and_args)
+{
+    using namespace std::chrono_literals;
+
+    EXPECT_TRUE(tp->start(max_threads_count));
+    constexpr int task_count = 64;
+    std::counting_semaphore<task_count> sync(0);
+
+    std::atomic_int counter = 0;
+    std::function<double(const std::string& s, float f)> task = [&sync, &counter](const std::string& s, float f) {
+        (void)s;
+        ++counter;
+        sync.release();
+        return static_cast<double>(f + counter.load());
+    };
+
+    for (auto i = 0; i < task_count; ++i)
+    {
+        constexpr float float_k = 1.234;
+        auto result = tp->run(task, "param", float_k);
+        EXPECT_EQ(result.get(), static_cast<double>(1 + i + float_k));
     }
 
     for (auto i = 0; i < task_count; ++i)

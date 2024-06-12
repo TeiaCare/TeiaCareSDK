@@ -2,58 +2,93 @@ name: Coverage
 
 on:
   workflow_dispatch:
-  pull_request:
   push:
 
 jobs:
-  coverage:
-    runs-on: 'ubuntu-22.04'
-    name: 'Code Coverage'
-
-    env:
-      BUILD_TYPE: Release
-      CONAN_USER_HOME: ${{github.workspace}}
-      COMPILER: 'gcc'
-      COMPILER_VERSION: 12
-      SETUP_BUILD_ENV: 'g++-12 --version'
-      ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
+  build:
+    runs-on: ${{ matrix.agent }}
+    name: '${{ matrix.build_type }} ${{ matrix.compiler }} ${{ matrix.compiler_version }}'
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - agent: ubuntu-22.04
+            compiler: gcc
+            compiler_version: '12'
+            activate_virtual_env: 'source .venv/bin/activate'
+            build_type: 'Debug'
+          - agent: ubuntu-22.04
+            compiler: gcc
+            compiler_version: '12'
+            activate_virtual_env: 'source .venv/bin/activate'
+            build_type: 'Release'
+          - agent: ubuntu-22.04
+            compiler: clang
+            compiler_version: '15'
+            activate_virtual_env: 'source .venv/bin/activate'
+            build_type: 'Debug'
+          - agent: ubuntu-22.04
+            compiler: clang
+            compiler_version: '15'
+            activate_virtual_env: 'source .venv/bin/activate'
+            build_type: 'Release'
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v5.0.0
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v4
         with:
           python-version: '3.10'
+          architecture: 'x64'
 
-      - name: Install Dependencies
+      - name: Cache Virtual Environment
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ matrix.build_type }}-${{ hashFiles('scripts/requirements.txt') }}
+
+      - name: Cache Conan
+        uses: actions/cache@v3
+        with:
+          path: .conan
+          key: conan-${{ runner.os }}-${{ matrix.build_type }}-${{ hashFiles('sdk/examples/conanfile.txt', 'sdk/tests/conanfile.txt') }}
+
+      - name: Setup Virtual Environment
+        if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          python -m venv .venv
-          ${{env.ACTIVATE_VIRTUAL_ENV}}
+          python3 -m venv .venv
+          source .venv/bin/activate
           pip install -r scripts/requirements.txt
-          python scripts/conan/setup.py ${{env.BUILD_TYPE}} ${{env.COMPILER}} ${{env.COMPILER_VERSION}} --directories sdk/tests
 
-      - name: Build
+      - name: Setup Conan
         run: |
-          ${{env.ACTIVATE_VIRTUAL_ENV}}
-          ${{env.SETUP_BUILD_ENV}}
-          python scripts/cmake/configure.py ${{env.BUILD_TYPE}} ${{env.COMPILER}} ${{env.COMPILER_VERSION}} --coverage
-          python scripts/cmake/build.py ${{env.BUILD_TYPE}}
+          source .venv/bin/activate
+          python3 scripts/conan/setup.py ${{ matrix.build_type }} ${{ matrix.compiler }} ${{ matrix.compiler_version }}
 
       - name: Run Code Coverage
-        continue-on-error: true
         run: |
-          ${{env.ACTIVATE_VIRTUAL_ENV}}
-          ${{env.SETUP_BUILD_ENV}}
-          python scripts/tools/run_unit_tests.py ${{env.BUILD_TYPE}}
-          python scripts/tools/run_coverage.py ${{env.COMPILER}} ${{env.COMPILER_VERSION}}
+          source .venv/bin/activate
+          python3 scripts/cmake.py ${{ matrix.build_type }} ${{ matrix.compiler }} ${{ matrix.compiler_version }} --warnings --coverage
+          python3 scripts/tools/run_unit_tests.py ${{ matrix.build_type }}
+          python3 scripts/tools/run_coverage.py ${{ matrix.compiler }} ${{ matrix.compiler_version }}
+        timeout-minutes: 5
+        continue-on-error: true
+        env:
+          CONAN_USER_HOME: ${{ github.workspace }}
 
-      - name: Upload Code Coverage
+      - name: Upload Codecov
         uses: codecov/codecov-action@v4
         with:
           files: './results/coverage/cobertura.xml'
           name: TeiaCareSDK
           slug: TeiaCare/TeiaCareSDK
           token: ${{secrets.CODECOV_TOKEN}}
-          flags: 'gcc12'
+          flags: '${{ matrix.build_type }} ${{ matrix.compiler }} ${{ matrix.compiler_version }}'
+
+      - name: Upload Codacy
+        if: ${{ matrix.build_type == 'Release' && matrix.compiler == 'gcc' }}
+        run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r results/coverage/cobertura.xml
+        env:
+         CODACY_PROJECT_TOKEN: ${{secrets.CODACY_TOKEN}}

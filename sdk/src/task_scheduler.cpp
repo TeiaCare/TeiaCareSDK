@@ -14,6 +14,8 @@
 
 #include <teiacare/sdk/task_scheduler.hpp>
 
+#include <algorithm>
+
 namespace tc::sdk
 {
 task_scheduler::task_scheduler()

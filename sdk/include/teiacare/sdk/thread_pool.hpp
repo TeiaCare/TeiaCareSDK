@@ -20,6 +20,7 @@
 
 #include <atomic>
 #include <condition_variable>
+#include <functional>
 #include <future>
 #include <latch>
 #include <mutex>
@@ -87,19 +88,21 @@ public:
 
     /*!
      * \brief Run a callable object asynchronously.
-     * \tparam FunctionType Types of the callable object.
-     * \tparam f Callable object.
-     * \return std::future task result
+     * \tparam Callable Type of the callable object.
+     * \tparam Args... Arguments of the Callable object.
+     * \param f Callable object.
+     * \param args... Arguments of the Callable object.
+     * \return std::future containing the asynchronous task result
      *
      * Enqueue a new task with the given callable object.
      * The enqueued task will run as soon as a thread is available.
      * Returns the result of the asynchronous computation.
      */
-    template <typename FunctionType>
-    auto run(FunctionType&& f)
+    template <typename Callable, typename... Args>
+    auto run(Callable&& f, Args&&... args) -> std::future<std::invoke_result_t<Callable, Args...>>
     {
-        using result_type = std::invoke_result_t<std::decay_t<FunctionType>>;
-        std::packaged_task<result_type()> task(std::forward<FunctionType>(f));
+        using result_type = std::invoke_result_t<Callable, Args...>;
+        std::packaged_task<result_type()> task(std::bind(f, args...));
         std::future<result_type> future = task.get_future();
 
         enqueue_task(tc::sdk::task(std::move(task)));

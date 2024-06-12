@@ -14,7 +14,7 @@ cmake_print_variables(TC_ENABLE_UNIT_TESTS_COVERAGE)
 option(TC_ENABLE_BENCHMARKS "Enable Benchmarks" False)
 cmake_print_variables(TC_ENABLE_BENCHMARKS)
 
-option(TC_ENABLE_EXAMPLES "Enable Examples" False)
+option(TC_ENABLE_EXAMPLES "Enable Examples" True)
 cmake_print_variables(TC_ENABLE_EXAMPLES)
 
 option(TC_ENABLE_DOCS "Enable Doxygen docuentation" True)
