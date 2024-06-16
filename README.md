@@ -2,9 +2,6 @@
 
 Welcome to TeiaCareSDK!
 
-Docs available at:  
-https://teiacare.github.io/TeiaCareSDK/
-
 [![Docs](https://img.shields.io/badge/Docs-TeiaCareSDK-white.svg)](https://teiacare.github.io/TeiaCareSDK/)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/ba48b0836d884c969b94b314901b95ff)](https://app.codacy.com/gh/TeiaCare/TeiaCareSDK/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/ba48b0836d884c969b94b314901b95ff)](https://app.codacy.com/gh/TeiaCare/TeiaCareSDK/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
