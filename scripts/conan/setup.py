@@ -104,7 +104,6 @@ def get_conanfile_directories(args):
     if not args.directories:
         conanfile_directories_include = set(current_working_directory.glob('**/conanfile.txt'))
         conanfile_directories_exclude = set(current_working_directory.glob('**/.conan/**/conanfile.*'))
-        conanfile_directories_exclude.add(current_working_directory / 'sdk_package_test/conanfile.txt')
         conanfile_directories = conanfile_directories_include - conanfile_directories_exclude
     else:
         conanfile_directories = args.directories

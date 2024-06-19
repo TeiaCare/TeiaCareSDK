@@ -118,21 +118,21 @@ Examples:
 
 This script must be executed in order to setup the conan packages (note that 3rd party libs are only required for unit tests, examples and benchmarks).
 ```bash
-python scripts/conan/setup.py <Debug|Release|DebWithRelInfo> <COMPILER_NAME> <COMPILER_VERSION>
+python scripts/conan/setup.py <Debug|Release|RelWithDebInfo> <COMPILER_NAME> <COMPILER_VERSION>
 ```
 
 **Configure, Build and Install**
 
 This script configures, builds and installs the library.
 ```bash
-python scripts/cmake.py <Debug|Release|DebWithRelInfo> <COMPILER_NAME> <COMPILER_VERSION>
+python scripts/cmake.py <Debug|Release|RelWithDebInfo> <COMPILER_NAME> <COMPILER_VERSION>
 ```
 
 
 ## Examples
 
 ```bash
-python scripts/cmake.py <Debug|Release|DebWithRelInfo> <COMPILER_NAME> <COMPILER_VERSION> --examples --warnings
+python scripts/cmake.py <Debug|Release|RelWithDebInfo> <COMPILER_NAME> <COMPILER_VERSION> --examples --warnings
 ```
 Examples are installed in $PWD/install/examples.
 
@@ -142,8 +142,8 @@ Examples are installed in $PWD/install/examples.
 Note that code coverage is not available on Windows.
 
 ```bash
-python scripts/cmake.py <Debug|Release|DebWithRelInfo> <COMPILER_NAME> <COMPILER_VERSION> --coverage --warnings
-python scripts/tools/run_unit_tests.py <Debug|Release|DebWithRelInfo>
+python scripts/cmake.py <Debug|Release|RelWithDebInfo> <COMPILER_NAME> <COMPILER_VERSION> --coverage --warnings
+python scripts/tools/run_unit_tests.py <Debug|Release|RelWithDebInfo>
 python scripts/tools/run_coverage.py <COMPILER_NAME> <COMPILER_VERSION>
 ```
 Unit tests results are available in $PWD/results/unit_tests.
@@ -153,7 +153,7 @@ Coverage results are available in $PWD/results/coverage.
 ## Benchmarks
 
 ```bash
-python scripts/cmake.py <Debug|Release|DebWithRelInfo> <COMPILER_NAME> <COMPILER_VERSION> --benchmarks --warnings
+python scripts/cmake.py <Debug|Release|RelWithDebInfo> <COMPILER_NAME> <COMPILER_VERSION> --benchmarks --warnings
 python scripts/tools/run_benchmarks.py <COMPILER_NAME> <COMPILER_VERSION>
 ```
 Benchmarks are installed in $PWD/install/benchmarks.
@@ -192,7 +192,7 @@ winget install cppcheck
 ```
 
 ```bash
-python scripts/tools/run_cppcheck.py <Debug|Release|DebWithRelInfo>
+python scripts/tools/run_cppcheck.py <Debug|Release|RelWithDebInfo>
 ```
 
 - [cpplint](https://github.com/cpplint/cpplint) [TODO: Review]
@@ -217,7 +217,7 @@ doxygen -u sdk/docs/Doxyfile
 ```
 
 ```bash
-python ./scripts/cmake/configure.py <Debug|Release|DebWithRelInfo>  <COMPILER_NAME> <COMPILER_VERSION> --docs
+python ./scripts/cmake/configure.py <Debug|Release|RelWithDebInfo>  <COMPILER_NAME> <COMPILER_VERSION> --docs
 ```
 Documentation is now installed in $PWD/install/docs.
 
@@ -235,10 +235,10 @@ cd TeiaCareSDK
 # 2) The Conan package tests are automatically run during package creation.
 #    The directory test_package contains a test project that is built to validate the proper package creation.
 
-python ./scripts/conan/create.py <Debug|Release|DebWithRelInfo>  <COMPILER_NAME> <COMPILER_VERSION>
+python ./scripts/conan/create.py <Debug|Release|RelWithDebInfo>  <COMPILER_NAME> <COMPILER_VERSION>
 
 # Build, install and run the test package executable
-python test_package/build.py <Debug|Release|DebWithRelInfo>  <COMPILER_NAME> <COMPILER_VERSION>
+python test_package/build.py <Debug|Release|RelWithDebInfo>  <COMPILER_NAME> <COMPILER_VERSION>
 $PWD/install/test_package/teiacare_sdk_test_package
 ```
 
@@ -252,7 +252,7 @@ In order to push a Conan package to TeiaCare artifactory server it is required t
 conan remote add artifactory http://<ADDRESS>:<PORT>/artifactory/api/conan/conan
 conan user -p <ARTIFACTORY_PERSONAL_ACCESS_TOKEN> -r artifactory <YOUR_USERNAME>
 
-python3 scripts/conan/create.py <Debug|Release|DebWithRelInfo>  <COMPILER_NAME> <COMPILER_VERSION>
+python3 scripts/conan/create.py <Debug|Release|RelWithDebInfo>  <COMPILER_NAME> <COMPILER_VERSION>
 python scripts/conan/upload.py artifactory teiacare_sdk
 ```
 

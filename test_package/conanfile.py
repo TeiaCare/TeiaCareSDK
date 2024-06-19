@@ -35,5 +35,5 @@ class TeiaCareSDKTest(ConanFile):
 
     def test(self):
         if not cross_building(self):
-            cmd = os.path.join(self.cpp.build.bindirs[0], "teiacare_sdk_package_test")
+            cmd = os.path.join(self.cpp.build.bindirs[0], "teiacare_sdk_test_package")
             self.run(cmd, env="conanrun")

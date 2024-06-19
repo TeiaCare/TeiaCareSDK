@@ -38,7 +38,7 @@ def run(command):
     except Exception as e:
         print(f'Unhandled Exception: {e}')
 
-def conan_create(remote_name, package_name, force):
+def conan_upload(remote_name, package_name, force):
     command = [
         'conan',
         'upload',
@@ -61,7 +61,7 @@ def get_profile_path(profile_name):
 def main():
     setup_conan_home()
     args = parse()
-    conan_create(args.remote_name, args.package_name, args.force)
+    conan_upload(args.remote_name, args.package_name, args.force)
 
 if __name__ == '__main__':
     sys.exit(main())
