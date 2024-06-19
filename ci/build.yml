@@ -11,6 +11,14 @@ trigger:
     include:
     - v*
 
+schedules:
+  - cron: "0 1 * * Sun"
+    displayName: 'Weekly Build'
+    branches:
+      include:
+      - develop
+    always: true
+
 parameters:
 - name: BUILD_TYPES
   type: object
@@ -231,7 +239,6 @@ jobs:
             $(SETUP_BUILD_ENV)
             conan remote add teiacare_sdk $(artifactory.url)/teiacare_sdk
             conan user $(artifactory.username) -p $(artifactory.password) -r teiacare_sdk
-
             python3 scripts/conan/create.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION)
             python3 scripts/conan/upload.py teiacare_sdk teiacare_sdk/0.1.0@
           displayName: 'Conan Package'
