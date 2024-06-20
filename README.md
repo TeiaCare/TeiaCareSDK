@@ -166,7 +166,7 @@ Benchmarks are installed in $PWD/install/benchmarks.
 *clang-format* can be installed via *pip* using the provided *scripts/requirements.txt*
 
 ```bash
-python scripts/tools/run_clang_format.py -r -i sdk
+python scripts/tools/run_clang_format.py sdk
 ```
 
 
@@ -249,11 +249,10 @@ In order to push a Conan package to TeiaCare artifactory server it is required t
 
 ```bash
 # export CONAN_REVISIONS_ENABLED=1
-conan remote add artifactory http://<ADDRESS>:<PORT>/artifactory/api/conan/conan
-conan user -p <ARTIFACTORY_PERSONAL_ACCESS_TOKEN> -r artifactory <YOUR_USERNAME>
-
-python3 scripts/conan/create.py <Debug|Release|RelWithDebInfo>  <COMPILER_NAME> <COMPILER_VERSION>
-python scripts/conan/upload.py artifactory teiacare_sdk
+conan remote add teiacare_sdk $(artifactory.url)/teiacare_sdk
+conan user $(artifactory.username) -p $(artifactory.password) -r teiacare_sdk
+python scripts/conan/create.py <Debug|Release|RelWithDebInfo> <COMPILER_NAME> <COMPILER_VERSION>
+python scripts/conan/upload.py teiacare_sdk teiacare_sdk/<PACKAGE_VERSION>@
 ```
 
 
