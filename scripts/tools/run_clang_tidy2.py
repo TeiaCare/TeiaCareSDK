@@ -4,22 +4,22 @@ import subprocess
 import pathlib
 import argparse
 
-APPLICATION_NAME = "clang-format runner"
+APPLICATION_NAME = "clang-tidy runner"
 
 def parse():
     parser = argparse.ArgumentParser(APPLICATION_NAME, formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("directory", help="Directory to look for files, of the given extensions, recursively")
-    parser.add_argument("--extensions", help="File extensions to be formatted", required=False, default={'c', 'h', 'cpp', 'hpp'})
-    parser.add_argument("--executable", help='Path to the clang-format executable', required=False, default='clang-format')
+    parser.add_argument("--extensions", help="File extensions to be validated", required=False, default={'c', 'h', 'cpp', 'hpp'})
+    parser.add_argument("--executable", help='Path to the clang-tidy executable', required=False, default='clang-tidy')
     return parser.parse_args()
 
-def format_file(executable, file_path):
-    print(f"clang-format: {file_path}")
+def tidy_file(executable, file_path):
+    print(f"clang-tidy: {file_path}")
     try:
-        process_result = subprocess.run([executable, '-i', file_path, '-style=file'], check=True)
+        process_result = subprocess.run([executable, file_path, "-checks=clang-analyzer-cplusplus.*"], check=True)
         process_result.check_returncode()
     except Exception as e:
-        print(f"Error formatting {file_path} {e}")
+        print(f"Error tidying {file_path} {e}")
         return 1
     return 0
 
@@ -30,12 +30,12 @@ def find_files(directory, extensions):
             yield file_path
 
 def check_executable(executable):
-    print(f"Using clang-format executable: {executable}")
+    print(f"Using clang-tidy executable: {executable}")
     try:
         process_result = subprocess.run([executable, '--version'], check=True)
         process_result.check_returncode()
     except Exception as e:
-        print(f"Error with clang-format executable: {executable} {e}")
+        print(f"Error with clang-tidy executable: {executable} {e}")
         sys.exit(1)
 
 def main():
@@ -49,7 +49,7 @@ def main():
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=sys.maxsize) as executor:
         files = list(find_files(directory, extensions))
-        futures = {executor.submit(format_file, executable, file): file for file in files}
+        futures = {executor.submit(tidy_file, executable, file): file for file in files}
         for future in concurrent.futures.as_completed(futures):
             if future.result() != 0:
                 print(f"Error running {APPLICATION_NAME} - Execution finished")

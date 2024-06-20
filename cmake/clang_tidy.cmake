@@ -27,9 +27,9 @@ function(setup_target_clang_tidy TARGET_NAME)
     add_custom_target(${TARGET_NAME}_clang_tidy ALL
         COMMAND ${Python3_EXECUTABLE}
             ${CMAKE_SOURCE_DIR}/scripts/tools/run_clang_tidy.py
-            -clang-tidy-binary ${CLANG_TIDY}
-            -header-filter=.*
-            -p ${CMAKE_BINARY_DIR}
+            --executable ${CLANG_TIDY}
+            --compile_commands ${CMAKE_BINARY_DIR}
+            ${TARGET_FOLDERS}
         DEPENDS ${TARGET_NAME}
         COMMENT "Running ${CLANG_TIDY} on ${TARGET_NAME}"
     )
