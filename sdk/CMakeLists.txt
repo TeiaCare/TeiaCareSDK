@@ -12,13 +12,11 @@ set(TARGET_HEADERS
     include/teiacare/sdk/datetime/datetime.hpp
     include/teiacare/sdk/datetime/time.hpp
     include/teiacare/sdk/datetime/timedelta.hpp
-
     include/teiacare/sdk/geometry/line.hpp
     include/teiacare/sdk/geometry/point.hpp
     include/teiacare/sdk/geometry/range.hpp
     include/teiacare/sdk/geometry/rectangle.hpp
     include/teiacare/sdk/geometry/size.hpp
-
     include/teiacare/sdk/blocking_queue.hpp
     include/teiacare/sdk/clock.hpp
     include/teiacare/sdk/event_dispatcher.hpp
@@ -72,8 +70,8 @@ target_include_directories(${TARGET_NAME}
         $<INSTALL_INTERFACE:CMAKE_INSTALL_INCLUDEDIR>
 )
 set_target_properties(${TARGET_NAME} PROPERTIES VERSION ${${PROJECT_NAME}_VERSION} SOVERSION ${${PROJECT_NAME}_VERSION_MAJOR})
-set_target_properties(${TARGET_NAME} PROPERTIES PUBLIC_HEADER "${TARGET_HEADERS}")
-install(TARGETS ${TARGET_NAME} PUBLIC_HEADER DESTINATION include/teiacare/sdk)
+install(TARGETS ${TARGET_NAME})
+install(DIRECTORY include DESTINATION .)
 
 if(TC_ENABLE_WARNINGS_ERROR)
     include(warnings)
