@@ -2,13 +2,12 @@
 
 Welcome to TeiaCareSDK!
 
+TeiaCareSDK is a collection of reusable C++ components.
+
 [![Docs](https://img.shields.io/badge/Docs-TeiaCareSDK-white.svg)](https://teiacare.github.io/TeiaCareSDK/)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/ba48b0836d884c969b94b314901b95ff)](https://app.codacy.com/gh/TeiaCare/TeiaCareSDK/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/ba48b0836d884c969b94b314901b95ff)](https://app.codacy.com/gh/TeiaCare/TeiaCareSDK/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
 [![codecov](https://codecov.io/gh/TeiaCare/TeiaCareSDK/branch/develop/graph/badge.svg?token=EFEW3J454E)](https://codecov.io/gh/TeiaCare/TeiaCareSDK)
-
-TeiaCareSDK is a collection of reusable C++ components designed to make your development journey smoother, faster, and easier.
-With its modular approach and extensive features, TeiaCareSDK empowers you to focus on the core functionality of your application while providing essential building blocks for common tasks.
 
 ![TeiaCareSDK](https://socialify.git.ci/TeiaCare/TeiaCareSDK/image?description=1&font=Raleway&name=1&pattern=Solid&theme=Dark)
 
@@ -217,28 +216,26 @@ doxygen -u sdk/docs/Doxyfile
 ```
 
 ```bash
-python ./scripts/cmake/configure.py <Debug|Release|RelWithDebInfo>  <COMPILER_NAME> <COMPILER_VERSION> --docs
+python ./scripts/cmake/configure.py <Debug|Release|RelWithDebInfo> <COMPILER_NAME> <COMPILER_VERSION> --docs
 ```
 Documentation is now installed in $PWD/install/docs.
 
 
 ## Conan Package - Local Install
 
+Create, test and install local package.
+
+Notes:
+1) The install directory path must be a valid Conan cache (i.e. ".conan" folder) located in the current directory.
+   So, in order to install the package in a desired repository folder, it is required to run this script from the repository folder directly.
+2) The Conan package tests are automatically run during package creation.
+   The directory test_package contains a test project that is built to validate the proper package creation.
+
 ```bash
-git clone https://teiacare@dev.azure.com/teiacare/Ancelia/_git/TeiaCareSDK
-cd TeiaCareSDK
-
-# Create, test and install local package
-# Notes:
-# 1) The install directory path must be a valid Conan cache (i.e. ".conan" folder) located in the current directory
-#    So, in order to install the package in a desired repository folder, it is required to run this script from the repository folder directly.
-# 2) The Conan package tests are automatically run during package creation.
-#    The directory test_package contains a test project that is built to validate the proper package creation.
-
-python ./scripts/conan/create.py <Debug|Release|RelWithDebInfo>  <COMPILER_NAME> <COMPILER_VERSION>
+python ./scripts/conan/create.py <Debug|Release|RelWithDebInfo> <COMPILER_NAME> <COMPILER_VERSION>
 
 # Build, install and run the test package executable
-python test_package/build.py <Debug|Release|RelWithDebInfo>  <COMPILER_NAME> <COMPILER_VERSION>
+python test_package/build.py <Debug|Release|RelWithDebInfo> <COMPILER_NAME> <COMPILER_VERSION>
 $PWD/install/test_package/teiacare_sdk_test_package
 ```
 
@@ -247,8 +244,17 @@ $PWD/install/test_package/teiacare_sdk_test_package
 
 In order to push a Conan package to TeiaCare artifactory server it is required to setup you local Conan client with the following commands:
 
+First enable multiple revisions for a single package:
 ```bash
-# export CONAN_REVISIONS_ENABLED=1
+# Linux
+export CONAN_REVISIONS_ENABLED=1
+
+# Windows
+set CONAN_REVISIONS_ENABLED=1
+```
+
+Then add artifactory remote and upload the pacage:
+```bash
 conan remote add teiacare_sdk $(artifactory.url)/teiacare_sdk
 conan user $(artifactory.username) -p $(artifactory.password) -r teiacare_sdk
 python scripts/conan/create.py <Debug|Release|RelWithDebInfo> <COMPILER_NAME> <COMPILER_VERSION>
@@ -266,6 +272,7 @@ In order to contribute to TeiaCareSDK, please follow our [contribution guideline
 ## License
 
 This project is licensed under the [Apache License, Version 2.0](./LICENSE).
-Copyright © 2024 [TeiaCare](https://teiacare.com/)
 
 [![License](https://img.shields.io/badge/License-Apache_v2-blue)](./LICENSE)
+
+Copyright © 2024 [TeiaCare](https://teiacare.com/)

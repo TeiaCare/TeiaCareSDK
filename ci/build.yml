@@ -245,3 +245,4 @@ jobs:
           timeoutInMinutes: 5
           env:
             CONAN_USER_HOME: $(Build.SourcesDirectory)
+            CONAN_REVISIONS_ENABLED: 1

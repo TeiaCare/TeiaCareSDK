@@ -35,7 +35,7 @@ class TeiaCareSDK(ConanFile):
     description = "TeiaCareSDK is a collection of reusable C++ components"
     topics = ("sdk")
     exports = "VERSION"
-    exports_sources = "CMakeLists.txt", "README.md", "VERSION", "sdk/*", "cmake/*"
+    exports_sources = "CMakeLists.txt", "README.md", "VERSION", "cmake/*", "sdk/CMakeLists.txt", "sdk/include/*", "sdk/src/*"
     settings = "os", "compiler", "build_type", "arch"
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = {"shared": False, "fPIC": True}
