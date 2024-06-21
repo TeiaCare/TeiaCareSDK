@@ -28,8 +28,7 @@ def get_project_version():
 
 class TeiaCareSDK(ConanFile):
     name = "teiacare_sdk"
-    # version = get_project_version()
-    version = "dev"
+    version = get_project_version()
     license = "Apache License"
     author = "TeiaCare"
     url = "https://github.com/TeiaCare/TeiaCareSDK"
