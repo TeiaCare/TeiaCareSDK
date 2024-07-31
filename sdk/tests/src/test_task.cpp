@@ -213,25 +213,32 @@ TEST(test_task, multiple_invoke)
 // NOLINTNEXTLINE
 TEST(test_task, parallel_invoke)
 {
-    constexpr int total_invoke_count = 1'000;
-    std::atomic_int task_invoked_count = 0;
+    constexpr int total_invoke_count = 2'000;
+    constexpr int total_invoke_count_per_task = 1'000;
+    int task_invoked_count = 0;
+    std::mutex task_invoked_mutex;
 
     auto t1 = tc::sdk::task([&] {
-        while (task_invoked_count < total_invoke_count)
+        for (int i = 0; i < total_invoke_count_per_task; ++i)
         {
+            std::scoped_lock lock(task_invoked_mutex);
             ++task_invoked_count;
         }
     });
 
     auto t2 = tc::sdk::task([&] {
-        while (task_invoked_count < total_invoke_count)
+        for (int i = 0; i < total_invoke_count_per_task; ++i)
         {
+            std::scoped_lock lock(task_invoked_mutex);
             ++task_invoked_count;
         }
     });
 
-    std::jthread thread1([&t1] { t1(); });
-    std::jthread thread2([&t2] { t2(); });
+    std::thread thread1([&t1] { t1(); });
+    std::thread thread2([&t2] { t2(); });
+
+    thread1.join();
+    thread2.join();
 
     EXPECT_EQ(task_invoked_count, total_invoke_count);
 }
