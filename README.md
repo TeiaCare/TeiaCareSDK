@@ -9,7 +9,7 @@ TeiaCareSDK is a collection of reusable C++ components.
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/ba48b0836d884c969b94b314901b95ff)](https://app.codacy.com/gh/TeiaCare/TeiaCareSDK/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
 [![codecov](https://codecov.io/gh/TeiaCare/TeiaCareSDK/branch/develop/graph/badge.svg?token=EFEW3J454E)](https://codecov.io/gh/TeiaCare/TeiaCareSDK)
 
-![TeiaCareSDK](https://socialify.git.ci/TeiaCare/TeiaCareSDK/image?description=1&font=Raleway&name=1&pattern=Solid&theme=Dark)
+![TeiaCareSDK](https://socialify.git.ci/TeiaCare/TeiaCareSDK/image?description=1&font=Raleway&name=1&pattern=Solid&theme=Auto)
 
 
 ## Key Features
@@ -76,13 +76,13 @@ Check the [Examples](sdk/examples/src/) folder for an in-depth showcase of all t
 
 ## Getting Started
 
-**Create a virtual environment**
+### Create a virtual environment
 
 ```bash
 python -m pip install --upgrade pip
 python -m venv .venv
 
-# Linux
+# Linux/MacOS
 echo "export CONAN_USER_HOME=$PWD" >> .venv/bin/activate
 source .venv/bin/activate
 
@@ -91,13 +91,10 @@ echo set CONAN_USER_HOME=%CD%>>.venv\Scripts\activate.bat
 .venv\Scripts\activate.bat
 
 pip install -r scripts/requirements.txt
-
-# on developer machine only (not in CI)
-pip install pre-commit==3.7.1
 pre-commit install
 ```
 
-**Setup Build Environment (Windows Only)**
+### Setup Build Environment (Windows Only)
 
 When building from command line on Windows it is necessary to activate the Visual Studio Developer Command Prompt.
 Depending on the version of Visual Studio compiler and on its install location it is required to run *vcvars64.bat* script the set the development environment properly.
@@ -113,14 +110,14 @@ Examples:
 "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
 ```
 
-**Dependencies Setup**
+### Dependencies Setup
 
 This script must be executed in order to setup the conan packages (note that 3rd party libs are only required for unit tests, examples and benchmarks).
 ```bash
 python scripts/conan/setup.py <Debug|Release|RelWithDebInfo> <COMPILER_NAME> <COMPILER_VERSION>
 ```
 
-**Configure, Build and Install**
+### Configure, Build and Install
 
 This script configures, builds and installs the library.
 ```bash
@@ -131,20 +128,29 @@ python scripts/cmake.py <Debug|Release|RelWithDebInfo> <COMPILER_NAME> <COMPILER
 ## Examples
 
 ```bash
+# Build all the examples
 python scripts/cmake.py <Debug|Release|RelWithDebInfo> <COMPILER_NAME> <COMPILER_VERSION> --examples --warnings
+
+# Run all the examples
+python3 scripts/tools/run_examples.py install/examples
 ```
 Examples are installed in $PWD/install/examples.
 
 
 ## Unit Tests and Code Coverage
 
-Note that code coverage is not available on Windows.
-
 ```bash
+# Build Unit Tests with Code Coverage enabled (if supported)
 python scripts/cmake.py <Debug|Release|RelWithDebInfo> <COMPILER_NAME> <COMPILER_VERSION> --coverage --warnings
+
+# Run Unit Tests
 python scripts/tools/run_unit_tests.py <Debug|Release|RelWithDebInfo>
+
+# Run Code Covergae
 python scripts/tools/run_coverage.py <COMPILER_NAME> <COMPILER_VERSION>
 ```
+Note that code coverage is not available on Windows.
+
 Unit tests results are available in $PWD/results/unit_tests.
 Coverage results are available in $PWD/results/coverage.
 
@@ -195,6 +201,7 @@ python scripts/tools/run_cppcheck.py <Debug|Release|RelWithDebInfo>
 ```
 
 - [cpplint](https://github.com/cpplint/cpplint) [TODO: Review]
+
 ```bash
 # TODO: add python script.
 cpplint --counting=detailed  $(find teiacare_sdk* -type f -name "*.hpp" -or -name "*.cpp")
@@ -210,18 +217,16 @@ apt-get install doxygen graphviz
 
 # Windows
 winget install doxygen
-
-# Update Doxyfile (required only after Doxygen updates)
-doxygen -u sdk/docs/Doxyfile
 ```
 
 ```bash
-python ./scripts/cmake/configure.py <Debug|Release|RelWithDebInfo> <COMPILER_NAME> <COMPILER_VERSION> --docs
+python scripts/tools/run_doxygen.py
 ```
-Documentation is now installed in $PWD/install/docs.
+Documentation is now installed in $PWD/docs.
 
+## Conan Package
 
-## Conan Package - Local Install
+### Local Install
 
 Create, test and install local package.
 
@@ -232,33 +237,37 @@ Notes:
    The directory test_package contains a test project that is built to validate the proper package creation.
 
 ```bash
-python ./scripts/conan/create.py <Debug|Release|RelWithDebInfo> <COMPILER_NAME> <COMPILER_VERSION>
+# Create the Conan package locally
+python scripts/conan/create.py <Debug|Release|RelWithDebInfo> <COMPILER_NAME> <COMPILER_VERSION>
 
-# Build, install and run the test package executable
+# Build and install the test package executable
 python test_package/build.py <Debug|Release|RelWithDebInfo> <COMPILER_NAME> <COMPILER_VERSION>
+
+# Run the test package executable
 $PWD/install/test_package/teiacare_sdk_test_package
 ```
 
 
-## Conan Package - Artifactory Setup
+### Artifactory Upload
 
-In order to push a Conan package to TeiaCare artifactory server it is required to setup you local Conan client with the following commands:
+In order to upload a Conan package to TeiaCare Artifactory server it is required to setup you local Conan client once with the following commands:
 
-First enable multiple revisions for a single package:
 ```bash
-# Linux
-export CONAN_REVISIONS_ENABLED=1
+# Add TeiaCare Artifactory remote to local Conan client
+conan remote add teiacare $(artifactory.url)/teiacare
 
-# Windows
-set CONAN_REVISIONS_ENABLED=1
+# Authenticate with Artifactory credentials
+conan user $(artifactory.username) -p $(artifactory.password) -r teiacare
 ```
 
-Then add artifactory remote and upload the pacage:
+Now it is possible to create and upload a Conan package with the following commands:
+
 ```bash
-conan remote add teiacare_sdk $(artifactory.url)/teiacare_sdk
-conan user $(artifactory.username) -p $(artifactory.password) -r teiacare_sdk
+# Create the Conan package locally
 python scripts/conan/create.py <Debug|Release|RelWithDebInfo> <COMPILER_NAME> <COMPILER_VERSION>
-python scripts/conan/upload.py teiacare_sdk teiacare_sdk/<PACKAGE_VERSION>@
+
+# Upload the package to Artifactory on the teicare remote
+python scripts/conan/upload.py teiacare teiacare_sdk/<PACKAGE_VERSION>@
 ```
 
 
