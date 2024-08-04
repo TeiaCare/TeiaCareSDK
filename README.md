@@ -11,7 +11,6 @@ TeiaCareSDK is a collection of reusable C++ components.
 
 ![TeiaCareSDK](https://socialify.git.ci/TeiaCare/TeiaCareSDK/image?description=1&font=Raleway&name=1&pattern=Solid&theme=Auto)
 
-
 ## Key Features
 
 * **Date & Time:** Master dates, times, and durations with ease using dedicated classes for manipulation, validation, formatting, conversions, timezones, and arithmetic operations.
@@ -166,7 +165,7 @@ Benchmarks are installed in $PWD/install/benchmarks.
 
 ## Code Formatting
 
-- [clang-format](https://clang.llvm.org/docs/ClangFormat.html)
+[clang-format](https://clang.llvm.org/docs/ClangFormat.html)
 
 *clang-format* can be installed via *pip* using the provided *scripts/requirements.txt*
 
@@ -177,7 +176,7 @@ python scripts/tools/run_clang_format.py sdk
 
 ## Code Analysis
 
-- [clang-tidy](https://clang.llvm.org/extra/clang-tidy/)
+[clang-tidy](https://clang.llvm.org/extra/clang-tidy/)
 
 *clang-tidy* can be installed via *pip* using the provided *scripts/requirements.txt*
 
@@ -185,7 +184,7 @@ python scripts/tools/run_clang_format.py sdk
 python scripts/tools/run_clang_tidy.py -header-filter=.* sdk
 ```
 
-- [cppcheck](http://cppcheck.net/)
+[cppcheck](http://cppcheck.net/)
 
 First install and setup *cppcheck* from your OS package manager.
 ```bash
@@ -196,15 +195,9 @@ sudo apt install cppcheck
 winget install cppcheck
 ```
 
+Then run CppCheck using the provided python script:
 ```bash
 python scripts/tools/run_cppcheck.py <Debug|Release|RelWithDebInfo>
-```
-
-- [cpplint](https://github.com/cpplint/cpplint) [TODO: Review]
-
-```bash
-# TODO: add python script.
-cpplint --counting=detailed  $(find teiacare_sdk* -type f -name "*.hpp" -or -name "*.cpp")
 ```
 
 
@@ -219,6 +212,7 @@ apt-get install doxygen graphviz
 winget install doxygen
 ```
 
+Then run Doxygen using the provided python script:
 ```bash
 python scripts/tools/run_doxygen.py
 ```
@@ -231,6 +225,7 @@ Documentation is now installed in $PWD/docs.
 Create, test and install local package.
 
 Notes:
+
 1) The install directory path must be a valid Conan cache (i.e. ".conan" folder) located in the current directory.
    So, in order to install the package in a desired repository folder, it is required to run this script from the repository folder directly.
 2) The Conan package tests are automatically run during package creation.

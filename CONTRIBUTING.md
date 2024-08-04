@@ -6,10 +6,10 @@ Reading and following these guidelines will help us make the contribution proces
 
 ## Quicklinks
 
-* [Getting Started](#getting-started)
-    * [Issues](#issues)
-    * [Pull Requests](#pull-requests)
-* [License](#license)
+- [Getting Started](#getting-started)
+  - [Issues](#issues)
+  - [Pull Requests](#pull-requests)
+- [License](#license)
 
 ## Getting Started
 
@@ -47,4 +47,5 @@ In general, we follow the ["fork-and-pull" Git workflow](https://github.com/susa
 7. Open a PR in our repository and follow the PR template so that we can efficiently review the changes.
 
 ### License
+
 By contributing, you agree that your contributions will be licensed under its [Apache License, Version 2.0](LICENSE).
