@@ -17,9 +17,6 @@ cmake_print_variables(TC_ENABLE_BENCHMARKS)
 option(TC_ENABLE_EXAMPLES "Enable Examples" True)
 cmake_print_variables(TC_ENABLE_EXAMPLES)
 
-option(TC_ENABLE_DOCS "Enable Doxygen docuentation" True)
-cmake_print_variables(TC_ENABLE_DOCS)
-
 option(TC_ENABLE_WARNINGS_ERROR "Enable treat Warnings as Errors" True)
 cmake_print_variables(TC_ENABLE_WARNINGS_ERROR)
 

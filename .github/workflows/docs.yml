@@ -35,21 +35,16 @@ jobs:
         uses: actions/configure-pages@v4
 
       - name: Build Docs
-        uses: docker/build-push-action@v5
-        with:
-          file: Dockerfile.docs
-          target: docs
-          outputs: 'type=local,dest=docs'
+        run: sudo apt-get install -y doxygen graphviz
 
-      - name: Create dummy Docs
-        run: |
-          sudo chmod a+rwx docs
+      - name: Build Docs
+        run: python3 scripts/tools/run_doxygen.py
 
       - name: Upload Docs
         uses: actions/upload-pages-artifact@v3
         with:
           name: github-pages
-          path: 'docs'
+          path: 'docs/html'
 
       - name: Deploy to GitHub Pages
         id: deployment

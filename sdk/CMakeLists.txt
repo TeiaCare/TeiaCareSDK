@@ -120,13 +120,3 @@ endif()
 if(TC_ENABLE_EXAMPLES)
     add_subdirectory(examples)
 endif()
-
-if(TC_ENABLE_DOCS)
-    include(doxygen)
-    setup_docs(
-        ${TARGET_NAME}
-        "${TARGET_HEADERS}"
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/teiacare/sdk
-        ${CMAKE_CURRENT_SOURCE_DIR}/docs/Doxyfile
-    )
-endif()

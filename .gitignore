@@ -13,3 +13,4 @@
 **/compile_commands.json
 **/CMakeUserPresets.json
 sdk/src/version.cpp
+/docs

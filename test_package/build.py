@@ -94,7 +94,6 @@ def cmake_configure(build_type):
         '-D', 'TC_ENABLE_CLANG_TIDY=False',
         '-D', 'TC_ENABLE_CPPCHECK=False',
         '-D', 'TC_ENABLE_CPPLINT=False',
-        '-D', 'TC_ENABLE_DOCS=False',
         '-B', f'build/{build_type}',
         '-S', '.',
         '--fresh'

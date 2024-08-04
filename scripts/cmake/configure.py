@@ -37,7 +37,6 @@ def parse():
     parser.add_argument("--clang_tidy",         required=False, default=False, action='store_true')
     parser.add_argument("--cppcheck",           required=False, default=False, action='store_true')
     parser.add_argument("--cpplint",            required=False, default=False, action='store_true')
-    parser.add_argument("--docs",               required=False, default=False, action='store_true')
     args, _ = parser.parse_known_args()
     return args
 
@@ -79,7 +78,6 @@ def main():
         '-D', f'TC_ENABLE_CLANG_TIDY={str(args.clang_tidy)}',
         '-D', f'TC_ENABLE_CPPCHECK={str(args.cppcheck)}',
         '-D', f'TC_ENABLE_CPPLINT={str(args.cpplint)}',
-        '-D', f'TC_ENABLE_DOCS={str(args.docs)}',
         '-B', f'{args.build_dir}/{args.build_type}',
         '-S', '.',
         '--fresh'

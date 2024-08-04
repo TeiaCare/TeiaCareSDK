@@ -56,7 +56,6 @@ class TeiaCareSDK(ConanFile):
         tc.variables["TC_ENABLE_UNIT_TESTS_COVERAGE"] = False
         tc.variables["TC_ENABLE_BENCHMARKS"] = False
         tc.variables["TC_ENABLE_EXAMPLES"] = False
-        tc.variables["TC_ENABLE_DOCS"] = False
         tc.variables["TC_ENABLE_WARNINGS_ERROR"] = True
         tc.variables["TC_ENABLE_SANITIZER_ADDRESS"] = False
         tc.variables["TC_ENABLE_SANITIZER_THREAD"] = False
@@ -64,7 +63,6 @@ class TeiaCareSDK(ConanFile):
         tc.variables["TC_ENABLE_CLANG_TIDY"] = False
         tc.variables["TC_ENABLE_CPPCHECK"] = False
         tc.variables["TC_ENABLE_CPPLINT"] = False
-        tc.variables["TC_ENABLE_DOCS"] = False
         tc.generate()
 
     def build(self):
