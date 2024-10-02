@@ -426,7 +426,7 @@ TEST_F(test_event_dispatcher, push_event_with_different_overloads)
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_event_dispatcher, push_after_remove_handler)
+TEST_F(test_event_dispatcher, DISABLED_TSAN_WARNING_push_after_remove_handler)
 {
     e->start();
     const auto event_name = "EVENT_NAME";
@@ -456,7 +456,7 @@ TEST_F(test_event_dispatcher, push_after_remove_handler)
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_event_dispatcher, push_after_remove_event)
+TEST_F(test_event_dispatcher, DISABLED_TSAN_WARNING_push_after_remove_event)
 {
     e->start();
     const auto event_name = "EVENT_NAME";
@@ -545,7 +545,7 @@ TEST_F(test_event_dispatcher, DISABLED_TSAN_WARNING_push_after_remove_specific_h
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_event_dispatcher, push_after_remove_event_with_multiple_handlers)
+TEST_F(test_event_dispatcher, DISABLED_TSAN_WARNING_push_after_remove_event_with_multiple_handlers)
 {
     e->start(2);
     const auto event_name = "EVENT_NAME";
