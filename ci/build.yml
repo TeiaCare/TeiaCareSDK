@@ -92,6 +92,9 @@ jobs:
         vmImage: $(AGENT)
 
       steps:
+        - checkout: self
+          submodules: true
+
         - task: UsePythonVersion@0
           displayName: Set Python version (3.10)
           inputs:
