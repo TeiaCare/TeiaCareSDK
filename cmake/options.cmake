@@ -1,9 +1,10 @@
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set(WINDOWS_EXPORT_ALL_SYMBOLS ON)
-set(CONAN_CMAKE_SILENT_OUTPUT ON)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+set(CMAKE_CXX_EXTENSIONS True)
+set(CMAKE_EXPORT_COMPILE_COMMANDS True)
+set(CMAKE_LINK_WHAT_YOU_USE True)
+set(WINDOWS_EXPORT_ALL_SYMBOLS True)
+set(CONAN_CMAKE_SILENT_OUTPUT True)
 
 option(TC_ENABLE_UNIT_TESTS "Enable Unit Tests" True)
 cmake_print_variables(TC_ENABLE_UNIT_TESTS)
@@ -26,13 +27,13 @@ cmake_print_variables(TC_ENABLE_SANITIZER_ADDRESS)
 option(TC_ENABLE_SANITIZER_THREAD "Enable Thread Sanitizer" False)
 cmake_print_variables(TC_ENABLE_SANITIZER_THREAD)
 
-option(TC_ENABLE_CLANG_FORMAT "Enable Clang Format" True)
+option(TC_ENABLE_CLANG_FORMAT "Enable Clang Format" False)
 cmake_print_variables(TC_ENABLE_CLANG_FORMAT)
 
-option(TC_ENABLE_CLANG_TIDY "Enable Clang Tidy" True)
+option(TC_ENABLE_CLANG_TIDY "Enable Clang Tidy" False)
 cmake_print_variables(TC_ENABLE_CLANG_TIDY)
 
-option(TC_ENABLE_CPPCHECK "Enable Cppcheck" True)
+option(TC_ENABLE_CPPCHECK "Enable Cppcheck" False)
 cmake_print_variables(TC_ENABLE_CPPCHECK)
 
 option(TC_ENABLE_CPPLINT "Enable Cpplint" False)

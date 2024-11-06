@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # Copyright 2024 TeiaCare
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,12 +13,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#!/usr/bin/python
 import subprocess
 import argparse
 import pathlib
 import sys
 import os
+import re
+
+def get_project_version():
+    with open('VERSION', encoding='utf8') as version_file:
+        version_regex = r'^\d+\.\d+\.\d+$'
+        version = version_file.read().strip()
+        if re.match(version_regex, version):
+            return version
+        else:
+            raise ValueError(f"Invalid version detected into file VERSION: {version}")
 
 def setup_conan_home():
     current_working_directory = pathlib.Path().resolve()

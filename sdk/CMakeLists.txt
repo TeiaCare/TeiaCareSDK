@@ -8,6 +8,11 @@ configure_file(
 )
 
 set(TARGET_HEADERS
+    include/teiacare/sdk/argparse/argument_base.hpp
+    include/teiacare/sdk/argparse/argument_parser.hpp
+    include/teiacare/sdk/argparse/flag_argument.hpp
+    include/teiacare/sdk/argparse/optional_argument.hpp
+    include/teiacare/sdk/argparse/positional_argument.hpp
     include/teiacare/sdk/datetime/date.hpp
     include/teiacare/sdk/datetime/datetime.hpp
     include/teiacare/sdk/datetime/time.hpp
@@ -41,12 +46,12 @@ set(TARGET_HEADERS
 )
 
 set(TARGET_SOURCES
+    src/argparse/argument_parser.cpp
     src/datetime/date.h
     src/datetime/date.cpp
     src/datetime/datetime.cpp
     src/datetime/time.cpp
     src/datetime/timedelta.cpp
-
     src/event_dispatcher.cpp
     src/high_precision_timer.cpp
     src/rate_limiter.cpp
@@ -74,7 +79,6 @@ install(TARGETS ${TARGET_NAME})
 install(DIRECTORY include DESTINATION .)
 
 if(TC_ENABLE_WARNINGS_ERROR)
-    include(warnings)
     add_warnings(${TARGET_NAME})
     add_warnings_as_errors(${TARGET_NAME})
 endif()

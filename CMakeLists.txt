@@ -14,6 +14,7 @@ include(GNUInstallDirs)
 include(CMakePrintHelpers)
 
 include(compiler_info)
+include(warnings)
 include(options)
 validate_project_options()
 

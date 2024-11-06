@@ -1,4 +1,5 @@
 include(examples)
+add_example(${TARGET_NAME} example_argparse)
 add_example(${TARGET_NAME} example_blocking_queue)
 add_example(${TARGET_NAME} example_datetime_date)
 add_example(${TARGET_NAME} example_datetime_datetime)
