@@ -53,7 +53,15 @@ public:
         if (_env.empty())
             return;
 
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable : 4996)
+#endif
         const char* env_value = std::getenv(_env.c_str());
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
         if (env_value)
         {
             parse(std::string(env_value));
