@@ -75,28 +75,41 @@ Check the [Examples](sdk/examples/src/) folder for an in-depth showcase of all t
 
 ## Getting Started
 
-### Create a virtual environment
+This project uses git submodules so it is required to clone it using the *--recursive* flag in order to retrive the required submodules.
 
 ```bash
-python -m pip install --upgrade pip
-python -m venv .venv
+git clone https://github.com/TeiaCare/TeiaCareSDK.git --recursive
+```
 
+### Create Development Environment
+In order to setup a development environment it is sufficient to run the script *scripts/env/setup.<bat|sh>* depending on your operating system.
+
+```bash
 # Linux/MacOS
-echo "export CONAN_USER_HOME=$PWD" >> .venv/bin/activate
+chmod +x scripts/env/setup.sh
+scripts/env/setup.sh
+
+# Windows
+scripts\env\setup.bat
+```
+
+### Start Development Environment
+In order to start the development environment it is sufficient to activate the Python Virtual Environment just created the step above.
+
+```bash
+# Linux/MacOS
 source .venv/bin/activate
 
 # Windows
-echo set CONAN_USER_HOME=%CD%>>.venv\Scripts\activate.bat
 .venv\Scripts\activate.bat
-
-pip install -r scripts/requirements.txt
-pre-commit install
 ```
 
 ### Setup Build Environment (Windows Only)
 
 When building from command line on Windows it is necessary to activate the Visual Studio Developer Command Prompt.
+
 Depending on the version of Visual Studio compiler and on its install location it is required to run *vcvars64.bat* script the set the development environment properly.
+
 *Note*: using Visual Studio IDE or the CMake extension for VSCode this step is already managed in the background, so no action is required.
 
 Examples:
@@ -109,11 +122,17 @@ Examples:
 "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
 ```
 
-### Dependencies Setup
+### Setup Dependencies
+This script must be executed in order to install the 3rd party dependencies specified in the conanfile (note that 3rd party libs are only required for unit tests, examples and benchmarks).
 
-This script must be executed in order to setup the conan packages (note that 3rd party libs are only required for unit tests, examples and benchmarks).
+See the section [Scripts Parameters](#scripts-parameters) for more details on the allowed scripts parameters.
+
 ```bash
 python scripts/conan/setup.py <Debug|Release|RelWithDebInfo> <COMPILER_NAME> <COMPILER_VERSION>
+
+# examples:
+python scripts/conan/setup.py Debug visual_studio 17
+python scripts/conan/setup.py Release clang 15
 ```
 
 ### Configure, Build and Install
@@ -122,7 +141,6 @@ This script configures, builds and installs the library.
 ```bash
 python scripts/cmake.py <Debug|Release|RelWithDebInfo> <COMPILER_NAME> <COMPILER_VERSION>
 ```
-
 
 ## Examples
 
