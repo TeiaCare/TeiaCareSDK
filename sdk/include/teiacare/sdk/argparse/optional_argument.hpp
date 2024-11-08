@@ -22,7 +22,7 @@ template <typename T>
 class optional_argument : public argument_base
 {
 public:
-    explicit optional_argument(const std::string& name_long, const char name_short[2], T& var, const T& default_value = T(), const std::string& description = "", bool required = false, const std::string& env_var = "") noexcept
+    explicit optional_argument(const std::string& name_long, const std::string& name_short, T& var, const T& default_value = T(), const std::string& description = "", bool required = false, const std::string& env_var = "") noexcept
         : argument_base(name_long, name_short, description, required, env_var)
         , _var{var}
     {

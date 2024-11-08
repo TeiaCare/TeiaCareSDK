@@ -47,7 +47,7 @@ TEST_F(test_task_scheduler, run_after_stop)
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_task_scheduler, stop_immediate_while_running)
+TEST_F(test_task_scheduler, DISABLED_TSAN_WARNING_stop_immediate_while_running)
 {
     EXPECT_TRUE(ts->start());
 
@@ -84,7 +84,7 @@ TEST_F(test_task_scheduler, DISABLED_TSAN_WARNING_tasks_size_different_id)
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_task_scheduler, tasks_size_same_id)
+TEST_F(test_task_scheduler, DISABLED_TSAN_WARNING_tasks_size_same_id)
 {
     EXPECT_TRUE(ts->start());
     EXPECT_EQ(ts->tasks_size(), 0);

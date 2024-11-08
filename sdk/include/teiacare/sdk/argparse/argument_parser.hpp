@@ -64,7 +64,7 @@ public:
     template <typename T>
     void add_option(const std::string& name_long, const std::string& name_short, T& var, const T& default_value = T(), const std::string& description = "", bool required = false, const std::string& env_var = "")
     {
-        return add_option(std::make_unique<tc::sdk::optional_argument<T>>(name_long, name_short.c_str(), var, default_value, description, required, env_var));
+        return add_option(std::make_unique<tc::sdk::optional_argument<T>>(name_long, name_short, var, default_value, description, required, env_var));
     }
 
     template <typename T>
@@ -75,7 +75,7 @@ public:
 
     void add_flag(const std::string& name_long, const std::string& name_short, bool& var, const std::string& description = "", const std::string& env_var = "")
     {
-        add_flag(std::make_unique<tc::sdk::flag_argument>(name_long, name_short.c_str(), var, description, env_var));
+        add_flag(std::make_unique<tc::sdk::flag_argument>(name_long, name_short, var, description, env_var));
     }
 
     void add_flag(std::unique_ptr<tc::sdk::flag_argument>&& flag_arg)

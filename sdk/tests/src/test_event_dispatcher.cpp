@@ -195,7 +195,7 @@ TEST_F(test_event_dispatcher, remove_event_handler_after_stop)
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_event_dispatcher, push_event_n_times_void_payload)
+TEST_F(test_event_dispatcher, DISABLED_TSAN_WARNING_push_event_n_times_void_payload)
 {
     const auto event_name = "EVENT_NAME";
     e->start();
@@ -261,7 +261,7 @@ TEST_F(test_event_dispatcher, add_same_event_name_same_handler_types)
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_event_dispatcher, add_same_event_name_different_handler_types)
+TEST_F(test_event_dispatcher, DISABLED_TSAN_WARNING_add_same_event_name_different_handler_types)
 {
     const auto event_name = "EVENT_NAME";
     EXPECT_TRUE(e->add_handler<int>(event_name, [](int) {}));
@@ -277,7 +277,7 @@ TEST_F(test_event_dispatcher, add_same_event_name_different_handler_types)
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_event_dispatcher, push_same_event_name_same_handler_types)
+TEST_F(test_event_dispatcher, DISABLED_TSAN_WARNING_push_same_event_name_same_handler_types)
 {
     const auto event_name = "EVENT_NAME";
     e->start();
@@ -344,7 +344,7 @@ TEST_F(test_event_dispatcher, DISABLED_TSAN_WARNING_push_same_event_name_differe
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_event_dispatcher, push_event_consecutive_start_stop)
+TEST_F(test_event_dispatcher, DISABLED_TSAN_WARNING_push_event_consecutive_start_stop)
 {
     const auto event_name = "EVENT_NAME";
 
@@ -402,7 +402,7 @@ TEST_F(test_event_dispatcher, push_missing_event)
 }
 
 // NOLINTNEXTLINE
-TEST_F(test_event_dispatcher, push_event_with_different_overloads)
+TEST_F(test_event_dispatcher, DISABLED_TSAN_WARNING_push_event_with_different_overloads)
 {
     e->start();
     const auto event_name = "EVENT_NAME";

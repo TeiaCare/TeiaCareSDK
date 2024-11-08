@@ -35,7 +35,7 @@ struct is_vector<std::vector<T>> : std::true_type
 class argument_base
 {
 public:
-    explicit argument_base(const std::string& name_long, const char name_short[2] = "", const std::string& description = "", bool required = false, const std::string& environment_var = "") noexcept
+    explicit argument_base(const std::string& name_long, const std::string& name_short = "", const std::string& description = "", bool required = false, const std::string& environment_var = "") noexcept
         : _required{required}
         , _name_long{name_long}
         , _name_short{name_short}

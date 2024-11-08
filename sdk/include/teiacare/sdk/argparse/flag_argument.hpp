@@ -19,7 +19,7 @@ namespace tc::sdk
 class flag_argument : public argument_base
 {
 public:
-    explicit flag_argument(const std::string& name_long, const char name_short[2], bool& var, const std::string& description = "", const std::string& env_var = "") noexcept
+    explicit flag_argument(const std::string& name_long, const std::string& name_short, bool& var, const std::string& description = "", const std::string& env_var = "") noexcept
         : argument_base(name_long, name_short, description, true, env_var)
         , _var{var}
     {
