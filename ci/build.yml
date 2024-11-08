@@ -173,7 +173,7 @@ jobs:
         - script: |
             $(ACTIVATE_VIRTUAL_ENV)
             $(SETUP_BUILD_ENV)
-            python3 scripts/tools/run_coverage.py $(COMPILER) $(COMPILER_VERSION)
+            python3 scripts/tools/run_coverage.py $(COMPILER) $(COMPILER_VERSION) sdk
           displayName: 'Code Coverage'
           condition: eq(variables['Agent.OS'], 'Linux')
           timeoutInMinutes: 5
