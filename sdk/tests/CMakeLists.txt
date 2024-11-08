@@ -6,6 +6,16 @@ endif()
 include(unit_tests)
 set(UNIT_TESTS_SRC
     src/main.cpp
+
+    src/test_argparse_argument_base.cpp
+    src/test_argparse_argument_base.hpp
+    src/test_argparse_flag_argument.cpp
+    src/test_argparse_flag_argument.hpp
+    src/test_argparse_optional_argument.cpp
+    src/test_argparse_optional_argument.hpp
+    src/test_argparse_positional_argument.cpp
+    src/test_argparse_positional_argument.hpp
+
     src/test_blocking_queue.cpp
     src/test_blocking_queue.hpp
 

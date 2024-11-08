@@ -10,29 +10,28 @@
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
-// limitations under the License.#pragma once
+// limitations under the License.
 
-#include <teiacare/sdk/argparse/argument_base.hpp>
+#pragma once
 
-namespace tc::sdk
+#include <teiacare/sdk/argparse/flag_argument.hpp>
+
+#include <gtest/gtest.h>
+
+namespace tc::sdk::tests
 {
-class flag_argument : public argument_base
+class test_argparse_flag_argument : public ::testing::Test
 {
-public:
-    explicit flag_argument(const std::string& name_long, const std::string& name_short, bool& var, const std::string& description = "", const std::string& env_var = "") noexcept
-        : argument_base(name_long, name_short, description, false, env_var)
-        , _var{var}
+protected:
+    explicit test_argparse_flag_argument()
     {
     }
 
-    void parse(const std::string&) override
+    ~test_argparse_flag_argument() override
     {
-        _var = true;
-        _parsed = true;
     }
 
-private:
-    bool& _var;
+    static constexpr const char* ENV_VAR = "TC_FLAG";
 };
 
 }

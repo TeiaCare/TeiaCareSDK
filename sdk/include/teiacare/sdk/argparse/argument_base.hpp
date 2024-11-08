@@ -48,7 +48,7 @@ public:
 
     virtual void parse(const std::string& value) = 0;
 
-    void parse_from_env()
+    void parse_from_env() noexcept
     {
         if (_env.empty())
             return;
@@ -68,32 +68,32 @@ public:
         }
     }
 
-    constexpr bool is_parsed() const
+    constexpr bool is_parsed() const noexcept
     {
         return _parsed;
     }
 
-    constexpr bool is_required() const
+    constexpr bool is_required() const noexcept
     {
         return _required;
     }
 
-    constexpr const std::string& get_name_short() const
+    constexpr const std::string& get_name_short() const noexcept
     {
         return _name_short;
     }
 
-    constexpr const std::string& get_name_long() const
+    constexpr const std::string& get_name_long() const noexcept
     {
         return _name_long;
     }
 
-    constexpr const std::string& get_description() const
+    constexpr const std::string& get_description() const noexcept
     {
         return _description;
     }
 
-    constexpr const std::string& get_env() const
+    constexpr const std::string& get_env() const noexcept
     {
         return _env;
     }
@@ -107,6 +107,14 @@ protected:
     convert(const std::string& str) const
     {
         return str;
+    }
+
+    // Specialization for const char*
+    template <typename T>
+    typename std::enable_if_t<std::is_same_v<T, const char*>, T>
+    convert(const std::string& str) const
+    {
+        return str.c_str();
     }
 
     // Specialization for int
@@ -180,6 +188,7 @@ protected:
             !std::is_same_v<T, float> &&
             !std::is_same_v<T, double> &&
             !std::is_same_v<T, std::string> &&
+            !std::is_same_v<T, const char*> &&
             !tc::sdk::is_vector<T>::value,
         T>
     convert(const std::string& str) const

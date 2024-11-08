@@ -41,12 +41,6 @@ public:
         _parsed = true;
     }
 
-    optional_argument* set_default_value(const T& default_value)
-    {
-        _var = default_value;
-        return this;
-    }
-
     optional_argument* set_validator(std::function<bool(const T&)> validator_callback)
     {
         _validator = validator_callback;
