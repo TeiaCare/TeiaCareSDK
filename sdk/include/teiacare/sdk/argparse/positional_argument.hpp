@@ -24,6 +24,7 @@ public:
         : argument_base(name, "", description, true)
         , _var(var)
     {
+        _var = T();
     }
 
     void parse(const std::string& value) override

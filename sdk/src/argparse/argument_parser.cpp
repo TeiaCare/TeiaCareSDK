@@ -132,34 +132,11 @@ parse_result argument_parser::parse(std::vector<std::string>&& args) const
         }
     }
 
-    // Check if all Positional Arguments have been set, otherwise report an error.
-    // if (next_positional_arg != _positionals.end())
-    // {
-    //     std::string missing_args = "[";
-    //     missing_args += next_positional_arg->get()->get_name_long();
-    //     while (++next_positional_arg != _positionals.end())
-    //     {
-    //         missing_args += ", ";
-    //         missing_args += next_positional_arg->get()->get_name_long();
-    //     }
-    //     missing_args += "]";
-    //     throw std::runtime_error("Missing arguments: " + missing_args);
-    // }
+    // Check all Positional Arguments have been set, otherwise report an error.
+    check_parsed_arguments(_positionals);
 
-    // Check required Optional Arguments have all been set
-    std::vector<std::string> missing_arguments{};
-    for (const auto& opt : _optionals)
-    {
-        if (opt->is_required() && !opt->is_parsed())
-        {
-            missing_arguments.emplace_back(opt->get_name_long());
-        }
-    }
-
-    if (!missing_arguments.empty())
-    {
-        throw std::runtime_error("Missing required arguments: " + vector_to_string(missing_arguments));
-    }
+    // Check required Optional Arguments have all been set, otherwise report an error
+    check_parsed_arguments(_optionals);
 
     return parse_result::success;
 }

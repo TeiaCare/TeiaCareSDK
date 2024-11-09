@@ -9,6 +9,8 @@ set(UNIT_TESTS_SRC
 
     src/test_argparse_argument_base.cpp
     src/test_argparse_argument_base.hpp
+    src/test_argparse_argument_parser.cpp
+    src/test_argparse_argument_parser.hpp
     src/test_argparse_flag_argument.cpp
     src/test_argparse_flag_argument.hpp
     src/test_argparse_optional_argument.cpp

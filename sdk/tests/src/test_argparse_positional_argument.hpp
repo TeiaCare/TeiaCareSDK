@@ -14,24 +14,22 @@
 
 #pragma once
 
-#include <teiacare/sdk/argparse/flag_argument.hpp>
+#include <teiacare/sdk/argparse/positional_argument.hpp>
 
 #include <gtest/gtest.h>
 
 namespace tc::sdk::tests
 {
-class test_argparse_flag_argument : public ::testing::Test
+class test_argparse_positional_argument : public ::testing::Test
 {
 protected:
-    explicit test_argparse_flag_argument()
+    explicit test_argparse_positional_argument()
     {
     }
 
-    ~test_argparse_flag_argument() override
+    ~test_argparse_positional_argument() override
     {
     }
-
-    static constexpr const char* ENV_VAR = "TC_FLAG";
 };
 
 }

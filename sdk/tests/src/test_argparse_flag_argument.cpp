@@ -62,8 +62,8 @@ TEST_F(test_argparse_flag_argument, parse)
     bool value = false;
     tc::sdk::flag_argument arg("flag_a", "a", value);
 
-    EXPECT_TRUE(arg.is_parsed());
     EXPECT_NO_THROW(arg.parse(""));
+    EXPECT_TRUE(arg.is_parsed());
     EXPECT_TRUE(value);
 }
 
@@ -79,6 +79,16 @@ TEST_F(test_argparse_flag_argument, parse_twice)
     EXPECT_NO_THROW(arg.parse("some_random_string"));
     EXPECT_TRUE(arg.is_parsed());
     EXPECT_TRUE(value);
+}
+
+TEST_F(test_argparse_flag_argument, parse_from_env_variable_empty)
+{
+    bool value = false;
+    tc::sdk::flag_argument arg("flag_a", "a", value, "Argument Description", "");
+
+    EXPECT_NO_THROW(arg.parse_from_env());
+    EXPECT_FALSE(arg.is_parsed());
+    EXPECT_FALSE(value);
 }
 
 TEST_F(test_argparse_flag_argument, parse_from_env_variable_not_found)

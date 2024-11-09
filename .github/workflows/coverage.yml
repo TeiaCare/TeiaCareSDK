@@ -72,7 +72,7 @@ jobs:
           source .venv/bin/activate
           python3 scripts/cmake.py ${{ matrix.build_type }} ${{ matrix.compiler }} ${{ matrix.compiler_version }} --warnings --coverage
           python3 scripts/tools/run_unit_tests.py ${{ matrix.build_type }}
-          python3 scripts/tools/run_coverage.py ${{ matrix.compiler }} ${{ matrix.compiler_version }}
+          python3 scripts/tools/run_coverage.py ${{ matrix.compiler }} ${{ matrix.compiler_version }} sdk --extra_args=-e=sdk/src/datetime/date.h
         timeout-minutes: 5
         continue-on-error: true
         env:

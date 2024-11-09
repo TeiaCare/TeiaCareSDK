@@ -64,7 +64,7 @@ public:
     template <typename T>
     void add_option(const std::string& name_long, const std::string& name_short, T& var, const T& default_value = T(), const std::string& description = "", bool required = false, const std::string& env_var = "")
     {
-        return add_option(std::make_unique<tc::sdk::optional_argument<T>>(name_long, name_short, var, default_value, description, required, env_var));
+        add_option(std::make_unique<tc::sdk::optional_argument<T>>(name_long, name_short, var, default_value, description, required, env_var));
     }
 
     template <typename T>
@@ -84,9 +84,9 @@ public:
     }
 
     parse_result parse(int argc, char* argv[]) const;
-    parse_result parse(std::vector<std::string>&& args) const;
 
 protected:
+    parse_result parse(std::vector<std::string>&& args) const;
     void print_help() const;
     void print_version() const;
     void print_description() const;

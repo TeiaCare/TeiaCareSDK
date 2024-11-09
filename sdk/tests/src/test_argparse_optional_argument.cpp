@@ -96,7 +96,7 @@ TEST_F(test_argparse_optional_argument, parse_error)
     Type value;
     tc::sdk::optional_argument<Type> arg("long_name", "s", value);
 
-    EXPECT_NO_THROW(arg.parse("a"));
+    EXPECT_THROW(arg.parse("a"), std::runtime_error);
     EXPECT_FALSE(arg.is_parsed());
     EXPECT_EQ(value, 0);
 }
@@ -201,6 +201,17 @@ TEST_F(test_argparse_optional_argument, parse_twice)
 
     EXPECT_NO_THROW(arg.parse("4"));
     EXPECT_EQ(value, 4);
+}
+
+TEST_F(test_argparse_optional_argument, parse_from_env_variable_empty)
+{
+    int value = 1;
+    int default_value = 2;
+    tc::sdk::optional_argument<int> arg("flag_a", "a", value, default_value, "Argument Description", "");
+
+    EXPECT_NO_THROW(arg.parse_from_env());
+    EXPECT_FALSE(arg.is_parsed());
+    EXPECT_EQ(value, default_value);
 }
 
 TEST_F(test_argparse_optional_argument, parse_from_env_variable_not_found)

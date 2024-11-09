@@ -164,7 +164,7 @@ python scripts/cmake.py <Debug|Release|RelWithDebInfo> <COMPILER_NAME> <COMPILER
 python scripts/tools/run_unit_tests.py <Debug|Release|RelWithDebInfo>
 
 # Run Code Covergae
-python scripts/tools/run_coverage.py <COMPILER_NAME> <COMPILER_VERSION>
+python scripts/tools/run_coverage.py <COMPILER_NAME> <COMPILER_VERSION> sdk --extra_args=-e=sdk/src/datetime/date.h
 ```
 Note that code coverage is not available on Windows.
 
