@@ -32,9 +32,24 @@ struct is_vector<std::vector<T>> : std::true_type
 {
 };
 
+/*!
+ * \class argument_base
+ * \brief Base class for command-line arguments.
+ *
+ * The tc::sdk::argument_base class serves as an abstract base for various types of command-line arguments,
+ * providing common functionality for parsing values and handling environment variables.
+ */
 class argument_base
 {
 public:
+    /*!
+     * \brief Constructs an argument with the given properties.
+     * \param name_long Long name of the argument (e.g., "--option").
+     * \param name_short Short name of the argument (e.g., "-o") (optional).
+     * \param description Description of the argument (optional).
+     * \param required Indicates if the argument is required (default=false).
+     * \param environment_var Name of the environment variable to parse (optional).
+     */
     explicit argument_base(const std::string& name_long, const std::string& name_short = "", const std::string& description = "", bool required = false, const std::string& environment_var = "") noexcept
         : _required{required}
         , _name_long{name_long}
@@ -44,15 +59,29 @@ public:
     {
     }
 
+    /*!
+     * \brief Destructor
+     *
+     * Destructs this.
+     */
     virtual ~argument_base() = default;
 
+    /*!
+     * \brief Pure virtual function to parse the provided value.
+     * \param value String value to parse and convert.
+     */
     virtual void parse(const std::string& value) = 0;
 
+    /*!
+     * \brief Parses the argument's value from an environment variable, if set.
+     *
+     * This function checks if the specified environment variable exists and,
+     * if so, parses its value using the parse method.
+     */
     void parse_from_env() noexcept
     {
         if (_env.empty())
             return;
-
 #ifdef _MSC_VER
 #pragma warning(push)
 #pragma warning(disable : 4996)
@@ -61,38 +90,61 @@ public:
 #ifdef _MSC_VER
 #pragma warning(pop)
 #endif
-
         if (env_value)
         {
             parse(std::string(env_value));
         }
     }
 
+    /*!
+     * \brief Checks if the argument has been parsed.
+     * \return True if the argument has been parsed, false otherwise.
+     */
     constexpr bool is_parsed() const noexcept
     {
         return _parsed;
     }
 
+    /*!
+     * \brief Checks if the argument is required.
+     * \return True if the argument is required, false otherwise.
+     */
     constexpr bool is_required() const noexcept
     {
         return _required;
     }
 
+    /*!
+     * \brief Gets the short name of the argument.
+     * \return A constant reference to the short name of the argument.
+     */
     constexpr const std::string& get_name_short() const noexcept
     {
         return _name_short;
     }
 
+    /*!
+     * \brief Gets the long name of the argument.
+     * \return A constant reference to the long name of the argument.
+     */
     constexpr const std::string& get_name_long() const noexcept
     {
         return _name_long;
     }
 
+    /*!
+     * \brief Gets the description of the argument.
+     * \return A constant reference to the description of the argument.
+     */
     constexpr const std::string& get_description() const noexcept
     {
         return _description;
     }
 
+    /*!
+     * \brief Gets the name of the associated environment variable.
+     * \return A constant reference to the name of the environment variable.
+     */
     constexpr const std::string& get_env() const noexcept
     {
         return _env;

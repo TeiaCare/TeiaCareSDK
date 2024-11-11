@@ -16,10 +16,24 @@
 
 namespace tc::sdk
 {
+/*!
+ * \class positional_argument
+ * \brief Represents a positional argument for command-line parsing.
+ * \tparam T Type of the argument variable.
+ *
+ * The tc::sdk::positional_argument class is a specialization of tc::sdk::argument_base that handles
+ * command-line arguments specified in a positional manner.
+ */
 template <typename T>
 class positional_argument : public argument_base
 {
 public:
+    /*!
+     * \brief Constructs a positional argument.
+     * \param name Name of the argument.
+     * \param var Reference to the variable that will hold the parsed value.
+     * \param description Description of the argument (optional).
+     */
     explicit positional_argument(const std::string& name, T& var, const std::string& description = "") noexcept
         : argument_base(name, "", description, true)
         , _var(var)
@@ -27,6 +41,10 @@ public:
         _var = T();
     }
 
+    /*!
+     * \brief Parses and converts the provided value.
+     * \param value String value to parse and convert.
+     */
     void parse(const std::string& value) override
     {
         _var = convert<T>(value);

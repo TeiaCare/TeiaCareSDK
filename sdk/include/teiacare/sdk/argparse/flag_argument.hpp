@@ -16,15 +16,34 @@
 
 namespace tc::sdk
 {
+/*!
+ * \class flag_argument
+ * \brief Represents a flag argument for command-line parsing.
+ *
+ * The tc::sdk::flag_argument class is a specialization of tc::sdk::argument_base used for
+ * handling flag-type command-line arguments that, when present, set a boolean variable to true.
+ */
 class flag_argument : public argument_base
 {
 public:
+    /*!
+     * \brief Constructs a flag argument.
+     * \param name_long Long name of the argument (e.g., "--flag").
+     * \param name_short Short name of the argument (e.g., "-f").
+     * \param var Reference to the boolean variable that will be set.
+     * \param description Description of the argument (optional).
+     * \param env_var Name of the environment variable to parse (optional).
+     */
     explicit flag_argument(const std::string& name_long, const std::string& name_short, bool& var, const std::string& description = "", const std::string& env_var = "") noexcept
         : argument_base(name_long, name_short, description, false, env_var)
         , _var{var}
     {
     }
 
+    /*!
+     * \brief Sets the variable to true when the flag is present.
+     * \param value Unused parameter (flags do not require a value).
+     */
     void parse(const std::string&) override
     {
         _var = true;

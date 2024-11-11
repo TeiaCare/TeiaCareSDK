@@ -26,17 +26,6 @@
 
 namespace tc::sdk
 {
-#define TC_PARSE_CLI(parser, argc, argv) \
-    switch (parser.parse(argc, argv))    \
-    {                                    \
-    case tc::sdk::parse_result::success: \
-        break;                           \
-    case tc::sdk::parse_result::quit:    \
-        return EXIT_SUCCESS;             \
-    case tc::sdk::parse_result::error:   \
-        return EXIT_FAILURE;             \
-    }
-
 enum class parse_result
 {
     success,
@@ -44,45 +33,117 @@ enum class parse_result
     quit
 };
 
+/*!
+ * \class argument_parser
+ * \brief Command-line argument parser for handling flags, options, and positional arguments.
+ *
+ * The tc::sdk::argument_parser class facilitates the definition and parsing of command-line arguments,
+ * including positional arguments, optional parameters, and flags. It also provides mechanisms
+ * for displaying help and version information.
+ *
+ * Example usage:
+ * \code{.cpp}
+ * tc::sdk::argument_parser parser("ProgramName", "1.0.0", "A sample program.");
+ * int value;
+ * parser.add_positional("input", value, "Input file path");
+ * bool verbose;
+ * parser.add_flag("verbose", "v", verbose, "Enable verbose output");
+ * if (parser.parse(argc, argv) == tc::sdk::parse_result::success) {
+ *     // Proceed with program logic
+ * }
+ * \endcode
+ */
 class argument_parser
 {
 public:
+    /*!
+     * \brief Constructs an argument parser with program information.
+     * \param program_name Name of the program.
+     * \param program_version Version of the program.
+     * \param program_description Description of the program (optional).
+     */
     explicit argument_parser(const std::string& program_name, const std::string& program_version, const std::string& program_description = "") noexcept;
 
+    /*!
+     * \brief Adds a positional argument to the parser.
+     * \tparam T Type of the argument.
+     * \param name Name of the positional argument.
+     * \param var Variable to store the parsed value.
+     * \param description Description of the argument (optional).
+     */
     template <typename T>
     void add_positional(const std::string& name, T& var, const std::string& description = "")
     {
         add_positional(std::make_unique<tc::sdk::positional_argument<T>>(name, var, description));
     }
 
+    /*!
+     * \brief Adds a positional argument using a unique pointer.
+     * \tparam T Type of the argument.
+     * \param positional_arg Unique pointer to the positional argument object.
+     */
     template <typename T>
     void add_positional(std::unique_ptr<tc::sdk::positional_argument<T>>&& positional_arg)
     {
         _positionals.emplace_back(std::move(positional_arg));
     }
 
+    /*!
+     * \brief Adds an optional argument to the parser.
+     * \tparam T Type of the argument.
+     * \param name_long Long name of the argument (e.g., "--option").
+     * \param name_short Short name of the argument (e.g., "-o").
+     * \param var Variable to store the parsed value.
+     * \param default_value Default value for the argument.
+     * \param description Description of the argument (optional).
+     * \param required Whether the argument is required (default=false).
+     * \param env_var Environment variable to use for the argument (optional).
+     */
     template <typename T>
     void add_option(const std::string& name_long, const std::string& name_short, T& var, const T& default_value = T(), const std::string& description = "", bool required = false, const std::string& env_var = "")
     {
         add_option(std::make_unique<tc::sdk::optional_argument<T>>(name_long, name_short, var, default_value, description, required, env_var));
     }
 
+    /*!
+     * \brief Adds an optional argument using a unique pointer.
+     * \tparam T Type of the argument.
+     * \param optional_arg Unique pointer to the optional argument object.
+     */
     template <typename T>
     void add_option(std::unique_ptr<tc::sdk::optional_argument<T>>&& optional_arg)
     {
         _optionals.emplace_back(std::move(optional_arg));
     }
 
+    /*!
+     * \brief Adds a flag argument to the parser.
+     * \param name_long Long name of the flag (e.g., "--flag").
+     * \param name_short Short name of the flag (e.g., "-f").
+     * \param var Boolean variable to store the flag state.
+     * \param description Description of the flag (optional).
+     * \param env_var Environment variable to use for the flag (optional).
+     */
     void add_flag(const std::string& name_long, const std::string& name_short, bool& var, const std::string& description = "", const std::string& env_var = "")
     {
         add_flag(std::make_unique<tc::sdk::flag_argument>(name_long, name_short, var, description, env_var));
     }
 
+    /*!
+     * \brief Adds a flag argument using a unique pointer.
+     * \param flag_arg Unique pointer to the flag argument object.
+     */
     void add_flag(std::unique_ptr<tc::sdk::flag_argument>&& flag_arg)
     {
         _flags.emplace_back(std::move(flag_arg));
     }
 
+    /*!
+     * \brief Parses the command-line arguments.
+     * \param argc Number of command-line arguments.
+     * \param argv Array of command-line arguments.
+     * \return A tc::sdk::parse_result indicating the outcome of the parsing (success, error, or quit).
+     */
     parse_result parse(int argc, char* argv[]) const;
 
 protected:
@@ -127,3 +188,14 @@ private:
 };
 
 }
+
+#define TC_PARSE_CLI(parser, argc, argv) \
+    switch (parser.parse(argc, argv))    \
+    {                                    \
+    case tc::sdk::parse_result::success: \
+        break;                           \
+    case tc::sdk::parse_result::quit:    \
+        return EXIT_SUCCESS;             \
+    case tc::sdk::parse_result::error:   \
+        return EXIT_FAILURE;             \
+    }
