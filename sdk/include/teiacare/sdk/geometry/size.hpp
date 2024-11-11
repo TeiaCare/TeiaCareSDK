@@ -139,7 +139,7 @@ public:
     /*!
      * \brief Output stream operator.
      * \param stream the output stream to write into.
-     * \param z the size object to stream.
+     * \param s the size object to stream.
      * \return reference to the output stream operator, with the size string representation written into it.
      */
     friend std::ostream& operator<<(std::ostream& stream, const size& s)

@@ -16,6 +16,9 @@
 
 #include <functional>
 
+/**
+ * @cond SKIP_DOXYGEN
+ */
 namespace tc::sdk
 {
 template <typename RetType, typename... Args>
@@ -58,4 +61,6 @@ template <typename T>
 struct function_traits : function_traits<decltype(&T::operator())>
 {
 };
+/** @endcond */
+
 }

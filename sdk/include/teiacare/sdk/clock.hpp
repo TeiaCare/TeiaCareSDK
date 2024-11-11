@@ -34,7 +34,9 @@ using time_duration = std::chrono::steady_clock::duration;
  */
 using sys_time_point = std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>;
 
-// Clock traits
+/**
+ * @cond SKIP_DOXYGEN
+ */
 template <typename T>
 struct is_duration : std::false_type
 {
@@ -60,5 +62,6 @@ struct is_std_chrono
 {
     static constexpr bool value = is_duration<T>::value || is_time_point<T>::value;
 };
+/** @endcond */
 
 }

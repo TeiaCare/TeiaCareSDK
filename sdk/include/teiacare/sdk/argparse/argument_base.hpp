@@ -22,6 +22,10 @@
 
 namespace tc::sdk
 {
+
+/**
+ * @cond SKIP_DOXYGEN
+ */
 template <typename T>
 struct is_vector : std::false_type
 {
@@ -31,6 +35,7 @@ template <typename T>
 struct is_vector<std::vector<T>> : std::true_type
 {
 };
+/** @endcond */
 
 /*!
  * \class argument_base

@@ -26,6 +26,15 @@
 
 namespace tc::sdk
 {
+/*!
+ * \enum class parse_result
+ * \brief Represents the result of parsing command-line arguments.
+ *
+ * The tc::sdk::parse_result enum class indicates the outcome of parsing:
+ * - success: Parsing was successful, and the program can proceed.
+ * - error: An error occurred during parsing, and the program should terminate.
+ * - quit: No error occurred during parsing, but the program should terminate. (i.e. program invoked with a help or version flag).
+ */
 enum class parse_result
 {
     success,
@@ -43,15 +52,19 @@ enum class parse_result
  *
  * Example usage:
  * \code{.cpp}
- * tc::sdk::argument_parser parser("ProgramName", "1.0.0", "A sample program.");
+ * tc::sdk::argument_parser parser("ProgramName", "v1.0.0", "A sample program description");
+ *
  * int value;
  * parser.add_positional("input", value, "Input file path");
+ *
  * bool verbose;
  * parser.add_flag("verbose", "v", verbose, "Enable verbose output");
+ *
  * if (parser.parse(argc, argv) == tc::sdk::parse_result::success) {
  *     // Proceed with program logic
  * }
  * \endcode
+ * \see TC_PARSE_CLI
  */
 class argument_parser
 {
@@ -187,8 +200,19 @@ private:
     bool _version_flag = false;
 };
 
-}
-
+/*!
+ * \def TC_PARSE_CLI
+ * \brief Macro for parsing command-line arguments and handling parse results.
+ * \param parser An instance of the tc::sdk::argument_parser class.
+ * \param argc The number of command-line arguments.
+ * \param argv The array of command-line arguments.
+ *
+ * The TC_PARSE_CLI macro simplifies the parsing logic by switching on the result
+ * of the tc::sdk::argument_parser::parse() method. Depending on the tc::sdk::parse_result, it either:
+ * - Continues execution if parsing was successful (tc::sdk::parse_result::success).
+ * - Exits with EXIT_SUCCESS if the user requested to quit (tc::sdk::parse_result::quit).
+ * - Exits with EXIT_FAILURE if there was an error during parsing (tc::sdk::parse_result::error).
+ */
 #define TC_PARSE_CLI(parser, argc, argv) \
     switch (parser.parse(argc, argv))    \
     {                                    \
@@ -199,3 +223,5 @@ private:
     case tc::sdk::parse_result::error:   \
         return EXIT_FAILURE;             \
     }
+
+}
