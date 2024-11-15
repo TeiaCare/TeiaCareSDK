@@ -230,10 +230,10 @@ jobs:
             $(ACTIVATE_VIRTUAL_ENV)
             $(SETUP_BUILD_ENV)
             conan config set general.revisions_enabled=0
-            conan remote add teiacare $(artifactory.url)/teiacare
+            conan remote add teiacare $(artifactory.url)/teiacare --force
             conan user $(artifactory.username) -p $(artifactory.password) -r teiacare
             python3 scripts/conan/create.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION)
-            python3 scripts/conan/upload.py teiacare teiacare_sdk/0.1.0@
+            python3 scripts/conan/upload.py teiacare teiacare_sdk
           displayName: 'Conan Package'
           timeoutInMinutes: 5
           env:
