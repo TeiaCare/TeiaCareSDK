@@ -19,6 +19,7 @@
 
 #include <teiacare/sdk/argparse/argument_parser.hpp>
 
+#include <filesystem>
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/spdlog.h>
 
@@ -79,6 +80,13 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
     });
     parser.add_option(std::move(double_arg));
 
+    std::filesystem::path file_path{"some/path/to/file.txt"};
+    auto path_arg = std::make_unique<tc::sdk::optional_argument<std::filesystem::path>>("file_path", "p", file_path, file_path, "Path to file");
+    path_arg->set_validator([](const std::filesystem::path& p) {
+        return std::filesystem::exists(p);
+    });
+    parser.add_option(std::move(path_arg));
+
     switch (parser.parse(argc, argv))
     {
     case tc::sdk::parse_result::success:
@@ -101,6 +109,7 @@ int main([[maybe_unused]] int argc, [[maybe_unused]] char* argv[])
     spdlog::info("Double Opt: ", double_opt);
     spdlog::info("Flag: {}", (flag ? "true" : "false"));
     spdlog::info("List: {}", to_string(the_list));
+    spdlog::info("Path: {}", file_path.string());
 
     return EXIT_SUCCESS;
 }
