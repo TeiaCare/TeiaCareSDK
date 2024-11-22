@@ -1,0 +1,8 @@
+function(add_example LIB_TARGET EXAMPLE_TARGET)
+	find_package(spdlog REQUIRED)
+	set(TARGET_NAME ${LIB_TARGET}_${EXAMPLE_TARGET})
+	add_executable(${TARGET_NAME} src/${EXAMPLE_TARGET}.cpp)
+	target_link_libraries(${TARGET_NAME} PRIVATE ${LIB_TARGET} PRIVATE spdlog::spdlog)
+	target_compile_features(${TARGET_NAME} PRIVATE cxx_std_20)
+    install(TARGETS ${TARGET_NAME} DESTINATION examples)
+endfunction()

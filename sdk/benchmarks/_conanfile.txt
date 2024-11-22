@@ -1,0 +1,5 @@
+[requires]
+benchmark/1.8.3
+
+[generators]
+CMakeDeps

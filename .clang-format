@@ -1,0 +1,18 @@
+﻿---
+BasedOnStyle: Microsoft
+AccessModifierOffset: '-4'
+BreakConstructorInitializers: BeforeComma
+ColumnLimit: '0'
+IndentWidth: '4'
+KeepEmptyLinesAtTheStartOfBlocks: 'false'
+PointerAlignment: Left
+UseTab: Never
+FixNamespaceComments: 'false'
+IncludeBlocks: 'Regroup'
+IncludeCategories:
+  - Regex:           '^(<|")teiacare/'
+    Priority:        1
+    CaseSensitive:   true
+  - Regex:           '.*'
+    Priority:        2
+...
