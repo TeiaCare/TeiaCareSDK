@@ -1,0 +1,16 @@
+**/__pycache__
+**/.vscode
+**/.venv
+**/build
+**/install
+**/results
+**/memcheck
+**/callgrind
+**/.cache
+**/.conan
+**/.clangd
+**/launch.dev.json
+**/compile_commands.json
+**/CMakeUserPresets.json
+sdk/src/version.cpp
+/docs
