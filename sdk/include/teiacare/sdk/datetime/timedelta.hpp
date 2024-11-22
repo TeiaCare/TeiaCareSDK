@@ -73,6 +73,16 @@ public:
     }
 
     /*!
+     * \brief Assignment operator. Assign a tc::sdk::timedelta instance to another one.
+     */
+    constexpr timedelta& operator=(const timedelta&) noexcept = default;
+
+    /*!
+     * \brief Move assignment operator. Assign a tc::sdk::timedelta instance to another one.
+     */
+    constexpr timedelta& operator=(timedelta&&) noexcept = default;
+
+    /*!
      * \brief Checks if the timedelta represents a null duration.
      * \return True if the duration is zero, otherwise false.
      */
@@ -299,7 +309,7 @@ public:
     std::string to_string() const noexcept(false);
 
 private:
-    const std::chrono::nanoseconds _duration;
+    std::chrono::nanoseconds _duration;
 };
 
 }

@@ -389,4 +389,22 @@ TEST_F(test_datetime_datetime, utc_now)
     }
 }
 
+TEST_F(test_datetime_datetime, copy_assignment)
+{
+    tc::sdk::datetime dt1;
+    tc::sdk::datetime dt2 = tc::sdk::datetime::from_string("2024-11-22T10:01:12.789");
+    dt1 = dt2;
+
+    EXPECT_EQ(dt1, dt2);
+    EXPECT_EQ(dt1, tc::sdk::datetime::from_string("2024-11-22T10:01:12.789"));
+}
+
+TEST_F(test_datetime_datetime, move_assignment)
+{
+    tc::sdk::datetime dt;
+    dt = tc::sdk::datetime::from_string("2024-11-22T10:01:12.789");
+
+    EXPECT_EQ(dt, tc::sdk::datetime::from_string("2024-11-22T10:01:12.789"));
+}
+
 }

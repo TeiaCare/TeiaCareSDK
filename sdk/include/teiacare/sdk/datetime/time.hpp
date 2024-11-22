@@ -60,6 +60,16 @@ public:
     }
 
     /*!
+     * \brief Assignment operator. Assign a tc::sdk::time instance to another one.
+     */
+    constexpr time& operator=(const time&) noexcept = default;
+
+    /*!
+     * \brief Move assignment operator. Assign a tc::sdk::time instance to another one.
+     */
+    constexpr time& operator=(time&&) noexcept = default;
+
+    /*!
      * \brief Checks if the time is valid (i.e., within 24 hours).
      * \return true if the time is valid, false otherwise.
      */
@@ -243,7 +253,7 @@ public:
     static tc::sdk::time utc_now() noexcept;
 
 private:
-    const std::chrono::hh_mm_ss<std::chrono::nanoseconds> _hh_mm_ss;
+    std::chrono::hh_mm_ss<std::chrono::nanoseconds> _hh_mm_ss;
 };
 
 }

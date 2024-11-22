@@ -196,4 +196,22 @@ TEST_F(test_datetime_timedelta, to_string_resolution)
     EXPECT_EQ(t.to_string<std::chrono::nanoseconds>(), "01:02:03.004005006");
 }
 
+TEST_F(test_datetime_timedelta, copy_assignment)
+{
+    tc::sdk::timedelta td1;
+    tc::sdk::timedelta td2 = tc::sdk::timedelta(5s);
+    td1 = td2;
+
+    EXPECT_EQ(td1, td2);
+    EXPECT_EQ(td1, tc::sdk::timedelta(5s));
+}
+
+TEST_F(test_datetime_timedelta, move_assignment)
+{
+    tc::sdk::timedelta td;
+    td = tc::sdk::timedelta(5s);
+
+    EXPECT_EQ(td, tc::sdk::timedelta(5s));
+}
+
 }

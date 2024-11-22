@@ -296,4 +296,22 @@ TEST_F(test_datetime_date, today)
     EXPECT_LT(now_minus_24_hours, today.to_timepoint());
 }
 
+TEST_F(test_datetime_date, copy_assignment)
+{
+    tc::sdk::date d1;
+    tc::sdk::date d2 = tc::sdk::date::from_string("2024-11-22");
+    d1 = d2;
+
+    EXPECT_EQ(d1, d2);
+    EXPECT_EQ(d1, tc::sdk::date::from_string("2024-11-22"));
+}
+
+TEST_F(test_datetime_date, move_assignment)
+{
+    tc::sdk::date d;
+    d = tc::sdk::date::from_string("2024-11-22");
+
+    EXPECT_EQ(d, tc::sdk::date::from_string("2024-11-22"));
+}
+
 }

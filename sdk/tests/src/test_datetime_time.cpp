@@ -330,4 +330,22 @@ TEST_F(test_datetime_time, utc_now)
     EXPECT_LT(current_time_minus_1_minute, utc_now.to_duration());
 }
 
+TEST_F(test_datetime_time, copy_assignment)
+{
+    tc::sdk::time t1;
+    tc::sdk::time t2 = tc::sdk::time::from_string("10:01:12.789");
+    t1 = t2;
+
+    EXPECT_EQ(t1, t2);
+    EXPECT_EQ(t1, tc::sdk::time::from_string("10:01:12.789"));
+}
+
+TEST_F(test_datetime_time, move_assignment)
+{
+    tc::sdk::time t;
+    t = tc::sdk::time::from_string("10:01:12.789");
+
+    EXPECT_EQ(t, tc::sdk::time::from_string("10:01:12.789"));
+}
+
 }

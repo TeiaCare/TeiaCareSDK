@@ -85,5 +85,18 @@ int main()
         std::cout << "date(2023y/8/3d) - timedelta(std::chrono::days(2)): " << d1 - delta << std::endl;
     }
 
+    {
+        // Copy Assignment
+        tc::sdk::date d1;
+        tc::sdk::date d2 = tc::sdk::date::from_string("2024-11-22");
+        d1 = d2;
+    }
+
+    {
+        // Move Assignment
+        tc::sdk::date d;
+        d = tc::sdk::date::from_string("2024-11-22");
+    }
+
     return 0;
 }

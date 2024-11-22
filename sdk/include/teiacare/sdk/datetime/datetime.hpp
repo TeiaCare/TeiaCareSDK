@@ -116,6 +116,16 @@ public:
     }
 
     /*!
+     * \brief Assignment operator. Assign a tc::sdk::datetime instance to another one.
+     */
+    constexpr datetime& operator=(const datetime&) noexcept = default;
+
+    /*!
+     * \brief Move assignment operator. Assign a tc::sdk::datetime instance to another one.
+     */
+    constexpr datetime& operator=(datetime&&) noexcept = default;
+
+    /*!
      * \brief Checks if the datetime is valid.
      * \return true if the datetime is valid, false otherwise.
      */
@@ -258,7 +268,7 @@ public:
     static tc::sdk::datetime utc_now() noexcept;
 
 private:
-    const tc::sdk::sys_time_point _tp;
+    tc::sdk::sys_time_point _tp;
 };
 
 }

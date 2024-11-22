@@ -98,6 +98,16 @@ public:
     }
 
     /*!
+     * \brief Assignment operator. Assign a tc::sdk::date instance to another one.
+     */
+    constexpr date& operator=(const date&) noexcept = default;
+
+    /*!
+     * \brief Move assignment operator. Assign a tc::sdk::date instance to another one.
+     */
+    constexpr date& operator=(date&&) noexcept = default;
+
+    /*!
      * \brief Checks if the date is valid.
      * \return true if the date is valid, false otherwise.
      */
@@ -259,7 +269,7 @@ public:
     static tc::sdk::date today() noexcept;
 
 private:
-    const std::chrono::year_month_day _ymd;
+    std::chrono::year_month_day _ymd;
 };
 
 }

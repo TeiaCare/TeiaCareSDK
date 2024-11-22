@@ -143,5 +143,18 @@ int main()
             << "timedelta(5min, 5s) - timedelta(10min, 5s): " << tc::sdk::timedelta(5min, 5s) - tc::sdk::timedelta(10min, 5s) << std::endl;
     }
 
+    {
+        // Copy Assignment
+        tc::sdk::timedelta td1;
+        tc::sdk::timedelta td2 = tc::sdk::timedelta(1s);
+        td1 = td2;
+    }
+
+    {
+        // Move Assignment
+        tc::sdk::timedelta dt;
+        dt = tc::sdk::timedelta(1s);
+    }
+
     return 0;
 }

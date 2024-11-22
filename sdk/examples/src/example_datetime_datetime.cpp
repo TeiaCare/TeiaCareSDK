@@ -132,5 +132,18 @@ int main()
         << " - subseconds: " << time.subseconds()
         << std::endl;
 
+    {
+        // Copy Assignment
+        tc::sdk::datetime dt1;
+        tc::sdk::datetime dt2 = tc::sdk::datetime::from_string("2024-04-19T18:09:12.123");
+        dt1 = dt2;
+    }
+
+    {
+        // Move Assignment
+        tc::sdk::datetime dt;
+        dt = tc::sdk::datetime::from_string("2024-04-19T18:09:12.123");
+    }
+
     return 0;
 }

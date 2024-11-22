@@ -118,5 +118,18 @@ int main()
         std::cout << "time(60min) - timedelta(2min): " << t2 - delta << std::endl;
     }
 
+    {
+        // Copy Assignment
+        tc::sdk::time t1;
+        tc::sdk::time t2 = tc::sdk::time::from_string("19:21:34.123");
+        t1 = t2;
+    }
+
+    {
+        // Move Assignment
+        tc::sdk::time t;
+        t = tc::sdk::time::from_string("19:21:34.123");
+    }
+
     return 0;
 }
