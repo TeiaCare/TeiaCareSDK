@@ -254,21 +254,8 @@ TEST_F(test_argparse_argument_base, convert_vector_double)
     EXPECT_THROW(arg.convert_wrapper("1,a,b,c,d,e"), std::runtime_error);
 }
 
-TEST_F(test_argparse_argument_base, convert_filesystem_path_unix)
-{
-    using Type = std::filesystem::path;
-    argument<Type> arg("name_long");
-
-    EXPECT_EQ(Type{}, arg.convert_wrapper(""));
-
-    const auto non_spaced_path = std::filesystem::path("/home/TeiaCare/DummyDirectory/log.txt");
-    EXPECT_EQ(arg.convert_wrapper("/home/TeiaCare/DummyDirectory/log.txt"), non_spaced_path);
-    
-    const auto spaced_path = std::filesystem::path("/home/TeiaCare/Dummy Directory/log.txt");
-    EXPECT_EQ(arg.convert_wrapper("/home/TeiaCare/Dummy Directory/log.txt"), spaced_path);
-}
-
-TEST_F(test_argparse_argument_base, convert_filesystem_path_windows)
+#if defined(WIN32)
+TEST_F(test_argparse_argument_base, convert_filesystem_path)
 {
     using Type = std::filesystem::path;
     argument<Type> arg("name_long");
@@ -285,5 +272,20 @@ TEST_F(test_argparse_argument_base, convert_filesystem_path_windows)
     EXPECT_EQ(arg.convert_wrapper(R"(C:\TeiaCare\Dummy Directory\log.txt)"), spaced_path);
     EXPECT_EQ(arg.convert_wrapper(R"(C:/TeiaCare/Dummy Directory/log.txt)"), spaced_path);
 }
+#else
+TEST_F(test_argparse_argument_base, convert_filesystem_path)
+{
+    using Type = std::filesystem::path;
+    argument<Type> arg("name_long");
+
+    EXPECT_EQ(Type{}, arg.convert_wrapper(""));
+
+    const auto non_spaced_path = std::filesystem::path("/home/TeiaCare/DummyDirectory/log.txt");
+    EXPECT_EQ(arg.convert_wrapper("/home/TeiaCare/DummyDirectory/log.txt"), non_spaced_path);
+    
+    const auto spaced_path = std::filesystem::path("/home/TeiaCare/Dummy Directory/log.txt");
+    EXPECT_EQ(arg.convert_wrapper("/home/TeiaCare/Dummy Directory/log.txt"), spaced_path);
+}
+#endif
 
 }
