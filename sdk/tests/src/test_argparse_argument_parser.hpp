@@ -22,17 +22,17 @@
 #define argc_argv(command_line)                                 \
     std::istringstream iss(command_line);                       \
     std::vector<std::string> command_line_args{"program_name"}; \
-    std::string arg;                                            \
-    while (iss >> arg)                                          \
+    std::string cmd_line_arg;                                   \
+    while (iss >> cmd_line_arg)                                 \
     {                                                           \
-        command_line_args.push_back(arg);                       \
+        command_line_args.push_back(cmd_line_arg);              \
     }                                                           \
     std::vector<char*> args;                                    \
     for (const auto& arg : command_line_args)                   \
     {                                                           \
         args.push_back(const_cast<char*>(arg.c_str()));         \
     }                                                           \
-    int argc = args.size();                                     \
+    int argc = static_cast<int>(args.size());                   \
     char** argv = args.data();
 
 namespace tc::sdk::tests
@@ -54,13 +54,13 @@ protected:
         argc_argv(command_line);
 
         int opt_1;
-        parser.add_option("first", "f", opt_1);
+        parser.add_option("first", 'f', opt_1);
 
         std::string opt_2;
-        parser.add_option("second", "s", opt_2);
+        parser.add_option("second", 's', opt_2);
 
         std::vector<int> opt_3;
-        parser.add_option("third", "t", opt_3);
+        parser.add_option("third", 't', opt_3);
 
         const tc::sdk::parse_result r = parser.parse(argc, argv);
         EXPECT_EQ(r, tc::sdk::parse_result::success);
@@ -74,13 +74,13 @@ protected:
         argc_argv(command_line);
 
         bool flag_a;
-        parser.add_flag("flag_a", "a", flag_a);
+        parser.add_flag("flag_a", 'a', flag_a);
 
         bool flag_b;
-        parser.add_flag("flag_b", "b", flag_b);
+        parser.add_flag("flag_b", 'b', flag_b);
 
         bool flag_c;
-        parser.add_flag("flag_c", "c", flag_c);
+        parser.add_flag("flag_c", 'c', flag_c);
 
         const tc::sdk::parse_result r = parser.parse(argc, argv);
         EXPECT_EQ(r, tc::sdk::parse_result::success);

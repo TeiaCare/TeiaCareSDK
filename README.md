@@ -79,6 +79,7 @@ This project uses git submodules so it is required to clone it using the *--recu
 
 ```bash
 git clone --recurse-submodules https://github.com/TeiaCare/TeiaCareSDK.git
+git submodule update --init
 ```
 
 ### Create Development Environment
