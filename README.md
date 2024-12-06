@@ -75,10 +75,10 @@ Check the [Examples](sdk/examples/src/) folder for an in-depth showcase of all t
 
 ## Getting Started
 
-This project uses git submodules so it is required to clone it using the *--recursive* flag in order to retrive the required submodules.
+This project uses git submodules so it is required to clone it using the *--recurse-submodules* flag in order to retrive the required submodules.
 
 ```bash
-git clone https://github.com/TeiaCare/TeiaCareSDK.git --recursive
+git clone --recurse-submodules https://github.com/TeiaCare/TeiaCareSDK.git
 ```
 
 ### Create Development Environment
