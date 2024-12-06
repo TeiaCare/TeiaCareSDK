@@ -32,16 +32,32 @@ class optional_argument : public argument_base
 public:
     /*!
      * \brief Constructs an optional argument.
-     * \param name_long Long name of the argument (e.g., "--option").
-     * \param name_short Short name of the argument (e.g., "-o").
+     * \param name_long Long name of the argument (e.g., "option").
+     * \param name_short Short name of the argument (e.g., "o").
      * \param var Reference to the variable that will hold the parsed value.
      * \param default_value Default value for the argument.
      * \param description Description of the argument (optional).
      * \param required Indicates if the argument is required (default=false).
      * \param env_var Name of the environment variable to parse (optional).
      */
-    explicit optional_argument(const std::string& name_long, const std::string& name_short, T& var, const T& default_value = T(), const std::string& description = "", bool required = false, const std::string& env_var = "") noexcept
-        : argument_base(name_long, name_short, description, required, env_var)
+    explicit optional_argument(const std::string& name_long, const char name_short, T& var, const T& default_value = T(), const std::string& description = "", bool required = false, const std::string& env_var = "") noexcept
+        : argument_base(name_long, std::string(1, name_short), description, required, env_var)
+        , _var{var}
+    {
+        _var = default_value;
+    }
+
+    /*!
+     * \brief Constructs an optional argument.
+     * \param name_long Long name of the argument (e.g., "option").
+     * \param var Reference to the variable that will hold the parsed value.
+     * \param default_value Default value for the argument.
+     * \param description Description of the argument (optional).
+     * \param required Indicates if the argument is required (default=false).
+     * \param env_var Name of the environment variable to parse (optional).
+     */
+    explicit optional_argument(const std::string& name_long, T& var, const T& default_value = T(), const std::string& description = "", bool required = false, const std::string& env_var = "") noexcept
+        : argument_base(name_long, std::string(), description, required, env_var)
         , _var{var}
     {
         _var = default_value;

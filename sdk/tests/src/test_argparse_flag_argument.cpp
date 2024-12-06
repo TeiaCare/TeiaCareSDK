@@ -22,7 +22,19 @@ TEST_F(test_argparse_flag_argument, default_properties)
 {
     {
         bool value = false;
-        tc::sdk::flag_argument arg("flag_a", "a", value);
+        tc::sdk::flag_argument arg("flag_a", value);
+        EXPECT_FALSE(arg.is_parsed());
+        EXPECT_FALSE(arg.is_required());
+        EXPECT_EQ(arg.get_name_long(), "flag_a");
+        EXPECT_EQ(arg.get_name_short(), "");
+        EXPECT_EQ(arg.get_description(), "");
+        EXPECT_EQ(arg.get_env(), "");
+        EXPECT_FALSE(value);
+    }
+
+    {
+        bool value = false;
+        tc::sdk::flag_argument arg("flag_a", 'a', value);
         EXPECT_FALSE(arg.is_parsed());
         EXPECT_FALSE(arg.is_required());
         EXPECT_EQ(arg.get_name_long(), "flag_a");
@@ -34,7 +46,7 @@ TEST_F(test_argparse_flag_argument, default_properties)
 
     {
         bool value = false;
-        tc::sdk::flag_argument arg("flag_a", "a", value, "Argument Description");
+        tc::sdk::flag_argument arg("flag_a", 'a', value, "Argument Description");
         EXPECT_FALSE(arg.is_parsed());
         EXPECT_FALSE(arg.is_required());
         EXPECT_EQ(arg.get_name_long(), "flag_a");
@@ -46,7 +58,7 @@ TEST_F(test_argparse_flag_argument, default_properties)
 
     {
         bool value = false;
-        tc::sdk::flag_argument arg("flag_a", "a", value, "Argument Description", ENV_VAR);
+        tc::sdk::flag_argument arg("flag_a", 'a', value, "Argument Description", ENV_VAR);
         EXPECT_FALSE(arg.is_parsed());
         EXPECT_FALSE(arg.is_required());
         EXPECT_EQ(arg.get_name_long(), "flag_a");
@@ -60,7 +72,17 @@ TEST_F(test_argparse_flag_argument, default_properties)
 TEST_F(test_argparse_flag_argument, parse)
 {
     bool value = false;
-    tc::sdk::flag_argument arg("flag_a", "a", value);
+    tc::sdk::flag_argument arg("flag_a", 'a', value);
+
+    EXPECT_NO_THROW(arg.parse(""));
+    EXPECT_TRUE(arg.is_parsed());
+    EXPECT_TRUE(value);
+}
+
+TEST_F(test_argparse_flag_argument, parse_long_only)
+{
+    bool value = false;
+    tc::sdk::flag_argument arg("flag_a", value);
 
     EXPECT_NO_THROW(arg.parse(""));
     EXPECT_TRUE(arg.is_parsed());
@@ -70,7 +92,7 @@ TEST_F(test_argparse_flag_argument, parse)
 TEST_F(test_argparse_flag_argument, parse_twice)
 {
     bool value = false;
-    tc::sdk::flag_argument arg("flag_a", "a", value);
+    tc::sdk::flag_argument arg("flag_a", 'a', value);
 
     EXPECT_NO_THROW(arg.parse(""));
     EXPECT_TRUE(arg.is_parsed());
@@ -84,7 +106,7 @@ TEST_F(test_argparse_flag_argument, parse_twice)
 TEST_F(test_argparse_flag_argument, parse_from_env_variable_empty)
 {
     bool value = false;
-    tc::sdk::flag_argument arg("flag_a", "a", value, "Argument Description", "");
+    tc::sdk::flag_argument arg("flag_a", 'a', value, "Argument Description", "");
 
     EXPECT_NO_THROW(arg.parse_from_env());
     EXPECT_FALSE(arg.is_parsed());
@@ -94,7 +116,7 @@ TEST_F(test_argparse_flag_argument, parse_from_env_variable_empty)
 TEST_F(test_argparse_flag_argument, parse_from_env_variable_not_found)
 {
     bool value = false;
-    tc::sdk::flag_argument arg("flag_a", "a", value, "Argument Description", ENV_VAR);
+    tc::sdk::flag_argument arg("flag_a", 'a', value, "Argument Description", ENV_VAR);
 
     tc::sdk::tests::clear_env(ENV_VAR);
 
@@ -106,7 +128,7 @@ TEST_F(test_argparse_flag_argument, parse_from_env_variable_not_found)
 TEST_F(test_argparse_flag_argument, parse_from_env_variable_found)
 {
     bool value = false;
-    tc::sdk::flag_argument arg("flag_a", "a", value, "Argument Description", ENV_VAR);
+    tc::sdk::flag_argument arg("flag_a", 'a', value, "Argument Description", ENV_VAR);
 
     tc::sdk::tests::clear_env(ENV_VAR);
     tc::sdk::tests::set_env(ENV_VAR, "1");

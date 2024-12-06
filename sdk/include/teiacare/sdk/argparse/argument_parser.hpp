@@ -80,7 +80,7 @@ public:
     /*!
      * \brief Adds a positional argument to the parser.
      * \tparam T Type of the argument.
-     * \param name Name of the positional argument.
+     * \param name Name of the positional argument. Any string without spaces is accepted.
      * \param var Variable to store the parsed value.
      * \param description Description of the argument (optional).
      */
@@ -104,8 +104,8 @@ public:
     /*!
      * \brief Adds an optional argument to the parser.
      * \tparam T Type of the argument.
-     * \param name_long Long name of the argument (e.g., "--option").
-     * \param name_short Short name of the argument (e.g., "-o").
+     * \param name_long Long name of the argument. Any string without spaces is accepted. The double dashes must be omitted (e.g., "option" will result in "--option").
+     * \param name_short Short name of the argument. Single character. The dash must be omitted. (e.g., 'o' will result in '-o').
      * \param var Variable to store the parsed value.
      * \param default_value Default value for the argument.
      * \param description Description of the argument (optional).
@@ -113,9 +113,27 @@ public:
      * \param env_var Environment variable to use for the argument (optional).
      */
     template <typename T>
-    void add_option(const std::string& name_long, const std::string& name_short, T& var, const T& default_value = T(), const std::string& description = "", bool required = false, const std::string& env_var = "")
+    // void add_option(const std::string& name_long, const std::string& name_short, T& var, const T& default_value = T(), const std::string& description = "", bool required = false, const std::string& env_var = "")
+    void add_option(const std::string& name_long, const char name_short, T& var, const T& default_value = T(), const std::string& description = "", bool required = false, const std::string& env_var = "")
     {
         add_option(std::make_unique<tc::sdk::optional_argument<T>>(name_long, name_short, var, default_value, description, required, env_var));
+    }
+
+    /*!
+     * \brief Adds an optional argument to the parser.
+     * \tparam T Type of the argument.
+     * \param name_long Long name of the argument. Any string without spaces is accepted. The double dashes must be omitted (e.g., "option" will result in "--option").
+     * \param var Variable to store the parsed value.
+     * \param default_value Default value for the argument.
+     * \param description Description of the argument (optional).
+     * \param required Whether the argument is required (default=false).
+     * \param env_var Environment variable to use for the argument (optional).
+     */
+    template <typename T>
+    // void add_option(const std::string& name_long, const std::string& name_short, T& var, const T& default_value = T(), const std::string& description = "", bool required = false, const std::string& env_var = "")
+    void add_option(const std::string& name_long, T& var, const T& default_value = T(), const std::string& description = "", bool required = false, const std::string& env_var = "")
+    {
+        add_option(std::make_unique<tc::sdk::optional_argument<T>>(name_long, var, default_value, description, required, env_var));
     }
 
     /*!
@@ -131,15 +149,27 @@ public:
 
     /*!
      * \brief Adds a flag argument to the parser.
-     * \param name_long Long name of the flag (e.g., "--flag").
-     * \param name_short Short name of the flag (e.g., "-f").
+     * \param name_long Long name of the flag (e.g., "flag" will result in "--flag").
+     * \param name_short Short name of the flag (e.g., 'f', will result in '-f').
      * \param var Boolean variable to store the flag state.
      * \param description Description of the flag (optional).
      * \param env_var Environment variable to use for the flag (optional).
      */
-    void add_flag(const std::string& name_long, const std::string& name_short, bool& var, const std::string& description = "", const std::string& env_var = "")
+    void add_flag(const std::string& name_long, const char name_short, bool& var, const std::string& description = "", const std::string& env_var = "")
     {
         add_flag(std::make_unique<tc::sdk::flag_argument>(name_long, name_short, var, description, env_var));
+    }
+
+    /*!
+     * \brief Adds a flag argument to the parser.
+     * \param name_long Long name of the flag (e.g., "flag" will result in "--flag").
+     * \param var Boolean variable to store the flag state.
+     * \param description Description of the flag (optional).
+     * \param env_var Environment variable to use for the flag (optional).
+     */
+    void add_flag(const std::string& name_long, bool& var, const std::string& description = "", const std::string& env_var = "")
+    {
+        add_flag(std::make_unique<tc::sdk::flag_argument>(name_long, var, description, env_var));
     }
 
     /*!

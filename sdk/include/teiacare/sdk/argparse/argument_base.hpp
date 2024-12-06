@@ -19,6 +19,7 @@
 #include <string>
 #include <type_traits>
 #include <vector>
+#include <filesystem>
 
 namespace tc::sdk
 {
@@ -238,7 +239,22 @@ protected:
         return values;
     }
 
-    // Generic implementation (for every type different from int, float, double, std::string and std::vector)
+    // Specialization for std::filesystem::path
+    template <typename T>
+    typename std::enable_if_t<std::is_same_v<T, std::filesystem::path>, T>
+    convert(const std::string& str) const
+    {
+        try
+        {
+            return std::filesystem::path(str);
+        }
+        catch (...)
+        {
+            throw std::runtime_error("Conversion error: " + _name_long + "=" + str);
+        }
+    }
+
+    // Generic implementation (for every type different from int, float, double, std::string, std::vector and std::filesystem::path)
     template <typename T>
     typename std::enable_if_t<
         !std::is_same_v<T, int> &&
@@ -246,6 +262,7 @@ protected:
             !std::is_same_v<T, double> &&
             !std::is_same_v<T, std::string> &&
             !std::is_same_v<T, const char*> &&
+            !std::is_same_v<T, std::filesystem::path> &&
             !tc::sdk::is_vector<T>::value,
         T>
     convert(const std::string& str) const
