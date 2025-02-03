@@ -98,6 +98,16 @@ public:
     }
 
     /*!
+     * \brief Copy Constructor. Copy a tc::sdk::date instance to another one.
+     */
+    constexpr date(const date&) noexcept = default;
+
+    /*!
+     * \brief Move Constructor. Copy a tc::sdk::date instance to another one.
+     */
+    constexpr date(date&&) noexcept = default;
+
+    /*!
      * \brief Assignment operator. Assign a tc::sdk::date instance to another one.
      */
     constexpr date& operator=(const date&) noexcept = default;
@@ -171,24 +181,11 @@ public:
     }
 
     /*!
-     * \brief Equality operator.
+     * \brief Spaceship operator.
      * \param other the date to compare against.
-     * \return true if the two date objects are the same.
+     * \return std::strong_ordering comparing two date objects.
      */
-    constexpr inline bool operator==(const date& other) const noexcept
-    {
-        return _ymd == other._ymd;
-    }
-
-    /*!
-     * \brief Inequality operator.
-     * \param other the date to compare against.
-     * \return true if the two date objects are the different.
-     */
-    constexpr inline bool operator!=(const date& other) const noexcept
-    {
-        return !operator==(other);
-    }
+    constexpr auto operator<=>(const date& other) const noexcept = default;
 
     /*!
      * \brief Adds a time delta to the current date.
@@ -208,26 +205,6 @@ public:
     constexpr tc::sdk::date operator-(const timedelta& delta) const noexcept
     {
         return tc::sdk::date{std::chrono::sys_days(_ymd) - delta.total_nanoseconds()};
-    }
-
-    /*!
-     * \brief Checks if the current date is less than another date.
-     * \param other The date to compare against.
-     * \return true if the current date is less, false otherwise.
-     */
-    constexpr inline bool operator<(const date& other) const noexcept
-    {
-        return _ymd < other._ymd;
-    }
-
-    /*!
-     * \brief Checks if the current date is greater than another date.
-     * \param other The date to compare against.
-     * \return true if the current date is greater, false otherwise.
-     */
-    constexpr inline bool operator>(const date& other) const noexcept
-    {
-        return _ymd > other._ymd;
     }
 
     /*!

@@ -60,6 +60,16 @@ public:
     }
 
     /*!
+     * \brief Copy Constructor. Copy a tc::sdk::time instance to another one.
+     */
+    constexpr time(const time&) noexcept = default;
+
+    /*!
+     * \brief Move Constructor. Copy a tc::sdk::time instance to another one.
+     */
+    constexpr time(time&&) noexcept = default;
+
+    /*!
      * \brief Assignment operator. Assign a tc::sdk::time instance to another one.
      */
     constexpr time& operator=(const time&) noexcept = default;
@@ -162,6 +172,16 @@ public:
     }
 
     /*!
+     * \brief Spaceship operator.
+     * \param other the time to compare against.
+     * \return std::strong_ordering comparing two time objects.
+     */
+    constexpr auto operator<=>(const time& other) const noexcept
+    {
+        return _hh_mm_ss.to_duration() <=> other._hh_mm_ss.to_duration();
+    }
+
+    /*!
      * \brief Adds a timedelta to the current time.
      * \param delta The tc::sdk::timedelta to add.
      * \return A new time object representing the result.
@@ -179,26 +199,6 @@ public:
     constexpr tc::sdk::time operator-(const timedelta& delta) const noexcept
     {
         return tc::sdk::time{_hh_mm_ss.to_duration() - delta.total_nanoseconds()};
-    }
-
-    /*!
-     * \brief Checks if the current time is less than another time.
-     * \param other The time to compare against.
-     * \return true if the current time is less, false otherwise.
-     */
-    constexpr inline bool operator<(const time& other) const noexcept
-    {
-        return _hh_mm_ss.to_duration() < other._hh_mm_ss.to_duration();
-    }
-
-    /*!
-     * \brief Checks if the current time is greater than another time.
-     * \param other The time to compare against.
-     * \return true if the current time is greater, false otherwise.
-     */
-    constexpr inline bool operator>(const time& other) const noexcept
-    {
-        return _hh_mm_ss.to_duration() > other._hh_mm_ss.to_duration();
     }
 
     /*!

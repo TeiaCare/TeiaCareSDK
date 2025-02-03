@@ -226,12 +226,20 @@ TEST_F(test_datetime_date, operator_comparison)
     const auto d1 = tc::sdk::date(2024y, std::chrono::January, 1d);   // 2024 Jan 1st
     const auto d2 = tc::sdk::date(2023y, std::chrono::December, 31d); // 2023 Dec 31th
     const auto d3 = tc::sdk::date(2023y, std::chrono::December, 1d);  // 2023 Dec 1st
+    const auto d4 = tc::sdk::date(2023y, std::chrono::December, 1d);  // 2023 Dec 1st
 
     EXPECT_TRUE(d1 > d2);
     EXPECT_TRUE(d2 > d3);
+    EXPECT_TRUE(d1 >= d2);
+    EXPECT_TRUE(d2 >= d3);
 
     EXPECT_TRUE(d3 < d1);
     EXPECT_TRUE(d3 < d2);
+    EXPECT_TRUE(d3 <= d1);
+    EXPECT_TRUE(d3 <= d2);
+
+    EXPECT_TRUE(d3 <= d4);
+    EXPECT_TRUE(d3 >= d4);
 }
 
 TEST_F(test_datetime_date, ostream)

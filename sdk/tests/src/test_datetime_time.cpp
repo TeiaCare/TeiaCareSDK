@@ -218,12 +218,20 @@ TEST_F(test_datetime_time, operator_comparison)
     const auto t1 = tc::sdk::time(3'662s);               // 01:01:02
     const auto t2 = tc::sdk::time(1h, 1min, 1s);         // 01:01:01
     const auto t3 = tc::sdk::time(std::chrono::days(1)); // 00:00:00
+    const auto t4 = tc::sdk::time(std::chrono::days(1)); // 00:00:00
 
     EXPECT_TRUE(t1 > t2);
     EXPECT_TRUE(t2 > t3);
+    EXPECT_TRUE(t1 >= t2);
+    EXPECT_TRUE(t2 >= t3);
 
     EXPECT_TRUE(t3 < t1);
     EXPECT_TRUE(t3 < t2);
+    EXPECT_TRUE(t3 <= t1);
+    EXPECT_TRUE(t3 <= t2);
+
+    EXPECT_TRUE(t3 <= t4);
+    EXPECT_TRUE(t3 >= t4);
 }
 
 TEST_F(test_datetime_time, ostream)

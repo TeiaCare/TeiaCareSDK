@@ -73,6 +73,16 @@ public:
     }
 
     /*!
+     * \brief Copy Constructor. Copy a tc::sdk::timedelta instance to another one.
+     */
+    constexpr timedelta(const timedelta&) noexcept = default;
+
+    /*!
+     * \brief Move Constructor. Copy a tc::sdk::timedelta instance to another one.
+     */
+    constexpr timedelta(timedelta&&) noexcept = default;
+
+    /*!
      * \brief Assignment operator. Assign a tc::sdk::timedelta instance to another one.
      */
     constexpr timedelta& operator=(const timedelta&) noexcept = default;
@@ -232,24 +242,11 @@ public:
     }
 
     /*!
-     * \brief Equality operator.
+     * \brief Spaceship operator.
      * \param other the timedelta to compare against.
-     * \return true if the two timedelta objects are the same.
+     * \return std::strong_ordering comparing two timedelta objects.
      */
-    constexpr inline bool operator==(const timedelta& other) const noexcept
-    {
-        return _duration == other._duration;
-    }
-
-    /*!
-     * \brief Inequality operator.
-     * \param other the timedelta to compare against.
-     * \return true if the two timedelta objects are the different.
-     */
-    constexpr inline bool operator!=(const timedelta& other) const noexcept
-    {
-        return !operator==(other);
-    }
+    constexpr auto operator<=>(const timedelta& other) const noexcept = default;
 
     /*!
      * \brief Addition operator.
