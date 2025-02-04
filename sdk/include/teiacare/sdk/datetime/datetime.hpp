@@ -116,6 +116,16 @@ public:
     }
 
     /*!
+     * \brief Copy Constructor. Copy a tc::sdk::datetime instance to another one.
+     */
+    constexpr datetime(const datetime&) noexcept = default;
+
+    /*!
+     * \brief Move Constructor. Copy a tc::sdk::datetime instance to another one.
+     */
+    constexpr datetime(datetime&&) noexcept = default;
+
+    /*!
      * \brief Assignment operator. Assign a tc::sdk::datetime instance to another one.
      */
     constexpr datetime& operator=(const datetime&) noexcept = default;
@@ -166,24 +176,11 @@ public:
     }
 
     /*!
-     * \brief Equality operator.
+     * \brief Spaceship operator.
      * \param other the datetime to compare against.
-     * \return true if the two datetime objects are the same.
+     * \return std::strong_ordering comparing two datetime objects.
      */
-    constexpr inline bool operator==(const datetime& other) const noexcept
-    {
-        return _tp == other._tp;
-    }
-
-    /*!
-     * \brief Inequality operator.
-     * \param other the datetime to compare against.
-     * \return true if the two datetime objects are the different.
-     */
-    constexpr inline bool operator!=(const datetime& other) const noexcept
-    {
-        return !operator==(other);
-    }
+    constexpr auto operator<=>(const datetime& other) const noexcept = default;
 
     /*!
      * \brief Adds a timedelta to the current datetime.
@@ -203,26 +200,6 @@ public:
     constexpr tc::sdk::datetime operator-(const timedelta& delta) const noexcept
     {
         return tc::sdk::datetime{_tp - delta.total_nanoseconds()};
-    }
-
-    /*!
-     * \brief Checks if the current datetime is less than another datetime.
-     * \param other The datetime to compare against.
-     * \return true if the current datetime is less, false otherwise.
-     */
-    constexpr inline bool operator<(const datetime& other) const noexcept
-    {
-        return _tp < other._tp;
-    }
-
-    /*!
-     * \brief Checks if the current datetime is greater than another datetime.
-     * \param other The datetime to compare against.
-     * \return true if the current datetime is greater, false otherwise.
-     */
-    constexpr inline bool operator>(const datetime& other) const noexcept
-    {
-        return _tp > other._tp;
     }
 
     /*!

@@ -154,13 +154,31 @@ TEST_F(test_argparse_argument_parser, parse_optionals_extras)
     argc_argv(command_line);
 
     int opt_1;
-    parser.add_option("first", "f", opt_1, 0, "description", true);
+    parser.add_option("first", 'f', opt_1, 0, "description", true);
 
     std::string opt_2;
-    parser.add_option("second", "s", opt_2, std::string(), "description", true);
+    parser.add_option("second", 's', opt_2, std::string(), "description", true);
 
     std::vector<int> opt_3;
-    parser.add_option("third", "t", opt_3, {1, 2, 3}, "description", true, "ENV_VAR");
+    parser.add_option("third", 't', opt_3, {1, 2, 3}, "description", true, "ENV_VAR");
+
+    const tc::sdk::parse_result r = parser.parse(argc, argv);
+    EXPECT_EQ(r, tc::sdk::parse_result::error);
+}
+
+TEST_F(test_argparse_argument_parser, parse_optionals_simple)
+{
+    std::string command_line = "--first 1 --second two --third 3,4,5 --fourth=missing";
+    argc_argv(command_line);
+
+    int opt_1;
+    parser.add_option("first", opt_1, 0, "description", true);
+
+    std::string opt_2;
+    parser.add_option("second", opt_2, std::string(), "description", true);
+
+    std::vector<int> opt_3;
+    parser.add_option("third", opt_3, {1, 2, 3}, "description", true, "ENV_VAR");
 
     const tc::sdk::parse_result r = parser.parse(argc, argv);
     EXPECT_EQ(r, tc::sdk::parse_result::error);
@@ -172,13 +190,13 @@ TEST_F(test_argparse_argument_parser, parse_optionals_not_required)
     argc_argv(command_line);
 
     int opt_1;
-    parser.add_option("first", "f", opt_1);
+    parser.add_option("first", 'f', opt_1);
 
     std::string opt_2;
-    parser.add_option("second", "s", opt_2);
+    parser.add_option("second", 's', opt_2);
 
     std::vector<int> opt_3;
-    parser.add_option("third", "t", opt_3);
+    parser.add_option("third", 't', opt_3);
 
     const tc::sdk::parse_result r = parser.parse(argc, argv);
     EXPECT_EQ(r, tc::sdk::parse_result::success);
@@ -193,13 +211,13 @@ TEST_F(test_argparse_argument_parser, parse_optionals_required_error)
     argc_argv(command_line);
 
     int opt_1;
-    parser.add_option("first", "f", opt_1, 0, "description", true);
+    parser.add_option("first", 'f', opt_1, 0, "description", true);
 
     std::string opt_2;
-    parser.add_option("second", "s", opt_2, std::string(), "description", true);
+    parser.add_option("second", 's', opt_2, std::string(), "description", true);
 
     std::vector<int> opt_3;
-    parser.add_option("third", "t", opt_3, {1, 2, 3}, "description", true);
+    parser.add_option("third", 't', opt_3, {1, 2, 3}, "description", true);
 
     const tc::sdk::parse_result r = parser.parse(argc, argv);
     EXPECT_EQ(r, tc::sdk::parse_result::error);
@@ -211,13 +229,13 @@ TEST_F(test_argparse_argument_parser, parse_optionals_without_value)
     argc_argv(command_line);
 
     int opt_1;
-    parser.add_option("first", "f", opt_1, 0, "description", true);
+    parser.add_option("first", 'f', opt_1, 0, "description", true);
 
     std::string opt_2;
-    parser.add_option("second", "s", opt_2, std::string(), "description", true);
+    parser.add_option("second", 's', opt_2, std::string(), "description", true);
 
     std::vector<int> opt_3;
-    parser.add_option("third", "t", opt_3, {1, 2, 3}, "description", true);
+    parser.add_option("third", 't', opt_3, {1, 2, 3}, "description", true);
 
     const tc::sdk::parse_result r = parser.parse(argc, argv);
     EXPECT_EQ(r, tc::sdk::parse_result::error);
@@ -247,13 +265,31 @@ TEST_F(test_argparse_argument_parser, parse_flags_extras)
     argc_argv(command_line);
 
     bool flag_a;
-    parser.add_flag("flag_a", "a", flag_a);
+    parser.add_flag("flag_a", 'a', flag_a);
 
     bool flag_b;
-    parser.add_flag("flag_b", "b", flag_b);
+    parser.add_flag("flag_b", 'b', flag_b);
 
     bool flag_c;
-    parser.add_flag("flag_c", "c", flag_c, "", "ENV_VAR");
+    parser.add_flag("flag_c", 'c', flag_c, "", "ENV_VAR");
+
+    const tc::sdk::parse_result r = parser.parse(argc, argv);
+    EXPECT_EQ(r, tc::sdk::parse_result::error);
+}
+
+TEST_F(test_argparse_argument_parser, parse_flags_simple)
+{
+    std::string command_line = "--flag_a --flag_b --flag_c --flag_d";
+    argc_argv(command_line);
+
+    bool flag_a;
+    parser.add_flag("flag_a", flag_a);
+
+    bool flag_b;
+    parser.add_flag("flag_b", flag_b);
+
+    bool flag_c;
+    parser.add_flag("flag_c", flag_c, "", "ENV_VAR");
 
     const tc::sdk::parse_result r = parser.parse(argc, argv);
     EXPECT_EQ(r, tc::sdk::parse_result::error);

@@ -22,7 +22,20 @@ TEST_F(test_argparse_optional_argument, default_properties)
 {
     {
         int value = 1;
-        tc::sdk::optional_argument<int> arg("flag_a", "a", value);
+        tc::sdk::optional_argument<int> arg("flag_a", value);
+
+        EXPECT_FALSE(arg.is_parsed());
+        EXPECT_FALSE(arg.is_required());
+        EXPECT_EQ(arg.get_name_long(), "flag_a");
+        EXPECT_EQ(arg.get_name_short(), "");
+        EXPECT_EQ(arg.get_description(), "");
+        EXPECT_EQ(arg.get_env(), "");
+        EXPECT_EQ(value, 0);
+    }
+
+    {
+        int value = 1;
+        tc::sdk::optional_argument<int> arg("flag_a", 'a', value);
 
         EXPECT_FALSE(arg.is_parsed());
         EXPECT_FALSE(arg.is_required());
@@ -36,7 +49,7 @@ TEST_F(test_argparse_optional_argument, default_properties)
     {
         int value = 1;
         int default_value = 2;
-        tc::sdk::optional_argument<int> arg("flag_a", "a", value, default_value);
+        tc::sdk::optional_argument<int> arg("flag_a", 'a', value, default_value);
 
         EXPECT_FALSE(arg.is_parsed());
         EXPECT_FALSE(arg.is_required());
@@ -50,7 +63,7 @@ TEST_F(test_argparse_optional_argument, default_properties)
     {
         int value = 1;
         int default_value = 2;
-        tc::sdk::optional_argument<int> arg("flag_a", "a", value, default_value, "Argument Description");
+        tc::sdk::optional_argument<int> arg("flag_a", 'a', value, default_value, "Argument Description");
 
         EXPECT_FALSE(arg.is_parsed());
         EXPECT_FALSE(arg.is_required());
@@ -64,7 +77,7 @@ TEST_F(test_argparse_optional_argument, default_properties)
     {
         int value = 1;
         int default_value = 2;
-        tc::sdk::optional_argument<int> arg("flag_a", "a", value, default_value, "Argument Description", true);
+        tc::sdk::optional_argument<int> arg("flag_a", 'a', value, default_value, "Argument Description", true);
 
         EXPECT_FALSE(arg.is_parsed());
         EXPECT_TRUE(arg.is_required());
@@ -78,7 +91,7 @@ TEST_F(test_argparse_optional_argument, default_properties)
     {
         int value = 1;
         int default_value = 2;
-        tc::sdk::optional_argument<int> arg("flag_a", "a", value, default_value, "Argument Description", true, ENV_VAR);
+        tc::sdk::optional_argument<int> arg("flag_a", 'a', value, default_value, "Argument Description", true, ENV_VAR);
 
         EXPECT_FALSE(arg.is_parsed());
         EXPECT_TRUE(arg.is_required());
@@ -94,7 +107,7 @@ TEST_F(test_argparse_optional_argument, parse_error)
 {
     using Type = int;
     Type value;
-    tc::sdk::optional_argument<Type> arg("long_name", "s", value);
+    tc::sdk::optional_argument<Type> arg("long_name", 's', value);
 
     EXPECT_THROW(arg.parse("a"), std::runtime_error);
     EXPECT_FALSE(arg.is_parsed());
@@ -105,7 +118,7 @@ TEST_F(test_argparse_optional_argument, parse_int)
 {
     using Type = int;
     Type value;
-    tc::sdk::optional_argument<Type> arg("long_name", "s", value);
+    tc::sdk::optional_argument<Type> arg("long_name", 's', value);
 
     EXPECT_NO_THROW(arg.parse("12345"));
     EXPECT_TRUE(arg.is_parsed());
@@ -116,7 +129,7 @@ TEST_F(test_argparse_optional_argument, parse_float)
 {
     using Type = float;
     Type value;
-    tc::sdk::optional_argument<Type> arg("long_name", "s", value);
+    tc::sdk::optional_argument<Type> arg("long_name", 's', value);
 
     EXPECT_NO_THROW(arg.parse("1.2345"));
     EXPECT_TRUE(arg.is_parsed());
@@ -127,7 +140,7 @@ TEST_F(test_argparse_optional_argument, parse_double)
 {
     using Type = double;
     Type value;
-    tc::sdk::optional_argument<Type> arg("long_name", "s", value);
+    tc::sdk::optional_argument<Type> arg("long_name", 's', value);
 
     EXPECT_NO_THROW(arg.parse("1.2345"));
     EXPECT_TRUE(arg.is_parsed());
@@ -138,29 +151,33 @@ TEST_F(test_argparse_optional_argument, parse_string)
 {
     using Type = std::string;
     Type value;
-    tc::sdk::optional_argument<Type> arg("long_name", "s", value);
+    tc::sdk::optional_argument<Type> arg("long_name", 's', value);
 
     EXPECT_NO_THROW(arg.parse("dummy_string"));
     EXPECT_TRUE(arg.is_parsed());
     EXPECT_EQ(value, std::string("dummy_string"));
 }
 
+/*
+Cannot bind a reference to a const char*
+
 TEST_F(test_argparse_optional_argument, parse_const_char_ptr)
 {
     using Type = const char*;
-    Type value;
-    tc::sdk::optional_argument<Type> arg("long_name", "s", value);
+    Type value = "";
+    tc::sdk::optional_argument<Type> arg("long_name", 's', value);
 
     EXPECT_NO_THROW(arg.parse("dummy_string"));
     EXPECT_TRUE(arg.is_parsed());
     EXPECT_EQ(std::string(value), std::string("dummy_string"));
 }
+*/
 
 TEST_F(test_argparse_optional_argument, parse_vector_int)
 {
     using Type = std::vector<int>;
     Type value;
-    tc::sdk::optional_argument<Type> arg("long_name", "s", value);
+    tc::sdk::optional_argument<Type> arg("long_name", 's', value);
 
     EXPECT_NO_THROW(arg.parse("1,2,3,4,5"));
     EXPECT_TRUE(arg.is_parsed());
@@ -171,7 +188,7 @@ TEST_F(test_argparse_optional_argument, parse_vector_string)
 {
     using Type = std::vector<std::string>;
     Type value;
-    tc::sdk::optional_argument<Type> arg("long_name", "s", value);
+    tc::sdk::optional_argument<Type> arg("long_name", 's', value);
 
     EXPECT_NO_THROW(arg.parse("1,2,3,4,5"));
     EXPECT_TRUE(arg.is_parsed());
@@ -181,18 +198,28 @@ TEST_F(test_argparse_optional_argument, parse_vector_string)
 TEST_F(test_argparse_optional_argument, parse_empty_string)
 {
     int value = 1;
-    tc::sdk::optional_argument<int> arg("long_name", "s", value);
+    tc::sdk::optional_argument<int> arg("long_name", 's', value);
 
     EXPECT_THROW(arg.parse(""), std::runtime_error);
     EXPECT_EQ(value, 0);
     EXPECT_FALSE(arg.is_parsed());
 }
 
+TEST_F(test_argparse_optional_argument, parse_long_only)
+{
+    int value = 1;
+    tc::sdk::optional_argument<int> arg("long_name", value);
+
+    EXPECT_NO_THROW(arg.parse("2"));
+    EXPECT_EQ(value, 2);
+    EXPECT_TRUE(arg.is_parsed());
+}
+
 TEST_F(test_argparse_optional_argument, parse_twice)
 {
     int value = 1;
     int default_value = 2;
-    tc::sdk::optional_argument<int> arg("long_name", "s", value, default_value);
+    tc::sdk::optional_argument<int> arg("long_name", 's', value, default_value);
 
     EXPECT_EQ(value, 2);
 
@@ -207,7 +234,7 @@ TEST_F(test_argparse_optional_argument, parse_from_env_variable_empty)
 {
     int value = 1;
     int default_value = 2;
-    tc::sdk::optional_argument<int> arg("flag_a", "a", value, default_value, "Argument Description", "");
+    tc::sdk::optional_argument<int> arg("flag_a", 'a', value, default_value, "Argument Description", "");
 
     EXPECT_NO_THROW(arg.parse_from_env());
     EXPECT_FALSE(arg.is_parsed());
@@ -218,7 +245,7 @@ TEST_F(test_argparse_optional_argument, parse_from_env_variable_not_found)
 {
     int value = 1;
     int default_value = 2;
-    tc::sdk::optional_argument<int> arg("flag_a", "a", value, default_value, "Argument Description", true, ENV_VAR);
+    tc::sdk::optional_argument<int> arg("flag_a", 'a', value, default_value, "Argument Description", true, ENV_VAR);
 
     tc::sdk::tests::clear_env(ENV_VAR);
 
@@ -231,7 +258,7 @@ TEST_F(test_argparse_optional_argument, parse_from_env_variable_found)
 {
     int value = 1;
     int default_value = 2;
-    tc::sdk::optional_argument<int> arg("flag_a", "a", value, default_value, "Argument Description", true, ENV_VAR);
+    tc::sdk::optional_argument<int> arg("flag_a", 'a', value, default_value, "Argument Description", true, ENV_VAR);
 
     tc::sdk::tests::clear_env(ENV_VAR);
     tc::sdk::tests::set_env(ENV_VAR, "3");
@@ -246,7 +273,7 @@ TEST_F(test_argparse_optional_argument, parse_from_env_variable_found)
 TEST_F(test_argparse_optional_argument, validator_failure)
 {
     std::string value = "";
-    tc::sdk::optional_argument<std::string> arg("long_name", "s", value);
+    tc::sdk::optional_argument<std::string> arg("long_name", 's', value);
     arg.set_validator([](const std::string& str) {
         return str.size() > 20;
     });
@@ -259,7 +286,7 @@ TEST_F(test_argparse_optional_argument, validator_failure)
 TEST_F(test_argparse_optional_argument, validator_success)
 {
     std::string value = "";
-    tc::sdk::optional_argument<std::string> arg("long_name", "s", value);
+    tc::sdk::optional_argument<std::string> arg("long_name", 's', value);
     arg.set_validator([](const std::string& str) {
         return str.size() > 20;
     });

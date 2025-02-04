@@ -28,14 +28,27 @@ class flag_argument : public argument_base
 public:
     /*!
      * \brief Constructs a flag argument.
-     * \param name_long Long name of the argument (e.g., "--flag").
-     * \param name_short Short name of the argument (e.g., "-f").
+     * \param name_long Long name of the argument (e.g., "flag").
+     * \param name_short Short name of the argument (e.g., "f").
      * \param var Reference to the boolean variable that will be set.
      * \param description Description of the argument (optional).
      * \param env_var Name of the environment variable to parse (optional).
      */
-    explicit flag_argument(const std::string& name_long, const std::string& name_short, bool& var, const std::string& description = "", const std::string& env_var = "") noexcept
-        : argument_base(name_long, name_short, description, false, env_var)
+    explicit flag_argument(const std::string& name_long, char name_short, bool& var, const std::string& description = "", const std::string& env_var = "") noexcept
+        : argument_base(name_long, std::string(1, name_short), description, false, env_var)
+        , _var{var}
+    {
+    }
+
+    /*!
+     * \brief Constructs a flag argument.
+     * \param name_long Long name of the argument (e.g., "flag").
+     * \param var Reference to the boolean variable that will be set.
+     * \param description Description of the argument (optional).
+     * \param env_var Name of the environment variable to parse (optional).
+     */
+    explicit flag_argument(const std::string& name_long, bool& var, const std::string& description = "", const std::string& env_var = "") noexcept
+        : argument_base(name_long, std::string(), description, false, env_var)
         , _var{var}
     {
     }

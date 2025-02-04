@@ -35,7 +35,7 @@ public:
      * \param description Description of the argument (optional).
      */
     explicit positional_argument(const std::string& name, T& var, const std::string& description = "") noexcept
-        : argument_base(name, "", description, true)
+        : argument_base(name, std::string(), description, true)
         , _var(var)
     {
         _var = T();

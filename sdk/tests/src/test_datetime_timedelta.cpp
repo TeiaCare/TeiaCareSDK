@@ -156,6 +156,25 @@ TEST_F(test_datetime_timedelta, operator_div)
     EXPECT_EQ(t1 / divider, t3);
 }
 
+TEST_F(test_datetime_timedelta, operator_comparison)
+{
+    const auto t1 = tc::sdk::timedelta(1h);
+    const auto t2 = tc::sdk::timedelta(12min);
+    const auto t3 = tc::sdk::timedelta(720'000ms);
+    const auto t4 = tc::sdk::timedelta(720s);
+
+    EXPECT_TRUE(t1 > t2);
+    EXPECT_TRUE(t1 >= t2);
+    EXPECT_TRUE(t2 >= t3);
+
+    EXPECT_TRUE(t3 < t1);
+    EXPECT_TRUE(t3 <= t1);
+    EXPECT_TRUE(t3 <= t2);
+
+    EXPECT_TRUE(t3 <= t4);
+    EXPECT_TRUE(t3 >= t4);
+}
+
 TEST_F(test_datetime_timedelta, ostream)
 {
     {

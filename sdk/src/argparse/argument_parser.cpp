@@ -28,8 +28,8 @@ argument_parser::argument_parser(const std::string& program_name, const std::str
     , _program_version{program_version}
     , _program_description{program_description}
 {
-    add_flag("help", "h", _help_flag, "Display this help message");
-    add_flag("version", "v", _version_flag, "Display program version");
+    add_flag("help", 'h', _help_flag, "Display this help message");
+    add_flag("version", 'v', _version_flag, "Display program version");
 }
 
 parse_result argument_parser::parse(int argc, char* argv[]) const
@@ -202,7 +202,15 @@ void argument_parser::print_arguments() const
     for (const auto& opt : _optionals)
     {
         std::cout << pad;
-        std::cout << std::setw(item_width) << "-" + opt->get_name_short() + ", --" + opt->get_name_long();
+        if(opt->get_name_short().empty())
+        {
+            std::cout << std::setw(item_width) << "--" + opt->get_name_long();
+        }
+        else
+        {
+            std::cout << std::setw(item_width) << "-" + opt->get_name_short() + ", --" + opt->get_name_long();
+        }
+
         std::cout << std::setw(item_width) << opt->get_description();
         if (const auto env = opt->get_env(); !env.empty())
         {
@@ -214,7 +222,15 @@ void argument_parser::print_arguments() const
     for (const auto& flag : _flags)
     {
         std::cout << pad;
-        std::cout << std::setw(item_width) << "-" + flag->get_name_short() + ", --" + flag->get_name_long();
+        if(flag->get_name_short().empty())
+        {
+            std::cout << std::setw(item_width) << "--" + flag->get_name_long();
+        }
+        else
+        {
+            std::cout << std::setw(item_width) << "-" + flag->get_name_short() + ", --" + flag->get_name_long();
+        }
+
         std::cout << std::setw(item_width) << flag->get_description();
         if (const auto env = flag->get_env(); !env.empty())
         {

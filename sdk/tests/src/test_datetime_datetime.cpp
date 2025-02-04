@@ -180,6 +180,7 @@ TEST_F(test_datetime_datetime, operator_minus_timedelta)
     EXPECT_EQ(dt2 - delta, dt1);
     EXPECT_EQ(dt2, tc::sdk::datetime(2024y, std::chrono::May, 1d, 20h, 33min, 46s, 2ms) - delta);
 }
+
 TEST_F(test_datetime_datetime, operator_minus)
 {
     const auto dt1 = tc::sdk::datetime{tc::sdk::sys_time_point(1'714'588'424'000ms)}; // 01 May 2024 18:33:44.000 UTC
@@ -194,12 +195,20 @@ TEST_F(test_datetime_datetime, operator_comparison)
     const auto dt1 = tc::sdk::datetime(2024y, std::chrono::May, 1d, 18h, 33min, 44s, 555ms, 666us); // 01 May 2024 18:33:44.555666 UTC
     const auto dt2 = tc::sdk::datetime(2024y, std::chrono::May, 1d, 18h, 33min, 44s, 555ms);        // 01 May 2024 18:33:44.555000 UTC
     const auto dt3 = tc::sdk::datetime(2024y, std::chrono::May, 1d, 18h, 33min, 44s);               // 01 May 2024 18:33:44.000000 UTC
+    const auto dt4 = tc::sdk::datetime(2024y, std::chrono::May, 1d, 18h, 33min, 44s);               // 01 May 2024 18:33:44.000000 UTC
 
     EXPECT_TRUE(dt1 > dt2);
     EXPECT_TRUE(dt2 > dt3);
+    EXPECT_TRUE(dt1 >= dt2);
+    EXPECT_TRUE(dt2 >= dt3);
 
     EXPECT_TRUE(dt3 < dt1);
     EXPECT_TRUE(dt3 < dt2);
+    EXPECT_TRUE(dt3 <= dt1);
+    EXPECT_TRUE(dt3 <= dt2);
+
+    EXPECT_TRUE(dt3 <= dt4);
+    EXPECT_TRUE(dt3 >= dt4);
 }
 
 TEST_F(test_datetime_datetime, ostream)

@@ -209,7 +209,7 @@ TEST_F(test_thread_pool, run_with_return_and_args)
 
     for (auto i = 0; i < task_count; ++i)
     {
-        constexpr float float_k = 1.234;
+        constexpr float float_k = 1.234f;
         auto result = tp->run(task, "param", float_k);
         EXPECT_EQ(result.get(), static_cast<double>(1 + i + float_k));
     }
