@@ -29,7 +29,7 @@ void install_signal_handlers(std::function<void(const char*, int)> callback = {}
  *
  * This function blocks until either an OS signal is rised or tc::sdk::quit() is called from another thread.
  */
-void wait_for_quit();
+int wait_for_quit();
 
 /*!
  * \brief Unlock the thread that is waiting on tc::sdk::wait_for_quit()

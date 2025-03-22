@@ -14,6 +14,7 @@
 
 #include <teiacare/sdk/signal_handler.hpp>
 
+#include <atomic>
 #include <csignal>
 #include <semaphore>
 
@@ -21,9 +22,12 @@ namespace tc::sdk
 {
 static std::function<void(const char*, int)> signal_callback;
 static std::binary_semaphore sync(0);
+static std::atomic<int> return_code(0);
 
 void quit(const char* message, int signal)
 {
+    return_code = signal;
+
     if (signal_callback)
     {
         signal_callback(message, signal);
@@ -35,9 +39,10 @@ void quit(const char* message, int signal)
     // std::call_once(signal_flag, quit, message, signal);
 }
 
-void wait_for_quit()
+int wait_for_quit()
 {
     sync.acquire();
+    return return_code.load();
 }
 
 void signal_handler(int signal)
