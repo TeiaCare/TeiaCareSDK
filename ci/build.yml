@@ -51,21 +51,19 @@ jobs:
             SETUP_BUILD_ENV: 'call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"'
             ACTIVATE_VIRTUAL_ENV: 'call ".venv\Scripts\activate.bat"'
 
-          # # Not available yet
-          # ubuntu2404_gcc14:
-          #   AGENT: 'ubuntu-24.04'
-          #   COMPILER: gcc
-          #   COMPILER_VERSION: 14
-          #   SETUP_BUILD_ENV: 'echo $(COMPILER) $(COMPILER_VERSION)'
-          #   ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
+          ubuntu2404_gcc14:
+            AGENT: 'ubuntu-24.04'
+            COMPILER: gcc
+            COMPILER_VERSION: 14
+            SETUP_BUILD_ENV: 'echo $(COMPILER) $(COMPILER_VERSION)'
+            ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
 
-          # # Not available yet
-          # ubuntu2404_clang18:
-          #   AGENT: 'ubuntu-24.04'
-          #   COMPILER: clang
-          #   COMPILER_VERSION: 18
-          #   SETUP_BUILD_ENV: 'echo $(COMPILER) $(COMPILER_VERSION)'
-          #   ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
+          ubuntu2404_clang18:
+            AGENT: 'ubuntu-24.04'
+            COMPILER: clang
+            COMPILER_VERSION: 18
+            SETUP_BUILD_ENV: 'echo $(COMPILER) $(COMPILER_VERSION)'
+            ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
 
           ubuntu2204_gcc12:
             AGENT: 'ubuntu-22.04'
@@ -235,11 +233,11 @@ jobs:
           env:
             CONAN_USER_HOME: $(Build.SourcesDirectory)
 
-        - script: |
-            $(ACTIVATE_VIRTUAL_ENV)
-            $(SETUP_BUILD_ENV)
-            python3 scripts/conan/upload.py teiacare teiacare_sdk $(artifactory.url) $(artifactory.username) $(artifactory.password)
-          displayName: 'Upload Conan Package'
-          timeoutInMinutes: 5
-          env:
-            CONAN_USER_HOME: $(Build.SourcesDirectory)
+        # - script: |
+        #     $(ACTIVATE_VIRTUAL_ENV)
+        #     $(SETUP_BUILD_ENV)
+        #     python3 scripts/conan/upload.py teiacare teiacare_sdk $(artifactory.url) $(artifactory.username) $(artifactory.password)
+        #   displayName: 'Upload Conan Package'
+        #   timeoutInMinutes: 5
+        #   env:
+        #     CONAN_USER_HOME: $(Build.SourcesDirectory)
