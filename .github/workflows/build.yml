@@ -257,6 +257,6 @@ jobs:
           commands: |
             ${{ matrix.config.activate_venv }}
             ${{ matrix.config.setup_build_env }}
-            python3 scripts/conan/upload.py teiacare ${{ secrets.ARTIFACTORY_URL }} ${{ secrets.ARTIFACTORY_USERNAME }} ${{ secrets.ARTIFACTORY_PASSWORD }}
+            python3 scripts/conan/upload.py teiacare teiacare_sdk ${{ secrets.ARTIFACTORY_URL }} ${{ secrets.ARTIFACTORY_USERNAME }} ${{ secrets.ARTIFACTORY_PASSWORD }}
         env:
           CONAN_USER_HOME: ${{ github.workspace }}
