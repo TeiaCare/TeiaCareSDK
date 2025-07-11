@@ -25,8 +25,24 @@ using namespace std::chrono_literals;
 
 int main()
 {
+    auto tt = "2025-05-29T15:22:17.4392851Z";
+
     {
-        std::cout << tc::sdk::datetime::utc_now().to_string<std::chrono::seconds>() << std::endl;
+        // Use default template specialization (std::chrono::milliseconds)
+        tc::sdk::datetime dt = tc::sdk::datetime::from_string(tt);
+        std::cout << dt << std::endl;
+        std::cout << dt.to_string() << std::endl;
+    }
+
+    {
+        // Use nanoseconds template specialization
+        tc::sdk::datetime dt = tc::sdk::datetime::from_string<std::chrono::nanoseconds>(tt);
+        std::cout << dt << std::endl;
+        std::cout << dt.to_string<std::chrono::nanoseconds>() << std::endl;
+    }
+
+    {
+        std::cout << tc::sdk::datetime::utc_now().to_string<std::chrono::seconds>("%FT%TZ") << std::endl;
         std::cout << tc::sdk::datetime::utc_now().to_string<std::chrono::milliseconds>() << std::endl;
         std::cout << tc::sdk::datetime::utc_now().to_string<std::chrono::microseconds>() << std::endl;
         std::cout << tc::sdk::datetime::utc_now().to_string<std::chrono::nanoseconds>() << std::endl;

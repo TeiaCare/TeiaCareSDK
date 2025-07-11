@@ -1,0 +1,22 @@
+name: "Run Shell Commands"
+description: "Runs a list of commands on the native OS shell"
+
+inputs:
+  commands:
+    description: 'Multiline string of commands to run'
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: CMD
+      if: runner.os == 'Windows'
+      shell: cmd
+      run: |
+        ${{ inputs.commands }}
+
+    - name: Bash
+      if: runner.os != 'Windows'
+      shell: bash
+      run: |
+        ${{ inputs.commands }}
