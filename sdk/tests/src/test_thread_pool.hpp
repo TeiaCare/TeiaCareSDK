@@ -16,6 +16,7 @@
 
 #include <teiacare/sdk/thread_pool.hpp>
 
+#include <chrono>
 #include <gtest/gtest.h>
 
 namespace tc::sdk::tests

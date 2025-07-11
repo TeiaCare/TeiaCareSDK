@@ -24,13 +24,6 @@ jobs:
             setup_build_env: 'call "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"'
             activate_venv: 'call ".venv\\Scripts\\activate.bat"'
 
-          - name: windows2019_msvc2019
-            os: windows-2019
-            compiler: visual_studio
-            compiler_version: 16
-            setup_build_env: 'call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"'
-            activate_venv: 'call ".venv\\Scripts\\activate.bat"'
-
           - name: macos14_clang15
             os: macos-14
             compiler: clang
@@ -202,13 +195,6 @@ jobs:
             compiler: visual_studio
             compiler_version: 17
             setup_build_env: 'call "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"'
-            activate_venv: 'call ".venv\\Scripts\\activate.bat"'
-
-          - name: windows2019_msvc2019
-            os: windows-2019
-            compiler: visual_studio
-            compiler_version: 16
-            setup_build_env: 'call "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"'
             activate_venv: 'call ".venv\\Scripts\\activate.bat"'
 
           - name: macos14_clang15
