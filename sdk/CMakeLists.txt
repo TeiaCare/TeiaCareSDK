@@ -64,9 +64,6 @@ set(TARGET_SOURCES
     src/version.cpp
 )
 
-list(APPEND ALL_SOURCES ${TARGET_HEADERS} ${TARGET_SOURCES})
-list(TRANSFORM ALL_SOURCES_ABS_PATH PREPEND "${CMAKE_CURRENT_SOURCE_DIR}/")
-
 target_compile_features(${TARGET_NAME} PUBLIC cxx_std_20)
 target_sources(${TARGET_NAME} PUBLIC ${TARGET_HEADERS} PRIVATE ${TARGET_SOURCES})
 target_include_directories(${TARGET_NAME}

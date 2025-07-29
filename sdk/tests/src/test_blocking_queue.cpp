@@ -15,11 +15,64 @@
 #include "test_blocking_queue.hpp"
 
 #include <gtest/gtest.h>
+#include <semaphore>
 
 using namespace std::string_literals;
 
 namespace tc::sdk::tests
 {
+constexpr size_t QUEUE_CAPACITY = 3;
+
+TEST(test_blocking_queue_clear, clear_after_construction)
+{
+    tc::sdk::blocking_queue<int> queue = tc::sdk::blocking_queue<int>(QUEUE_CAPACITY);
+
+    queue.clear();
+
+    EXPECT_EQ(queue.size(), 0);
+    EXPECT_EQ(queue.capacity(), QUEUE_CAPACITY);
+}
+
+TEST(test_blocking_queue_clear, clear_after_push)
+{
+    tc::sdk::blocking_queue<int> queue = tc::sdk::blocking_queue<int>(QUEUE_CAPACITY);
+
+    queue.push(1);
+    queue.push(2);
+    queue.push(3);
+    queue.clear();
+
+    EXPECT_EQ(queue.size(), 0);
+    EXPECT_EQ(queue.capacity(), QUEUE_CAPACITY);
+}
+
+TEST(test_blocking_queue_clear, push_after_clear)
+{
+    tc::sdk::blocking_queue<int> queue = tc::sdk::blocking_queue<int>(QUEUE_CAPACITY);
+
+    std::thread push_thread([&queue]() {
+        queue.push(1);
+        queue.push(2);
+        queue.push(3);
+        queue.push(4);
+    });
+
+    std::thread clear_thread([&queue]() {
+        while (queue.size() < QUEUE_CAPACITY)
+        {
+            std::this_thread::yield();
+        }
+
+        queue.clear();
+    });
+
+    clear_thread.join();
+    push_thread.join();
+
+    EXPECT_EQ(queue.size(), 1);
+    EXPECT_EQ(queue.capacity(), QUEUE_CAPACITY);
+}
+
 class test_blocking_queue_push_int : public test_blocking_queue<int>
 {
 };

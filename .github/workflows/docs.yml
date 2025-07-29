@@ -28,7 +28,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
         with:
           submodules: true
@@ -36,7 +36,7 @@ jobs:
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
 
-      - name: Build Docs
+      - name: Install Doxygen
         run: sudo apt-get install -y doxygen graphviz
 
       - name: Build Docs

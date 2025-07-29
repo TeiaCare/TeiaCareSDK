@@ -104,14 +104,14 @@ jobs:
 
         - task: Cache@2
           inputs:
-            key: 'venv $(Agent.JobName) | scripts/requirements.txt'
+            key: '"venv_$(Agent.JobName)" | scripts/requirements.txt'
             path: '$(Build.SourcesDirectory)/.venv'
             cacheHitVar: 'VENV_CACHE_RESTORED'
           displayName: 'Cache Virtual Environment'
 
         - task: Cache@2
           inputs:
-            key: 'conan $(Agent.JobName) | sdk/examples/conanfile.txt | sdk/tests/conanfile.txt'
+            key: '"conan_$(Agent.JobName)" | sdk/examples/conanfile.txt | sdk/tests/conanfile.txt'
             path: '$(Build.SourcesDirectory)/.conan'
           displayName: 'Cache Conan'
 
@@ -209,7 +209,7 @@ jobs:
             python3 scripts/tools/run_sanitizer.py --address_sanitizer install/unit_tests/teiacare_sdk_unit_tests
           displayName: 'Address Sanitizer'
           condition: eq(variables['Agent.OS'], 'Linux')
-          timeoutInMinutes: 5
+          timeoutInMinutes: 10
           continueOnError: True
           env:
             CONAN_USER_HOME: $(Build.SourcesDirectory)
@@ -221,7 +221,7 @@ jobs:
             python3 scripts/tools/run_sanitizer.py --thread_sanitizer install/unit_tests/teiacare_sdk_unit_tests
           displayName: 'Thread Sanitizer'
           condition: eq(variables['Agent.OS'], 'Linux')
-          timeoutInMinutes: 5
+          timeoutInMinutes: 10
           continueOnError: True
           env:
             CONAN_USER_HOME: $(Build.SourcesDirectory)

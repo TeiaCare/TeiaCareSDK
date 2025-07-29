@@ -61,7 +61,7 @@ PROJECT_BRIEF          = TeiaCareSDK is a collection of reusable C++ components
 # pixels and the maximum width should not exceed 200 pixels. Doxygen will copy
 # the logo to the output directory.
 
-PROJECT_LOGO           = sdk/docs/logo/logo-small.png
+PROJECT_LOGO           = doxygen/logo/logo-small.png
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) path
 # into which the generated documentation will be written. If a relative path is
@@ -1317,7 +1317,7 @@ HTML_FILE_EXTENSION    = .html
 # of the possible markers and block names see the documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_HEADER            = sdk/docs/style/header.html
+HTML_HEADER            = doxygen/style/header.html
 
 # The HTML_FOOTER tag can be used to specify a user-defined HTML footer for each
 # generated HTML page. If the tag is left blank doxygen will generate a standard
@@ -1327,7 +1327,7 @@ HTML_HEADER            = sdk/docs/style/header.html
 # that doxygen normally uses.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_FOOTER            = sdk/docs/style/footer.html
+HTML_FOOTER            = doxygen/style/footer.html
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading style
 # sheet that is used by each HTML page. It can be used to fine-tune the look of
@@ -1357,7 +1357,7 @@ HTML_STYLESHEET        =
 # documentation.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_STYLESHEET  = sdk/docs/style/doxygen-awesome.css sdk/docs/style/doxygen-awesome-sidebar-only-darkmode-toggle.css
+HTML_EXTRA_STYLESHEET  = doxygen/style/doxygen-awesome.css doxygen/style/doxygen-awesome-sidebar-only-darkmode-toggle.css
 
 # The HTML_EXTRA_FILES tag can be used to specify one or more extra images or
 # other source files which should be copied to the HTML output directory. Note
@@ -1367,7 +1367,7 @@ HTML_EXTRA_STYLESHEET  = sdk/docs/style/doxygen-awesome.css sdk/docs/style/doxyg
 # files will be copied as-is; there are no commands or markers available.
 # This tag requires that the tag GENERATE_HTML is set to YES.
 
-HTML_EXTRA_FILES       = sdk/docs/style/doxygen-awesome-darkmode-toggle.js sdk/docs/style/doxygen-awesome-fragment-copy-button.js
+HTML_EXTRA_FILES       = doxygen/style/doxygen-awesome-darkmode-toggle.js doxygen/style/doxygen-awesome-fragment-copy-button.js
 
 # The HTML_COLORSTYLE tag can be used to specify if the generated HTML output
 # should be rendered with a dark or light theme.

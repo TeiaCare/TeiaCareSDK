@@ -18,6 +18,7 @@
 
 #include <array>
 #include <gtest/gtest.h>
+#include <thread>
 #include <vector>
 
 namespace tc::sdk::tests
