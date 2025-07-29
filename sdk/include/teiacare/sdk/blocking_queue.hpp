@@ -189,6 +189,24 @@ public:
         return _capacity;
     }
 
+    /*!
+     * \brief Clear the queue
+     *
+     * Removes all items from the queue.
+     */
+    void clear()
+    {
+        std::lock_guard lock(_mutex);
+        if (is_empty())
+            return;
+
+        while (!_queue.empty())
+            _queue.pop();
+
+        _last_item_popped.notify_all();
+        _first_item_pushed.notify_all();
+    }
+
 private:
     std::queue<T> _queue;
     mutable std::mutex _mutex;
@@ -218,6 +236,7 @@ private:
     {
         return _queue.empty();
     }
+
     inline bool is_full() const
     {
         return _queue.size() >= _capacity;

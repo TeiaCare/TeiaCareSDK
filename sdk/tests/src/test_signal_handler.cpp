@@ -45,7 +45,8 @@ TEST_P(test_signal_handler, raise)
         std::raise(params.signal);
     });
 
-    tc::sdk::wait_for_quit();
+    int ret = tc::sdk::wait_for_quit();
+    EXPECT_EQ(ret, params.signal);
 }
 
 // NOLINTNEXTLINE
@@ -58,7 +59,8 @@ TEST_P(test_signal_handler, quit)
         tc::sdk::quit(params.name, params.signal);
     });
 
-    tc::sdk::wait_for_quit();
+    int ret = tc::sdk::wait_for_quit();
+    EXPECT_EQ(ret, params.signal);
 }
 
 // NOLINTNEXTLINE
@@ -73,7 +75,9 @@ TEST_F(test_signal_handler_shutdown, null_callback)
     });
 
     auto arrival_token = sync.arrive();
-    tc::sdk::wait_for_quit();
+    int ret = tc::sdk::wait_for_quit();
+    EXPECT_EQ(ret, 0);
+
     (void)arrival_token;
 }
 
@@ -93,7 +97,9 @@ TEST_F(test_signal_handler_shutdown, quit_arguments)
     });
 
     auto arrival_token = sync.arrive();
-    tc::sdk::wait_for_quit();
+    int ret = tc::sdk::wait_for_quit();
+    EXPECT_EQ(ret, 1234);
+
     (void)arrival_token;
 }
 
@@ -118,7 +124,8 @@ TEST_F(test_signal_handler_shutdown, multiple_quit)
     for (auto i = 0; i < total_count; ++i)
     {
         auto arrival_token = sync.arrive();
-        tc::sdk::wait_for_quit();
+        int ret = tc::sdk::wait_for_quit();
+        EXPECT_EQ(ret, 0);
         (void)arrival_token;
     }
 
