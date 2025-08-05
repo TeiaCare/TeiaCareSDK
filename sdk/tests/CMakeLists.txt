@@ -35,6 +35,8 @@ set(UNIT_TESTS_SRC
 
     src/test_geometry_line.cpp
     src/test_geometry_line.hpp
+    src/test_geometry_non_maximum_suppression.cpp
+    src/test_geometry_non_maximum_suppression.hpp
     src/test_geometry_point.cpp
     src/test_geometry_point.hpp
     src/test_geometry_range.cpp

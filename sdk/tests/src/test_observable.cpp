@@ -149,9 +149,13 @@ TEST(test_observable, multiple_thread_same_value)
 
     {
         auto worker = [&o](int value) { o = value; };
-        std::jthread t1(worker, v);
-        std::jthread t2(worker, v);
-        std::jthread t3(worker, v);
+        std::thread t1(worker, v);
+        std::thread t2(worker, v);
+        std::thread t3(worker, v);
+
+        t1.join();
+        t2.join();
+        t3.join();
     }
 
     EXPECT_EQ(callback_triggered_count, 1);
@@ -166,12 +170,15 @@ TEST(test_observable, multiple_thread_different_value)
     const auto callback = [&](int) { ++callback_triggered_count; };
     auto o = tc::sdk::observable<int>(value, callback);
 
-    auto worker = [&o](int v) { o = v; };
-
     {
-        std::jthread t1(worker, 1);
-        std::jthread t2(worker, 2);
-        std::jthread t3(worker, 3);
+        auto worker = [&o](int v) { o = v; };
+        std::thread t1(worker, 1);
+        std::thread t2(worker, 2);
+        std::thread t3(worker, 3);
+
+        t1.join();
+        t2.join();
+        t3.join();
     }
 
     EXPECT_EQ(callback_triggered_count, 3);

@@ -41,7 +41,7 @@ TEST_P(test_signal_handler, raise)
     const signal_handler_params params = GetParam();
     tc::sdk::install_signal_handlers(params.callback);
 
-    signal_thread = std::jthread([&params] {
+    signal_thread = std::thread([&params] {
         std::raise(params.signal);
     });
 
@@ -55,7 +55,7 @@ TEST_P(test_signal_handler, quit)
     const signal_handler_params params = GetParam();
     tc::sdk::install_signal_handlers(params.callback);
 
-    signal_thread = std::jthread([&params] {
+    signal_thread = std::thread([&params] {
         tc::sdk::quit(params.name, params.signal);
     });
 
@@ -69,7 +69,7 @@ TEST_F(test_signal_handler_shutdown, null_callback)
     tc::sdk::install_signal_handlers(nullptr);
 
     std::barrier sync(2, []() noexcept {});
-    signal_thread = std::jthread([&sync] {
+    signal_thread = std::thread([&sync] {
         sync.arrive_and_wait();
         tc::sdk::quit("NULL_CALLBACK");
     });
@@ -91,7 +91,7 @@ TEST_F(test_signal_handler_shutdown, quit_arguments)
     tc::sdk::install_signal_handlers(callback);
 
     std::barrier sync(2, []() noexcept {});
-    signal_thread = std::jthread([&sync] {
+    signal_thread = std::thread([&sync] {
         sync.arrive_and_wait();
         tc::sdk::quit("CUSTOM_MSG", 1234);
     });
@@ -113,7 +113,7 @@ TEST_F(test_signal_handler_shutdown, multiple_quit)
     const auto callback = [&callback_count](const char*, int) { ++callback_count; };
     tc::sdk::install_signal_handlers(callback);
 
-    signal_thread = std::jthread([&sync] {
+    signal_thread = std::thread([&sync] {
         for (auto i = 0; i < total_count; ++i)
         {
             sync.arrive_and_wait();
@@ -129,7 +129,6 @@ TEST_F(test_signal_handler_shutdown, multiple_quit)
         (void)arrival_token;
     }
 
-    signal_thread.join();
     EXPECT_EQ(total_count, callback_count);
 }
 

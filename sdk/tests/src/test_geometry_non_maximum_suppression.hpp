@@ -14,38 +14,27 @@
 
 #pragma once
 
-#include <teiacare/sdk/signal_handler.hpp>
+#include <teiacare/sdk/geometry/non_maximum_suppression.hpp>
+#include <teiacare/sdk/geometry/rectangle.hpp>
 
 #include <gtest/gtest.h>
-#include <thread>
 
 namespace tc::sdk::tests
 {
-struct signal_handler_params
-{
-    int signal;
-    const char* name;
-    std::function<void(const char*, int)> callback;
-};
-
-class test_signal_handler_shutdown : public testing::Test
+class test_geometry_non_maximum_suppression : public testing::Test
 {
 protected:
-    explicit test_signal_handler_shutdown()
+    explicit test_geometry_non_maximum_suppression()
     {
     }
 
-    ~test_signal_handler_shutdown() override
+    ~test_geometry_non_maximum_suppression() override
     {
-        signal_thread.join();
     }
-
-    std::thread signal_thread;
 };
 
-class test_signal_handler
-    : public test_signal_handler_shutdown,
-      public testing::WithParamInterface<signal_handler_params>
+template <class T>
+class test_geometry_non_maximum_suppression_t : public test_geometry_non_maximum_suppression
 {
 };
 

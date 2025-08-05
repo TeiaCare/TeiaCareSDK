@@ -19,6 +19,7 @@
 #include <teiacare/sdk/geometry/size.hpp>
 #include <teiacare/sdk/math.hpp>
 
+#include <algorithm>
 #include <string>
 
 namespace tc::sdk
@@ -355,6 +356,102 @@ public:
         const auto translated_position = tc::sdk::point<T>(_position);
         translated_position.add_delta(delta_x, delta_y);
         return tc::sdk::rectangle<T>(translated_position, _width, _height);
+    }
+
+    /*!
+     * \brief Calculate Intersection over Union (IoU) with another rectangle.
+     * \param other The rectangle to calculate IoU with.
+     * \return The IoU value as a ratio of the intersection area to the union area.
+     */
+    double calculate_iou(const tc::sdk::rectangle<T>& other) const noexcept
+    {
+        // Early exit for null rectangles
+        if (is_null() || other.is_null())
+        {
+            return 0.0;
+        }
+
+        const auto intersection_rect = get_intersection(other);
+        if (intersection_rect.is_null())
+        {
+            return 0.0;
+        }
+
+        const auto intersection_area = intersection_rect.area();
+        const auto union_area = area() + other.area() - intersection_area;
+
+        // Avoid division by zero
+        if (union_area == T(0.0))
+        {
+            return 0.0;
+        }
+
+        return static_cast<double>(intersection_area) / static_cast<double>(union_area);
+    }
+
+    /*!
+     * \brief Transform this rectangle from input coordinate space back to output coordinate space.
+     * This method handles the inverse transformation of letterboxing/padding applied during scaling.
+     * \param input_width The width of the input coordinate space.
+     * \param input_height The height of the input coordinate space.
+     * \param output_width The width of the output coordinate space.
+     * \param output_height The height of the output coordinate space.
+     * \return A rectangle transformed back to output coordinates.
+     */
+    tc::sdk::rectangle<T> reshape(
+        T input_width,
+        T input_height,
+        T output_width,
+        T output_height) const noexcept
+    {
+        // Input validation
+        if (output_width <= T{} || output_height <= T{} ||
+            input_width <= T{} || input_height <= T{} ||
+            is_null())
+        {
+            return tc::sdk::rectangle<T>{};
+        }
+
+        // Calculate scale ratios for width and height
+        const auto scale_width = static_cast<double>(input_width) / output_width;
+        const auto scale_height = static_cast<double>(input_height) / output_height;
+
+        // Use the smaller ratio to maintain aspect ratio (letterboxing)
+        const auto scale = tc::sdk::min(scale_width, scale_height);
+
+        // Calculate actual scaled dimensions of the output in input space
+        const auto scaled_output_width = output_width * scale;
+        const auto scaled_output_height = output_height * scale;
+
+        // Calculate padding offsets (where letterbox bars are added)
+        const auto x_padding_offset = (input_width - scaled_output_width) * 0.5;
+        const auto y_padding_offset = (input_height - scaled_output_height) * 0.5;
+
+        // Get input box boundaries (using this rectangle)
+        const auto input_left = static_cast<double>(top_left().x());
+        const auto input_top = static_cast<double>(top_left().y());
+        const auto input_right = input_left + width();
+        const auto input_bottom = input_top + height();
+
+        // Remove padding and scale back to output coordinates
+        const auto inverse_scale = 1.0 / scale;
+        const auto output_left = (input_left - x_padding_offset) * inverse_scale;
+        const auto output_right = (input_right - x_padding_offset) * inverse_scale;
+        const auto output_top = (input_top - y_padding_offset) * inverse_scale;
+        const auto output_bottom = (input_bottom - y_padding_offset) * inverse_scale;
+
+        // Clamp to output boundaries
+        const auto clamped_left = std::clamp(static_cast<T>(output_left), T{}, output_width);
+        const auto clamped_right = std::clamp(static_cast<T>(output_right), T{}, output_width);
+        const auto clamped_top = std::clamp(static_cast<T>(output_top), T{}, output_height);
+        const auto clamped_bottom = std::clamp(static_cast<T>(output_bottom), T{}, output_height);
+
+        // Calculate final dimensions
+        const auto final_width = tc::sdk::max(T{}, clamped_right - clamped_left);
+        const auto final_height = tc::sdk::max(T{}, clamped_bottom - clamped_top);
+
+        // Create and return the transformed rectangle
+        return tc::sdk::rectangle<T>(clamped_left, clamped_top, final_width, final_height);
     }
 
     /*!
