@@ -21,6 +21,7 @@ jobs:
             os: windows-2022
             compiler: visual_studio
             compiler_version: 17
+            profile: windows-msvc
             setup_build_env: 'call "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"'
             activate_venv: 'call ".venv\\Scripts\\activate.bat"'
 
@@ -28,6 +29,7 @@ jobs:
             os: macos-14
             compiler: clang
             compiler_version: 15
+            profile: macos-arm64
             setup_build_env: ""
             activate_venv: 'source .venv/bin/activate'
 
@@ -35,6 +37,7 @@ jobs:
             os: ubuntu-22.04
             compiler: gcc
             compiler_version: 12
+            profile: linux-gcc
             setup_build_env: ""
             activate_venv: 'source .venv/bin/activate'
 
@@ -42,6 +45,7 @@ jobs:
             os: ubuntu-22.04
             compiler: clang
             compiler_version: 15
+            profile: linux-clang
             setup_build_env: ""
             activate_venv: 'source .venv/bin/activate'
 
@@ -66,20 +70,20 @@ jobs:
           commands: |
             python3 -m venv .venv
             ${{ matrix.config.activate_venv }}
-            pip3 install -r scripts/requirements.txt
+            pip3 install -r scripts/scripts/requirements.txt
             conan remote add teiacare ${{ secrets.ARTIFACTORY_URL }}/teiacare --insert 0 --force
-            conan user ${{ secrets.ARTIFACTORY_USERNAME }} -p ${{ secrets.ARTIFACTORY_PASSWORD }} -r teiacare
+            conan remote login teiacare ${{ secrets.ARTIFACTORY_USERNAME }} -p ${{ secrets.ARTIFACTORY_PASSWORD }}
         env:
-          CONAN_USER_HOME: ${{ github.workspace }}
+          CONAN_HOME: ${{ github.workspace }}/.conan2
 
       - name: Setup Conan
         uses: ./.github/actions/shell
         with:
           commands: |
             ${{ matrix.config.activate_venv }}
-            python3 scripts/conan/setup.py ${{ matrix.build_type }} ${{ matrix.config.compiler }} ${{ matrix.config.compiler_version }}
+            python3 scripts/conan_setup.py ${{ matrix.build_type }} ${{ matrix.config.compiler }} ${{ matrix.config.compiler_version }}
         env:
-          CONAN_USER_HOME: ${{ github.workspace }}
+          CONAN_HOME: ${{ github.workspace }}/.conan2
 
       - name: Build
         uses: ./.github/actions/shell
@@ -87,9 +91,13 @@ jobs:
           commands: |
             ${{ matrix.config.activate_venv }}
             ${{ matrix.config.setup_build_env }}
-            python3 scripts/cmake.py ${{ matrix.build_type }} ${{ matrix.config.compiler }} ${{ matrix.config.compiler_version }} --warnings
+            conan install sdk/examples --output-folder build/modules --settings build_type=${{ matrix.build_type }} --profile:all ${{ matrix.config.profile }} --build missing
+            conan install sdk/tests --output-folder build/modules --settings build_type=${{ matrix.build_type }} --profile:all ${{ matrix.config.profile }} --build missing
+            cmake -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE=build/modules/conan_toolchain.cmake -DTC_ENABLE_WARNINGS_ERROR=True -B build/${{ matrix.build_type }} -S . --fresh
+            cmake --build build/${{ matrix.build_type }}
+            cmake --install build/${{ matrix.build_type }} --prefix install
         env:
-          CONAN_USER_HOME: ${{ github.workspace }}
+          CONAN_HOME: ${{ github.workspace }}/.conan2
 
       - name: Unit Tests
         uses: ./.github/actions/shell
@@ -97,10 +105,13 @@ jobs:
           commands: |
             ${{ matrix.config.activate_venv }}
             ${{ matrix.config.setup_build_env }}
-            python3 scripts/cmake.py ${{ matrix.build_type }} ${{ matrix.config.compiler }} ${{ matrix.config.compiler_version }} --warnings --unit_tests
+            conan install sdk/tests --output-folder build/modules --settings build_type=${{ matrix.build_type }} --profile:all ${{ matrix.config.profile }} --build missing
+            cmake -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} -DCMAKE_TOOLCHAIN_FILE=build/modules/conan_toolchain.cmake -DTC_ENABLE_WARNINGS_ERROR=True -DTC_ENABLE_UNIT_TESTS=True -B build/${{ matrix.build_type }} -S . --fresh
+            cmake --build build/${{ matrix.build_type }}
+            cmake --install build/${{ matrix.build_type }} --prefix install
             python3 scripts/tools/run_unit_tests.py ${{ matrix.build_type }}
         env:
-          CONAN_USER_HOME: ${{ github.workspace }}
+          CONAN_HOME: ${{ github.workspace }}/.conan2
         continue-on-error: true
         timeout-minutes: 5
 
@@ -110,15 +121,15 @@ jobs:
           commands: |
             ${{ matrix.config.activate_venv }}
             ${{ matrix.config.setup_build_env }}
-            python3 scripts/conan/create.py ${{ matrix.build_type }} ${{ matrix.config.compiler }} ${{ matrix.config.compiler_version }}
+            conan create . --settings build_type=${{ matrix.build_type }} --profile:all ${{ matrix.config.profile }} --build missing
         env:
-          CONAN_USER_HOME: ${{ github.workspace }}
+          CONAN_HOME: ${{ github.workspace }}/.conan2
 
       - name: Publish Conan cache
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.config.name }}-${{ matrix.build_type }}
-          path: .conan
+          path: .conan2
           if-no-files-found: error
           overwrite: true
           include-hidden-files: true
@@ -131,6 +142,7 @@ jobs:
     env:
       COMPILER: gcc
       COMPILER_VERSION: 12
+      PROFILE: linux-gcc
       BUILD_TYPE: Debug
 
     steps:
@@ -150,32 +162,35 @@ jobs:
         with:
           commands: |
             python3 -m venv .venv
-            ${{ matrix.config.activate_venv }}
-            pip3 install -r scripts/requirements.txt
+            source .venv/bin/activate
+            pip3 install -r scripts/scripts/requirements.txt
             conan remote add teiacare ${{ secrets.ARTIFACTORY_URL }}/teiacare --insert 0 --force
-            conan user ${{ secrets.ARTIFACTORY_USERNAME }} -p ${{ secrets.ARTIFACTORY_PASSWORD }} -r teiacare
+            conan remote login teiacare ${{ secrets.ARTIFACTORY_USERNAME }} -p ${{ secrets.ARTIFACTORY_PASSWORD }}
         env:
-          CONAN_USER_HOME: ${{ github.workspace }}
+          CONAN_HOME: ${{ github.workspace }}/.conan2
 
       - name: Setup Conan
         uses: ./.github/actions/shell
         with:
           commands: |
             source .venv/bin/activate
-            python3 scripts/conan/setup.py ${{ env.BUILD_TYPE }} ${{ env.COMPILER }} ${{ env.COMPILER_VERSION }}
+            python3 scripts/conan_setup.py ${{ env.BUILD_TYPE }} ${{ env.COMPILER }} ${{ env.COMPILER_VERSION }}
         env:
-          CONAN_USER_HOME: ${{ github.workspace }}
+          CONAN_HOME: ${{ github.workspace }}/.conan2
 
       - name: Run Code Coverage
         run: |
           source .venv/bin/activate
-          python3 scripts/cmake.py ${{ env.BUILD_TYPE }} ${{ env.COMPILER }} ${{ env.COMPILER_VERSION }} --warnings --coverage
+          conan install sdk/tests --output-folder build/modules --settings build_type=${{ env.BUILD_TYPE }} --profile:all ${{ env.PROFILE }} --build missing
+          cmake -G Ninja -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_TOOLCHAIN_FILE=build/modules/conan_toolchain.cmake -DTC_ENABLE_WARNINGS_ERROR=True -DTC_ENABLE_UNIT_TESTS=True -DTC_ENABLE_UNIT_TESTS_COVERAGE=True -B build/${{ env.BUILD_TYPE }} -S . --fresh
+          cmake --build build/${{ env.BUILD_TYPE }}
+          cmake --install build/${{ env.BUILD_TYPE }} --prefix install
           python3 scripts/tools/run_unit_tests.py ${{ env.BUILD_TYPE }}
           python3 scripts/tools/run_coverage.py ${{ env.COMPILER }} ${{ env.COMPILER_VERSION }} sdk --extra_args=-e=sdk/src/datetime/date.h
         timeout-minutes: 5
         continue-on-error: true
         env:
-          CONAN_USER_HOME: ${{ github.workspace }}
+          CONAN_HOME: ${{ github.workspace }}/.conan2
 
       - name: Upload Codacy
         run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -r results/coverage/cobertura.xml
@@ -194,6 +209,7 @@ jobs:
             os: windows-2022
             compiler: visual_studio
             compiler_version: 17
+            profile: windows-msvc
             setup_build_env: 'call "C:\\Program Files\\Microsoft Visual Studio\\2022\\Enterprise\\VC\\Auxiliary\\Build\\vcvars64.bat"'
             activate_venv: 'call ".venv\\Scripts\\activate.bat"'
 
@@ -201,6 +217,7 @@ jobs:
             os: macos-14
             compiler: clang
             compiler_version: 15
+            profile: macos-arm64
             setup_build_env: ""
             activate_venv: 'source .venv/bin/activate'
 
@@ -208,6 +225,7 @@ jobs:
             os: ubuntu-22.04
             compiler: gcc
             compiler_version: 12
+            profile: linux-gcc
             setup_build_env: ""
             activate_venv: 'source .venv/bin/activate'
 
@@ -215,6 +233,7 @@ jobs:
             os: ubuntu-22.04
             compiler: clang
             compiler_version: 15
+            profile: linux-clang
             setup_build_env: ""
             activate_venv: 'source .venv/bin/activate'
 
@@ -239,17 +258,17 @@ jobs:
           commands: |
             python3 -m venv .venv
             ${{ matrix.config.activate_venv }}
-            pip3 install -r scripts/requirements.txt
+            pip3 install -r scripts/scripts/requirements.txt
             conan remote add teiacare ${{ secrets.ARTIFACTORY_URL }}/teiacare --insert 0 --force
-            conan user ${{ secrets.ARTIFACTORY_USERNAME }} -p ${{ secrets.ARTIFACTORY_PASSWORD }} -r teiacare
+            conan remote login teiacare ${{ secrets.ARTIFACTORY_USERNAME }} -p ${{ secrets.ARTIFACTORY_PASSWORD }}
         env:
-          CONAN_USER_HOME: ${{ github.workspace }}
+          CONAN_HOME: ${{ github.workspace }}/.conan2
 
       - name: Download Conan cache
         uses: actions/download-artifact@v4
         with:
           name: ${{ matrix.config.name }}-${{ matrix.build_type }}
-          path: .conan/
+          path: .conan2/
 
       - name: Upload Conan Package
         uses: ./.github/actions/shell
@@ -257,6 +276,6 @@ jobs:
           commands: |
             ${{ matrix.config.activate_venv }}
             ${{ matrix.config.setup_build_env }}
-            python3 scripts/conan/upload.py teiacare ${{ secrets.ARTIFACTORY_URL }} ${{ secrets.ARTIFACTORY_USERNAME }} ${{ secrets.ARTIFACTORY_PASSWORD }}
+            conan upload "*" --remote teiacare --confirm
         env:
-          CONAN_USER_HOME: ${{ github.workspace }}
+          CONAN_HOME: ${{ github.workspace }}/.conan2

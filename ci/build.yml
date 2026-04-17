@@ -39,6 +39,7 @@ jobs:
             AGENT: 'windows-2022'
             COMPILER: visual_studio
             COMPILER_VERSION: 17
+            PROFILE: windows-msvc
             SETUP_BUILD_ENV: 'call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"'
             ACTIVATE_VIRTUAL_ENV: 'call ".venv\Scripts\activate.bat"'
 
@@ -48,6 +49,7 @@ jobs:
             AGENT: 'windows-2019'
             COMPILER: visual_studio
             COMPILER_VERSION: 16
+            PROFILE: windows-msvc
             SETUP_BUILD_ENV: 'call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"'
             ACTIVATE_VIRTUAL_ENV: 'call ".venv\Scripts\activate.bat"'
 
@@ -56,6 +58,7 @@ jobs:
           #   AGENT: 'ubuntu-24.04'
           #   COMPILER: gcc
           #   COMPILER_VERSION: 14
+          #   PROFILE: linux-gcc
           #   SETUP_BUILD_ENV: 'echo $(COMPILER) $(COMPILER_VERSION)'
           #   ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
 
@@ -64,6 +67,7 @@ jobs:
           #   AGENT: 'ubuntu-24.04'
           #   COMPILER: clang
           #   COMPILER_VERSION: 18
+          #   PROFILE: linux-clang
           #   SETUP_BUILD_ENV: 'echo $(COMPILER) $(COMPILER_VERSION)'
           #   ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
 
@@ -71,6 +75,7 @@ jobs:
             AGENT: 'ubuntu-22.04'
             COMPILER: gcc
             COMPILER_VERSION: 12
+            PROFILE: linux-gcc
             SETUP_BUILD_ENV: 'echo $(COMPILER) $(COMPILER_VERSION)'
             ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
 
@@ -78,6 +83,7 @@ jobs:
             AGENT: 'ubuntu-22.04'
             COMPILER: clang
             COMPILER_VERSION: 15
+            PROFILE: linux-clang
             SETUP_BUILD_ENV: 'echo $(COMPILER) $(COMPILER_VERSION)'
             ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
 
@@ -85,6 +91,7 @@ jobs:
             AGENT: 'macOS-14'
             COMPILER: clang
             COMPILER_VERSION: 15
+            PROFILE: macos-arm64
             SETUP_BUILD_ENV: 'echo $(COMPILER) $(COMPILER_VERSION)'
             ACTIVATE_VIRTUAL_ENV: 'source .venv/bin/activate'
 
@@ -104,57 +111,70 @@ jobs:
 
         - task: Cache@2
           inputs:
-            key: '"venv_$(Agent.JobName)" | scripts/requirements.txt'
+            key: '"venv_$(Agent.JobName)" | scripts/scripts/requirements.txt'
             path: '$(Build.SourcesDirectory)/.venv'
             cacheHitVar: 'VENV_CACHE_RESTORED'
           displayName: 'Cache Virtual Environment'
 
         - task: Cache@2
           inputs:
-            key: '"conan_$(Agent.JobName)" | sdk/examples/conanfile.txt | sdk/tests/conanfile.txt'
-            path: '$(Build.SourcesDirectory)/.conan'
+            key: '"conan2_$(Agent.JobName)" | sdk/examples/conanfile.txt | sdk/tests/conanfile.txt'
+            path: '$(Build.SourcesDirectory)/.conan2'
           displayName: 'Cache Conan'
 
         - script: |
             python3 -m venv .venv
+            echo "export CONAN_HOME=$(Build.SourcesDirectory)/.conan2" >> .venv/bin/activate
             $(ACTIVATE_VIRTUAL_ENV)
-            pip3 install -r scripts/requirements.txt
+            pip3 install -r scripts/scripts/requirements.txt
           displayName: 'Setup Virtual Environment'
           condition: eq(variables['VENV_CACHE_RESTORED'], 'false')
 
         - script: |
             $(ACTIVATE_VIRTUAL_ENV)
-            python3 scripts/conan/setup.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION)
+            python3 scripts/conan_setup.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION)
           displayName: 'Setup Conan'
+          env:
+            CONAN_HOME: $(Build.SourcesDirectory)/.conan2
 
         - script: |
             $(ACTIVATE_VIRTUAL_ENV)
             $(SETUP_BUILD_ENV)
-            python3 scripts/cmake.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION) --warnings
+            conan install sdk/examples --output-folder build/modules --settings build_type=${{BUILD_TYPE}} --profile:all $(PROFILE) --build missing
+            conan install sdk/tests --output-folder build/modules --settings build_type=${{BUILD_TYPE}} --profile:all $(PROFILE) --build missing
+            cmake -G Ninja -DCMAKE_BUILD_TYPE=${{BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=build/modules/conan_toolchain.cmake -DTC_ENABLE_WARNINGS_ERROR=True -B build/${{BUILD_TYPE}} -S . --fresh
+            cmake --build build/${{BUILD_TYPE}}
+            cmake --install build/${{BUILD_TYPE}} --prefix install
           displayName: 'Build'
           env:
-            CONAN_USER_HOME: $(Build.SourcesDirectory)
+            CONAN_HOME: $(Build.SourcesDirectory)/.conan2
 
         - script: |
             $(ACTIVATE_VIRTUAL_ENV)
             $(SETUP_BUILD_ENV)
-            python3 scripts/cmake.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION) --warnings --examples
+            conan install sdk/examples --output-folder build/modules --settings build_type=${{BUILD_TYPE}} --profile:all $(PROFILE) --build missing
+            cmake -G Ninja -DCMAKE_BUILD_TYPE=${{BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=build/modules/conan_toolchain.cmake -DTC_ENABLE_WARNINGS_ERROR=True -DTC_ENABLE_EXAMPLES=True -B build/${{BUILD_TYPE}} -S . --fresh
+            cmake --build build/${{BUILD_TYPE}}
+            cmake --install build/${{BUILD_TYPE}} --prefix install
             python3 scripts/tools/run_examples.py install/examples
           displayName: 'Examples'
           timeoutInMinutes: 5
           env:
-            CONAN_USER_HOME: $(Build.SourcesDirectory)
+            CONAN_HOME: $(Build.SourcesDirectory)/.conan2
 
         - script: |
             $(ACTIVATE_VIRTUAL_ENV)
             $(SETUP_BUILD_ENV)
-            python3 scripts/cmake.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION) --warnings --coverage
+            conan install sdk/tests --output-folder build/modules --settings build_type=${{BUILD_TYPE}} --profile:all $(PROFILE) --build missing
+            cmake -G Ninja -DCMAKE_BUILD_TYPE=${{BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=build/modules/conan_toolchain.cmake -DTC_ENABLE_WARNINGS_ERROR=True -DTC_ENABLE_UNIT_TESTS=True -DTC_ENABLE_UNIT_TESTS_COVERAGE=True -B build/${{BUILD_TYPE}} -S . --fresh
+            cmake --build build/${{BUILD_TYPE}}
+            cmake --install build/${{BUILD_TYPE}} --prefix install
             python3 scripts/tools/run_unit_tests.py ${{BUILD_TYPE}}
           displayName: 'Unit Tests'
           timeoutInMinutes: 5
           continueOnError: True
           env:
-            CONAN_USER_HOME: $(Build.SourcesDirectory)
+            CONAN_HOME: $(Build.SourcesDirectory)/.conan2
 
         - task: PublishTestResults@2
           displayName: 'Publish Unit Tests Results'
@@ -178,7 +198,7 @@ jobs:
           condition: eq(variables['Agent.OS'], 'Linux')
           timeoutInMinutes: 5
           env:
-            CONAN_USER_HOME: $(Build.SourcesDirectory)
+            CONAN_HOME: $(Build.SourcesDirectory)/.conan2
 
         - task: PublishCodeCoverageResults@1
           displayName: 'Publish Code Coverage Results'
@@ -193,53 +213,64 @@ jobs:
         #     $(ACTIVATE_VIRTUAL_ENV)
         #     $(SETUP_BUILD_ENV)
         #     sudo apt-get install valgrind
-        #     python3 scripts/cmake.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION) --unit_tests
+        #     conan install sdk/tests --output-folder build/modules --settings build_type=${{BUILD_TYPE}} --profile:all $(PROFILE) --build missing
+        #     cmake -G Ninja -DCMAKE_BUILD_TYPE=${{BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=build/modules/conan_toolchain.cmake -DTC_ENABLE_UNIT_TESTS=True -B build/${{BUILD_TYPE}} -S . --fresh
+        #     cmake --build build/${{BUILD_TYPE}}
+        #     cmake --install build/${{BUILD_TYPE}} --prefix install
         #     python scripts/tools/run_valgrind.py --memcheck install/unit_tests/teiacare_sdk_unit_tests
         #   displayName: 'Valgrind'
         #   condition: eq(variables['Agent.OS'], 'Linux')
         #   timeoutInMinutes: 5
         #   continueOnError: True
         #   env:
-        #     CONAN_USER_HOME: $(Build.SourcesDirectory)
+        #     CONAN_HOME: $(Build.SourcesDirectory)/.conan2
 
         - script: |
             $(ACTIVATE_VIRTUAL_ENV)
             $(SETUP_BUILD_ENV)
-            python3 scripts/cmake.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION) --address_sanitizer --unit_tests
+            conan install sdk/tests --output-folder build/modules --settings build_type=${{BUILD_TYPE}} --profile:all $(PROFILE) --build missing
+            cmake -G Ninja -DCMAKE_BUILD_TYPE=${{BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=build/modules/conan_toolchain.cmake -DTC_ENABLE_SANITIZER_ADDRESS=True -DTC_ENABLE_UNIT_TESTS=True -B build/${{BUILD_TYPE}} -S . --fresh
+            cmake --build build/${{BUILD_TYPE}}
+            cmake --install build/${{BUILD_TYPE}} --prefix install
             python3 scripts/tools/run_sanitizer.py --address_sanitizer install/unit_tests/teiacare_sdk_unit_tests
           displayName: 'Address Sanitizer'
           condition: eq(variables['Agent.OS'], 'Linux')
           timeoutInMinutes: 10
           continueOnError: True
           env:
-            CONAN_USER_HOME: $(Build.SourcesDirectory)
+            CONAN_HOME: $(Build.SourcesDirectory)/.conan2
 
         - script: |
             $(ACTIVATE_VIRTUAL_ENV)
             $(SETUP_BUILD_ENV)
-            python3 scripts/cmake.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION) --thread_sanitizer --unit_tests
+            conan install sdk/tests --output-folder build/modules --settings build_type=${{BUILD_TYPE}} --profile:all $(PROFILE) --build missing
+            cmake -G Ninja -DCMAKE_BUILD_TYPE=${{BUILD_TYPE}} -DCMAKE_TOOLCHAIN_FILE=build/modules/conan_toolchain.cmake -DTC_ENABLE_SANITIZER_THREAD=True -DTC_ENABLE_UNIT_TESTS=True -B build/${{BUILD_TYPE}} -S . --fresh
+            cmake --build build/${{BUILD_TYPE}}
+            cmake --install build/${{BUILD_TYPE}} --prefix install
             python3 scripts/tools/run_sanitizer.py --thread_sanitizer install/unit_tests/teiacare_sdk_unit_tests
           displayName: 'Thread Sanitizer'
           condition: eq(variables['Agent.OS'], 'Linux')
           timeoutInMinutes: 10
           continueOnError: True
           env:
-            CONAN_USER_HOME: $(Build.SourcesDirectory)
+            CONAN_HOME: $(Build.SourcesDirectory)/.conan2
 
         - script: |
             $(ACTIVATE_VIRTUAL_ENV)
             $(SETUP_BUILD_ENV)
-            python3 scripts/conan/create.py ${{BUILD_TYPE}} $(COMPILER) $(COMPILER_VERSION)
+            conan create . --settings build_type=${{BUILD_TYPE}} --profile:all $(PROFILE) --build missing
           displayName: 'Create Conan Package'
           timeoutInMinutes: 5
           env:
-            CONAN_USER_HOME: $(Build.SourcesDirectory)
+            CONAN_HOME: $(Build.SourcesDirectory)/.conan2
 
         - script: |
             $(ACTIVATE_VIRTUAL_ENV)
             $(SETUP_BUILD_ENV)
-            python3 scripts/conan/upload.py teiacare teiacare_sdk $(artifactory.url) $(artifactory.username) $(artifactory.password)
+            conan remote add teiacare $(artifactory.url)/teiacare --force
+            conan remote login teiacare $(artifactory.username) -p $(artifactory.password)
+            conan upload "*" --remote teiacare --confirm
           displayName: 'Upload Conan Package'
           timeoutInMinutes: 5
           env:
-            CONAN_USER_HOME: $(Build.SourcesDirectory)
+            CONAN_HOME: $(Build.SourcesDirectory)/.conan2

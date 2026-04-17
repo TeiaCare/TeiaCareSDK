@@ -1,6 +1,6 @@
 [submodule "scripts"]
 	path = scripts
-	url = https://github.com/TeiaCare/venvpp.git
+	url = https://github.com/FrancescoOlivaTC/venvpp2.git
 [submodule "doxygen"]
 	path = doxygen
 	url = https://github.com/TeiaCare/doxygen_template.git
