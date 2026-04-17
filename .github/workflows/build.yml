@@ -156,13 +156,12 @@ jobs:
         run: |
           source .venv/bin/activate
           conan install sdk/tests --output-folder build/modules --settings build_type=${{ env.BUILD_TYPE }} --profile:all ${{ env.PROFILE }} --build missing
-          cmake -G Ninja -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_TOOLCHAIN_FILE=build/modules/conan_toolchain.cmake -DTC_ENABLE_WARNINGS_ERROR=True -DTC_ENABLE_UNIT_TESTS=True -DTC_ENABLE_UNIT_TESTS_COVERAGE=True -B build/${{ env.BUILD_TYPE }} -S . --fresh
+          cmake -G Ninja -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_TOOLCHAIN_FILE=build/modules/conan_toolchain.cmake -DTC_ENABLE_WARNINGS_ERROR=True -DTC_ENABLE_UNIT_TESTS=True -DTC_ENABLE_UNIT_TESTS_COVERAGE=True -DTC_ENABLE_EXAMPLES=False -B build/${{ env.BUILD_TYPE }} -S . --fresh
           cmake --build build/${{ env.BUILD_TYPE }}
           cmake --install build/${{ env.BUILD_TYPE }} --prefix install
           python3 scripts/tools/run_unit_tests.py ${{ env.BUILD_TYPE }}
           python3 scripts/tools/run_coverage.py ${{ env.COMPILER }} ${{ env.COMPILER_VERSION }} sdk --extra_args=-e=sdk/src/datetime/date.h
         timeout-minutes: 5
-        continue-on-error: true
         env:
           CONAN_HOME: ${{ github.workspace }}/.conan2
 
