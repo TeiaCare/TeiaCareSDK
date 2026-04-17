@@ -128,7 +128,7 @@ Examples:
 Configure the TeiaCare Artifactory remote to fetch 3rd party dependencies (only required for unit tests, examples and benchmarks).
 
 ```bash
-conan remote add teiacare https://artifactory.app.teiacare.com/artifactory/api/conan/teiacare --insert 0 --force
+conan remote add teiacare https://artifactory.app.teiacare.com/artifactory/api/conan/teiacare --index 0 --force
 conan remote login teiacare <ARTIFACTORY_USERNAME> -p <ARTIFACTORY_PASSWORD>
 ```
 

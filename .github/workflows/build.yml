@@ -71,7 +71,7 @@ jobs:
             python3 -m venv .venv
             ${{ matrix.config.activate_venv }}
             pip3 install -r scripts/scripts/requirements.txt
-            conan remote add teiacare ${{ secrets.ARTIFACTORY_URL }}/teiacare --insert 0 --force
+            conan remote add teiacare ${{ secrets.ARTIFACTORY_URL }}/teiacare --index 0 --force
             conan remote login teiacare ${{ secrets.ARTIFACTORY_USERNAME }} -p ${{ secrets.ARTIFACTORY_PASSWORD }}
         env:
           CONAN_HOME: ${{ github.workspace }}/.conan2
@@ -164,7 +164,7 @@ jobs:
             python3 -m venv .venv
             source .venv/bin/activate
             pip3 install -r scripts/scripts/requirements.txt
-            conan remote add teiacare ${{ secrets.ARTIFACTORY_URL }}/teiacare --insert 0 --force
+            conan remote add teiacare ${{ secrets.ARTIFACTORY_URL }}/teiacare --index 0 --force
             conan remote login teiacare ${{ secrets.ARTIFACTORY_USERNAME }} -p ${{ secrets.ARTIFACTORY_PASSWORD }}
         env:
           CONAN_HOME: ${{ github.workspace }}/.conan2
@@ -259,7 +259,7 @@ jobs:
             python3 -m venv .venv
             ${{ matrix.config.activate_venv }}
             pip3 install -r scripts/scripts/requirements.txt
-            conan remote add teiacare ${{ secrets.ARTIFACTORY_URL }}/teiacare --insert 0 --force
+            conan remote add teiacare ${{ secrets.ARTIFACTORY_URL }}/teiacare --index 0 --force
             conan remote login teiacare ${{ secrets.ARTIFACTORY_USERNAME }} -p ${{ secrets.ARTIFACTORY_PASSWORD }}
         env:
           CONAN_HOME: ${{ github.workspace }}/.conan2
