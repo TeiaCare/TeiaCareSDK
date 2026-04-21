@@ -40,7 +40,7 @@ jobs:
         run: sudo apt-get install -y doxygen graphviz
 
       - name: Build Docs
-        run: python3 scripts/tools/run_doxygen.py
+        run: python3 scripts/tools/run_doxygen.py --doxyfile_path Doxyfile
 
       - name: Upload Docs
         uses: actions/upload-pages-artifact@v3
