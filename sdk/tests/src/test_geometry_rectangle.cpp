@@ -303,7 +303,10 @@ TYPED_TEST(test_geometry_rectangle_t, reshape_floating_point_precision)
     if constexpr (std::is_floating_point_v<RectT>)
     {
         // Test with dimensions that don't divide evenly
-        tc::sdk::rectangle<RectT> rect(tc::sdk::point<RectT>(10.5, 15.7), 20.3, 25.8);
+        tc::sdk::rectangle<RectT> rect(
+            tc::sdk::point<RectT>(static_cast<RectT>(10.5), static_cast<RectT>(15.7)),
+            static_cast<RectT>(20.3),
+            static_cast<RectT>(25.8));
 
         // Non-integer scaling factor
         auto result = rect.reshape(100, 100, 33, 33);
