@@ -1,4 +1,13 @@
 # TeiaCareSDK Changelog
 
-## [1.0.0] - 2024-xx-xx
+## [0.2.5] - 2026-04-21
 ### Added
+- IoU and NMS to geometry module
+### Changed
+- Migrate build toolchain to Conan 2 and venvpp2
+- Ship CI-owned Conan profiles for multi-platform GitHub Actions
+- Use Conan 2 `--index` flag for remote registration
+- Point scripts submodule to TeiaCare/venvpp2
+### Fixed
+- Rectangle initialization for floating point precision in reshape test
+- Disable example builds in CMake configuration for unit tests
