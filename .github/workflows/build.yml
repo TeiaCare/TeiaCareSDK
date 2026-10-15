@@ -63,7 +63,11 @@ jobs:
             python3 -m venv .venv
             ${{ matrix.config.activate_venv }}
             pip3 install -r scripts/scripts/requirements.txt
-            conan remote add teiacare ${{ secrets.ARTIFACTORY_URL }}/teiacare --index 0 --force
+            # Third-party Conan 2 packages come from teiacare_conan2; teiacare serves only
+            # the TeiaCare libraries (it also holds Conan 1 recipes, revision 0).
+            conan remote add teiacare_conan2 ${{ secrets.ARTIFACTORY_URL }}/teiacare_conan2 --index 0 --force
+            conan remote add teiacare ${{ secrets.ARTIFACTORY_URL }}/teiacare --index 1 --force --allowed-packages "teiacare_*/*"
+            conan remote login teiacare_conan2 ${{ secrets.ARTIFACTORY_USERNAME }} -p ${{ secrets.ARTIFACTORY_PASSWORD }}
             conan remote login teiacare ${{ secrets.ARTIFACTORY_USERNAME }} -p ${{ secrets.ARTIFACTORY_PASSWORD }}
         env:
           CONAN_HOME: ${{ github.workspace }}/.conan2
@@ -147,7 +151,11 @@ jobs:
             python3 -m venv .venv
             source .venv/bin/activate
             pip3 install -r scripts/scripts/requirements.txt
-            conan remote add teiacare ${{ secrets.ARTIFACTORY_URL }}/teiacare --index 0 --force
+            # Third-party Conan 2 packages come from teiacare_conan2; teiacare serves only
+            # the TeiaCare libraries (it also holds Conan 1 recipes, revision 0).
+            conan remote add teiacare_conan2 ${{ secrets.ARTIFACTORY_URL }}/teiacare_conan2 --index 0 --force
+            conan remote add teiacare ${{ secrets.ARTIFACTORY_URL }}/teiacare --index 1 --force --allowed-packages "teiacare_*/*"
+            conan remote login teiacare_conan2 ${{ secrets.ARTIFACTORY_USERNAME }} -p ${{ secrets.ARTIFACTORY_PASSWORD }}
             conan remote login teiacare ${{ secrets.ARTIFACTORY_USERNAME }} -p ${{ secrets.ARTIFACTORY_PASSWORD }}
         env:
           CONAN_HOME: ${{ github.workspace }}/.conan2
