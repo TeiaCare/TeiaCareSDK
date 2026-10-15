@@ -45,6 +45,13 @@ jobs:
     name: CI ${{ matrix.config.name }} ${{ matrix.build_type }}
 
     steps:
+      # Check out the same bytes on every OS: with CRLF conversion the Windows
+      # jobs export a recipe with different line endings, i.e. a different
+      # recipe revision from the Linux and macOS jobs of the same release.
+      - name: Disable CRLF conversion
+        if: runner.os == 'Windows'
+        run: git config --global core.autocrlf false
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
