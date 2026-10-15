@@ -45,6 +45,13 @@ jobs:
     name: CI ${{ matrix.config.name }} ${{ matrix.build_type }}
 
     steps:
+      # Check out the same bytes on every OS: with CRLF conversion the Windows
+      # jobs export a recipe with different line endings, i.e. a different
+      # recipe revision from the Linux and macOS jobs of the same release.
+      - name: Disable CRLF conversion
+        if: runner.os == 'Windows'
+        run: git config --global core.autocrlf false
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -63,7 +70,11 @@ jobs:
             python3 -m venv .venv
             ${{ matrix.config.activate_venv }}
             pip3 install -r scripts/scripts/requirements.txt
-            conan remote add teiacare ${{ secrets.ARTIFACTORY_URL }}/teiacare --index 0 --force
+            # Third-party Conan 2 packages come from teiacare_conan2; teiacare serves only
+            # the TeiaCare libraries (it also holds Conan 1 recipes, revision 0).
+            conan remote add teiacare_conan2 ${{ secrets.ARTIFACTORY_URL }}/teiacare_conan2 --index 0 --force
+            conan remote add teiacare ${{ secrets.ARTIFACTORY_URL }}/teiacare --index 1 --force --allowed-packages "teiacare_*/*"
+            conan remote login teiacare_conan2 ${{ secrets.ARTIFACTORY_USERNAME }} -p ${{ secrets.ARTIFACTORY_PASSWORD }}
             conan remote login teiacare ${{ secrets.ARTIFACTORY_USERNAME }} -p ${{ secrets.ARTIFACTORY_PASSWORD }}
         env:
           CONAN_HOME: ${{ github.workspace }}/.conan2
@@ -147,7 +158,11 @@ jobs:
             python3 -m venv .venv
             source .venv/bin/activate
             pip3 install -r scripts/scripts/requirements.txt
-            conan remote add teiacare ${{ secrets.ARTIFACTORY_URL }}/teiacare --index 0 --force
+            # Third-party Conan 2 packages come from teiacare_conan2; teiacare serves only
+            # the TeiaCare libraries (it also holds Conan 1 recipes, revision 0).
+            conan remote add teiacare_conan2 ${{ secrets.ARTIFACTORY_URL }}/teiacare_conan2 --index 0 --force
+            conan remote add teiacare ${{ secrets.ARTIFACTORY_URL }}/teiacare --index 1 --force --allowed-packages "teiacare_*/*"
+            conan remote login teiacare_conan2 ${{ secrets.ARTIFACTORY_USERNAME }} -p ${{ secrets.ARTIFACTORY_PASSWORD }}
             conan remote login teiacare ${{ secrets.ARTIFACTORY_USERNAME }} -p ${{ secrets.ARTIFACTORY_PASSWORD }}
         env:
           CONAN_HOME: ${{ github.workspace }}/.conan2
@@ -172,7 +187,7 @@ jobs:
 
   deploy:
     needs: build
-    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.force_deployment == 'true' || github.ref == 'refs/heads/develop' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.force_deployment == 'true' || startsWith(github.ref, 'refs/tags/v') }}
     strategy:
       fail-fast: false
       matrix:
@@ -220,8 +235,6 @@ jobs:
             python3 -m venv .venv
             ${{ matrix.config.activate_venv }}
             pip3 install -r scripts/scripts/requirements.txt
-            conan remote add teiacare ${{ secrets.ARTIFACTORY_URL }}/teiacare --index 0 --force
-            conan remote login teiacare ${{ secrets.ARTIFACTORY_USERNAME }} -p ${{ secrets.ARTIFACTORY_PASSWORD }}
         env:
           CONAN_HOME: ${{ github.workspace }}/.conan2
 
@@ -237,6 +250,14 @@ jobs:
           commands: |
             ${{ matrix.config.activate_venv }}
             ${{ matrix.config.setup_build_env }}
-            conan upload "*" --remote teiacare --confirm
+            # The cache artifact overwrites remotes.json, so the remote must
+            # be configured after the download, not in the setup step.
+            conan remote add teiacare ${{ secrets.ARTIFACTORY_URL }}/teiacare --index 0 --force
+            conan remote login teiacare ${{ secrets.ARTIFACTORY_USERNAME }} -p ${{ secrets.ARTIFACTORY_PASSWORD }}
+            # Upload ONLY this package at the version being released.
+            # Never upload "*": the cache also contains Conan 2 builds of
+            # shared references (fmt, zlib, ...) and new revisions on the
+            # teiacare remote break the Conan 1 projects that consume it.
+            conan upload "teiacare_sdk/$(cat VERSION)" --remote teiacare --confirm
         env:
           CONAN_HOME: ${{ github.workspace }}/.conan2

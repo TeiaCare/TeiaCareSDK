@@ -1,5 +1,13 @@
 # TeiaCareSDK Changelog
 
+## [0.2.6] - 2026-10-15
+### Fixed
+- One Conan recipe revision per release: version.cpp is generated in the build directory instead of the source tree
+- No CRLF conversion on Windows checkouts (the Windows jobs exported a different recipe)
+### Changed
+- CD deploys only on v* tags and uploads only teiacare_sdk/<version>, never "*"
+- CI resolves third-party Conan 2 packages from teiacare_conan2; teiacare serves only teiacare_*
+
 ## [0.2.5] - 2026-04-21
 ### Added
 - IoU and NMS to geometry module
