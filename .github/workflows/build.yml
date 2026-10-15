@@ -63,6 +63,8 @@ jobs:
           python-version: '3.12'
           architecture: 'x64'
 
+      # Third-party Conan 2 packages come from teiacare_conan2; teiacare serves only
+      # the TeiaCare libraries (it also holds Conan 1 recipes, revision 0).
       - name: Setup Virtual Environment
         uses: ./.github/actions/shell
         with:
@@ -70,8 +72,6 @@ jobs:
             python3 -m venv .venv
             ${{ matrix.config.activate_venv }}
             pip3 install -r scripts/scripts/requirements.txt
-            # Third-party Conan 2 packages come from teiacare_conan2; teiacare serves only
-            # the TeiaCare libraries (it also holds Conan 1 recipes, revision 0).
             conan remote add teiacare_conan2 ${{ secrets.ARTIFACTORY_URL }}/teiacare_conan2 --index 0 --force
             conan remote add teiacare ${{ secrets.ARTIFACTORY_URL }}/teiacare --index 1 --force --allowed-packages "teiacare_*/*"
             conan remote login teiacare_conan2 ${{ secrets.ARTIFACTORY_USERNAME }} -p ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -151,6 +151,8 @@ jobs:
           python-version: '3.12'
           architecture: 'x64'
 
+      # Third-party Conan 2 packages come from teiacare_conan2; teiacare serves only
+      # the TeiaCare libraries (it also holds Conan 1 recipes, revision 0).
       - name: Setup Virtual Environment
         uses: ./.github/actions/shell
         with:
@@ -158,8 +160,6 @@ jobs:
             python3 -m venv .venv
             source .venv/bin/activate
             pip3 install -r scripts/scripts/requirements.txt
-            # Third-party Conan 2 packages come from teiacare_conan2; teiacare serves only
-            # the TeiaCare libraries (it also holds Conan 1 recipes, revision 0).
             conan remote add teiacare_conan2 ${{ secrets.ARTIFACTORY_URL }}/teiacare_conan2 --index 0 --force
             conan remote add teiacare ${{ secrets.ARTIFACTORY_URL }}/teiacare --index 1 --force --allowed-packages "teiacare_*/*"
             conan remote login teiacare_conan2 ${{ secrets.ARTIFACTORY_USERNAME }} -p ${{ secrets.ARTIFACTORY_PASSWORD }}
@@ -244,20 +244,21 @@ jobs:
           name: ${{ matrix.config.name }}-${{ matrix.build_type }}
           path: .conan2/
 
+      # The cache artifact overwrites remotes.json, so the remote must
+      # be configured after the download, not in the setup step.
+      # Upload ONLY this package: the cache holds just the version built by this run.
+      # Commands run in cmd.exe on Windows: no '#' lines and no $(...) inside them.
+      # Never upload "*": the cache also contains Conan 2 builds of
+      # shared references (fmt, zlib, ...) and new revisions on the
+      # teiacare remote break the Conan 1 projects that consume it.
       - name: Upload Conan Package
         uses: ./.github/actions/shell
         with:
           commands: |
             ${{ matrix.config.activate_venv }}
             ${{ matrix.config.setup_build_env }}
-            # The cache artifact overwrites remotes.json, so the remote must
-            # be configured after the download, not in the setup step.
             conan remote add teiacare ${{ secrets.ARTIFACTORY_URL }}/teiacare --index 0 --force
             conan remote login teiacare ${{ secrets.ARTIFACTORY_USERNAME }} -p ${{ secrets.ARTIFACTORY_PASSWORD }}
-            # Upload ONLY this package at the version being released.
-            # Never upload "*": the cache also contains Conan 2 builds of
-            # shared references (fmt, zlib, ...) and new revisions on the
-            # teiacare remote break the Conan 1 projects that consume it.
-            conan upload "teiacare_sdk/$(cat VERSION)" --remote teiacare --confirm
+            conan upload "teiacare_sdk/*" --remote teiacare --confirm
         env:
           CONAN_HOME: ${{ github.workspace }}/.conan2
